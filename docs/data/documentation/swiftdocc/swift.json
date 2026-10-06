@@ -45,7 +45,6 @@
       "anchor" : "Extended-Structures",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String"
       ],
       "title" : "Extended Structures"
@@ -89,38 +88,6 @@
   "title" : "Swift",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/swift"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Swift/Array": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:Sa",
-      "text" : "Array"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Array"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Array",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/array"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Sequence": {
   "abstract" : [

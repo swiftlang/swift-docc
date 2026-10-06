@@ -73,7 +73,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -342,8 +342,9 @@
       "type" : "text"
     },
     {
-      "code" : "action",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/action(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " attribute’s URL.",
@@ -436,6 +437,68 @@
   "title" : "HTMLNode.Attribute.Method.post",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/method\/post"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/action(_:)": {
+  "abstract" : [
+    {
+      "text" : "The URL that processes the ",
+      "type" : "text"
+    },
+    {
+      "code" : "<form>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element’s submission.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "action"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/action(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "action(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/action(_:)"
 },
 "doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/method(_:)": {
   "abstract" : [

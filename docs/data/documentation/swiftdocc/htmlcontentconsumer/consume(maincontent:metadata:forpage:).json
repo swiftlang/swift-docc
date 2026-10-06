@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC19HTMLContentConsumerP7consume11mainContent8metadata7forPagey0B5CHTML8HTMLNodeV_SS5title_SSSg11descriptiontAA22ResolvedTopicReferenceVtKF",
+    "externalID" : "s:9SwiftDocC19HTMLContentConsumerP7consume11mainContent8metadata7forPagey0B5CHTML8HTMLNodeVSg_SS5title_SSSg11descriptiontAA22ResolvedTopicReferenceVtKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -52,7 +52,7 @@
       },
       {
         "kind" : "text",
-        "text" : ", "
+        "text" : "?, "
       },
       {
         "kind" : "externalParam",
@@ -117,7 +117,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTMLContentConsumer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLContentConsumer.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLContentConsumer.swift#L26"
     },
     "required" : true,
     "role" : "symbol",
@@ -133,7 +133,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -168,7 +168,7 @@
             },
             {
               "kind" : "text",
-              "text" : ", "
+              "text" : "?, "
             },
             {
               "kind" : "externalParam",
@@ -455,7 +455,7 @@
     },
     {
       "kind" : "text",
-      "text" : ", "
+      "text" : "?, "
     },
     {
       "kind" : "externalParam",

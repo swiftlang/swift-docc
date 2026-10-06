@@ -41,8 +41,8 @@
       }
     ],
     "remoteSource" : {
-      "fileName" : "Availability.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L51"
+      "fileName" : "AvailabilityDirective.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/AvailabilityDirective.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -57,7 +57,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {

@@ -84,7 +84,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -154,6 +154,17 @@
   },
   "sections" : [
 
+  ],
+  "seeAlsoSections" : [
+    {
+      "anchor" : "Metadata",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/info-swift.property",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/displayName"
+      ],
+      "title" : "Metadata"
+    }
   ],
   "variants" : [
     {
@@ -285,6 +296,43 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/displayName": {
+  "abstract" : [
+    {
+      "text" : "A human-readable display name for this unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "displayName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/displayName",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "displayName",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/displayname"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/id": {
   "abstract" : [
     {
@@ -339,6 +387,43 @@
   "title" : "id",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/id"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/info-swift.property": {
+  "abstract" : [
+    {
+      "text" : "Non-content information or metadata about this unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "info"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV4InfoV",
+      "text" : "Info"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/info-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "info",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/info-swift.property"
 }
 }
 }

@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC17FileTypeReferenceV10identifier11displayName10iconBase64AcA06RenderE10IdentifierV_SS10Foundation4DataVtcfc",
+    "externalID" : "s:9SwiftDocC17FileTypeReferenceV10identifier11displayName10iconBase64AcA06RenderE10IdentifierV_SS20FoundationEssentials4DataVtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -73,7 +73,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation4DataV",
+        "preciseIdentifier" : "s:20FoundationEssentials4DataV",
         "text" : "Data"
       },
       {
@@ -103,7 +103,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -159,7 +159,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation4DataV",
+              "preciseIdentifier" : "s:20FoundationEssentials4DataV",
               "text" : "Data"
             },
             {
@@ -349,7 +349,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     },
     {

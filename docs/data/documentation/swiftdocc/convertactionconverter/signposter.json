@@ -13,7 +13,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC22ConvertActionConverterO10signposter2os12OSSignposterVvpZ",
+    "externalID" : "s:9SwiftDocC22ConvertActionConverterO10signposterAA18NoOpSignposterShimVvpZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -41,8 +41,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:2os12OSSignposterV",
-        "text" : "OSSignposter"
+        "preciseIdentifier" : "s:9SwiftDocC18NoOpSignposterShimV",
+        "text" : "NoOpSignposterShim"
       }
     ],
     "modules" : [
@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertActionConverter.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertActionConverter.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertActionConverter.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",
@@ -67,7 +67,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -95,9 +95,10 @@
               "text" : ": "
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpSignposterShim",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:2os12OSSignposterV",
-              "text" : "OSSignposter"
+              "preciseIdentifier" : "s:9SwiftDocC18NoOpSignposterShimV",
+              "text" : "NoOpSignposterShim"
             }
           ]
         }
@@ -203,8 +204,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:2os12OSSignposterV",
-      "text" : "OSSignposter"
+      "preciseIdentifier" : "s:9SwiftDocC18NoOpSignposterShimV",
+      "text" : "NoOpSignposterShim"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertActionConverter\/signposter",
@@ -213,6 +214,48 @@
   "title" : "signposter",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertactionconverter\/signposter"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NoOpSignposterShim": {
+  "abstract" : [
+    {
+      "text" : "A shim for ",
+      "type" : "text"
+    },
+    {
+      "code" : "os.OSSignposter",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " that does nothing, except for running the passed interval task.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NoOpSignposterShim"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NoOpSignposterShim",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NoOpSignposterShim"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NoOpSignposterShim",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/noopsignpostershim"
 }
 }
 }

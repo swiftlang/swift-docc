@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -142,8 +142,14 @@
           "code" : [
             "@Snippet(path: \"example-snippet\", slice: \"setup\")"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : "markdown",
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         },
         {
           "inlineContent" : [
@@ -222,8 +228,14 @@
               "code" : [
                 "@Snippet(path: \"my-package\/Snippets\/example-snippet\")"
               ],
+              "copyToClipboard" : true,
+              "lineAnnotations" : [
+
+              ],
+              "showLineNumbers" : false,
               "syntax" : "markdown",
-              "type" : "codeListing"
+              "type" : "codeListing",
+              "wrap" : 0
             }
           ],
           "name" : "Earlier Versions",

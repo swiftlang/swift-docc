@@ -69,7 +69,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -245,8 +245,14 @@
             "",
             "self.init(...)"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : null,
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         },
         {
           "inlineContent" : [
@@ -270,8 +276,14 @@
             "let rawValue = try decoder.decode(RawValue.self)",
             "self = .init(rawValue: consume rawValue)"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : null,
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         }
       ],
       "kind" : "content"
@@ -327,7 +339,7 @@
         "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericParameter",
         "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/Generics",
         "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/TypeDetail",
-        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation\/URL"
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FoundationEssentials\/URL"
       ],
       "kind" : "relationships",
       "title" : "Conforming Types",
@@ -535,7 +547,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decode_4fromxxm_10Foundation4DataVntKAA0C13JSONDecodableRzlFZ9DecodableL_xmfp",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decode_4fromxxm_20FoundationEssentials4DataVntKAA0C13JSONDecodableRzlFZ9DecodableL_xmfp",
       "text" : "Decodable"
     },
     {
@@ -560,7 +572,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     },
     {
@@ -577,7 +589,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decode_4fromxxm_10Foundation4DataVntKAA0C13JSONDecodableRzlFZ9DecodableL_xmfp",
+      "preciseIdentifier" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decode_4fromxxm_20FoundationEssentials4DataVntKAA0C13JSONDecodableRzlFZ9DecodableL_xmfp",
       "text" : "Decodable"
     }
   ],
@@ -588,7 +600,7 @@
   "type" : "topic",
   "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/decode(_:from:)"
 },
-"doc://DocCCommon/documentation/DocCCommon/Foundation/URL": {
+"doc://DocCCommon/documentation/DocCCommon/FoundationEssentials/URL": {
   "abstract" : [
 
   ],
@@ -603,11 +615,11 @@
     },
     {
       "kind" : "identifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     }
   ],
-  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation\/URL",
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FoundationEssentials\/URL",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -618,7 +630,7 @@
   "role" : "symbol",
   "title" : "URL",
   "type" : "topic",
-  "url" : "\/documentation\/docccommon\/foundation\/url"
+  "url" : "\/documentation\/docccommon\/foundationessentials\/url"
 },
 "doc://DocCCommon/documentation/DocCCommon/Swift/Array": {
   "abstract" : [

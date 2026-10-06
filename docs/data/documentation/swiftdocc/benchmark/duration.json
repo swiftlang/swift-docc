@@ -63,7 +63,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -601,7 +601,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@T@NSTimeInterval",
+      "preciseIdentifier" : "s:10Foundation12TimeIntervala",
       "text" : "TimeInterval"
     },
     {

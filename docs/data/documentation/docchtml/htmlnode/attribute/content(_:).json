@@ -100,7 +100,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -340,8 +340,9 @@
       "type" : "text"
     },
     {
-      "code" : "contents(_:)",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/content(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " value for a ",

@@ -63,7 +63,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -456,8 +456,9 @@
       "type" : "text"
     },
     {
-      "code" : "HTMLNode\/Attribute\/autocapitalize(_:)",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/autoCapitalize(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " attribute.",
@@ -584,8 +585,9 @@
       "type" : "text"
     },
     {
-      "code" : "HTMLNode\/Attribute\/controls(_:)",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/controlsList(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " attribute.",
@@ -7319,8 +7321,9 @@
       "type" : "text"
     },
     {
-      "code" : "contents(_:)",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/content(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " value for a ",

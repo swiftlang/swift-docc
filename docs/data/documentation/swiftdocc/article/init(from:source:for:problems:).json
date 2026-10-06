@@ -39,7 +39,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC7ArticleC4from6source3for8problemsACSg8Markdown6Markup_p_10Foundation3URLVSgAA20DocumentationContextC6InputsVSayAA7ProblemVGztcfc",
+    "externalID" : "s:9SwiftDocC7ArticleC4from6source3for8problemsACSg8Markdown6Markup_p_20FoundationEssentials3URLVSgAA20DocumentationContextC6InputsVSayAA7ProblemVGztcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -84,7 +84,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -141,7 +141,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Article.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L265"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L266"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -156,7 +156,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -218,7 +218,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -402,7 +402,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

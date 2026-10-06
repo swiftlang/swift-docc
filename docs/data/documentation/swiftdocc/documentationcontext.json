@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L40"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L37"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -96,47 +96,6 @@
           "level" : 2,
           "text" : "Overview",
           "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "A ",
-              "type" : "text"
-            },
-            {
-              "code" : "DocumentationWorkspace",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " discovers serialized documentation bundles from a variety of sources (files on disk, databases, or web services), provides them to the ",
-              "type" : "text"
-            },
-            {
-              "code" : "DocumentationContext",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ",",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "and notifies the context when bundles are added or removed using the ",
-              "type" : "text"
-            },
-            {
-              "code" : "DocumentationContextDataProviderDelegate",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " protocol.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
         },
         {
           "inlineContent" : [
@@ -854,7 +813,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -912,7 +871,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -1076,15 +1035,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/init(inputs:dataProvider:diagnosticEngine:configuration:)": {
   "abstract" : [
     {
-      "text" : "Initializes a documentation context with a given ",
-      "type" : "text"
-    },
-    {
-      "code" : "bundle",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Initializes a documentation context from a collection of input files.",
       "type" : "text"
     }
   ],
@@ -1605,7 +1556,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -2130,7 +2081,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     }
   ],

@@ -47,7 +47,7 @@
       "anchor" : "Extended-Modules",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation",
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FoundationEssentials",
         "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Swift",
         "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit"
       ],
@@ -147,16 +147,16 @@
   "type" : "topic",
   "url" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder"
 },
-"doc://DocCCommon/documentation/DocCCommon/Foundation": {
+"doc://DocCCommon/documentation/DocCCommon/FoundationEssentials": {
   "abstract" : [
 
   ],
-  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Foundation",
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FoundationEssentials",
   "kind" : "symbol",
   "role" : "collection",
-  "title" : "Foundation",
+  "title" : "FoundationEssentials",
   "type" : "topic",
-  "url" : "\/documentation\/docccommon\/foundation"
+  "url" : "\/documentation\/docccommon\/foundationessentials"
 },
 "doc://DocCCommon/documentation/DocCCommon/SmallSourceLanguageSet": {
   "abstract" : [

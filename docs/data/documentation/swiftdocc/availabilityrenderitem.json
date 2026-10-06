@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -85,9 +85,12 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastJSONDecodable",
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/SH"
       ],
       "kind" : "relationships",
@@ -126,9 +129,11 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/beta",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/deprecated",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/introduced",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/isBeta",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/isUnconditionallyDeprecated",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/message",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/name",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/obsoleted",
@@ -145,6 +150,14 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/encode(to:)"
       ],
       "title" : "Instance Methods"
+    },
+    {
+      "anchor" : "Default-Implementations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/FastJSONDecodable-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -161,6 +174,48 @@
   ]
 , 
 "references": {
+"doc://DocCCommon/documentation/DocCCommon/FastJSONDecodable": {
+  "abstract" : [
+    {
+      "text" : "A protocol for types that can be decoded using a ",
+      "type" : "text"
+    },
+    {
+      "code" : "FastSymbolGraphJSONDecoder",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FastJSONDecodable"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastJSONDecodable",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FastJSONDecodable"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FastJSONDecodable",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommon\/fastjsondecodable"
+},
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
@@ -228,6 +283,62 @@
   "title" : "AvailabilityRenderItem",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/availabilityrenderitem"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem/FastJSONDecodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/FastJSONDecodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "FastJSONDecodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/availabilityrenderitem\/fastjsondecodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem/beta": {
+  "abstract" : [
+    {
+      "text" : "If ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", the symbol is introduced in a beta version of this platform.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "beta"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/beta",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "beta",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/availabilityrenderitem\/beta"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem/deprecated": {
   "abstract" : [
@@ -421,19 +532,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem/isBeta": {
   "abstract" : [
-    {
-      "text" : "If ",
-      "type" : "text"
-    },
-    {
-      "code" : "true",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", the symbol is introduced in a beta version of this platform.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -468,6 +569,51 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/availabilityrenderitem\/isbeta"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem/isUnconditionallyDeprecated": {
+  "abstract" : [
+    {
+      "text" : "If ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", the symbol is deprecated on this or all platforms.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isUnconditionallyDeprecated"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem\/isUnconditionallyDeprecated",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isUnconditionallyDeprecated",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/availabilityrenderitem\/isunconditionallydeprecated"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem/message": {
   "abstract" : [
     {
@@ -475,6 +621,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -557,6 +704,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -598,6 +746,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -634,19 +783,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem/unconditionallyDeprecated": {
   "abstract" : [
-    {
-      "text" : "If ",
-      "type" : "text"
-    },
-    {
-      "code" : "true",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", the symbol is deprecated on this or all platforms.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -696,6 +835,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -763,6 +903,16 @@
   "title" : "DiffAvailability",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diffavailability"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s9EscapableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
+  "title" : "Swift.Escapable",
+  "type" : "unresolvable"
 }
 }
 }

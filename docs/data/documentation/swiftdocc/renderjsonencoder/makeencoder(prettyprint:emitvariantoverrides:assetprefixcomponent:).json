@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC17RenderJSONEncoderO11makeEncoder11prettyPrint20emitVariantOverrides20assetPrefixComponent10Foundation0D0CSb_SbSSSgtFZ",
+    "externalID" : "s:9SwiftDocC17RenderJSONEncoderO11makeEncoder11prettyPrint20emitVariantOverrides20assetPrefixComponent20FoundationEssentials0D0CSb_SbSSSgtFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -98,7 +98,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation11JSONEncoderC",
+        "preciseIdentifier" : "s:20FoundationEssentials11JSONEncoderC",
         "text" : "JSONEncoder"
       }
     ],
@@ -124,7 +124,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -204,7 +204,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation11JSONEncoderC",
+              "preciseIdentifier" : "s:20FoundationEssentials11JSONEncoderC",
               "text" : "JSONEncoder"
             }
           ]
@@ -513,7 +513,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation11JSONEncoderC",
+      "preciseIdentifier" : "s:20FoundationEssentials11JSONEncoderC",
       "text" : "JSONEncoder"
     }
   ],

@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC10FileServerC8response2toSo13NSURLResponseC_10Foundation4DataVSgtAH10URLRequestV_tF",
+    "externalID" : "s:9SwiftDocC10FileServerC8response2to20FoundationNetworking11URLResponseC_0G10Essentials4DataVSgtAF10URLRequestV_tF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -47,7 +47,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation10URLRequestV",
+        "preciseIdentifier" : "s:20FoundationNetworking10URLRequestV",
         "text" : "URLRequest"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:objc(cs)NSURLResponse",
+        "preciseIdentifier" : "s:20FoundationNetworking11URLResponseC",
         "text" : "URLResponse"
       },
       {
@@ -65,7 +65,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation4DataV",
+        "preciseIdentifier" : "s:20FoundationEssentials4DataV",
         "text" : "Data"
       },
       {
@@ -95,7 +95,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -132,7 +132,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation10URLRequestV",
+              "preciseIdentifier" : "s:20FoundationNetworking10URLRequestV",
               "text" : "URLRequest"
             },
             {
@@ -141,7 +141,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:objc(cs)NSURLResponse",
+              "preciseIdentifier" : "s:20FoundationNetworking11URLResponseC",
               "text" : "URLResponse"
             },
             {
@@ -150,7 +150,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation4DataV",
+              "preciseIdentifier" : "s:20FoundationEssentials4DataV",
               "text" : "Data"
             },
             {
@@ -350,7 +350,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation10URLRequestV",
+      "preciseIdentifier" : "s:20FoundationNetworking10URLRequestV",
       "text" : "URLRequest"
     },
     {
@@ -359,7 +359,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSURLResponse",
+      "preciseIdentifier" : "s:20FoundationNetworking11URLResponseC",
       "text" : "URLResponse"
     },
     {
@@ -368,7 +368,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     },
     {

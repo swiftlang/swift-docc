@@ -73,7 +73,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -118,8 +118,18 @@
               "type" : "text"
             },
             {
-              "code" : "Names\/single\/conceptual(_:)",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheadings-swift.enum\/single(_:)",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheading\/conceptual(_:)",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " name.",
@@ -134,16 +144,27 @@
               "type" : "text"
             },
             {
-              "code" : "Names\/single\/symbol(_:)",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheadings-swift.enum\/single(_:)",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheading\/symbol(_:)",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " name or have different names for each language representation (",
               "type" : "text"
             },
             {
-              "code" : "Names\/languageSpecificSymbol",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheadings-swift.enum\/languageSpecificSymbol(_:)",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : ").",
@@ -220,6 +241,96 @@
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/linkedelement"
 },
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/Subheading/conceptual(_:)": {
+  "abstract" : [
+    {
+      "text" : "The name refers to an article, heading, or custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "@DisplayName",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and should display as regular text.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "conceptual"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheading\/conceptual(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LinkedElement.Subheading.conceptual(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/subheading\/conceptual(_:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/Subheading/symbol(_:)": {
+  "abstract" : [
+    {
+      "text" : "The name refers to a symbol’s subheading declaration and should display in a monospaced font.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "(["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13LinkedElementV18SymbolNameFragmentV",
+      "text" : "SymbolNameFragment"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheading\/symbol(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LinkedElement.Subheading.symbol(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/subheading\/symbol(_:)"
+},
 "doc://DocCHTML/documentation/DocCHTML/LinkedElement/Subheadings-swift.enum": {
   "abstract" : [
     {
@@ -261,6 +372,97 @@
   "title" : "LinkedElement.Subheadings",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/linkedelement\/subheadings-swift.enum"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/Subheadings-swift.enum/languageSpecificSymbol(_:)": {
+  "abstract" : [
+    {
+      "text" : "This element is a symbol with different names in different languages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "languageSpecificSymbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "(["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10DocCCommon14SourceLanguageV",
+      "text" : "SourceLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : " : ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13LinkedElementV18SymbolNameFragmentV",
+      "text" : "SymbolNameFragment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]])"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheadings-swift.enum\/languageSpecificSymbol(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LinkedElement.Subheadings.languageSpecificSymbol(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/subheadings-swift.enum\/languagespecificsymbol(_:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/LinkedElement/Subheadings-swift.enum/single(_:)": {
+  "abstract" : [
+    {
+      "text" : "This element has the same name in all language representations",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "single"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML13LinkedElementV10SubheadingO",
+      "text" : "Subheading"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/Subheadings-swift.enum\/single(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LinkedElement.Subheadings.single(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/linkedelement\/subheadings-swift.enum\/single(_:)"
 },
 "doc://DocCHTML/documentation/DocCHTML/LinkedElement/subheadings-swift.property": {
   "abstract" : [

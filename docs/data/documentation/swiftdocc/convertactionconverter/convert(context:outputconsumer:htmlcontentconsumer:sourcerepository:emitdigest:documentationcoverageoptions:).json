@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC22ConvertActionConverterO7convert7context14outputConsumer011htmlContentI016sourceRepository10emitDigest28documentationCoverageOptionsyAA20DocumentationContextC_xAA011HTMLContentI0_pSgAA06SourceM0VSgSbAA0sqR0VtYaKAA0c6OutputI0RzAA012ExternalNodeI0RzlFZ",
+    "externalID" : "s:9SwiftDocC22ConvertActionConverterO7convert7context14outputConsumer011htmlContentI016sourceRepository10emitDigest28documentationCoverageOptionsyAA20DocumentationContextC_xAA011HTMLContentI0_pSgAA06SourceM0VSgSbAA0sqR0VtYaKAA012ExternalNodeI0RzAA020_WillBeMadeNonPublicc6OutputI0RzlFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -80,8 +80,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
-        "text" : "ConvertOutputConsumer"
+        "preciseIdentifier" : "s:9SwiftDocC41_WillBeMadeNonPublicConvertOutputConsumerP",
+        "text" : "_WillBeMadeNonPublicConvertOutputConsumer"
       },
       {
         "kind" : "text",
@@ -192,7 +192,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertActionConverter.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertActionConverter.swift#L35"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertActionConverter.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -207,7 +207,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -269,10 +269,9 @@
               "text" : " "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
-              "text" : "ConvertOutputConsumer"
+              "preciseIdentifier" : "s:9SwiftDocC41_WillBeMadeNonPublicConvertOutputConsumerP",
+              "text" : "_WillBeMadeNonPublicConvertOutputConsumer"
             },
             {
               "kind" : "text",
@@ -616,8 +615,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
-      "text" : "ConvertOutputConsumer"
+      "preciseIdentifier" : "s:9SwiftDocC41_WillBeMadeNonPublicConvertOutputConsumerP",
+      "text" : "_WillBeMadeNonPublicConvertOutputConsumer"
     },
     {
       "kind" : "text",
@@ -727,40 +726,6 @@
   "title" : "convert(context:outputConsumer:htmlContentConsumer:sourceRepository:emitDigest:documentationCoverageOptions:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertactionconverter\/convert(context:outputconsumer:htmlcontentconsumer:sourcerepository:emitdigest:documentationcoverageoptions:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer": {
-  "abstract" : [
-    {
-      "text" : "A consumer for output produced by a documentation conversion.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "ConvertOutputConsumer"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "ConvertOutputConsumer"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "ConvertOutputConsumer",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
   "abstract" : [

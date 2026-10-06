@@ -16,7 +16,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SymbolKit",
-    "externalID" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO9ExtensionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc",
+    "externalID" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO16GenericParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc",
     "modules" : [
       {
         "name" : "DocCCommon",

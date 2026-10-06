@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC19FileManagerProtocolP15createDirectory2at27withIntermediateDirectories10attributesy10Foundation3URLV_SbSDySo18NSFileAttributeKeyaypGSgtKF",
+    "externalID" : "s:9SwiftDocC19FileManagerProtocolP15createDirectory2at27withIntermediateDirectories10attributesy20FoundationEssentials3URLV_SbSDyAH0C12AttributeKeyVypGSgtKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -47,7 +47,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -81,7 +81,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:@T@NSFileAttributeKey",
+        "preciseIdentifier" : "s:20FoundationEssentials16FileAttributeKeyV",
         "text" : "FileAttributeKey"
       },
       {
@@ -124,7 +124,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -153,7 +153,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -187,7 +187,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:@T@NSFileAttributeKey",
+              "preciseIdentifier" : "s:20FoundationEssentials16FileAttributeKeyV",
               "text" : "FileAttributeKey"
             },
             {
@@ -316,7 +316,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -350,7 +350,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@T@NSFileAttributeKey",
+      "preciseIdentifier" : "s:20FoundationEssentials16FileAttributeKeyV",
       "text" : "FileAttributeKey"
     },
     {

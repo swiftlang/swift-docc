@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -93,7 +93,7 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/FileManager"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager"
       ],
       "kind" : "relationships",
       "title" : "Conforming Types",
@@ -214,7 +214,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -231,7 +231,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     }
   ],
@@ -277,7 +277,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/filemanagerprotocol"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation/FileManager": {
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/FileManager": {
   "abstract" : [
     {
       "text" : "Add compliance to ",
@@ -319,11 +319,11 @@
     },
     {
       "kind" : "identifier",
-      "preciseIdentifier" : "c:objc(cs)NSFileManager",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
       "text" : "FileManager"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/FileManager",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -334,7 +334,7 @@
   "role" : "symbol",
   "title" : "FileManager",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation\/filemanager"
+  "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager"
 }
 }
 }

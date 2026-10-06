@@ -20,7 +20,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "DocCCommandLine",
-    "externalID" : "s:15DocCCommandLine13ConvertActionV04fromD7Command20withFallbackTemplateAcA4DoccV0D0V_10Foundation3URLVSgtKcfc",
+    "externalID" : "s:15DocCCommandLine13ConvertActionV04fromD7Command20withFallbackTemplateAcA4DoccV0D0V_20FoundationEssentials3URLVSgtKcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -66,7 +66,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -100,7 +100,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -165,7 +165,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -353,7 +353,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

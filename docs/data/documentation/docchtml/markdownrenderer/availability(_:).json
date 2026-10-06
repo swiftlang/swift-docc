@@ -92,7 +92,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownRenderer+Availability.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Availability.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Availability.swift#L35"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -107,7 +107,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {

@@ -20,7 +20,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC12HTMLRendererV18prepareForFullPage12customHeader0H6Footer11fileManager0B5CHTML8HTMLNodeVSgAE_AkFt10Foundation3URLVSg_AOxtKAA04FileL8ProtocolRzlFZ",
+    "externalID" : "s:9SwiftDocC12HTMLRendererV18prepareForFullPage12customHeader0H6Footer11fileManager0B5CHTML8HTMLNodeVSgAE_AkFt20FoundationEssentials3URLVSg_AOxtKAA04FileL8ProtocolRzlFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -56,7 +56,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -73,7 +73,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -147,7 +147,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTMLRenderer+FullPage.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLRenderer+FullPage.swift#L121"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLRenderer+FullPage.swift#L123"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -162,7 +162,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -199,7 +199,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -216,7 +216,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -535,7 +535,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -552,7 +552,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

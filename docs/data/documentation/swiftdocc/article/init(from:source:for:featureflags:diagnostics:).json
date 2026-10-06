@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC7ArticleC4from6source3for12featureFlags11diagnosticsACSg8Markdown6Markup_p_10Foundation3URLVSgAA20DocumentationContextC6InputsVAA07FeatureH0VSayAA10DiagnosticVGztcfc",
+    "externalID" : "s:9SwiftDocC7ArticleC4from6source3for12featureFlags11diagnosticsACSg8Markdown6Markup_p_20FoundationEssentials3URLVSgAA20DocumentationContextC6InputsVAA07FeatureH0VSayAA10DiagnosticVGztcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -64,7 +64,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -147,7 +147,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Article.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L120"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L121"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -162,7 +162,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -224,7 +224,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -366,6 +366,20 @@
             {
               "inlineContent" : [
                 {
+                  "text" : "A set of feature flags that conditionally enable certain behaviors.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "featureFlags"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
                   "text" : "A mutable collection of diagnostics to update with any additional issues encountered while initializing the article.",
                   "type" : "text"
                 }
@@ -499,7 +513,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

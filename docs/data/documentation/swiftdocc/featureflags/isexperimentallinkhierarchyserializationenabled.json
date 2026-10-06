@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'isLinkHierarchySerializationEnabled' instead. This deprecated API will be removed after 6.5 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -50,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FeatureFlags.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -65,7 +70,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -88,6 +93,26 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:Sb",
               "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -167,11 +192,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalLinkHierarchySerializationEnabled": {
   "abstract" : [
-    {
-      "text" : "Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

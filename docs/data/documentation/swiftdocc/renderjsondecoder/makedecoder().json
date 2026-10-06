@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC17RenderJSONDecoderO11makeDecoder10Foundation0D0CyFZ",
+    "externalID" : "s:9SwiftDocC17RenderJSONDecoderO11makeDecoder20FoundationEssentials0D0CyFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -47,7 +47,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation11JSONDecoderC",
+        "preciseIdentifier" : "s:20FoundationEssentials11JSONDecoderC",
         "text" : "JSONDecoder"
       }
     ],
@@ -73,7 +73,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -102,7 +102,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation11JSONDecoderC",
+              "preciseIdentifier" : "s:20FoundationEssentials11JSONDecoderC",
               "text" : "JSONDecoder"
             }
           ]
@@ -235,7 +235,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation11JSONDecoderC",
+      "preciseIdentifier" : "s:20FoundationEssentials11JSONDecoderC",
       "text" : "JSONDecoder"
     }
   ],

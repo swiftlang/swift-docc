@@ -83,7 +83,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -290,6 +290,77 @@
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/htmlnode\/attribute"
 },
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/content(_:)": {
+  "abstract" : [
+    {
+      "text" : "The value associated with a ",
+      "type" : "text"
+    },
+    {
+      "code" : "<meta>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element’s ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/name(_:)",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " attribute.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "content"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/content(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "content(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/content(_:)"
+},
 "doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/name(_:)": {
   "abstract" : [
     {
@@ -297,8 +368,9 @@
       "type" : "text"
     },
     {
-      "code" : "contents(_:)",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/content(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " value for a ",

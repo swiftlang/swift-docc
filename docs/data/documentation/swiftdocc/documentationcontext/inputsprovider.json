@@ -63,7 +63,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -104,7 +104,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
               "isActive" : true,
               "type" : "reference"
             },
@@ -122,7 +122,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes",
               "isActive" : true,
               "type" : "reference"
             },
@@ -165,8 +165,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundle\/markupURLs",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/markupURLs",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -176,8 +177,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundleFileTypes\/isMarkupFile(_:)",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isMarkupFile(_:)",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -189,8 +191,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundle\/symbolGraphURLs",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/symbolGraphURLs",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -200,8 +203,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundleFileTypes\/isSymbolGraphFile(_:)",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isSymbolGraphFile(_:)",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -213,8 +217,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundle\/info",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/info-swift.property",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -224,8 +229,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundleFileTypes\/isInfoPlistFile(_:)",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isInfoPlistFile(_:)",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -237,8 +243,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundle\/themeSettings",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/themeSettings",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -248,8 +255,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundleFileTypes\/isThemeSettingsFile(_:)",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isThemeSettingsFile(_:)",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -261,8 +269,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundle\/customHeader",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/customHeader",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -272,8 +281,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundleFileTypes\/isCustomHeader(_:)",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomHeader(_:)",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -285,8 +295,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundle\/customFooter",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/customFooter",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -296,8 +307,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundleFileTypes\/isCustomFooter(_:)",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomFooter(_:)",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -309,8 +321,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundle\/customFavicon",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/customFavicon",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -320,8 +333,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundleFileTypes\/isCustomFavicon(_:)",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomFavicon(_:)",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -333,8 +347,9 @@
                 {
                   "inlineContent" : [
                     {
-                      "code" : "DocumentationBundle\/miscResourceURLs",
-                      "type" : "codeVoice"
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/miscResourceURLs",
+                      "isActive" : true,
+                      "type" : "reference"
                     }
                   ],
                   "type" : "paragraph"
@@ -452,15 +467,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/compilerpipeline"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes": {
   "abstract" : [
-
+    {
+      "text" : "A collection of functions to check if a file is one of the documentation catalog files types.",
+      "type" : "text"
+    }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "typealias"
+      "text" : "enum"
     },
     {
       "kind" : "text",
@@ -468,31 +485,41 @@
     },
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundle"
+      "text" : "DocumentationCatalogFileTypes"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundle"
+      "text" : "DocumentationCatalogFileTypes"
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationBundle",
+  "title" : "DocumentationCatalogFileTypes",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle"
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundleFileTypes": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isCustomFavicon(_:)": {
   "abstract" : [
-
+    {
+      "text" : "Checks if a file is a custom favicon.",
+      "type" : "text"
+    }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "typealias"
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
     },
     {
       "kind" : "text",
@@ -500,21 +527,365 @@
     },
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundleFileTypes"
+      "text" : "isCustomFavicon"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomFavicon(_:)",
   "kind" : "symbol",
-  "navigatorTitle" : [
+  "role" : "symbol",
+  "title" : "isCustomFavicon(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomfavicon(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isCustomFooter(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a custom footer.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundleFileTypes"
+      "text" : "isCustomFooter"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
     }
   ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomFooter(_:)",
+  "kind" : "symbol",
   "role" : "symbol",
-  "title" : "DocumentationBundleFileTypes",
+  "title" : "isCustomFooter(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes"
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomfooter(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isCustomHeader(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a custom header.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isCustomHeader"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isCustomHeader(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isCustomHeader(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomheader(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isInfoPlistFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is an Info.plist file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isInfoPlistFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isInfoPlistFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isInfoPlistFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isinfoplistfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isMarkupFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a markup file; that is, either a reference documentation file or a tutorial file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isMarkupFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isMarkupFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isMarkupFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/ismarkupfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isSymbolGraphFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is a symbol graph file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isSymbolGraphFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isSymbolGraphFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isSymbolGraphFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/issymbolgraphfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes/isThemeSettingsFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is ",
+      "type" : "text"
+    },
+    {
+      "code" : "theme-settings.json",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isThemeSettingsFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes\/isThemeSettingsFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isThemeSettingsFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isthemesettingsfile(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
   "abstract" : [
@@ -549,6 +920,364 @@
   "title" : "DocumentationContext",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs": {
+  "abstract" : [
+    {
+      "text" : "A collection of the build inputs for a unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Inputs"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Inputs"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext.Inputs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/customFavicon": {
+  "abstract" : [
+    {
+      "text" : "A custom favicon file to use for rendered output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "customFavicon"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/customFavicon",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "customFavicon",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/customfavicon"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/customFooter": {
+  "abstract" : [
+    {
+      "text" : "A custom HTML file to use as the footer for rendered output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "customFooter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/customFooter",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "customFooter",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/customfooter"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/customHeader": {
+  "abstract" : [
+    {
+      "text" : "A custom HTML file to use as the header for rendered output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "customHeader"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/customHeader",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "customHeader",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/customheader"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/info-swift.property": {
+  "abstract" : [
+    {
+      "text" : "Non-content information or metadata about this unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "info"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV4InfoV",
+      "text" : "Info"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/info-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "info",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/info-swift.property"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/markupURLs": {
+  "abstract" : [
+    {
+      "text" : "Documentation markup input files for this unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "markupURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/markupURLs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "markupURLs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/markupurls"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/miscResourceURLs": {
+  "abstract" : [
+    {
+      "text" : "Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "miscResourceURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/miscResourceURLs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "miscResourceURLs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/miscresourceurls"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/symbolGraphURLs": {
+  "abstract" : [
+    {
+      "text" : "Symbol graph JSON input files for the module that’s represented by this unit of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbolGraphURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/symbolGraphURLs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "symbolGraphURLs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/symbolgraphurls"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs/themeSettings": {
+  "abstract" : [
+    {
+      "text" : "A custom JSON settings file used to theme renderer output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "themeSettings"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs\/themeSettings",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "themeSettings",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/themesettings"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/InputsProvider": {
   "abstract" : [
@@ -756,7 +1485,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

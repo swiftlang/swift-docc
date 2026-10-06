@@ -306,7 +306,7 @@
               "type" : "text"
             },
             {
-              "code" : "DocumentationBundle\/Info\/BundleFeatureFlags",
+              "code" : "DocumentationContext\/Inputs\/Info\/CatalogFeatureFlags",
               "type" : "codeVoice"
             },
             {

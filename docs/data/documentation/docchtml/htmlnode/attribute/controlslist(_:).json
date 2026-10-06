@@ -91,7 +91,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -261,8 +261,9 @@
       "type" : "text"
     },
     {
-      "code" : "HTMLNode\/Attribute\/controls(_:)",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/controlsList(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " attribute.",

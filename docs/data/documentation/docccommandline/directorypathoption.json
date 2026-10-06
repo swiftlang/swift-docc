@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -148,6 +148,14 @@
         "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DirectoryPathOption\/urlOrFallback"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Default-Implementations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DirectoryPathOption\/ParsableArguments-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -222,6 +230,17 @@
   "type" : "topic",
   "url" : "\/documentation\/docccommandline\/directorypathoption"
 },
+"doc://DocCCommandLine/documentation/DocCCommandLine/DirectoryPathOption/ParsableArguments-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DirectoryPathOption\/ParsableArguments-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ParsableArguments Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/directorypathoption\/parsablearguments-implementations"
+},
 "doc://DocCCommandLine/documentation/DocCCommandLine/DirectoryPathOption/url": {
   "abstract" : [
     {
@@ -248,7 +267,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -299,7 +318,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     }
   ],

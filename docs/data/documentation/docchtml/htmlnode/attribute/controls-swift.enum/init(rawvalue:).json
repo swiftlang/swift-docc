@@ -75,7 +75,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -214,8 +214,9 @@
       "type" : "text"
     },
     {
-      "code" : "HTMLNode\/Attribute\/controls(_:)",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/controlsList(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " attribute.",
@@ -286,6 +287,68 @@
   "title" : "init(rawValue:)",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/controls-swift.enum\/init(rawvalue:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/controlsList(_:)": {
+  "abstract" : [
+    {
+      "text" : "A hint to the browser for what controls to show for this ",
+      "type" : "text"
+    },
+    {
+      "code" : "<audio>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "controlsList"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV8ControlsO",
+      "text" : "Controls"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/controlsList(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "controlsList(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/controlslist(_:)"
 }
 }
 }

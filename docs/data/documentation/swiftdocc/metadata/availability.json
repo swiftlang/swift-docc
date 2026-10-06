@@ -47,8 +47,8 @@
       }
     ],
     "remoteSource" : {
-      "fileName" : "Availability.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L47"
+      "fileName" : "AvailabilityDirective.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/AvailabilityDirective.swift#L47"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -63,7 +63,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -262,8 +262,14 @@
             "    @Available(\"My Package\", introduced: \"1.2.3\")",
             "}"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : "markdown",
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         },
         {
           "inlineContent" : [

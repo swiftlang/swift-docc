@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -342,7 +342,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation13URLComponentsV",
+      "preciseIdentifier" : "s:20FoundationEssentials13URLComponentsV",
       "text" : "URLComponents"
     }
   ],

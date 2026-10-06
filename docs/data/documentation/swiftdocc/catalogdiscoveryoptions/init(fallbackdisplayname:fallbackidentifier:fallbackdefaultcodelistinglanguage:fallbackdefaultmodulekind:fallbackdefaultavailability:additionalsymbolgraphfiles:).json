@@ -20,7 +20,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC23CatalogDiscoveryOptionsV19fallbackDisplayName0F10Identifier0F26DefaultCodeListingLanguage0fJ10ModuleKind0fJ12Availability26additionalSymbolGraphFilesACSSSg_A3jA0jP0VSgSay10Foundation3URLVGtcfc",
+    "externalID" : "s:9SwiftDocC23CatalogDiscoveryOptionsV19fallbackDisplayName0F10Identifier0F26DefaultCodeListingLanguage0fJ10ModuleKind0fJ12Availability26additionalSymbolGraphFilesACSSSg_A3jA0jP0VSgSay20FoundationEssentials3URLVGtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -125,7 +125,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -155,7 +155,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -262,7 +262,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -573,7 +573,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

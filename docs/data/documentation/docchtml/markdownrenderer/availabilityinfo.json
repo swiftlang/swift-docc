@@ -95,7 +95,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -139,7 +139,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/init(name:introduced:deprecated:isBeta:)"
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/init(name:introduced:deprecated:isUnconditionallyDeprecated:isBeta:)"
       ],
       "title" : "Initializers"
     },
@@ -150,6 +150,7 @@
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/deprecated",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/introduced",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/isBeta",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/isUnconditionallyDeprecated",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/name"
       ],
       "title" : "Instance Properties"
@@ -321,7 +322,7 @@
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/deprecated"
 },
-"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/AvailabilityInfo/init(name:introduced:deprecated:isBeta:)": {
+"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/AvailabilityInfo/init(name:introduced:deprecated:isUnconditionallyDeprecated:isBeta:)": {
   "abstract" : [
 
   ],
@@ -387,6 +388,23 @@
     },
     {
       "kind" : "externalParam",
+      "text" : "isUnconditionallyDeprecated"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
       "text" : "isBeta"
     },
     {
@@ -403,12 +421,12 @@
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/init(name:introduced:deprecated:isBeta:)",
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/init(name:introduced:deprecated:isUnconditionallyDeprecated:isBeta:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(name:introduced:deprecated:isBeta:)",
+  "title" : "init(name:introduced:deprecated:isUnconditionallyDeprecated:isBeta:)",
   "type" : "topic",
-  "url" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/init(name:introduced:deprecated:isbeta:)"
+  "url" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/init(name:introduced:deprecated:isunconditionallydeprecated:isbeta:)"
 },
 "doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/AvailabilityInfo/introduced": {
   "abstract" : [
@@ -454,7 +472,7 @@
 "doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/AvailabilityInfo/isBeta": {
   "abstract" : [
     {
-      "text" : "A Boolean value indicating if the platform is currently in beta.",
+      "text" : "A Boolean value indicating if this API is currently in beta for this platform.",
       "type" : "text"
     }
   ],
@@ -487,6 +505,43 @@
   "title" : "isBeta",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/isbeta"
+},
+"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/AvailabilityInfo/isUnconditionallyDeprecated": {
+  "abstract" : [
+    {
+      "text" : "A Boolean value indicating if this API is unconditionally deprecated for this platform.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isUnconditionallyDeprecated"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/AvailabilityInfo\/isUnconditionallyDeprecated",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isUnconditionallyDeprecated",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/isunconditionallydeprecated"
 },
 "doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/AvailabilityInfo/name": {
   "abstract" : [

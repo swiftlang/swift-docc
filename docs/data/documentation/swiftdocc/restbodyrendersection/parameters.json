@@ -69,7 +69,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -134,8 +134,9 @@
               "type" : "text"
             },
             {
-              "code" : "RESTParameter",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " ",

@@ -1,16 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "If ",
-      "type" : "text"
-    },
-    {
-      "code" : "true",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", the symbol is introduced in a beta version of this platform.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'beta' instead. This deprecated API will be removed after 6.6 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -62,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AvailabilityRenderMetadataItem.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AvailabilityRenderMetadataItem.swift#L87"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AvailabilityRenderMetadataItem.swift#L112"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -77,7 +74,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -103,7 +100,23 @@
             },
             {
               "kind" : "text",
-              "text" : "?"
+              "text" : "? { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -183,19 +196,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem/isBeta": {
   "abstract" : [
-    {
-      "text" : "If ",
-      "type" : "text"
-    },
-    {
-      "code" : "true",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", the symbol is introduced in a beta version of this platform.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

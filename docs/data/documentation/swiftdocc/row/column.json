@@ -71,7 +71,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -181,8 +181,14 @@
             "    }",
             "}"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : "md",
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         },
         {
           "content" : [
@@ -197,7 +203,7 @@
                   "type" : "text"
                 },
                 {
-                  "text" : "Before Swift-DocC 6.4, the ",
+                  "text" : "Before Swift-DocC 6.5, the ",
                   "type" : "text"
                 },
                 {

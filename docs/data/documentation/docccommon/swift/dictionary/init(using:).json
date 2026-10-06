@@ -140,7 +140,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FastSymbolGraphJSONDecoder.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommon\/JSONDecoding\/FastSymbolGraphJSONDecoder.swift#L1117"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommon\/JSONDecoding\/FastSymbolGraphJSONDecoder.swift#L1179"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -155,7 +155,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {

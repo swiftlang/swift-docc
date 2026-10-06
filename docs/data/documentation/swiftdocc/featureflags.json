@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -131,12 +131,14 @@
       "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isCodeBlockAnnotationsEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalCodeBlockAnnotationsEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDeviceFrameSupportEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalLinkHierarchySerializationEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalMarkdownOutputEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalMarkdownOutputManifestEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalOverloadedSymbolPresentationEnabled",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isLinkHierarchySerializationEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isMentionedInEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isParametersAndReturnsValidationEnabled"
       ],
@@ -380,13 +382,48 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalCodeBlockAnnotationsEnabled": {
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isCodeBlockAnnotationsEnabled": {
   "abstract" : [
     {
-      "text" : "Whether or not experimental annotation of code blocks is enabled.",
+      "text" : "Whether or not annotation of code blocks is enabled.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isCodeBlockAnnotationsEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isCodeBlockAnnotationsEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isCodeBlockAnnotationsEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/featureflags\/iscodeblockannotationsenabled"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalCodeBlockAnnotationsEnabled": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -456,11 +493,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalLinkHierarchySerializationEnabled": {
   "abstract" : [
-    {
-      "text" : "Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -601,6 +636,43 @@
   "title" : "isExperimentalOverloadedSymbolPresentationEnabled",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaloverloadedsymbolpresentationenabled"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isLinkHierarchySerializationEnabled": {
+  "abstract" : [
+    {
+      "text" : "Whether or not support for emitting a serialized version of the local link resolution information is enabled.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isLinkHierarchySerializationEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isLinkHierarchySerializationEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isLinkHierarchySerializationEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/featureflags\/islinkhierarchyserializationenabled"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isMentionedInEnabled": {
   "abstract" : [

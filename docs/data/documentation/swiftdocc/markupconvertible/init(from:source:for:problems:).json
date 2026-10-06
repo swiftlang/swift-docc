@@ -30,7 +30,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC17MarkupConvertibleP4from6source3for8problemsxSg8Markdown0C0_p_10Foundation3URLVSgAA20DocumentationContextC6InputsVSayAA7ProblemVGztcfc",
+    "externalID" : "s:9SwiftDocC17MarkupConvertibleP4from6source3for8problemsxSg8Markdown0C0_p_20FoundationEssentials3URLVSgAA20DocumentationContextC6InputsVSayAA7ProblemVGztcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -75,7 +75,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -148,7 +148,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -202,7 +202,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -483,7 +483,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

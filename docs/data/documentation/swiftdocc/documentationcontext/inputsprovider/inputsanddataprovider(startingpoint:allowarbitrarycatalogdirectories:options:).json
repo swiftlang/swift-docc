@@ -21,7 +21,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC20DocumentationContextC14InputsProviderV013inputsAndDataF013startingPoint32allowArbitraryCatalogDirectories7optionsAC0E0V0G0_AA0iF0_p04dataF0t10Foundation3URLVSg_SbAA0N16DiscoveryOptionsVtKF",
+    "externalID" : "s:9SwiftDocC20DocumentationContextC14InputsProviderV013inputsAndDataF013startingPoint32allowArbitraryCatalogDirectories7optionsAC0E0V0G0_AA0iF0_p04dataF0t20FoundationEssentials3URLVSg_SbAA0N16DiscoveryOptionsVtKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -49,7 +49,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -126,7 +126,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -155,7 +155,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -526,7 +526,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

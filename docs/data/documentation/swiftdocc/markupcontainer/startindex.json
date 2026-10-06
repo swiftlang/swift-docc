@@ -5,7 +5,7 @@
       "type" : "text"
     },
     {
-      "code" : "RandomAccessCollection.startIndex",
+      "code" : "Collection.startIndex",
       "type" : "codeVoice"
     },
     {
@@ -91,7 +91,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {

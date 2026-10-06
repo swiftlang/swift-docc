@@ -1,0 +1,314 @@
+{
+  "abstract" : [
+    {
+      "text" : "A configuration for how the action should transform the output for static hosting environments",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/TransformForStaticHostingOptions"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:15DocCCommandLine13ConvertActionV32TransformForStaticHostingOptionsO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "TransformForStaticHostingOptions"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCCommandLine"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "TransformForStaticHostingOptions"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "ConvertAction.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/Action\/Actions\/Convert\/ConvertAction.swift#L40"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "ConvertAction.TransformForStaticHostingOptions"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "Linux"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "TransformForStaticHostingOptions"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/SQ",
+        "doc:\/\/DocCCommandLine\/SH",
+        "doc:\/\/DocCCommandLine\/s8SendableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/TransformForStaticHostingOptions\/noTransform",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/TransformForStaticHostingOptions\/withContent",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/TransformForStaticHostingOptions\/withoutContent"
+      ],
+      "title" : "Enumeration Cases"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCCommandLine/SH": {
+  "identifier" : "doc:\/\/DocCCommandLine\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/SQ": {
+  "identifier" : "doc:\/\/DocCCommandLine\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCCommandLine",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction": {
+  "abstract" : [
+    {
+      "text" : "An action that converts a collection of documentation inputs into compiled documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConvertAction"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConvertAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConvertAction",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/convertaction"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/TransformForStaticHostingOptions": {
+  "abstract" : [
+    {
+      "text" : "A configuration for how the action should transform the output for static hosting environments",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TransformForStaticHostingOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/TransformForStaticHostingOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TransformForStaticHostingOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConvertAction.TransformForStaticHostingOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/TransformForStaticHostingOptions/noTransform": {
+  "abstract" : [
+    {
+      "text" : "Don’t transform the archive to support static hosting environments.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "noTransform"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/TransformForStaticHostingOptions\/noTransform",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ConvertAction.TransformForStaticHostingOptions.noTransform",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions\/notransform"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/TransformForStaticHostingOptions/withContent": {
+  "abstract" : [
+    {
+      "text" : "Transform the archive to support static hosting environments and minimal browsing without JavaScript enabled.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "withContent"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/TransformForStaticHostingOptions\/withContent",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ConvertAction.TransformForStaticHostingOptions.withContent",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions\/withcontent"
+},
+"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/TransformForStaticHostingOptions/withoutContent": {
+  "abstract" : [
+    {
+      "text" : "Transform the archive to support static hosting environments but requiring JavaScript to render pages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "withoutContent"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/TransformForStaticHostingOptions\/withoutContent",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ConvertAction.TransformForStaticHostingOptions.withoutContent",
+  "type" : "topic",
+  "url" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions\/withoutcontent"
+},
+"doc://DocCCommandLine/s8SendableP": {
+  "identifier" : "doc:\/\/DocCCommandLine\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

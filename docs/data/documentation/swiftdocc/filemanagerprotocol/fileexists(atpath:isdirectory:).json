@@ -27,7 +27,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC19FileManagerProtocolP10fileExists6atPath11isDirectorySbSS_Spy10ObjectiveC8ObjCBoolVGSgtF",
+    "externalID" : "s:9SwiftDocC19FileManagerProtocolP10fileExists6atPath11isDirectorySbSS_Spy10Foundation8ObjCBoolVGSgtF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -81,7 +81,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10ObjectiveC8ObjCBoolV",
+        "preciseIdentifier" : "s:10Foundation8ObjCBoolV",
         "text" : "ObjCBool"
       },
       {
@@ -117,7 +117,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -172,7 +172,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10ObjectiveC8ObjCBoolV",
+              "preciseIdentifier" : "s:10Foundation8ObjCBoolV",
               "text" : "ObjCBool"
             },
             {
@@ -328,7 +328,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10ObjectiveC8ObjCBoolV",
+      "preciseIdentifier" : "s:10Foundation8ObjCBoolV",
       "text" : "ObjCBool"
     },
     {

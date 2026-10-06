@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Initializes a documentation context with a given ",
-      "type" : "text"
-    },
-    {
-      "code" : "bundle",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Initializes a documentation context from a collection of input files.",
       "type" : "text"
     }
   ],
@@ -142,7 +134,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L221"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L218"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -157,7 +149,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -283,7 +275,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The inputs to register with the context.",
+                  "text" : "The collection of input files to register with the context.",
                   "type" : "text"
                 }
               ],
@@ -291,6 +283,20 @@
             }
           ],
           "name" : "inputs"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The data provider that the context uses to read files from the inputs.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "dataProvider"
         },
         {
           "content" : [
@@ -335,7 +341,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "If an error is encountered while registering a documentation bundle.",
+                  "text" : "If an error is encountered while registering the documentation input files.",
                   "type" : "text"
                 }
               ],
@@ -559,15 +565,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/init(inputs:dataProvider:diagnosticEngine:configuration:)": {
   "abstract" : [
     {
-      "text" : "Initializes a documentation context with a given ",
-      "type" : "text"
-    },
-    {
-      "code" : "bundle",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Initializes a documentation context from a collection of input files.",
       "type" : "text"
     }
   ],

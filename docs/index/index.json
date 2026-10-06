@@ -181,6 +181,15 @@
                     "path" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/makegenericdatacorruptederror()",
                     "title" : "func makeGenericDataCorruptedError() -> DecodingError",
                     "type" : "method"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder\/makedatacorruptederror(message:)",
+                    "title" : "func makeDataCorruptedError(message: String) -> DecodingError",
+                    "type" : "method"
                   }
                 ],
                 "path" : "\/documentation\/docccommon\/fastsymbolgraphjsondecoder",
@@ -530,23 +539,23 @@
                             "type" : "groupMarker"
                           },
                           {
-                            "path" : "\/documentation\/docccommon\/foundation\/url\/init(using:)",
+                            "path" : "\/documentation\/docccommon\/foundationessentials\/url\/init(using:)",
                             "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
                             "type" : "init"
                           }
                         ],
-                        "path" : "\/documentation\/docccommon\/foundation\/url\/fastjsondecodable-implementations",
+                        "path" : "\/documentation\/docccommon\/foundationessentials\/url\/fastjsondecodable-implementations",
                         "title" : "FastJSONDecodable Implementations",
                         "type" : "collection"
                       }
                     ],
-                    "path" : "\/documentation\/docccommon\/foundation\/url",
+                    "path" : "\/documentation\/docccommon\/foundationessentials\/url",
                     "title" : "URL",
                     "type" : "extension"
                   }
                 ],
-                "path" : "\/documentation\/docccommon\/foundation",
-                "title" : "Foundation",
+                "path" : "\/documentation\/docccommon\/foundationessentials",
+                "title" : "FoundationEssentials",
                 "type" : "extension"
               },
               {
@@ -4540,8 +4549,8 @@
                         "type" : "groupMarker"
                       },
                       {
-                        "path" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/init(name:introduced:deprecated:isbeta:)",
-                        "title" : "init(name: String, introduced: String?, deprecated: String?, isBeta: Bool)",
+                        "path" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/init(name:introduced:deprecated:isunconditionallydeprecated:isbeta:)",
+                        "title" : "init(name: String, introduced: String?, deprecated: String?, isUnconditionallyDeprecated: Bool, isBeta: Bool)",
                         "type" : "init"
                       },
                       {
@@ -4561,6 +4570,11 @@
                       {
                         "path" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/isbeta",
                         "title" : "var isBeta: Bool",
+                        "type" : "property"
+                      },
+                      {
+                        "path" : "\/documentation\/docchtml\/markdownrenderer\/availabilityinfo\/isunconditionallydeprecated",
+                        "title" : "var isUnconditionallyDeprecated: Bool",
                         "type" : "property"
                       },
                       {
@@ -5154,6 +5168,11 @@
                         "type" : "property"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/id",
+                        "title" : "var id: DocumentationContext.Inputs.Identifier",
+                        "type" : "property"
+                      },
+                      {
                         "title" : "Structures",
                         "type" : "groupMarker"
                       },
@@ -5414,11 +5433,6 @@
                         "type" : "property"
                       },
                       {
-                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/id",
-                        "title" : "var id: DocumentationContext.Inputs.Identifier",
-                        "type" : "property"
-                      },
-                      {
                         "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/rootreference",
                         "title" : "var rootReference: ResolvedTopicReference",
                         "type" : "property"
@@ -5473,10 +5487,174 @@
                     "type" : "struct"
                   },
                   {
-                    "deprecated" : true,
-                    "path" : "\/documentation\/swiftdocc\/documentationbundlefiletypes",
-                    "title" : "DocumentationBundleFileTypes",
-                    "type" : "typealias"
+                    "children" : [
+                      {
+                        "title" : "Initializers",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/init(rawvalue:)",
+                        "title" : "init(rawValue: String)",
+                        "type" : "init"
+                      },
+                      {
+                        "title" : "Instance Properties",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/rawvalue",
+                        "title" : "let rawValue: String",
+                        "type" : "property"
+                      },
+                      {
+                        "title" : "Default Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Operators",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/_(_:_:)",
+                            "title" : "static func < (`Self`, `Self`) -> Bool",
+                            "type" : "op"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/comparable-implementations",
+                        "title" : "Comparable Implementations",
+                        "type" : "collection"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Instance Properties",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/description",
+                            "title" : "var description: String",
+                            "type" : "property"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/customstringconvertible-implementations",
+                        "title" : "CustomStringConvertible Implementations",
+                        "type" : "collection"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/init(from:)",
+                            "title" : "init(from: any Decoder) throws",
+                            "type" : "init"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/decodable-implementations",
+                        "title" : "Decodable Implementations",
+                        "type" : "collection"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Instance Methods",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/encode(to:)",
+                            "title" : "func encode(to: any Encoder) throws",
+                            "type" : "method"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/encodable-implementations",
+                        "title" : "Encodable Implementations",
+                        "type" : "collection"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/init(stringliteral:)",
+                            "title" : "init(stringLiteral: StringLiteralType)",
+                            "type" : "init"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier\/expressiblebystringliteral-implementations",
+                        "title" : "ExpressibleByStringLiteral Implementations",
+                        "type" : "collection"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/identifier",
+                    "title" : "DocumentationContext.Inputs.Identifier",
+                    "type" : "struct"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomfavicon(_:)",
+                        "title" : "static func isCustomFavicon(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomfooter(_:)",
+                        "title" : "static func isCustomFooter(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomheader(_:)",
+                        "title" : "static func isCustomHeader(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isdocumentationcatalog(_:)",
+                        "title" : "static func isDocumentationCatalog(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isinfoplistfile(_:)",
+                        "title" : "static func isInfoPlistFile(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/ismarkupfile(_:)",
+                        "title" : "static func isMarkupFile(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isreferencedocumentationfile(_:)",
+                        "title" : "static func isReferenceDocumentationFile(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/issymbolgraphfile(_:)",
+                        "title" : "static func isSymbolGraphFile(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isthemesettingsfile(_:)",
+                        "title" : "static func isThemeSettingsFile(URL) -> Bool",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/istutorialfile(_:)",
+                        "title" : "static func isTutorialFile(URL) -> Bool",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes",
+                    "title" : "DocumentationCatalogFileTypes",
+                    "type" : "enum"
                   },
                   {
                     "title" : "Bundle Assets",
@@ -6201,6 +6379,11 @@
                             "type" : "property"
                           },
                           {
+                            "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/id",
+                            "title" : "var id: DocumentationContext.Inputs.Identifier",
+                            "type" : "property"
+                          },
+                          {
                             "title" : "Structures",
                             "type" : "groupMarker"
                           },
@@ -6458,11 +6641,6 @@
                           {
                             "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/documentationrootreference",
                             "title" : "var documentationRootReference: ResolvedTopicReference",
-                            "type" : "property"
-                          },
-                          {
-                            "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputs\/id",
-                            "title" : "var id: DocumentationContext.Inputs.Identifier",
                             "type" : "property"
                           },
                           {
@@ -8012,6 +8190,26 @@
                                     "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/diagnosticinformation\/solution\/summary",
                                     "title" : "var summary: String",
                                     "type" : "property"
+                                  },
+                                  {
+                                    "title" : "Default Implementations",
+                                    "type" : "groupMarker"
+                                  },
+                                  {
+                                    "children" : [
+                                      {
+                                        "title" : "Initializers",
+                                        "type" : "groupMarker"
+                                      },
+                                      {
+                                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/diagnosticinformation\/solution\/init(using:)",
+                                        "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                        "type" : "init"
+                                      }
+                                    ],
+                                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/diagnosticinformation\/solution\/fastjsondecodable-implementations",
+                                    "title" : "FastJSONDecodable Implementations",
+                                    "type" : "collection"
                                   }
                                 ],
                                 "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/diagnosticinformation\/solution",
@@ -8045,6 +8243,26 @@
                                 "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/diagnosticinformation\/summary",
                                 "title" : "var summary: String",
                                 "type" : "property"
+                              },
+                              {
+                                "title" : "Default Implementations",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "children" : [
+                                  {
+                                    "title" : "Initializers",
+                                    "type" : "groupMarker"
+                                  },
+                                  {
+                                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/diagnosticinformation\/init(using:)",
+                                    "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                    "type" : "init"
+                                  }
+                                ],
+                                "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/diagnosticinformation\/fastjsondecodable-implementations",
+                                "title" : "FastJSONDecodable Implementations",
+                                "type" : "collection"
                               }
                             ],
                             "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/diagnosticinformation",
@@ -8087,6 +8305,26 @@
                             "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/encode(to:)",
                             "title" : "func encode(to: any Encoder) throws",
                             "type" : "method"
+                          },
+                          {
+                            "title" : "Default Implementations",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
                           }
                         ],
                         "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/responsev2",
@@ -8135,6 +8373,26 @@
                             "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/capabilities\/encode(to:)",
                             "title" : "func encode(to: any Encoder) throws",
                             "type" : "method"
+                          },
+                          {
+                            "title" : "Default Implementations",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/capabilities\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/capabilities\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
                           }
                         ],
                         "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/capabilities",
@@ -8920,6 +9178,11 @@
                         "type" : "property"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/rendernode\/hierarchyvariants",
+                        "title" : "var hierarchyVariants: VariantCollection<RenderHierarchy?>",
+                        "type" : "property"
+                      },
+                      {
                         "title" : "Sample Code Data",
                         "type" : "groupMarker"
                       },
@@ -9032,6 +9295,26 @@
                                 "path" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/error",
                                 "title" : "RenderNode.Variant.Trait.Error",
                                 "type" : "enum"
+                              },
+                              {
+                                "title" : "Default Implementations",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "children" : [
+                                  {
+                                    "title" : "Initializers",
+                                    "type" : "groupMarker"
+                                  },
+                                  {
+                                    "path" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/init(using:)",
+                                    "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                    "type" : "init"
+                                  }
+                                ],
+                                "path" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/fastjsondecodable-implementations",
+                                "title" : "FastJSONDecodable Implementations",
+                                "type" : "collection"
                               }
                             ],
                             "path" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait",
@@ -9057,6 +9340,26 @@
                             "path" : "\/documentation\/swiftdocc\/rendernode\/tag\/init(from:)",
                             "title" : "init(from: any Decoder) throws",
                             "type" : "init"
+                          },
+                          {
+                            "title" : "Default Implementations",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/rendernode\/tag\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/rendernode\/tag\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
                           }
                         ],
                         "path" : "\/documentation\/swiftdocc\/rendernode\/tag",
@@ -9089,11 +9392,6 @@
                       {
                         "path" : "\/documentation\/swiftdocc\/rendernode\/headings",
                         "title" : "var headings: [String]",
-                        "type" : "property"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/rendernode\/hierarchyvariants",
-                        "title" : "var hierarchyVariants: VariantCollection<RenderHierarchy?>",
                         "type" : "property"
                       },
                       {
@@ -9217,6 +9515,26 @@
                             "path" : "\/documentation\/swiftdocc\/rendernode\/kind-swift.enum\/init(rawvalue:)",
                             "title" : "init?(rawValue: String)",
                             "type" : "init"
+                          },
+                          {
+                            "title" : "Default Implementations",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/rendernode\/kind-swift.enum\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/rendernode\/kind-swift.enum\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
                           }
                         ],
                         "path" : "\/documentation\/swiftdocc\/rendernode\/kind-swift.enum",
@@ -11845,6 +12163,22 @@
                       {
                         "children" : [
                           {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/renderinlinecontent\/init(using:)",
+                            "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                            "type" : "init"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/renderinlinecontent\/fastjsondecodable-implementations",
+                        "title" : "FastJSONDecodable Implementations",
+                        "type" : "collection"
+                      },
+                      {
+                        "children" : [
+                          {
                             "title" : "Instance Properties",
                             "type" : "groupMarker"
                           },
@@ -11920,6 +12254,26 @@
                         "path" : "\/documentation\/swiftdocc\/rendercontentmetadata\/rawindexabletextcontent(references:)",
                         "title" : "func rawIndexableTextContent(references: [String : any RenderReference]) -> String",
                         "type" : "method"
+                      },
+                      {
+                        "title" : "Default Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/rendercontentmetadata\/init(using:)",
+                            "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                            "type" : "init"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/rendercontentmetadata\/fastjsondecodable-implementations",
+                        "title" : "FastJSONDecodable Implementations",
+                        "type" : "collection"
                       }
                     ],
                     "path" : "\/documentation\/swiftdocc\/rendercontentmetadata",
@@ -12264,6 +12618,26 @@
                                     "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/highlight-swift.enum\/init(rawvalue:)",
                                     "title" : "init?(rawValue: String)",
                                     "type" : "init"
+                                  },
+                                  {
+                                    "title" : "Default Implementations",
+                                    "type" : "groupMarker"
+                                  },
+                                  {
+                                    "children" : [
+                                      {
+                                        "title" : "Initializers",
+                                        "type" : "groupMarker"
+                                      },
+                                      {
+                                        "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/highlight-swift.enum\/init(using:)",
+                                        "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                        "type" : "init"
+                                      }
+                                    ],
+                                    "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/highlight-swift.enum\/fastjsondecodable-implementations",
+                                    "title" : "FastJSONDecodable Implementations",
+                                    "type" : "collection"
                                   }
                                 ],
                                 "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/highlight-swift.enum",
@@ -12339,11 +12713,51 @@
                                     "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/init(rawvalue:)",
                                     "title" : "init?(rawValue: String)",
                                     "type" : "init"
+                                  },
+                                  {
+                                    "title" : "Default Implementations",
+                                    "type" : "groupMarker"
+                                  },
+                                  {
+                                    "children" : [
+                                      {
+                                        "title" : "Initializers",
+                                        "type" : "groupMarker"
+                                      },
+                                      {
+                                        "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/init(using:)",
+                                        "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                        "type" : "init"
+                                      }
+                                    ],
+                                    "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/fastjsondecodable-implementations",
+                                    "title" : "FastJSONDecodable Implementations",
+                                    "type" : "collection"
                                   }
                                 ],
                                 "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum",
                                 "title" : "DeclarationRenderSection.Token.Kind",
                                 "type" : "enum"
+                              },
+                              {
+                                "title" : "Default Implementations",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "children" : [
+                                  {
+                                    "title" : "Initializers",
+                                    "type" : "groupMarker"
+                                  },
+                                  {
+                                    "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/init(using:)",
+                                    "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                    "type" : "init"
+                                  }
+                                ],
+                                "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/fastjsondecodable-implementations",
+                                "title" : "FastJSONDecodable Implementations",
+                                "type" : "collection"
                               }
                             ],
                             "path" : "\/documentation\/swiftdocc\/declarationrendersection\/token",
@@ -12997,6 +13411,26 @@
                             "path" : "\/documentation\/swiftdocc\/conformancesection\/init(from:)",
                             "title" : "init(from: any Decoder) throws",
                             "type" : "init"
+                          },
+                          {
+                            "title" : "Default Implementations",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/conformancesection\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/conformancesection\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
                           }
                         ],
                         "path" : "\/documentation\/swiftdocc\/conformancesection",
@@ -13443,6 +13877,56 @@
                         "path" : "\/documentation\/swiftdocc\/parametersrendersection",
                         "title" : "ParametersRenderSection",
                         "type" : "struct"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Enumeration Cases",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/usedisplayname",
+                            "title" : "case useDisplayName",
+                            "type" : "case"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/userawkey",
+                            "title" : "case useRawKey",
+                            "type" : "case"
+                          },
+                          {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/init(rawvalue:)",
+                            "title" : "init?(rawValue: String)",
+                            "type" : "init"
+                          },
+                          {
+                            "title" : "Default Implementations",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle",
+                        "title" : "PropertyListTitleStyle",
+                        "type" : "enum"
                       },
                       {
                         "children" : [
@@ -14395,6 +14879,11 @@
                             "type" : "groupMarker"
                           },
                           {
+                            "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/beta",
+                            "title" : "var beta: Bool",
+                            "type" : "property"
+                          },
+                          {
                             "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/deprecated",
                             "title" : "var deprecated: String?",
                             "type" : "property"
@@ -14405,11 +14894,18 @@
                             "type" : "property"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/isbeta",
                             "title" : "var isBeta: Bool?",
                             "type" : "property"
                           },
                           {
+                            "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/isunconditionallydeprecated",
+                            "title" : "var isUnconditionallyDeprecated: Bool",
+                            "type" : "property"
+                          },
+                          {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/message",
                             "title" : "var message: String?",
                             "type" : "property"
@@ -14420,21 +14916,25 @@
                             "type" : "property"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/obsoleted",
                             "title" : "var obsoleted: String?",
                             "type" : "property"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/renamed",
                             "title" : "var renamed: String?",
                             "type" : "property"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/unconditionallydeprecated",
                             "title" : "var unconditionallyDeprecated: Bool?",
                             "type" : "property"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/unconditionallyunavailable",
                             "title" : "var unconditionallyUnavailable: Bool?",
                             "type" : "property"
@@ -14447,6 +14947,26 @@
                             "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/encode(to:)",
                             "title" : "func encode(to: any Encoder) throws",
                             "type" : "method"
+                          },
+                          {
+                            "title" : "Default Implementations",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/availabilityrenderitem\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
                           }
                         ],
                         "path" : "\/documentation\/swiftdocc\/availabilityrenderitem",
@@ -14593,6 +15113,26 @@
                                 "path" : "\/documentation\/swiftdocc\/linehighlighter\/highlight\/start",
                                 "title" : "let start: Int?",
                                 "type" : "property"
+                              },
+                              {
+                                "title" : "Default Implementations",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "children" : [
+                                  {
+                                    "title" : "Initializers",
+                                    "type" : "groupMarker"
+                                  },
+                                  {
+                                    "path" : "\/documentation\/swiftdocc\/linehighlighter\/highlight\/init(using:)",
+                                    "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                    "type" : "init"
+                                  }
+                                ],
+                                "path" : "\/documentation\/swiftdocc\/linehighlighter\/highlight\/fastjsondecodable-implementations",
+                                "title" : "FastJSONDecodable Implementations",
+                                "type" : "collection"
                               }
                             ],
                             "path" : "\/documentation\/swiftdocc\/linehighlighter\/highlight",
@@ -16285,6 +16825,26 @@
                         "path" : "\/documentation\/swiftdocc\/renderreferencetype\/init(rawvalue:)",
                         "title" : "init?(rawValue: String)",
                         "type" : "init"
+                      },
+                      {
+                        "title" : "Default Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/renderreferencetype\/init(using:)",
+                            "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                            "type" : "init"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/renderreferencetype\/fastjsondecodable-implementations",
+                        "title" : "FastJSONDecodable Implementations",
+                        "type" : "collection"
                       }
                     ],
                     "path" : "\/documentation\/swiftdocc\/renderreferencetype",
@@ -16444,6 +17004,26 @@
                             "path" : "\/documentation\/swiftdocc\/imagereference\/variantproxy\/encode(to:)",
                             "title" : "func encode(to: any Encoder) throws",
                             "type" : "method"
+                          },
+                          {
+                            "title" : "Default Implementations",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/imagereference\/variantproxy\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/imagereference\/variantproxy\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
                           }
                         ],
                         "path" : "\/documentation\/swiftdocc\/imagereference\/variantproxy",
@@ -16629,6 +17209,26 @@
                         "path" : "\/documentation\/swiftdocc\/renderreferenceidentifier\/encode(to:)",
                         "title" : "func encode(to: any Encoder) throws",
                         "type" : "method"
+                      },
+                      {
+                        "title" : "Default Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/renderreferenceidentifier\/init(using:)",
+                            "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                            "type" : "init"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/renderreferenceidentifier\/fastjsondecodable-implementations",
+                        "title" : "FastJSONDecodable Implementations",
+                        "type" : "collection"
                       }
                     ],
                     "path" : "\/documentation\/swiftdocc\/renderreferenceidentifier",
@@ -17888,6 +18488,22 @@
                             "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/encodable-implementations",
                             "title" : "Encodable Implementations",
                             "type" : "collection"
+                          },
+                          {
+                            "children" : [
+                              {
+                                "title" : "Initializers",
+                                "type" : "groupMarker"
+                              },
+                              {
+                                "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/init(using:)",
+                                "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                                "type" : "init"
+                              }
+                            ],
+                            "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/fastjsondecodable-implementations",
+                            "title" : "FastJSONDecodable Implementations",
+                            "type" : "collection"
                           }
                         ],
                         "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant",
@@ -17899,6 +18515,12 @@
                         "type" : "groupMarker"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/init(kind:language:relativepresentationurl:referenceidentifier:title:abstract:availablelanguages:platforms:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatordeclarationfragments:redirects:topicimages:references:variants:)",
+                        "title" : "init(kind: DocumentationNode.Kind, language: SourceLanguage, relativePresentationURL: URL, referenceIdentifier: RenderReferenceIdentifier, title: String, abstract: LinkDestinationSummary.Abstract?, availableLanguages: Set<SourceLanguage>, platforms: [LinkDestinationSummary.PlatformAvailability]?, usr: String?, plainTextDeclaration: String?, subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, redirects: [URL]?, topicImages: [TopicImage]?, references: [any RenderReference]?, variants: [LinkDestinationSummary.Variant])",
+                        "type" : "init"
+                      },
+                      {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/init(kind:language:relativepresentationurl:referenceurl:title:abstract:availablelanguages:platforms:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatordeclarationfragments:redirects:topicimages:references:variants:)",
                         "title" : "init(kind: DocumentationNode.Kind, language: SourceLanguage, relativePresentationURL: URL, referenceURL: URL, title: String, abstract: LinkDestinationSummary.Abstract?, availableLanguages: Set<SourceLanguage>, platforms: [LinkDestinationSummary.PlatformAvailability]?, usr: String?, plainTextDeclaration: String?, subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, redirects: [URL]?, topicImages: [TopicImage]?, references: [any RenderReference]?, variants: [LinkDestinationSummary.Variant])",
                         "type" : "init"
@@ -17948,6 +18570,12 @@
                         "type" : "property"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/referenceidentifier",
+                        "title" : "var referenceIdentifier: RenderReferenceIdentifier",
+                        "type" : "property"
+                      },
+                      {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/referenceurl",
                         "title" : "var referenceURL: URL",
                         "type" : "property"
@@ -18056,6 +18684,22 @@
                         ],
                         "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/equatable-implementations",
                         "title" : "Equatable Implementations",
+                        "type" : "collection"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/init(using:)",
+                            "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                            "type" : "init"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/fastjsondecodable-implementations",
+                        "title" : "FastJSONDecodable Implementations",
                         "type" : "collection"
                       }
                     ],
@@ -22132,6 +22776,26 @@
                         "path" : "\/documentation\/swiftdocc\/describederror\/errordescription",
                         "title" : "var errorDescription: String",
                         "type" : "property"
+                      },
+                      {
+                        "title" : "Default Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Instance Properties",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/describederror\/errordescription-2kve7",
+                            "title" : "var errorDescription: String?",
+                            "type" : "property"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/describederror\/localizederror-implementations",
+                        "title" : "LocalizedError Implementations",
+                        "type" : "collection"
                       }
                     ],
                     "path" : "\/documentation\/swiftdocc\/describederror",
@@ -22218,6 +22882,12 @@
                         "type" : "groupMarker"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/featureflags\/iscodeblockannotationsenabled",
+                        "title" : "var isCodeBlockAnnotationsEnabled: Bool",
+                        "type" : "property"
+                      },
+                      {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalcodeblockannotationsenabled",
                         "title" : "var isExperimentalCodeBlockAnnotationsEnabled: Bool",
                         "type" : "property"
@@ -22228,6 +22898,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/featureflags\/isexperimentallinkhierarchyserializationenabled",
                         "title" : "var isExperimentalLinkHierarchySerializationEnabled: Bool",
                         "type" : "property"
@@ -22245,6 +22916,11 @@
                       {
                         "path" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaloverloadedsymbolpresentationenabled",
                         "title" : "var isExperimentalOverloadedSymbolPresentationEnabled: Bool",
+                        "type" : "property"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/featureflags\/islinkhierarchyserializationenabled",
+                        "title" : "var isLinkHierarchySerializationEnabled: Bool",
                         "type" : "property"
                       },
                       {
@@ -22282,40 +22958,6 @@
                   {
                     "title" : "Communication Bridge",
                     "type" : "groupMarker"
-                  },
-                  {
-                    "children" : [
-                      {
-                        "title" : "Initializers",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/webkitcommunicationbridge\/init(with:onreceivemessage:)",
-                        "title" : "init(with: WKUserContentController?, onReceiveMessage: ((Message) -> ())?)",
-                        "type" : "init"
-                      },
-                      {
-                        "title" : "Instance Properties",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/webkitcommunicationbridge\/onreceivemessage",
-                        "title" : "var onReceiveMessage: ((Message) -> ())?",
-                        "type" : "property"
-                      },
-                      {
-                        "title" : "Instance Methods",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/webkitcommunicationbridge\/send(_:using:)",
-                        "title" : "func send(Message, using: (String, ((Any?, (any Error)?) -> ())?) -> ()) throws",
-                        "type" : "method"
-                      }
-                    ],
-                    "path" : "\/documentation\/swiftdocc\/webkitcommunicationbridge",
-                    "title" : "WebKitCommunicationBridge",
-                    "type" : "struct"
                   },
                   {
                     "children" : [
@@ -22366,113 +23008,6 @@
                     "path" : "\/documentation\/swiftdocc\/communicationbridgeerror",
                     "title" : "CommunicationBridgeError",
                     "type" : "enum"
-                  },
-                  {
-                    "children" : [
-                      {
-                        "title" : "Initializers",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/init()",
-                        "title" : "init()",
-                        "type" : "init"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/init(withtemplateurl:)",
-                        "title" : "init(withTemplateURL: URL)",
-                        "type" : "init"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/init(withtemplateurl:filemanager:)",
-                        "title" : "init(withTemplateURL: URL, fileManager: any FileManagerProtocol)",
-                        "type" : "init"
-                      },
-                      {
-                        "title" : "Instance Properties",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/fallbackhandler",
-                        "title" : "var fallbackHandler: FallbackResponseHandler?",
-                        "type" : "property"
-                      },
-                      {
-                        "title" : "Instance Methods",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/loadtemplate(from:)",
-                        "title" : "func loadTemplate(from: String)",
-                        "type" : "method"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/response(to:)",
-                        "title" : "func response(to: URLRequest) -> (URLResponse, Data?)",
-                        "type" : "method"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/setdata(data:)",
-                        "title" : "func setData(data: [String : Data])",
-                        "type" : "method"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/settemplate(files:)",
-                        "title" : "func setTemplate(files: [String : Data])",
-                        "type" : "method"
-                      },
-                      {
-                        "title" : "Type Aliases",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/fallbackresponsehandler",
-                        "title" : "DocumentationSchemeHandler.FallbackResponseHandler",
-                        "type" : "typealias"
-                      },
-                      {
-                        "title" : "Type Properties",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/fullscheme",
-                        "title" : "static let fullScheme: String",
-                        "type" : "property"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/scheme",
-                        "title" : "static let scheme: String",
-                        "type" : "property"
-                      },
-                      {
-                        "title" : "Default Implementations",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "children" : [
-                          {
-                            "title" : "Instance Methods",
-                            "type" : "groupMarker"
-                          },
-                          {
-                            "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/webview(_:start:)",
-                            "title" : "func webView(WKWebView, start: any WKURLSchemeTask)",
-                            "type" : "method"
-                          },
-                          {
-                            "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/webview(_:stop:)",
-                            "title" : "func webView(WKWebView, stop: any WKURLSchemeTask)",
-                            "type" : "method"
-                          }
-                        ],
-                        "path" : "\/documentation\/swiftdocc\/documentationschemehandler\/wkurlschemehandler-implementations",
-                        "title" : "WKURLSchemeHandler Implementations",
-                        "type" : "collection"
-                      }
-                    ],
-                    "path" : "\/documentation\/swiftdocc\/documentationschemehandler",
-                    "title" : "DocumentationSchemeHandler",
-                    "type" : "class"
                   },
                   {
                     "children" : [
@@ -23733,8 +24268,8 @@
                             "type" : "subscript"
                           }
                         ],
-                        "path" : "\/documentation\/swiftdocc\/markupcontainer\/randomaccesscollection-implementations",
-                        "title" : "RandomAccessCollection Implementations",
+                        "path" : "\/documentation\/swiftdocc\/markupcontainer\/collection-implementations",
+                        "title" : "Collection Implementations",
                         "type" : "collection"
                       }
                     ],
@@ -23773,7 +24308,7 @@
                             "type" : "groupMarker"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:featureflags:diagnostics:)-1vjng",
+                            "path" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:featureflags:diagnostics:)-2mshx",
                             "title" : "init?(from: BlockDirective, source: URL?, for: DocumentationBundle, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic])",
                             "type" : "init"
                           }
@@ -23790,7 +24325,7 @@
                           },
                           {
                             "deprecated" : true,
-                            "path" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:featureflags:problems:)-39uhp",
+                            "path" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:featureflags:problems:)-272i",
                             "title" : "init?(from: BlockDirective, source: URL?, for: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem])",
                             "type" : "init"
                           }
@@ -23808,7 +24343,7 @@
                           },
                           {
                             "deprecated" : true,
-                            "path" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:problems:)-83l39",
+                            "path" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:problems:)-2cy7q",
                             "title" : "init?(from: BlockDirective, source: URL?, for: DocumentationBundle, problems: inout [Problem])",
                             "type" : "init"
                           }
@@ -25573,6 +26108,11 @@
                         "type" : "property"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/platformname\/visionosappextension",
+                        "title" : "static let visionOSAppExtension: PlatformName",
+                        "type" : "property"
+                      },
+                      {
                         "path" : "\/documentation\/swiftdocc\/platformname\/watchos",
                         "title" : "static let watchOS: PlatformName",
                         "type" : "property"
@@ -25581,6 +26121,15 @@
                         "path" : "\/documentation\/swiftdocc\/platformname\/watchosappextension",
                         "title" : "static let watchOSAppExtension: PlatformName",
                         "type" : "property"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/platformname\/addingfallbacks(_:)",
+                        "title" : "static func addingFallbacks([PlatformName?]) -> [PlatformName?]",
+                        "type" : "method"
                       }
                     ],
                     "path" : "\/documentation\/swiftdocc\/platformname",
@@ -25907,6 +26456,17 @@
                             "type" : "property"
                           },
                           {
+                            "path" : "\/documentation\/swiftdocc\/documentationdatavariants\/hasanyvalue",
+                            "title" : "var hasAnyValue: Bool",
+                            "type" : "property"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/documentationdatavariants\/hasanyvariants",
+                            "title" : "var hasAnyVariants: Bool",
+                            "type" : "property"
+                          },
+                          {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/documentationdatavariants\/isempty",
                             "title" : "var isEmpty: Bool",
                             "type" : "property"
@@ -28432,111 +28992,6 @@
                     "type" : "groupMarker"
                   },
                   {
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(assets:)",
-                    "title" : "func consume(assets: [RenderReferenceType : [any RenderReference]]) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "children" : [
-                      {
-                        "title" : "ConvertOutputConsumer Implementations",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(assetsininputs:)-2ic87",
-                        "title" : "func consume(assetsInInputs: DocumentationContext.Inputs) throws",
-                        "type" : "method"
-                      }
-                    ],
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(assetsininputs:)",
-                    "title" : "func consume(assetsInInputs: DocumentationContext.Inputs) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(benchmarks:)",
-                    "title" : "func consume(benchmarks: Benchmark) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "children" : [
-                      {
-                        "title" : "ConvertOutputConsumer Implementations",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(buildmetadata:)-3umjh",
-                        "title" : "func consume(buildMetadata: BuildMetadata) throws",
-                        "type" : "method"
-                      }
-                    ],
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(buildmetadata:)",
-                    "title" : "func consume(buildMetadata: BuildMetadata) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(documentationcoverageinfo:)",
-                    "title" : "func consume(documentationCoverageInfo: [CoverageDataEntry]) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(indexingrecords:)",
-                    "title" : "func consume(indexingRecords: [IndexingRecord]) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "children" : [
-                      {
-                        "title" : "ConvertOutputConsumer Implementations",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkresolutioninformation:)-z5vw",
-                        "title" : "func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws",
-                        "type" : "method"
-                      }
-                    ],
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkresolutioninformation:)",
-                    "title" : "func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkableelementsummaries:)",
-                    "title" : "func consume(linkableElementSummaries: [LinkDestinationSummary]) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(rendernode:)",
-                    "title" : "func consume(renderNode: RenderNode) throws",
-                    "type" : "method"
-                  },
-                  {
-                    "children" : [
-                      {
-                        "title" : "ConvertOutputConsumer Implementations",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(renderreferencestore:)-2y05j",
-                        "title" : "func consume(renderReferenceStore: RenderReferenceStore) throws",
-                        "type" : "method"
-                      }
-                    ],
-                    "path" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(renderreferencestore:)",
-                    "title" : "func consume(renderReferenceStore: RenderReferenceStore) throws",
-                    "type" : "method"
-                  }
-                ],
-                "path" : "\/documentation\/swiftdocc\/convertoutputconsumer",
-                "title" : "ConvertOutputConsumer",
-                "type" : "protocol"
-              },
-              {
-                "children" : [
-                  {
-                    "title" : "Instance Methods",
-                    "type" : "groupMarker"
-                  },
-                  {
                     "path" : "\/documentation\/swiftdocc\/convertoutputmarkdownconsumer\/consume(markdownmanifest:)",
                     "title" : "func consume(markdownManifest: MarkdownOutputManifest) throws",
                     "type" : "method"
@@ -28780,7 +29235,7 @@
                   },
                   {
                     "path" : "\/documentation\/swiftdocc\/htmlcontentconsumer\/consume(maincontent:metadata:forpage:)",
-                    "title" : "func consume(mainContent: HTMLNode, metadata: (title: String, description: String?), forPage: ResolvedTopicReference) throws",
+                    "title" : "func consume(mainContent: HTMLNode?, metadata: (title: String, description: String?), forPage: ResolvedTopicReference) throws",
                     "type" : "method"
                   }
                 ],
@@ -32234,11 +32689,51 @@
                         "path" : "\/documentation\/swiftdocc\/topicimage\/topicimagetype\/init(rawvalue:)",
                         "title" : "init?(rawValue: String)",
                         "type" : "init"
+                      },
+                      {
+                        "title" : "Default Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Initializers",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/topicimage\/topicimagetype\/init(using:)",
+                            "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                            "type" : "init"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/topicimage\/topicimagetype\/fastjsondecodable-implementations",
+                        "title" : "FastJSONDecodable Implementations",
+                        "type" : "collection"
                       }
                     ],
                     "path" : "\/documentation\/swiftdocc\/topicimage\/topicimagetype",
                     "title" : "TopicImage.TopicImageType",
                     "type" : "enum"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Initializers",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/topicimage\/init(using:)",
+                        "title" : "init(using: inout FastSymbolGraphJSONDecoder) throws(DecodingError)",
+                        "type" : "init"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/topicimage\/fastjsondecodable-implementations",
+                    "title" : "FastJSONDecodable Implementations",
+                    "type" : "collection"
                   }
                 ],
                 "path" : "\/documentation\/swiftdocc\/topicimage",
@@ -32361,6 +32856,15 @@
                 "type" : "var"
               },
               {
+                "title" : "Functions",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/autoreleasepool(_:)",
+                "title" : "func autoreleasepool<Result>(() throws -> Result) rethrows -> Result",
+                "type" : "func"
+              },
+              {
                 "title" : "Type Aliases",
                 "type" : "groupMarker"
               },
@@ -32372,8 +32876,20 @@
               },
               {
                 "deprecated" : true,
+                "path" : "\/documentation\/swiftdocc\/convertoutputconsumer",
+                "title" : "ConvertOutputConsumer",
+                "type" : "typealias"
+              },
+              {
+                "deprecated" : true,
                 "path" : "\/documentation\/swiftdocc\/documentationbundle",
                 "title" : "DocumentationBundle",
+                "type" : "typealias"
+              },
+              {
+                "deprecated" : true,
+                "path" : "\/documentation\/swiftdocc\/documentationbundlefiletypes",
+                "title" : "DocumentationBundleFileTypes",
                 "type" : "typealias"
               },
               {
@@ -32403,7 +32919,7 @@
                   },
                   {
                     "path" : "\/documentation\/swiftdocc\/convertactionconverter\/signposter",
-                    "title" : "static let signposter: OSSignposter",
+                    "title" : "static let signposter: NoOpSignposterShim",
                     "type" : "property"
                   },
                   {
@@ -32412,73 +32928,12 @@
                   },
                   {
                     "path" : "\/documentation\/swiftdocc\/convertactionconverter\/convert(context:outputconsumer:htmlcontentconsumer:sourcerepository:emitdigest:documentationcoverageoptions:)",
-                    "title" : "static func convert(context: DocumentationContext, outputConsumer: some ConvertOutputConsumer & ExternalNodeConsumer, htmlContentConsumer: (any HTMLContentConsumer)?, sourceRepository: SourceRepository?, emitDigest: Bool, documentationCoverageOptions: DocumentationCoverageOptions) async throws",
+                    "title" : "static func convert(context: DocumentationContext, outputConsumer: some _WillBeMadeNonPublicConvertOutputConsumer & ExternalNodeConsumer, htmlContentConsumer: (any HTMLContentConsumer)?, sourceRepository: SourceRepository?, emitDigest: Bool, documentationCoverageOptions: DocumentationCoverageOptions) async throws",
                     "type" : "method"
                   }
                 ],
                 "path" : "\/documentation\/swiftdocc\/convertactionconverter",
                 "title" : "ConvertActionConverter",
-                "type" : "enum"
-              },
-              {
-                "children" : [
-                  {
-                    "title" : "Type Methods",
-                    "type" : "groupMarker"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomfavicon(_:)",
-                    "title" : "static func isCustomFavicon(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomfooter(_:)",
-                    "title" : "static func isCustomFooter(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/iscustomheader(_:)",
-                    "title" : "static func isCustomHeader(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isdocumentationcatalog(_:)",
-                    "title" : "static func isDocumentationCatalog(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isinfoplistfile(_:)",
-                    "title" : "static func isInfoPlistFile(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/ismarkupfile(_:)",
-                    "title" : "static func isMarkupFile(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isreferencedocumentationfile(_:)",
-                    "title" : "static func isReferenceDocumentationFile(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/issymbolgraphfile(_:)",
-                    "title" : "static func isSymbolGraphFile(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/isthemesettingsfile(_:)",
-                    "title" : "static func isThemeSettingsFile(URL) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes\/istutorialfile(_:)",
-                    "title" : "static func isTutorialFile(URL) -> Bool",
-                    "type" : "method"
-                  }
-                ],
-                "path" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes",
-                "title" : "DocumentationCatalogFileTypes",
                 "type" : "enum"
               },
               {
@@ -32729,36 +33184,6 @@
                     "type" : "groupMarker"
                   },
                   {
-                    "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/usedisplayname",
-                    "title" : "case useDisplayName",
-                    "type" : "case"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/userawkey",
-                    "title" : "case useRawKey",
-                    "type" : "case"
-                  },
-                  {
-                    "title" : "Initializers",
-                    "type" : "groupMarker"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/init(rawvalue:)",
-                    "title" : "init?(rawValue: String)",
-                    "type" : "init"
-                  }
-                ],
-                "path" : "\/documentation\/swiftdocc\/propertylisttitlestyle",
-                "title" : "PropertyListTitleStyle",
-                "type" : "enum"
-              },
-              {
-                "children" : [
-                  {
-                    "title" : "Enumeration Cases",
-                    "type" : "groupMarker"
-                  },
-                  {
                     "path" : "\/documentation\/swiftdocc\/restparametersource\/cookie",
                     "title" : "case cookie",
                     "type" : "case"
@@ -32847,37 +33272,37 @@
                             "type" : "groupMarker"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/foundation\/filemanager\/contents(of:)",
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/contents(of:)",
                             "title" : "func contents(of: URL) throws -> Data",
                             "type" : "method"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/foundation\/filemanager\/contentsofdirectory(at:options:)",
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/contentsofdirectory(at:options:)",
                             "title" : "func contentsOfDirectory(at: URL, options: DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL])",
                             "type" : "method"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/foundation\/filemanager\/createfile(at:contents:)",
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/createfile(at:contents:)",
                             "title" : "func createFile(at: URL, contents: Data) throws",
                             "type" : "method"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/foundation\/filemanager\/createfile(at:contents:options:)",
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/createfile(at:contents:options:)",
                             "title" : "func createFile(at: URL, contents: Data, options: NSData.WritingOptions?) throws",
                             "type" : "method"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/foundation\/filemanager\/uniquetemporarydirectory()",
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/uniquetemporarydirectory()",
                             "title" : "func uniqueTemporaryDirectory() -> URL",
                             "type" : "method"
                           }
                         ],
-                        "path" : "\/documentation\/swiftdocc\/foundation\/filemanager\/filemanagerprotocol-implementations",
+                        "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/filemanagerprotocol-implementations",
                         "title" : "FileManagerProtocol Implementations",
                         "type" : "collection"
                       }
                     ],
-                    "path" : "\/documentation\/swiftdocc\/foundation\/filemanager",
+                    "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager",
                     "title" : "FileManager",
                     "type" : "extension"
                   },
@@ -32898,7 +33323,7 @@
                             "type" : "groupMarker"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/foundation\/data\/init(data:)",
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/data\/init(data:)",
                             "title" : "init?(data: UnsafeRawBufferPointer)",
                             "type" : "init"
                           },
@@ -32907,23 +33332,23 @@
                             "type" : "groupMarker"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/foundation\/data\/read(_:)",
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/data\/read(_:)",
                             "title" : "func read<R>((UnsafeRawBufferPointer) throws -> R) rethrows -> R",
                             "type" : "method"
                           }
                         ],
-                        "path" : "\/documentation\/swiftdocc\/foundation\/data\/lmdbdata-implementations",
+                        "path" : "\/documentation\/swiftdocc\/foundationessentials\/data\/lmdbdata-implementations",
                         "title" : "LMDBData Implementations",
                         "type" : "collection"
                       }
                     ],
-                    "path" : "\/documentation\/swiftdocc\/foundation\/data",
+                    "path" : "\/documentation\/swiftdocc\/foundationessentials\/data",
                     "title" : "Data",
                     "type" : "extension"
                   }
                 ],
-                "path" : "\/documentation\/swiftdocc\/foundation",
-                "title" : "Foundation",
+                "path" : "\/documentation\/swiftdocc\/foundationessentials",
+                "title" : "FoundationEssentials",
                 "type" : "extension"
               },
               {
@@ -33026,42 +33451,6 @@
                   {
                     "title" : "Extended Structures",
                     "type" : "groupMarker"
-                  },
-                  {
-                    "children" : [
-                      {
-                        "title" : "Default Implementations",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "children" : [
-                          {
-                            "title" : "Initializers",
-                            "type" : "groupMarker"
-                          },
-                          {
-                            "path" : "\/documentation\/swiftdocc\/swift\/array\/init(data:)",
-                            "title" : "init?(data: UnsafeRawBufferPointer)",
-                            "type" : "init"
-                          },
-                          {
-                            "title" : "Instance Methods",
-                            "type" : "groupMarker"
-                          },
-                          {
-                            "path" : "\/documentation\/swiftdocc\/swift\/array\/read(_:)",
-                            "title" : "func read<R>((UnsafeRawBufferPointer) throws -> R) rethrows -> R",
-                            "type" : "method"
-                          }
-                        ],
-                        "path" : "\/documentation\/swiftdocc\/swift\/array\/lmdbdata-implementations",
-                        "title" : "LMDBData Implementations",
-                        "type" : "collection"
-                      }
-                    ],
-                    "path" : "\/documentation\/swiftdocc\/swift\/array",
-                    "title" : "Array",
-                    "type" : "extension"
                   },
                   {
                     "children" : [
@@ -33806,8 +34195,8 @@
                     "type" : "groupMarker"
                   },
                   {
-                    "path" : "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:filemanager:temporarydirectory:outputformat:documentationcoverageoptions:catalogdiscoveryoptions:diagnosti-2nxp0",
-                    "title" : "init(documentationBundleURL: URL?, outOfProcessResolver: OutOfProcessReferenceResolver?, analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool, currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool, fileManager: any FileManagerProtocol, temporaryDirectory: URL, outputFormat: Docc.Convert.OutputFormat, documentationCoverageOptions: DocumentationCoverageOptions, catalogDiscoveryOptions: CatalogDiscoveryOptions, diagnosticLevel: String?, diagnosticEngine: DiagnosticEngine?, diagnosticFilePath: URL?, formatConsoleOutputForTools: Bool, inheritDocs: Bool, treatWarningsAsErrors: Bool, diagnosticIDsWithWarningSeverity: Set<String>, diagnosticIDsWithErrorSeverity: Set<String>, experimentalEnableCustomTemplates: Bool, experimentalModifyCatalogWithGeneratedCuration: Bool, featureFlags: FeatureFlags, transformForStaticHosting: Bool, includeContentInEachHTMLFile: Bool, allowArbitraryCatalogDirectories: Bool, hostingBasePath: String?, sourceRepository: SourceRepository?, dependencies: [URL]) throws",
+                    "path" : "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:filemanager:temporarydirectory:outputformat:documentationcoverageoptions:catalogdiscoveryoptions:diagnosti-2car4",
+                    "title" : "init(documentationBundleURL: URL?, outOfProcessResolver: OutOfProcessReferenceResolver?, analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool, currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool, fileManager: any FileManagerProtocol, temporaryDirectory: URL, outputFormat: Docc.Convert.OutputFormat, documentationCoverageOptions: DocumentationCoverageOptions, catalogDiscoveryOptions: CatalogDiscoveryOptions, diagnosticLevel: String?, diagnosticEngine: DiagnosticEngine?, diagnosticFilePath: URL?, formatConsoleOutputForTools: Bool, inheritDocs: Bool, treatWarningsAsErrors: Bool, diagnosticIDsWithWarningSeverity: Set<String>, diagnosticIDsWithErrorSeverity: Set<String>, experimentalEnableCustomTemplates: Bool, experimentalModifyCatalogWithGeneratedCuration: Bool, featureFlags: FeatureFlags, transformForStaticHostingOptions: TransformForStaticHostingOptions, allowArbitraryCatalogDirectories: Bool, hostingBasePath: String?, sourceRepository: SourceRepository?, dependencies: [URL]) throws",
                     "type" : "init"
                   },
                   {
@@ -33823,6 +34212,36 @@
                     "path" : "\/documentation\/docccommandline\/convertaction\/perform(loghandle:)",
                     "title" : "func perform(logHandle: inout LogHandle) async throws -> ActionResult",
                     "type" : "method"
+                  },
+                  {
+                    "title" : "Enumerations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Enumeration Cases",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions\/notransform",
+                        "title" : "case noTransform",
+                        "type" : "case"
+                      },
+                      {
+                        "path" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions\/withcontent",
+                        "title" : "case withContent",
+                        "type" : "case"
+                      },
+                      {
+                        "path" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions\/withoutcontent",
+                        "title" : "case withoutContent",
+                        "type" : "case"
+                      }
+                    ],
+                    "path" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions",
+                    "title" : "ConvertAction.TransformForStaticHostingOptions",
+                    "type" : "enum"
                   }
                 ],
                 "path" : "\/documentation\/docccommandline\/convertaction",
@@ -33911,6 +34330,38 @@
               {
                 "children" : [
                   {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "AsyncAction Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/docccommandline\/asyncaction\/perform(loghandle:)-4kc78",
+                        "title" : "func perform(logHandle: LogHandle) async throws -> ActionResult",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/docccommandline\/asyncaction\/perform(loghandle:)",
+                    "title" : "func perform(logHandle: inout LogHandle) async throws -> ActionResult",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/docccommandline\/asyncaction\/performandhandleresult(loghandle:)",
+                    "title" : "func performAndHandleResult(logHandle: LogHandle) async throws",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/docccommandline\/asyncaction",
+                "title" : "AsyncAction",
+                "type" : "protocol"
+              },
+              {
+                "children" : [
+                  {
                     "title" : "Initializers",
                     "type" : "groupMarker"
                   },
@@ -33980,7 +34431,7 @@
                   },
                   {
                     "path" : "\/documentation\/docccommandline\/signal\/all",
-                    "title" : "static let all: [Int32]",
+                    "title" : "static let all: [CInt]",
                     "type" : "property"
                   },
                   {
@@ -34004,38 +34455,6 @@
               {
                 "children" : [
                   {
-                    "title" : "Instance Methods",
-                    "type" : "groupMarker"
-                  },
-                  {
-                    "children" : [
-                      {
-                        "title" : "AsyncAction Implementations",
-                        "type" : "groupMarker"
-                      },
-                      {
-                        "path" : "\/documentation\/docccommandline\/asyncaction\/perform(loghandle:)-4kc78",
-                        "title" : "func perform(logHandle: LogHandle) async throws -> ActionResult",
-                        "type" : "method"
-                      }
-                    ],
-                    "path" : "\/documentation\/docccommandline\/asyncaction\/perform(loghandle:)",
-                    "title" : "func perform(logHandle: inout LogHandle) async throws -> ActionResult",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/docccommandline\/asyncaction\/performandhandleresult(loghandle:)",
-                    "title" : "func performAndHandleResult(logHandle: LogHandle) async throws",
-                    "type" : "method"
-                  }
-                ],
-                "path" : "\/documentation\/docccommandline\/asyncaction",
-                "title" : "AsyncAction",
-                "type" : "protocol"
-              },
-              {
-                "children" : [
-                  {
                     "title" : "Instance Properties",
                     "type" : "groupMarker"
                   },
@@ -34048,6 +34467,26 @@
                     "path" : "\/documentation\/docccommandline\/directorypathoption\/urlorfallback",
                     "title" : "var urlOrFallback: URL",
                     "type" : "property"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/docccommandline\/directorypathoption\/validate()",
+                        "title" : "func validate() throws",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/docccommandline\/directorypathoption\/parsablearguments-implementations",
+                    "title" : "ParsableArguments Implementations",
+                    "type" : "collection"
                   }
                 ],
                 "path" : "\/documentation\/docccommandline\/directorypathoption",

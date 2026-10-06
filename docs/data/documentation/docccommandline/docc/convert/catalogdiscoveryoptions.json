@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertAction+CommandInitialization.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/ArgumentParsing\/ActionExtensions\/ConvertAction+CommandInitialization.swift#L98"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/ArgumentParsing\/ActionExtensions\/ConvertAction+CommandInitialization.swift#L109"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {

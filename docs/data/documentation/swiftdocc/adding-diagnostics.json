@@ -546,8 +546,14 @@
                     "- This heading doesn't sequentially follow the previous heading",
                     "+ Level-4 heading doesn't sequentially follow the previous heading level (2); did you mean to use a level-3 heading?"
                   ],
+                  "copyToClipboard" : true,
+                  "lineAnnotations" : [
+
+                  ],
+                  "showLineNumbers" : false,
                   "syntax" : "diff",
-                  "type" : "codeListing"
+                  "type" : "codeListing",
+                  "wrap" : 0
                 }
               ]
             },
@@ -602,8 +608,14 @@
                     "- Incorrect use of symbol link",
                     "+ Symbol links can only find symbols; did you mean to use a '<doc:>' link?"
                   ],
+                  "copyToClipboard" : true,
+                  "lineAnnotations" : [
+
+                  ],
+                  "showLineNumbers" : false,
                   "syntax" : "diff",
-                  "type" : "codeListing"
+                  "type" : "codeListing",
+                  "wrap" : 0
                 }
               ]
             },
@@ -645,8 +657,14 @@
                     "- 'NAME' (at 'PATH') cannot be disambiguated using 'TEXT' ",
                     "+ 'TEXT' isn't a disambiguation for 'NAME' at 'PATH' "
                   ],
+                  "copyToClipboard" : true,
+                  "lineAnnotations" : [
+
+                  ],
+                  "showLineNumbers" : false,
                   "syntax" : "diff",
-                  "type" : "codeListing"
+                  "type" : "codeListing",
+                  "wrap" : 0
                 }
               ]
             }

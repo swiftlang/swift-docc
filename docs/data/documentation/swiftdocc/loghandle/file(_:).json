@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC9LogHandleO4fileyACSo06NSFileD0CcACmF",
+    "externalID" : "s:9SwiftDocC9LogHandleO4fileyAC10Foundation04FileD0CcACmF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -39,7 +39,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:objc(cs)NSFileHandle",
+        "preciseIdentifier" : "s:10Foundation10FileHandleC",
         "text" : "FileHandle"
       },
       {
@@ -69,7 +69,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -90,7 +90,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:objc(cs)NSFileHandle",
+              "preciseIdentifier" : "s:10Foundation10FileHandleC",
               "text" : "FileHandle"
             },
             {
@@ -199,7 +199,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSFileHandle",
+      "preciseIdentifier" : "s:10Foundation10FileHandleC",
       "text" : "FileHandle"
     },
     {

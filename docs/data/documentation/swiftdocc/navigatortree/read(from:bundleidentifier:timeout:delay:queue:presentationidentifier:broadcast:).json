@@ -27,7 +27,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC13NavigatorTreeC4read4from16bundleIdentifier7timeout5delay5queue012presentationH09broadcasty10Foundation3URLV_SSSgS2dSo012OS_dispatch_K0CAOySayAC4NodeCG_SbAC5ErrorOSgtcSgtKF",
+    "externalID" : "s:9SwiftDocC13NavigatorTreeC4read4from16bundleIdentifier7timeout5delay5queue012presentationH09broadcasty20FoundationEssentials3URLV_SSSgS2d8Dispatch0Q5QueueCAOySayAC4NodeCG_SbAC5ErrorOSgtcSgtKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -55,7 +55,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -89,7 +89,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:@T@NSTimeInterval",
+        "preciseIdentifier" : "s:10Foundation12TimeIntervala",
         "text" : "TimeInterval"
       },
       {
@@ -106,7 +106,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:@T@NSTimeInterval",
+        "preciseIdentifier" : "s:10Foundation12TimeIntervala",
         "text" : "TimeInterval"
       },
       {
@@ -123,7 +123,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+        "preciseIdentifier" : "s:8Dispatch0A5QueueC",
         "text" : "DispatchQueue"
       },
       {
@@ -191,7 +191,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -228,7 +228,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -262,7 +262,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:@T@NSTimeInterval",
+              "preciseIdentifier" : "s:10Foundation12TimeIntervala",
               "text" : "TimeInterval"
             },
             {
@@ -279,7 +279,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:@T@NSTimeInterval",
+              "preciseIdentifier" : "s:10Foundation12TimeIntervala",
               "text" : "TimeInterval"
             },
             {
@@ -296,7 +296,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+              "preciseIdentifier" : "s:8Dispatch0A5QueueC",
               "text" : "DispatchQueue"
             },
             {
@@ -613,7 +613,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -647,7 +647,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@T@NSTimeInterval",
+      "preciseIdentifier" : "s:10Foundation12TimeIntervala",
       "text" : "TimeInterval"
     },
     {
@@ -664,7 +664,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@T@NSTimeInterval",
+      "preciseIdentifier" : "s:10Foundation12TimeIntervala",
       "text" : "TimeInterval"
     },
     {
@@ -681,7 +681,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+      "preciseIdentifier" : "s:8Dispatch0A5QueueC",
       "text" : "DispatchQueue"
     },
     {

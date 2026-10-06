@@ -14,7 +14,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:e:s:9SwiftDocC17CoverageDataEntryV0B12CCommandLineE15generateSummary02ofD2At19shouldGenerateBrief0lM8DetailedSS10Foundation3URLV_S2btKFZ",
+    "externalID" : "s:e:s:9SwiftDocC17CoverageDataEntryV0B12CCommandLineE15generateSummary02ofD2At19shouldGenerateBrief0lM8DetailedSS20FoundationEssentials3URLV_S2btKFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -57,7 +57,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -211,7 +211,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

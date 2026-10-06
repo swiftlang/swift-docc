@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC19DocumentationServerC20synchronizationQueueSo17OS_dispatch_queueCvp",
+    "externalID" : "s:9SwiftDocC19DocumentationServerC20synchronizationQueue8Dispatch0gF0Cvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -39,7 +39,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+        "preciseIdentifier" : "s:8Dispatch0A5QueueC",
         "text" : "DispatchQueue"
       }
     ],
@@ -65,7 +65,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -86,7 +86,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+              "preciseIdentifier" : "s:8Dispatch0A5QueueC",
               "text" : "DispatchQueue"
             }
           ]
@@ -211,7 +211,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+      "preciseIdentifier" : "s:8Dispatch0A5QueueC",
       "text" : "DispatchQueue"
     }
   ],

@@ -20,7 +20,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC10RenderNodeV12encodeToJSON4with20renderReferenceCache10Foundation4DataVAG11JSONEncoderC_AA12SynchronizedCySDySSAI9reference_SayAA15VariantOverrideVG9overridestGGSgtKF",
+    "externalID" : "s:9SwiftDocC10RenderNodeV12encodeToJSON4with20renderReferenceCache20FoundationEssentials4DataVAG11JSONEncoderC_AA12SynchronizedCySDySSAI9reference_SayAA15VariantOverrideVG9overridestGGSgtKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -48,7 +48,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation11JSONEncoderC",
+        "preciseIdentifier" : "s:20FoundationEssentials11JSONEncoderC",
         "text" : "JSONEncoder"
       },
       {
@@ -82,7 +82,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation4DataV",
+        "preciseIdentifier" : "s:20FoundationEssentials4DataV",
         "text" : "Data"
       }
     ],
@@ -108,7 +108,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -145,7 +145,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation11JSONEncoderC",
+              "preciseIdentifier" : "s:20FoundationEssentials11JSONEncoderC",
               "text" : "JSONEncoder"
             },
             {
@@ -180,7 +180,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation4DataV",
+              "preciseIdentifier" : "s:20FoundationEssentials4DataV",
               "text" : "Data"
             }
           ]
@@ -424,7 +424,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation11JSONEncoderC",
+      "preciseIdentifier" : "s:20FoundationEssentials11JSONEncoderC",
       "text" : "JSONEncoder"
     },
     {
@@ -458,7 +458,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     }
   ],

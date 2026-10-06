@@ -5,8 +5,9 @@
       "type" : "text"
     },
     {
-      "code" : "==",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/==(_:_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : ".",
@@ -93,7 +94,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -221,6 +222,73 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platformname"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/PlatformName/==(_:_:)": {
+  "abstract" : [
+    {
+      "text" : "Compares platform names independently of any known aliases differences or possible incomplete display names.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "=="
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/==(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "==(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/platformname\/==(_:_:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformName/hash(into:)": {
   "abstract" : [
     {
@@ -228,8 +296,9 @@
       "type" : "text"
     },
     {
-      "code" : "==",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/==(_:_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : ".",

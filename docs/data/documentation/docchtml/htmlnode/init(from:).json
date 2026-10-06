@@ -14,7 +14,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "DocCHTML",
-    "externalID" : "s:8DocCHTML8HTMLNodeV4fromACSgSo9NSXMLNodeC_tcfc",
+    "externalID" : "s:8DocCHTML8HTMLNodeV4fromACSg13FoundationXML7XMLNodeC_tcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -34,7 +34,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:objc(cs)NSXMLNode",
+        "preciseIdentifier" : "s:13FoundationXML7XMLNodeC",
         "text" : "XMLNode"
       },
       {
@@ -64,7 +64,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -93,7 +93,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:objc(cs)NSXMLNode",
+              "preciseIdentifier" : "s:13FoundationXML7XMLNodeC",
               "text" : "XMLNode"
             },
             {
@@ -193,7 +193,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSXMLNode",
+      "preciseIdentifier" : "s:13FoundationXML7XMLNodeC",
       "text" : "XMLNode"
     },
     {

@@ -19,7 +19,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC16BenchmarkResultsV12platformName9timestamp13doccArguments16unorderedMetricsACSS_10Foundation4DateVSaySSGSayAC6MetricVGtcfc",
+    "externalID" : "s:9SwiftDocC16BenchmarkResultsV12platformName9timestamp13doccArguments16unorderedMetricsACSS_20FoundationEssentials4DateVSaySSGSayAC6MetricVGtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -56,7 +56,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation4DateV",
+        "preciseIdentifier" : "s:20FoundationEssentials4DateV",
         "text" : "Date"
       },
       {
@@ -120,7 +120,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -158,7 +158,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation4DateV",
+              "preciseIdentifier" : "s:20FoundationEssentials4DateV",
               "text" : "Date"
             },
             {
@@ -414,7 +414,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DateV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DateV",
       "text" : "Date"
     },
     {

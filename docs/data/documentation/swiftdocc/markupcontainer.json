@@ -69,7 +69,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -176,7 +176,7 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/RandomAccessCollection-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Collection-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -310,16 +310,16 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/RandomAccessCollection-Implementations": {
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/Collection-Implementations": {
   "abstract" : [
 
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/RandomAccessCollection-Implementations",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/Collection-Implementations",
   "kind" : "article",
   "role" : "collectionGroup",
-  "title" : "RandomAccessCollection Implementations",
+  "title" : "Collection Implementations",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/randomaccesscollection-implementations"
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/collection-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/accept(_:)": {
   "abstract" : [

@@ -20,7 +20,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV6traits4kind8language23relativePresentationURL5title8abstract3usr20plainTextDeclaration010subheadingR9Fragments09navigatorrT0AESayAA10RenderNodeVADV5TraitOG_AA013DocumentationW0V4KindVSg0B7CCommon14SourceLanguageVSg10Foundation0L0VSgSSSgSayAA0V13InlineContentOGSgSgA7_SgA13_SayAA0rV7SectionV5TokenVGSgSgA20_tcfc",
+    "externalID" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV6traits4kind8language23relativePresentationURL5title8abstract3usr20plainTextDeclaration010subheadingR9Fragments09navigatorrT0AESayAA10RenderNodeVADV5TraitOG_AA013DocumentationW0V4KindVSg0B7CCommon14SourceLanguageVSg20FoundationEssentials0L0VSgSSSgSayAA0V13InlineContentOGSgSgA7_SgA13_SayAA0rV7SectionV5TokenVGSgSgA20_tcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -145,7 +145,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -343,7 +343,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L222"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L228"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -358,7 +358,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -493,7 +493,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -1323,7 +1323,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

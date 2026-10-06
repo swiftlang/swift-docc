@@ -146,8 +146,14 @@
             "",
             "MyDocumentationTool.main()"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : "swift",
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         },
         {
           "inlineContent" : [
@@ -185,6 +191,7 @@
     {
       "anchor" : "Actions-Design",
       "identifiers" : [
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction",
         "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ActionResult"
       ],
       "title" : "Actions Design"
@@ -201,7 +208,6 @@
       "anchor" : "Protocols",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/AsyncAction",
         "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/DirectoryPathOption"
       ],
       "title" : "Protocols"

@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -272,7 +272,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSFileHandle",
+      "preciseIdentifier" : "s:10Foundation10FileHandleC",
       "text" : "FileHandle"
     },
     {

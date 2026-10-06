@@ -55,7 +55,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -234,7 +234,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSXMLNode",
+      "preciseIdentifier" : "s:13FoundationXML7XMLNodeC",
       "text" : "XMLNode"
     },
     {

@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -202,7 +202,7 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/FileManager"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager"
       ],
       "kind" : "relationships",
       "title" : "Conforming Types",
@@ -389,7 +389,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     },
     {
@@ -439,7 +439,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -456,7 +456,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     }
   ],
@@ -571,7 +571,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -588,7 +588,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@T@NSURLResourceKey",
+      "preciseIdentifier" : "s:10Foundation14URLResourceKeyV",
       "text" : "URLResourceKey"
     },
     {
@@ -605,7 +605,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSFileManager",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
       "text" : "FileManager"
     },
     {
@@ -614,7 +614,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@E@NSDirectoryEnumerationOptions",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
       "text" : "DirectoryEnumerationOptions"
     },
     {
@@ -631,7 +631,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -681,7 +681,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -698,7 +698,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSFileManager",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
       "text" : "FileManager"
     },
     {
@@ -707,7 +707,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@E@NSDirectoryEnumerationOptions",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
       "text" : "DirectoryEnumerationOptions"
     },
     {
@@ -728,7 +728,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -741,7 +741,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -858,7 +858,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -892,7 +892,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@T@NSFileAttributeKey",
+      "preciseIdentifier" : "s:20FoundationEssentials16FileAttributeKeyV",
       "text" : "FileAttributeKey"
     },
     {
@@ -962,7 +962,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -979,7 +979,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     },
     {
@@ -1041,7 +1041,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -1058,7 +1058,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     },
     {
@@ -1075,7 +1075,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSData",
+      "preciseIdentifier" : "s:10Foundation6NSDataC",
       "text" : "NSData"
     },
     {
@@ -1084,7 +1084,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@E@NSDataWritingOptions",
+      "preciseIdentifier" : "s:10Foundation6NSDataC14WritingOptionsa",
       "text" : "WritingOptions"
     },
     {
@@ -1350,7 +1350,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10ObjectiveC8ObjCBoolV",
+      "preciseIdentifier" : "s:10Foundation8ObjCBoolV",
       "text" : "ObjCBool"
     },
     {
@@ -1405,7 +1405,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -1422,7 +1422,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -1476,7 +1476,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -1493,7 +1493,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSFileManager",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
       "text" : "FileManager"
     },
     {
@@ -1502,7 +1502,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@E@NSDirectoryEnumerationOptions",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
       "text" : "DirectoryEnumerationOptions"
     },
     {
@@ -1569,7 +1569,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -1615,7 +1615,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     }
   ],
@@ -1627,7 +1627,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/filemanagerprotocol\/uniquetemporarydirectory()"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation/FileManager": {
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/FileManager": {
   "abstract" : [
     {
       "text" : "Add compliance to ",
@@ -1669,11 +1669,11 @@
     },
     {
       "kind" : "identifier",
-      "preciseIdentifier" : "c:objc(cs)NSFileManager",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
       "text" : "FileManager"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/FileManager",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -1684,7 +1684,7 @@
   "role" : "symbol",
   "title" : "FileManager",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation\/filemanager"
+  "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager"
 }
 }
 }

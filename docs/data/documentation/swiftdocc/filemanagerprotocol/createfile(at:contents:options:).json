@@ -27,7 +27,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC19FileManagerProtocolP06createC02at8contents7optionsy10Foundation3URLV_AH4DataVSo20NSDataWritingOptionsVSgtKF",
+    "externalID" : "s:9SwiftDocC19FileManagerProtocolP06createC02at8contents7optionsy20FoundationEssentials3URLV_AH4DataVAL14WritingOptionsVSgtKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -55,7 +55,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -72,7 +72,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation4DataV",
+        "preciseIdentifier" : "s:20FoundationEssentials4DataV",
         "text" : "Data"
       },
       {
@@ -89,7 +89,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:objc(cs)NSData",
+        "preciseIdentifier" : "s:10Foundation6NSDataC",
         "text" : "NSData"
       },
       {
@@ -98,7 +98,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:@E@NSDataWritingOptions",
+        "preciseIdentifier" : "s:10Foundation6NSDataC14WritingOptionsa",
         "text" : "WritingOptions"
       },
       {
@@ -133,7 +133,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -170,7 +170,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -187,7 +187,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation4DataV",
+              "preciseIdentifier" : "s:20FoundationEssentials4DataV",
               "text" : "Data"
             },
             {
@@ -212,7 +212,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:objc(cs)NSData",
+              "preciseIdentifier" : "s:10Foundation6NSDataC",
               "text" : "NSData"
             },
             {
@@ -221,7 +221,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:@E@NSDataWritingOptions",
+              "preciseIdentifier" : "s:10Foundation6NSDataC14WritingOptionsa",
               "text" : "WritingOptions"
             },
             {
@@ -245,6 +245,20 @@
             {
               "inlineContent" : [
                 {
+                  "text" : "The location to create the file",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "location"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
                   "text" : "The data to write to the file.",
                   "type" : "text"
                 }
@@ -253,6 +267,36 @@
             }
           ],
           "name" : "contents"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Options for writing the data. Provide ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "nil",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " to use the default",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "writing options of the file manager.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "writingOptions"
         }
       ]
     }
@@ -369,7 +413,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -386,7 +430,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     },
     {
@@ -403,7 +447,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSData",
+      "preciseIdentifier" : "s:10Foundation6NSDataC",
       "text" : "NSData"
     },
     {
@@ -412,7 +456,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@E@NSDataWritingOptions",
+      "preciseIdentifier" : "s:10Foundation6NSDataC14WritingOptionsa",
       "text" : "WritingOptions"
     },
     {

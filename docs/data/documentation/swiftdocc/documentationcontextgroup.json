@@ -175,8 +175,14 @@
             "",
             "let context = try DocumentationContext(inputs: inputs, dataProvider: dataProvider)"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : "swift",
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         },
         {
           "anchor" : "Accessing-Documentation",
@@ -211,8 +217,14 @@
             "    sourceLanguage: .swift)",
             "let node = try context.entity(with: reference)"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : "swift",
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         },
         {
           "inlineContent" : [
@@ -227,8 +239,14 @@
           "code" : [
             "let sourceFileURL = try context.documentURL(for: reference)"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : "swift",
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         }
       ],
       "kind" : "content"
@@ -502,15 +520,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/init(inputs:dataProvider:diagnosticEngine:configuration:)": {
   "abstract" : [
     {
-      "text" : "Initializes a documentation context with a given ",
-      "type" : "text"
-    },
-    {
-      "code" : "bundle",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Initializes a documentation context from a collection of input files.",
       "type" : "text"
     }
   ],

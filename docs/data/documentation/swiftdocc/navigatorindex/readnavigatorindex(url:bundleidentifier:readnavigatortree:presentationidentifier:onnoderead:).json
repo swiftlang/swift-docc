@@ -27,7 +27,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC14NavigatorIndexC04readcD03url16bundleIdentifier0eC4Tree012presentationH010onNodeReadAC10Foundation3URLV_SSSgSbAMyAA0cI0C0L0CcSgtKFZ",
+    "externalID" : "s:9SwiftDocC14NavigatorIndexC04readcD03url16bundleIdentifier0eC4Tree012presentationH010onNodeReadAC20FoundationEssentials3URLV_SSSgSbAMyAA0cI0C0L0CcSgtKFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -63,7 +63,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -192,7 +192,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -229,7 +229,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -465,8 +465,14 @@
             "let indexFilePath = URL(string: \"file:\/\/path\/to\/index\/on\/disk\")",
             "let index = NavigatorIndex.readNavigatorIndex(url: indexFilePath)"
           ],
+          "copyToClipboard" : true,
+          "lineAnnotations" : [
+
+          ],
+          "showLineNumbers" : false,
           "syntax" : "swift",
-          "type" : "codeListing"
+          "type" : "codeListing",
+          "wrap" : 0
         },
         {
           "content" : [
@@ -672,7 +678,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

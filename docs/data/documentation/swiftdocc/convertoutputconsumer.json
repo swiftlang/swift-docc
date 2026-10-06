@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "A consumer for output produced by a documentation conversion.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "The output consumer is not publicly configurable. This protocol will be made non-public after 6.5 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -18,11 +23,11 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC21ConvertOutputConsumerP",
+    "externalID" : "s:9SwiftDocC21ConvertOutputConsumera",
     "fragments" : [
       {
         "kind" : "keyword",
-        "text" : "protocol"
+        "text" : "typealias"
       },
       {
         "kind" : "text",
@@ -46,11 +51,11 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertOutputConsumer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L112"
     },
     "role" : "symbol",
-    "roleHeading" : "Protocol",
-    "symbolKind" : "protocol",
+    "roleHeading" : "Type Alias",
+    "symbolKind" : "typealias",
     "title" : "ConvertOutputConsumer"
   },
   "primaryContentSections" : [
@@ -61,12 +66,12 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
               "kind" : "keyword",
-              "text" : "protocol"
+              "text" : "typealias"
             },
             {
               "kind" : "text",
@@ -75,39 +80,20 @@
             {
               "kind" : "identifier",
               "text" : "ConvertOutputConsumer"
+            },
+            {
+              "kind" : "text",
+              "text" : " = "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC41_WillBeMadeNonPublicConvertOutputConsumerP",
+              "text" : "_WillBeMadeNonPublicConvertOutputConsumer"
             }
           ]
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "overview",
-          "level" : 2,
-          "text" : "Overview",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "Types that conform to this protocol manage what to do with documentation conversion products, for example persist them to disk",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "or store them in memory.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -117,25 +103,6 @@
   },
   "sections" : [
 
-  ],
-  "topicSections" : [
-    {
-      "anchor" : "Instance-Methods",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assets:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assetsInInputs:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(benchmarks:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(buildMetadata:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(documentationCoverageInfo:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(indexingRecords:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkableElementSummaries:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderNode:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)"
-      ],
-      "title" : "Instance Methods"
-    }
   ],
   "variants" : [
     {
@@ -167,15 +134,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer": {
   "abstract" : [
-    {
-      "text" : "A consumer for output produced by a documentation conversion.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "protocol"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -198,576 +163,6 @@
   "title" : "ConvertOutputConsumer",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(assets:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes the assets and their variants that were registered during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "assets"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19RenderReferenceTypeO",
-      "text" : "RenderReferenceType"
-    },
-    {
-      "kind" : "text",
-      "text" : " : ["
-    },
-    {
-      "kind" : "keyword",
-      "text" : "any"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC15RenderReferenceP",
-      "text" : "RenderReference"
-    },
-    {
-      "kind" : "text",
-      "text" : "]]) "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assets:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(assets:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(assets:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(assetsInInputs:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes a collection of documentation inputs with the purpose of extracting its on-disk assets.",
-      "type" : "text"
-    }
-  ],
-  "defaultImplementations" : 1,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "assetsInInputs"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC6InputsV",
-      "text" : "Inputs"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(assetsInInputs:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(assetsInInputs:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(assetsininputs:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(benchmarks:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes benchmarks collected during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "benchmarks"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC9BenchmarkC",
-      "text" : "Benchmark"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(benchmarks:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(benchmarks:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(benchmarks:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(buildMetadata:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes build metadata created during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "defaultImplementations" : 1,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "buildMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13BuildMetadataV",
-      "text" : "BuildMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(buildMetadata:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(buildMetadata:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(buildmetadata:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(documentationCoverageInfo:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes documentation coverage info created during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "documentationCoverageInfo"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17CoverageDataEntryV",
-      "text" : "CoverageDataEntry"
-    },
-    {
-      "kind" : "text",
-      "text" : "]) "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(documentationCoverageInfo:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(documentationCoverageInfo:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(documentationcoverageinfo:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(indexingRecords:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes the indexing records produced during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "indexingRecords"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14IndexingRecordV",
-      "text" : "IndexingRecord"
-    },
-    {
-      "kind" : "text",
-      "text" : "]) "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(indexingRecords:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(indexingRecords:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(indexingrecords:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(linkResolutionInformation:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes a file representation of the local link resolution information.",
-      "type" : "text"
-    }
-  ],
-  "defaultImplementations" : 1,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "linkResolutionInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC37SerializableLinkResolutionInformationV",
-      "text" : "SerializableLinkResolutionInformation"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(linkResolutionInformation:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkresolutioninformation:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(linkableElementSummaries:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes the linkable element summaries produced during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "linkableElementSummaries"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
-      "text" : "LinkDestinationSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : "]) "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkableElementSummaries:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(linkableElementSummaries:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkableelementsummaries:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(renderNode:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes a render node that was generated during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "renderNode"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV",
-      "text" : "RenderNode"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderNode:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(renderNode:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(rendernode:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(renderReferenceStore:)": {
-  "abstract" : [
-    {
-      "text" : "Consumes a render reference store creating during a conversion.",
-      "type" : "text"
-    }
-  ],
-  "defaultImplementations" : 1,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "consume"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "renderReferenceStore"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20RenderReferenceStoreV",
-      "text" : "RenderReferenceStore"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderReferenceStore:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "consume(renderReferenceStore:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(renderreferencestore:)"
 }
 }
 }

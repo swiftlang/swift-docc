@@ -9,7 +9,7 @@
     {
       "anchor" : "DirectiveConvertible-Implementations",
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/init(from:source:for:featureFlags:diagnostics:)-1vjng"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/init(from:source:for:featureFlags:diagnostics:)-2mshx"
       ],
       "title" : "DirectiveConvertible Implementations"
     }
@@ -28,7 +28,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC20DirectiveConvertibleP4from6source3for12featureFlags11diagnosticsxSg8Markdown05BlockC0V_10Foundation3URLVSgAA20DocumentationContextC6InputsVAA07FeatureI0VSayAA10DiagnosticVGztcfc",
+    "externalID" : "s:9SwiftDocC20DirectiveConvertibleP4from6source3for12featureFlags11diagnosticsxSg8Markdown05BlockC0V_20FoundationEssentials3URLVSgAA20DocumentationContextC6InputsVAA07FeatureI0VSayAA10DiagnosticVGztcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -65,7 +65,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -164,7 +164,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -210,7 +210,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -526,7 +526,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -610,7 +610,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:featureflags:diagnostics:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible/init(from:source:for:featureFlags:diagnostics:)-1vjng": {
+"doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible/init(from:source:for:featureFlags:diagnostics:)-2mshx": {
   "abstract" : [
 
   ],
@@ -651,7 +651,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -718,12 +718,12 @@
       "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/init(from:source:for:featureFlags:diagnostics:)-1vjng",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/init(from:source:for:featureFlags:diagnostics:)-2mshx",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "init(from:source:for:featureFlags:diagnostics:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:featureflags:diagnostics:)-1vjng"
+  "url" : "\/documentation\/swiftdocc\/directiveconvertible\/init(from:source:for:featureflags:diagnostics:)-2mshx"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
   "abstract" : [

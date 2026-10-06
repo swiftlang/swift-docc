@@ -5,7 +5,7 @@
       "type" : "text"
     },
     {
-      "code" : "RandomAccessCollection.subscript(_:)",
+      "code" : "Collection.subscript(_:)",
       "type" : "codeVoice"
     },
     {
@@ -100,7 +100,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {

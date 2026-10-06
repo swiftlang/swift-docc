@@ -58,7 +58,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -184,8 +184,9 @@
       "type" : "text"
     },
     {
-      "code" : "HTMLNode\/Attribute\/autocapitalize(_:)",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/autoCapitalize(_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : " attribute.",
@@ -246,6 +247,60 @@
   "title" : "HTMLNode.Attribute.AutoCapitalize.words",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/autocapitalize\/words"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/autoCapitalize(_:)": {
+  "abstract" : [
+    {
+      "text" : "A configuration of the autocapitalization behavior of the element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "autoCapitalize"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV14AutoCapitalizeO",
+      "text" : "AutoCapitalize"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/autoCapitalize(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "autoCapitalize(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/autocapitalize(_:)"
 }
 }
 }

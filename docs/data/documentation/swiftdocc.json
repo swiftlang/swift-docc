@@ -346,7 +346,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyLink",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkBlockMetric",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkMetric",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputMarkdownConsumer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataProvider",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingConsumer",
@@ -433,11 +432,21 @@
       "title" : "Variables"
     },
     {
+      "anchor" : "Functions",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/autoreleasepool(_:)"
+      ],
+      "title" : "Functions"
+    },
+    {
       "anchor" : "Type-Aliases",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleDiscoveryOptions",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchDifferences",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Lock",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MetricValue"
@@ -449,12 +458,10 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertActionConverter",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageLevel",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkCompletionTools",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTParameterSource",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderJSONDecoder",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderJSONEncoder"
@@ -465,7 +472,7 @@
       "anchor" : "Extended-Modules",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit"
@@ -1074,15 +1081,13 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer": {
   "abstract" : [
-    {
-      "text" : "A consumer for output produced by a documentation conversion.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "protocol"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -1739,17 +1744,15 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCatalogFileTypes": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundleFileTypes": {
   "abstract" : [
-    {
-      "text" : "A collection of functions to check if a file is one of the documentation catalog files types.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "enum"
+      "text" : "typealias"
     },
     {
       "kind" : "text",
@@ -1757,21 +1760,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "DocumentationCatalogFileTypes"
+      "text" : "DocumentationBundleFileTypes"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCatalogFileTypes",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "DocumentationCatalogFileTypes"
+      "text" : "DocumentationBundleFileTypes"
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationCatalogFileTypes",
+  "title" : "DocumentationBundleFileTypes",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes"
+  "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContentRenderer": {
   "abstract" : [
@@ -2305,16 +2308,16 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/filemanagerprotocol"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation": {
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials": {
   "abstract" : [
 
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials",
   "kind" : "symbol",
   "role" : "collection",
-  "title" : "Foundation",
+  "title" : "FoundationEssentials",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation"
+  "url" : "\/documentation\/swiftdocc\/foundationessentials"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/GeneratedCurationWriter": {
   "abstract" : [
@@ -3352,40 +3355,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/propertylistpossiblevaluessection"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle": {
-  "abstract" : [
-    {
-      "text" : "A style for how to render links to a property list key or an entitlement key.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "enum"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "PropertyListTitleStyle"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "PropertyListTitleStyle"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "PropertyListTitleStyle",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RESTBodyRenderSection": {
   "abstract" : [
     {
@@ -4305,6 +4274,76 @@
   "title" : "XcodeRequirementReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/xcoderequirementreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/autoreleasepool(_:)": {
+  "abstract" : [
+    {
+      "text" : "A shim for non-ObjC targets that runs the given block of code.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "autoreleasepool"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Result"
+    },
+    {
+      "kind" : "text",
+      "text" : ">(() "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15autoreleasepoolyxxyKXEKlF6ResultL_xmfp",
+      "text" : "Result"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "rethrows"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15autoreleasepoolyxxyKXEKlF6ResultL_xmfp",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/autoreleasepool(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "autoreleasepool(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/autoreleasepool(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/shouldPrettyPrintOutputJSON": {
   "abstract" : [

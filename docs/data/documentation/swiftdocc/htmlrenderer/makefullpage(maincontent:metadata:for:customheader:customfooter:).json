@@ -161,7 +161,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTMLRenderer+FullPage.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLRenderer+FullPage.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLRenderer+FullPage.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -176,7 +176,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -372,6 +372,34 @@
             }
           ],
           "name" : "reference"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A custom HTML header that the renderer will include in the full-page output.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "customHeader"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A custom HTML footer that the renderer will include in the full-page output.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "customFooter"
         }
       ]
     },

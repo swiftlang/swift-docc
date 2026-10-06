@@ -148,6 +148,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParameterRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertiesRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty",
@@ -895,6 +896,40 @@
   "title" : "PropertiesRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/propertiesrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle": {
+  "abstract" : [
+    {
+      "text" : "A style for how to render links to a property list key or an entitlement key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListTitleStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListTitleStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PropertyListTitleStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RESTEndpointRenderSection": {
   "abstract" : [

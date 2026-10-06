@@ -106,7 +106,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -177,6 +177,12 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "mentions",
+      "mentions" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkResolution"
+      ]
     }
   ],
   "schemaVersion" : {
@@ -494,6 +500,20 @@
   "title" : "ExternalDocumentationSource",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/externaldocumentationsource"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkResolution": {
+  "abstract" : [
+    {
+      "text" : "Connect documentation pages with documentation links.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkResolution",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Linking Between Documentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkresolution"
 }
 }
 }

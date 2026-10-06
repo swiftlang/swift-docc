@@ -31,7 +31,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV4kind3url5title8abstract8language18availableLanguages9platforms20declarationFragments11topicImages10references8variantsAeA17DocumentationNodeV4KindV_10Foundation3URLVS2S0B7CCommon14SourceLanguageVShyAZGSayAA22AvailabilityRenderItemVGSg9SymbolKit11SymbolGraphV6SymbolV011DeclarationS0VSgSayAA10TopicImageVGSgSayAA06RenderF0_pGSgSayAE7VariantVGSgtcfc",
+    "externalID" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV4kind3url5title8abstract8language18availableLanguages9platforms20declarationFragments11topicImages10references8variantsAeA17DocumentationNodeV4KindV_20FoundationEssentials3URLVS2S0B7CCommon14SourceLanguageVShyAZGSayAA22AvailabilityRenderItemVGSg9SymbolKit11SymbolGraphV6SymbolV011DeclarationS0VSgSayAA10TopicImageVGSgSayAA06RenderF0_pGSgSayAE7VariantVGSgtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -77,7 +77,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -277,7 +277,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -326,7 +326,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -1006,7 +1006,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

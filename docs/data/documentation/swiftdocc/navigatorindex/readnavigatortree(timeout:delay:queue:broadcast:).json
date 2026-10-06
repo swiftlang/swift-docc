@@ -43,7 +43,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC14NavigatorIndexC04readC4Tree7timeout5delay5queue9broadcastySd_SdSo012OS_dispatch_I0CySayAA0cF0C4NodeCG_SbAL5ErrorOSgtcSgtKF",
+    "externalID" : "s:9SwiftDocC14NavigatorIndexC04readC4Tree7timeout5delay5queue9broadcastySd_Sd8Dispatch0K5QueueCySayAA0cF0C4NodeCG_SbAM5ErrorOSgtcSgtKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -71,7 +71,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:@T@NSTimeInterval",
+        "preciseIdentifier" : "s:10Foundation12TimeIntervala",
         "text" : "TimeInterval"
       },
       {
@@ -88,7 +88,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:@T@NSTimeInterval",
+        "preciseIdentifier" : "s:10Foundation12TimeIntervala",
         "text" : "TimeInterval"
       },
       {
@@ -105,7 +105,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+        "preciseIdentifier" : "s:8Dispatch0A5QueueC",
         "text" : "DispatchQueue"
       },
       {
@@ -150,7 +150,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L391"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L394"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -165,7 +165,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -194,7 +194,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:@T@NSTimeInterval",
+              "preciseIdentifier" : "s:10Foundation12TimeIntervala",
               "text" : "TimeInterval"
             },
             {
@@ -211,7 +211,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:@T@NSTimeInterval",
+              "preciseIdentifier" : "s:10Foundation12TimeIntervala",
               "text" : "TimeInterval"
             },
             {
@@ -228,7 +228,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+              "preciseIdentifier" : "s:8Dispatch0A5QueueC",
               "text" : "DispatchQueue"
             },
             {
@@ -537,7 +537,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@T@NSTimeInterval",
+      "preciseIdentifier" : "s:10Foundation12TimeIntervala",
       "text" : "TimeInterval"
     },
     {
@@ -554,7 +554,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@T@NSTimeInterval",
+      "preciseIdentifier" : "s:10Foundation12TimeIntervala",
       "text" : "TimeInterval"
     },
     {
@@ -571,7 +571,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+      "preciseIdentifier" : "s:8Dispatch0A5QueueC",
       "text" : "DispatchQueue"
     },
     {

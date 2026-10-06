@@ -52,7 +52,7 @@
       ]
     },
     "extendedModule" : "DocCHTML",
-    "externalID" : "s:8DocCHTML16MarkdownRendererV11breadcrumbs10references16currentPageNamesAA8HTMLNodeVSay10Foundation3URLVG_AA13LinkedElementV0I0OtF",
+    "externalID" : "s:8DocCHTML16MarkdownRendererV11breadcrumbs10references16currentPageNamesAA8HTMLNodeVSay20FoundationEssentials3URLVG_AA13LinkedElementV0I0OtF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -80,7 +80,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -141,7 +141,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -170,7 +170,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -446,7 +446,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {

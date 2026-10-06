@@ -20,7 +20,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC10RenderNodeV6decode8fromJSON4withAC10Foundation4DataV_AG11JSONDecoderCtKFZ",
+    "externalID" : "s:9SwiftDocC10RenderNodeV6decode8fromJSON4withAC20FoundationEssentials4DataV_AG11JSONDecoderCtKFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -56,7 +56,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation4DataV",
+        "preciseIdentifier" : "s:20FoundationEssentials4DataV",
         "text" : "Data"
       },
       {
@@ -73,7 +73,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation11JSONDecoderC",
+        "preciseIdentifier" : "s:20FoundationEssentials11JSONDecoderC",
         "text" : "JSONDecoder"
       },
       {
@@ -116,7 +116,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -161,7 +161,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation4DataV",
+              "preciseIdentifier" : "s:20FoundationEssentials4DataV",
               "text" : "Data"
             },
             {
@@ -186,7 +186,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation11JSONDecoderC",
+              "preciseIdentifier" : "s:20FoundationEssentials11JSONDecoderC",
               "text" : "JSONDecoder"
             },
             {
@@ -448,7 +448,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     },
     {
@@ -465,7 +465,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation11JSONDecoderC",
+      "preciseIdentifier" : "s:20FoundationEssentials11JSONDecoderC",
       "text" : "JSONDecoder"
     },
     {

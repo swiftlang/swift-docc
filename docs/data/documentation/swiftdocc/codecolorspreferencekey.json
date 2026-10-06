@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -146,10 +146,8 @@
       "anchor" : "Communication-Bridge",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationSchemeHandler",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MessageType",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors"
@@ -1252,37 +1250,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/communicationbridgeerror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationSchemeHandler": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationSchemeHandler"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationSchemeHandler",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationSchemeHandler"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationSchemeHandler",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationschemehandler"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Message": {
   "abstract" : [
     {
@@ -1350,40 +1317,6 @@
   "title" : "MessageType",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/messagetype"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/WebKitCommunicationBridge": {
-  "abstract" : [
-    {
-      "text" : "Provides bi-directional communication with a documentation renderer via JavaScript calls in a web view.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "WebKitCommunicationBridge"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "WebKitCommunicationBridge"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "WebKitCommunicationBridge",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/webkitcommunicationbridge"
 },
 "doc://SwiftDocC/s16SendableMetatypeP": {
   "identifier" : "doc:\/\/SwiftDocC\/s16SendableMetatypeP",

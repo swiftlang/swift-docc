@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A Boolean value indicating if the platform is currently in beta.",
+      "text" : "A Boolean value indicating if this API is currently in beta for this platform.",
       "type" : "text"
     }
   ],
@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownRenderer+Availability.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Availability.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Availability.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -66,7 +66,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -232,7 +232,7 @@
 "doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/AvailabilityInfo/isBeta": {
   "abstract" : [
     {
-      "text" : "A Boolean value indicating if the platform is currently in beta.",
+      "text" : "A Boolean value indicating if this API is currently in beta for this platform.",
       "type" : "text"
     }
   ],

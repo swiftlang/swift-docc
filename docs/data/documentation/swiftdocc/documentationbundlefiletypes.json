@@ -66,7 +66,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -104,16 +104,6 @@
   },
   "sections" : [
 
-  ],
-  "seeAlsoSections" : [
-    {
-      "anchor" : "Documentation-Inputs",
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs"
-      ],
-      "title" : "Documentation Inputs"
-    }
   ],
   "variants" : [
     {
@@ -208,40 +198,6 @@
   "title" : "DocumentationCatalogFileTypes",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcatalogfiletypes"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/Inputs": {
-  "abstract" : [
-    {
-      "text" : "A collection of the build inputs for a unit of documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Inputs"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/Inputs",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Inputs"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationContext.Inputs",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/inputs"
 }
 }
 }

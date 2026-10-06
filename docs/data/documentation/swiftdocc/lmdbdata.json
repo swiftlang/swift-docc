@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -155,8 +155,8 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Bool",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/Data",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/Date",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Double",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Float",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int",
@@ -171,7 +171,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt32",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt64",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt8",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/URL"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/URL"
       ],
       "kind" : "relationships",
       "title" : "Conforming Types",
@@ -401,7 +401,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/availabilityindex"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation/Data": {
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/Data": {
   "abstract" : [
 
   ],
@@ -416,11 +416,11 @@
     },
     {
       "kind" : "identifier",
-      "preciseIdentifier" : "s:10Foundation4DataV",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
       "text" : "Data"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/Data",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
@@ -431,15 +431,15 @@
   "role" : "symbol",
   "title" : "Data",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/foundation\/data"
+  "url" : "\/documentation\/swiftdocc\/foundationessentials\/data"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation/Date": {
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Date",
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/Date": {
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/Date",
   "title" : "Date",
   "type" : "unresolvable"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Foundation/URL": {
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/URL",
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/URL": {
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/URL",
   "title" : "URL",
   "type" : "unresolvable"
 },
@@ -771,68 +771,9 @@
   "url" : "\/documentation\/swiftdocc\/serializable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Array": {
-  "abstract" : [
-
-  ],
-  "conformance" : {
-    "availabilityPrefix" : [
-      {
-        "text" : "Available when",
-        "type" : "text"
-      }
-    ],
-    "conformancePrefix" : [
-      {
-        "text" : "Conforms when",
-        "type" : "text"
-      }
-    ],
-    "constraints" : [
-      {
-        "code" : "Element",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " conforms to ",
-        "type" : "text"
-      },
-      {
-        "code" : "FixedWidthInteger",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : ".",
-        "type" : "text"
-      }
-    ]
-  },
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "extension"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "preciseIdentifier" : "s:Sa",
-      "text" : "Array"
-    }
-  ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Array"
-    }
-  ],
-  "role" : "symbol",
   "title" : "Array",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/swift\/array"
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Swift/Bool": {
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Bool",

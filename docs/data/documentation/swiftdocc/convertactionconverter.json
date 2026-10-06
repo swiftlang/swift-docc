@@ -40,7 +40,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertActionConverter.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertActionConverter.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertActionConverter.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -55,7 +55,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -238,8 +238,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
-      "text" : "ConvertOutputConsumer"
+      "preciseIdentifier" : "s:9SwiftDocC41_WillBeMadeNonPublicConvertOutputConsumerP",
+      "text" : "_WillBeMadeNonPublicConvertOutputConsumer"
     },
     {
       "kind" : "text",
@@ -381,8 +381,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:2os12OSSignposterV",
-      "text" : "OSSignposter"
+      "preciseIdentifier" : "s:9SwiftDocC18NoOpSignposterShimV",
+      "text" : "NoOpSignposterShim"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertActionConverter\/signposter",

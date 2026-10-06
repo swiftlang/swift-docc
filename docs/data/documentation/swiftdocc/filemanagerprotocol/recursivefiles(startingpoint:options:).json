@@ -20,7 +20,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC19FileManagerProtocolPAAE14recursiveFiles13startingPoint7optionss16IteratorSequenceVyAA01_gK0VG10Foundation3URLV_So29NSDirectoryEnumerationOptionsVtF",
+    "externalID" : "s:9SwiftDocC19FileManagerProtocolPAAE14recursiveFiles13startingPoint7optionss16IteratorSequenceVyAA01_gK0VG20FoundationEssentials3URLV_AL0cD0C27DirectoryEnumerationOptionsVtF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -48,7 +48,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:10Foundation3URLV",
+        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
         "text" : "URL"
       },
       {
@@ -65,7 +65,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:objc(cs)NSFileManager",
+        "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
         "text" : "FileManager"
       },
       {
@@ -74,7 +74,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "c:@E@NSDirectoryEnumerationOptions",
+        "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
         "text" : "DirectoryEnumerationOptions"
       },
       {
@@ -122,7 +122,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -151,7 +151,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:10Foundation3URLV",
+              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
               "text" : "URL"
             },
             {
@@ -168,7 +168,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:objc(cs)NSFileManager",
+              "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
               "text" : "FileManager"
             },
             {
@@ -177,7 +177,7 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "c:@E@NSDirectoryEnumerationOptions",
+              "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
               "text" : "DirectoryEnumerationOptions"
             },
             {
@@ -373,7 +373,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
       "text" : "URL"
     },
     {
@@ -390,7 +390,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSFileManager",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
       "text" : "FileManager"
     },
     {
@@ -399,7 +399,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:@E@NSDirectoryEnumerationOptions",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
       "text" : "DirectoryEnumerationOptions"
     },
     {

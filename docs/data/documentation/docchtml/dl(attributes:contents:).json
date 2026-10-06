@@ -100,7 +100,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTMLNode+Tags.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Tags.swift#L301"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Tags.swift#L299"
     },
     "role" : "symbol",
     "roleHeading" : "Function",
@@ -115,7 +115,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {

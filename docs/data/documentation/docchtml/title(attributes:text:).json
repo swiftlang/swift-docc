@@ -100,7 +100,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTMLNode+Tags.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Tags.swift#L86"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Tags.swift#L83"
     },
     "role" : "symbol",
     "roleHeading" : "Function",
@@ -115,7 +115,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -206,6 +206,20 @@
             }
           ],
           "name" : "attributes"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The textual contents for the new element.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "text"
         }
       ]
     },

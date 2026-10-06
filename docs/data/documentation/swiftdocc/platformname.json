@@ -61,7 +61,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -172,10 +172,19 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/tvOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/tvOSAppExtension",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/visionOS",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/visionOSAppExtension",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/watchOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/watchOSAppExtension"
       ],
       "title" : "Type Properties"
+    },
+    {
+      "anchor" : "Type-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/addingFallbacks(_:)"
+      ],
+      "title" : "Type Methods"
     }
   ],
   "variants" : [
@@ -450,6 +459,64 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platformname\/_(_:_:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/PlatformName/addingFallbacks(_:)": {
+  "abstract" : [
+    {
+      "text" : "Returns the given platforms with any missing fallback platforms added.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "addingFallbacks"
+    },
+    {
+      "kind" : "text",
+      "text" : "(["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : "?]) -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : "?]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/addingFallbacks(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "addingFallbacks(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/platformname\/addingfallbacks(_:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformName/aliases": {
   "abstract" : [
     {
@@ -696,8 +763,9 @@
       "type" : "text"
     },
     {
-      "code" : "==",
-      "type" : "codeVoice"
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/==(_:_:)",
+      "isActive" : true,
+      "type" : "reference"
     },
     {
       "text" : ".",
@@ -1402,6 +1470,48 @@
   "title" : "visionOS",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platformname\/visionos"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PlatformName/visionOSAppExtension": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visionOSAppExtension"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/visionOSAppExtension",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visionOSAppExtension",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/platformname\/visionosappextension"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformName/watchOS": {
   "abstract" : [

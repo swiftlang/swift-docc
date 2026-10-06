@@ -55,7 +55,7 @@
             "swift"
           ],
           "platforms" : [
-            "macOS"
+            "Linux"
           ],
           "tokens" : [
             {
@@ -205,8 +205,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:s5Int32V",
-      "text" : "Int32"
+      "preciseIdentifier" : "s:s4CInta",
+      "text" : "CInt"
     },
     {
       "kind" : "text",
