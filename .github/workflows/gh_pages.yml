@@ -21,7 +21,7 @@ jobs:
     name: Build and publish documentation
     runs-on: ubuntu-latest
     container:
-      image: swift:6.3-jammy
+      image: swift:6.4-noble
     steps:
       - name: Check out source
         uses: actions/checkout@v7
