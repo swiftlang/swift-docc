@@ -57,6 +57,7 @@ public struct PropertyListPossibleValuesSection {
         /// - Parameters:
         ///   - unknownPossibleValue: The authored documentation for the unknown possible value name.
         ///   - knownPossibleValues: All known possible value names for that symbol.
+        ///   - symbolName: The name of the symbol that the unknown value is associated with, to be displayed in the diagnostic message.
         /// - Returns: A new diagnostic that suggests that the developer removes the documentation for the unknown possible value.
         static func makeExtraPossibleValueDiagnostic(_ unknownPossibleValue: PossibleValue, knownPossibleValues: Set<String>, symbolName: String) -> Diagnostic {
             

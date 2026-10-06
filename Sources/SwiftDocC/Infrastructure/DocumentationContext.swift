@@ -19,9 +19,6 @@ private import os
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///
-/// A ``DocumentationWorkspace`` discovers serialized documentation bundles from a variety of sources (files on disk, databases, or web services), provides them to the `DocumentationContext`,
-/// and notifies the context when bundles are added or removed using the ``DocumentationContextDataProviderDelegate`` protocol.
-///
 /// When a documentation bundle is registered with the context, all of its content is loaded into memory and relationships between documentation entities are built. When this is done, the context can be queried
 /// about documentation entities, resources, and relationships between entities.
 ///
@@ -210,14 +207,14 @@ public class DocumentationContext {
     /// Mentions of symbols within articles.
     var articleSymbolMentions = ArticleSymbolMentions()
 
-    /// Initializes a documentation context with a given `bundle`.
+    /// Initializes a documentation context from a collection of input files.
     ///
     /// - Parameters:
-    ///   - inputs: The inputs to register with the context.
-    ///   - fileManager: The file manager that the context uses to read files from the bundle.
+    ///   - inputs: The collection of input files to register with the context.
+    ///   - dataProvider: The data provider that the context uses to read files from the inputs.
     ///   - diagnosticEngine: The pre-configured engine that will collect diagnostics encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
+    /// - Throws: If an error is encountered while registering the documentation input files.
     package init(
         inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
@@ -1146,12 +1143,11 @@ public class DocumentationContext {
                         }
                     }
 
-                    let overloadGroups: [String: Set<String>] =
-                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
-                        $0.filter { $0.kind == .overloadOf }
-                    }).reduce(into: [:], { acc, relationship in
-                        acc[relationship.target, default: []].insert(relationship.source)
-                    })
+                    let overloadGroups: [String: Set<String>] = unifiedSymbolGraph.relationshipsByLanguage.values.reduce(into: [:]) { acc, relationships in
+                        for relationship in relationships where relationship.kind == . overloadOf {
+                            acc[relationship.target, default: []].insert(relationship.source)
+                        }
+                    }
                     addOverloadGroupReferences(overloadGroups: overloadGroups)
 
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -1312,7 +1308,7 @@ public class DocumentationContext {
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationshipsBySelector)
             
-            for (selector, relationships) in combinedRelationshipsBySelector {
+            for (selector, relationships) in combinedRelationshipsBySelector.sortedBySelector() {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector)
                 // Merge into target symbols the member symbols that get rendered on the same page as target.
@@ -1416,49 +1412,50 @@ public class DocumentationContext {
         var bodyParametersByTarget = [String: [HTTPParameter]]()
         var responsesByTarget = [String: [HTTPResponse]]()
         
-        for edge in relationships {
-            if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
-                if let source = documentationCache[edge.source], let target = documentationCache[edge.target],
-                   let sourceSymbol = source.symbol
-                {
-                    switch (source.kind, target.kind) {
-                    case (.dictionaryKey, .dictionary):
-                        let dictionaryKey = DictionaryKey(name: sourceSymbol.names.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
-                        if keysByTarget[edge.target] == nil {
-                            keysByTarget[edge.target] = [dictionaryKey]
-                        } else {
-                            keysByTarget[edge.target]?.append(dictionaryKey)
-                        }
-                    case (.httpParameter, .httpRequest):
-                        let parameter = HTTPParameter(name: sourceSymbol.names.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
-                        if parametersByTarget[edge.target] == nil {
-                            parametersByTarget[edge.target] = [parameter]
-                        } else {
-                            parametersByTarget[edge.target]?.append(parameter)
-                        }
-                    case (.httpBody, .httpRequest):
-                        let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
-                        bodyByTarget[edge.target] = body
-                    case (.httpParameter, .httpBody):
-                        let parameter = HTTPParameter(name: sourceSymbol.names.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
-                        if bodyParametersByTarget[edge.target] == nil {
-                            bodyParametersByTarget[edge.target] = [parameter]
-                        } else {
-                            bodyParametersByTarget[edge.target]?.append(parameter)
-                        }
-                    case (.httpResponse, .httpRequest):
-                        let statusParts = sourceSymbol.names.title.split(separator: " ", maxSplits: 1)
-                        let statusCode = UInt(statusParts[0]) ?? 0
-                        let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
-                        let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
-                        if responsesByTarget[edge.target] == nil {
-                            responsesByTarget[edge.target] = [response]
-                        } else {
-                            responsesByTarget[edge.target]?.append(response)
-                        }
-                    case (_, _):
-                        continue
+        // For a given container and member symbol, there exists exactly one relationship for the membership.
+        // Ergo, every `memberOf` relationship to a target container will have a distinct source symbol.
+        // Thus, sorting relationships by the source identifier sufficiently guarantees stable ordering.
+        for edge in relationships.lazy.filter({ $0.kind == .memberOf || $0.kind == .optionalMemberOf }).sorted(by: { $0.source < $1.source }) {
+            if let source = documentationCache[edge.source], let target = documentationCache[edge.target],
+               let sourceSymbol = source.symbol
+            {
+                switch (source.kind, target.kind) {
+                case (.dictionaryKey, .dictionary):
+                    let dictionaryKey = DictionaryKey(name: sourceSymbol.names.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                    if keysByTarget[edge.target] == nil {
+                        keysByTarget[edge.target] = [dictionaryKey]
+                    } else {
+                        keysByTarget[edge.target]?.append(dictionaryKey)
                     }
+                case (.httpParameter, .httpRequest):
+                    let parameter = HTTPParameter(name: sourceSymbol.names.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                    if parametersByTarget[edge.target] == nil {
+                        parametersByTarget[edge.target] = [parameter]
+                    } else {
+                        parametersByTarget[edge.target]?.append(parameter)
+                    }
+                case (.httpBody, .httpRequest):
+                    let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
+                    bodyByTarget[edge.target] = body
+                case (.httpParameter, .httpBody):
+                    let parameter = HTTPParameter(name: sourceSymbol.names.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                    if bodyParametersByTarget[edge.target] == nil {
+                        bodyParametersByTarget[edge.target] = [parameter]
+                    } else {
+                        bodyParametersByTarget[edge.target]?.append(parameter)
+                    }
+                case (.httpResponse, .httpRequest):
+                    let statusParts = sourceSymbol.names.title.split(separator: " ", maxSplits: 1)
+                    let statusCode = UInt(statusParts[0]) ?? 0
+                    let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
+                    let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
+                    if responsesByTarget[edge.target] == nil {
+                        responsesByTarget[edge.target] = [response]
+                    } else {
+                        responsesByTarget[edge.target]?.append(response)
+                    }
+                case (_, _):
+                    continue
                 }
             }
         }
@@ -1634,7 +1631,7 @@ public class DocumentationContext {
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
-    // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
+    // TODO: Move this functionality to ``DocumentationCatalogFileTypes`` (rdar://68156425).
     
     /// A type of asset.
     public enum AssetType: CustomStringConvertible {
@@ -3311,11 +3308,17 @@ private extension DirectedGraph {
         var nodes = [startingPoint]
         var seen: Set<Node> = [startingPoint]
         while !nodes.isEmpty {
-            let matches = nodes.filter(predicate)
+            let matches = Set(nodes.lazy.filter(predicate))
             if !matches.isEmpty {
-                return Set(matches)
+                return matches
             }
-            nodes = nodes.flatMap { neighbors(of: $0) }.filter { seen.insert($0).inserted }
+            var next: [Node] = []
+            for node in nodes {
+                for neighbor in neighbors(of: node) where seen.insert(neighbor).inserted {
+                    next.append(neighbor)
+                }
+            }
+            nodes = next
         }
         return []
     }

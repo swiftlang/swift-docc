@@ -511,7 +511,7 @@ class ListItemExtractorTests: XCTestCase {
             // ```
             // Inner code block
             // ```
-            .codeListing(.init(syntax: nil, code: ["Inner code block"], metadata: nil, options: nil)),
+            .codeListing(.init(syntax: nil, code: ["Inner code block"], metadata: nil, options: .init(copyToClipboard: true, showLineNumbers: false, wrap: 0, lineAnnotations: []))),
 
             // > Warning: Inner aside, with ``ThirdNotFoundSymbol`` link
             .aside(.init(style: .init(asideKind: .warning), content: [

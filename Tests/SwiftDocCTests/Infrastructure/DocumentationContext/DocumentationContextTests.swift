@@ -888,12 +888,15 @@ class DocumentationContextTests: XCTestCase {
 
         // The two types are equatable but XCTAssertEqual doesn't catch that.
         XCTAssertTrue(myClassSymbol.kind.identifier == SymbolGraph.Symbol.KindIdentifier.class)
-        XCTAssertNotNil(myClassSymbol.availability?.availability.first(where: { (availability) -> Bool in
-            if let domain = availability.domain, let introduced = availability.introducedVersion, domain.rawValue == "macOS", introduced.major == 10, introduced.minor == 15 {
-                return true
-            }
-            return false
-        }))
+        do {
+            let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: myClass))
+            XCTAssertNotNil(
+                renderNode.metadata.platforms?.first(where: { availability in
+                    availability.name == "macOS" && availability.introduced == "10.15"
+                })
+            )
+        }
         
         XCTAssertEqual(Array(myClassSymbol.declaration.keys), [[PlatformName(operatingSystemName: "ios")]])
         XCTAssertEqual(myClassSymbol.declaration[[PlatformName(operatingSystemName: "ios")]]?.declarationFragments.map { $0.spelling }.joined(), "class MyClass")

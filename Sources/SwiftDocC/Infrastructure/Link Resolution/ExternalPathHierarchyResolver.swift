@@ -104,12 +104,7 @@ final class ExternalPathHierarchyResolver {
         entities.reserveCapacity(linkDestinationSummaries.count)
         symbols.reserveCapacity(linkDestinationSummaries.count)
         for entity in linkDestinationSummaries {
-            let reference = ResolvedTopicReference(
-                bundleID: .init(rawValue: entity.referenceURL.host!),
-                path: entity.referenceURL.path,
-                fragment: entity.referenceURL.fragment,
-                sourceLanguage: entity.language
-            )
+            let reference = entity.makeResolvedTopicReference()
             entities[reference] = entity
             if let usr = entity.usr {
                 symbols[usr] = reference
@@ -147,7 +142,7 @@ final class ExternalPathHierarchyResolver {
         
         self.init(
             linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: dataProvider.contents(of: linkHierarchyFile)),
-            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
+            entityInformation: try FastSymbolGraphJSONDecoder.decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
         )
     }
 }
@@ -161,7 +156,7 @@ extension LinkDestinationSummary {
             return false
         }
         
-        return platforms.allSatisfy { $0.isBeta == true }
+        return platforms.allSatisfy { $0.beta }
     }
     
     /// Create a topic render render reference for this link summary and its content variants.
@@ -190,7 +185,7 @@ extension LinkDestinationSummary {
         }
         
         return TopicRenderReference(
-            identifier: .init(referenceURL.absoluteString),
+            identifier: referenceIdentifier,
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
             url: absolutePresentationURL?.absoluteString ?? relativePresentationURL.absoluteString,
@@ -202,7 +197,7 @@ extension LinkDestinationSummary {
             estimatedTime: nil,
             conformance: nil,
             isBeta: isBeta,
-            isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true || $0.deprecated != nil }) ?? false,
+            isDeprecated: platforms?.contains(where: { $0.isUnconditionallyDeprecated || $0.deprecated != nil }) ?? false,
             defaultImplementationCount: nil,
             propertyListKeyNames: nil,
             tags: nil,

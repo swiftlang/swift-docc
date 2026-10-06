@@ -406,6 +406,8 @@ class DocumentationInputsInfoTests: XCTestCase {
             <dict>
                 <key>ExperimentalOverloadedSymbolPresentation</key>
                 <true/>
+                <key>CodeBlockAnnotations</key>
+                <false/>
             </dict>
         </dict>
         </plist>
@@ -418,5 +420,43 @@ class DocumentationInputsInfoTests: XCTestCase {
 
         let featureFlags = try XCTUnwrap(info.featureFlags)
         XCTAssertTrue(try XCTUnwrap(featureFlags.experimentalOverloadedSymbolPresentation))
+        XCTAssertFalse(try XCTUnwrap(featureFlags.codeBlockAnnotations))
+    }
+
+    func testFeatureFlagsBackwardsCompatibleWithDeprecatedCodeBlockAnnotationsKey() throws {
+        let infoPlistWithFeatureFlags = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>Info Plist Display Name</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.info.Plist</string>
+            <key>CDExperimentalFeatureFlags</key>
+            <dict>
+                <key>ExperimentalCodeBlockAnnotations</key>
+                <false/>
+            </dict>
+        </dict>
+        </plist>
+        """
+
+        let infoPlistWithFeatureFlagsData = Data(infoPlistWithFeatureFlags.utf8)
+        let info = try DocumentationContext.Inputs.Info(
+            from: infoPlistWithFeatureFlagsData,
+            catalogDiscoveryOptions: nil)
+
+        let featureFlags = try XCTUnwrap(info.featureFlags)
+        XCTAssertFalse(try XCTUnwrap(featureFlags.codeBlockAnnotations))
+    }
+
+    func testLoadFlagsFromBundleAppliesCodeBlockAnnotations() throws {
+        var featureFlags = FeatureFlags()
+        XCTAssertTrue(featureFlags.isCodeBlockAnnotationsEnabled)
+
+        featureFlags.loadFlagsFromBundle(.init(codeBlockAnnotations: false))
+        XCTAssertFalse(featureFlags.isCodeBlockAnnotationsEnabled)
+
+        featureFlags.loadFlagsFromBundle(.init(codeBlockAnnotations: true))
+        XCTAssertTrue(featureFlags.isCodeBlockAnnotationsEnabled)
     }
 }

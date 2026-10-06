@@ -19,7 +19,7 @@ enum TopicRenderReferenceEncoder {
     ///   - renderNodeData: A render node encoded as JSON data.
     ///   - references: A list of render references.
     ///   - encoder: A `JSONEncoder` to use for the encoding.
-    ///   - renderReferenceCache: A cache for encoded render reference data. When encoding a large number of render nodes, use the same cache
+    ///   - referenceCache: A cache for encoded render reference data. When encoding a large number of render nodes, use the same cache
     ///   instance to avoid encoding the same reference objects repeatedly.
     static func addRenderReferences(
         to renderNodeData: inout Data,

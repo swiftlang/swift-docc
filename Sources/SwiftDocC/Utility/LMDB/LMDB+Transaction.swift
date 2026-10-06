@@ -151,6 +151,7 @@ extension LMDB {
             - key: The key of the value.
             - value: The value to be insert inside the database.
             - db: The database to insert the value into.
+            - flags: The set of flags used by the database when writing a value
          - Throws: An error in case a read-only transaction has been used, an invalid parameter has been specified, the database is full or the transaction has too many dirty pages to complete.
          */
         public func put(key: some LMDBData, value: some LMDBData, in db: Database, flags: Database.WriteFlags = []) throws {

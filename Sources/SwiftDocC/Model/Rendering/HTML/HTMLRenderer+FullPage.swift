@@ -26,6 +26,8 @@ package extension HTMLRenderer {
     ///   - mainContent: The unique rendered documentation content for this page.
     ///   - metadata: The title and plain text description to use as metadata for this page.
     ///   - reference: The reference that the content and metadata is associated with.
+    ///   - customHeader: A custom HTML header that the renderer will include in the full-page output.
+    ///   - customFooter: A custom HTML footer that the renderer will include in the full-page output.
     /// - Returns: A full-page static HTML document.
     static func makeFullPage(
         mainContent: HTMLNode,

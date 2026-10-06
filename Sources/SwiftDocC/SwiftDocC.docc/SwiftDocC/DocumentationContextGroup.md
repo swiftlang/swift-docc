@@ -74,8 +74,6 @@ let sourceFileURL = try context.documentURL(for: reference)
 
 ### Code Listings
 
-- ``AttributedCodeListing``
-- ``UnresolvedCodeListingReference``
 - ``CodeColorsPreferenceKey``
 - ``SRGBColor``
 

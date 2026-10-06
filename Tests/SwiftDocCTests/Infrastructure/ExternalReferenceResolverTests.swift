@@ -43,7 +43,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                 kind: resolvedEntityKind,
                 language: resolvedEntityLanguage,
                 relativePresentationURL: URL(string: "/example" + reference.path + (reference.fragment.map { "#\($0)" } ?? ""))!,
-                referenceURL: reference.url,
+                referenceIdentifier: .init(reference.absoluteString),
                 title: resolvedEntityTitle,
                 availableLanguages: [resolvedEntityLanguage],
                 subheadingDeclarationFragments: resolvedEntityDeclarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
@@ -630,7 +630,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                     kind: .instanceProperty,
                     language: .swift,
                     relativePresentationURL: reference.url.withoutHostAndPortAndScheme(),
-                    referenceURL: reference.url,
+                    referenceIdentifier: .init(reference.absoluteString),
                     title: "Resolved",
                     availableLanguages: [.swift],
                     variants: []
@@ -1407,7 +1407,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         ])
         
         // Only decoded link summaries support absolute presentation URLs.
-        let externalEntity = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data("""
+        let externalEntity = try FastSymbolGraphJSONDecoder.decode(LinkDestinationSummary.self, from: Data("""
             {
               "path": "https://com.example/path/to/something",
               "title": "Something",

@@ -112,7 +112,7 @@ extension Row {
     /// ```
     ///
     /// > Earlier Versions:
-    /// > Before Swift-DocC 6.4, the `alignment` parameter wasn't supported for `@Column`.
+    /// > Before Swift-DocC 6.5, the `alignment` parameter wasn't supported for `@Column`.
     public final class Column: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
         public static let introducedVersion = "5.8"
         public let originalMarkup: BlockDirective
