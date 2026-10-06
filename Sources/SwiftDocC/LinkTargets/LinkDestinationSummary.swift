@@ -929,12 +929,12 @@ extension LinkDestinationSummary {
         // The path begins with the first slash (after the scheme and "//" authority prefix)
         guard let pathSeparator = utf8View.firstIndex(of: .init(ascii: "/")) else {
             assertionFailure("Reference identifier '\(identifier)' has no path component. At least '/documentation/ModuleName/' is expected.")
-            return .init(bundleID: .init(rawValue: String(substring)), path: "/", sourceLanguages: sourceLanguages)
+            return .init(bundleID: .init(rawValue: String(substring)), path: "", sourceLanguages: sourceLanguages)
         }
         let hostName = DocumentationContext.Inputs.Identifier(rawValue: String(substring[..<pathSeparator]))
         
         // An optional fragment begins after the first "#"
-        if let anchorSeparator = utf8View.firstIndex(of: .init(ascii: "#")) {
+        if let anchorSeparator = utf8View[pathSeparator...].firstIndex(of: .init(ascii: "#")) {
             return .init(
                 bundleID: hostName,
                 path: substring[pathSeparator..<anchorSeparator],

@@ -977,6 +977,45 @@ struct LinkDestinationSummaryTests {
         // iOS in the merged [iOS, tvOS] group is higher priority than macOS
         #expect(summary.plainTextDeclaration == "func someFunction_shared")
     }
+    
+    @Test(arguments: [
+        "doc://com.example/": /* this is unexpected and unsupported */  ResolvedTopicReference(bundleID: "com.example", path: "/",                                  fragment: nil,        sourceLanguage: .swift),
+        "doc://com.example/documentation/SomeModule/somePage":          ResolvedTopicReference(bundleID: "com.example", path: "/documentation/SomeModule/somePage", fragment: nil,        sourceLanguage: .swift),
+        "doc://com.example/documentation/SomeModule/somePage#fragment": ResolvedTopicReference(bundleID: "com.example", path: "/documentation/SomeModule/somePage", fragment: "fragment", sourceLanguage: .swift),
+    ])
+    func makesResolvedTopicReference(_ referenceIdentifier: String, expectedTopicReference: ResolvedTopicReference) throws {
+        let summary = LinkDestinationSummary(
+            kind: .class,
+            language: .swift,
+            relativePresentationURL: URL(string: "/documentation/somemodule/somepage")!,
+            referenceIdentifier: .init(referenceIdentifier),
+            title: "Some title",
+            availableLanguages: [.swift],
+            variants: []
+        )
+        let reference = summary.makeResolvedTopicReference()
+        #expect(reference == expectedTopicReference)
+        
+        let url = try #require(URL(string: referenceIdentifier))
+        #expect(reference.bundleID.rawValue == url.host())
+        #expect(reference.path              == url.path())
+        #expect(reference.fragment          == url.fragment())
+    }
+    
+    @Test()
+    func makeResolvedTopicReferenceHandlesUnsupportedHostComponent() throws {
+        let summary = LinkDestinationSummary(
+            kind: .class,
+            language: .swift,
+            relativePresentationURL: URL(string: "/documentation/somemodule/somepage")!,
+            referenceIdentifier: .init("doc://unsupported#host?name/documentation/SomeModule/somePage#fragment"),
+            title: "Some title",
+            availableLanguages: [.swift],
+            variants: []
+        )
+        let reference = summary.makeResolvedTopicReference()
+        #expect(reference == ResolvedTopicReference(bundleID: "unsupported-host-name", path: "/documentation/SomeModule/somePage", fragment: "fragment", sourceLanguage: .swift),)
+    }
 }
 
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
