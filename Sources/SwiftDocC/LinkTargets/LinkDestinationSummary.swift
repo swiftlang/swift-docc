@@ -94,7 +94,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     
     @available(*, deprecated, renamed: "referenceIdentifier", message: "Use 'referenceIdentifier' instead. This deprecated API will be removed after 6.6 is released.")
     public var referenceURL: URL {
-        get { URL(string: referenceIdentifier.identifier) ?? URL(string: "")! }
+        get { URL(string: referenceIdentifier.identifier) ?? URL(string: "doc://unknown")! }
         set { referenceIdentifier.identifier = newValue.absoluteString }
     }
     
