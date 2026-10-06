@@ -765,7 +765,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .module,
                         relativePresentationURL: URL(string: "/documentation/testbed")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "TestBed",
                         language: .swift,
                         abstract: "TestBed abstract.",
@@ -782,7 +782,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .structure,
                         relativePresentationURL: URL(string: "/documentation/testbed/a")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "A",
                         language: .swift,
                         abstract: "An abstract.",
@@ -799,7 +799,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .article,
                         relativePresentationURL: URL(string: "/documentation/testbundle/article")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "This is an article",
                         language: .swift,
                         abstract: "Article abstract.",
@@ -815,7 +815,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .sampleCode,
                         relativePresentationURL: URL(string: "/documentation/testbundle/samplearticle")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "Sample Article",
                         language: .swift,
                         abstract: "Sample abstract.",
@@ -1157,7 +1157,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .tutorialArticle,
                         relativePresentationURL: URL(string: "/tutorials/testbundle/article")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "Making an Augmented Reality App",
                         language: .swift,
                         abstract: "This is an abstract for the intro.",
@@ -1170,7 +1170,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .onPageLandmark,
                         relativePresentationURL: URL(string: "/tutorials/testbundle/article#Section-Name")!,
-                        referenceURL: reference.withFragment("Section-Name").url,
+                        referenceIdentifier: reference.withFragment("Section-Name").absoluteString,
                         title: "Section Name",
                         language: .swift,
                         abstract: nil,
@@ -1186,7 +1186,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .tutorialTableOfContents,
                         relativePresentationURL: URL(string: "/tutorials/technologyx")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "Technology X",
                         language: .swift,
                         abstract: "Learn about some stuff in Technology X.",
@@ -2928,7 +2928,7 @@ private extension LinkDestinationSummary {
     init(
         kind: DocumentationNode.Kind,
         relativePresentationURL: URL,
-        referenceURL: URL,
+        referenceIdentifier: String,
         title: String,
         language: SourceLanguage,
         abstract: String?,
@@ -2943,7 +2943,7 @@ private extension LinkDestinationSummary {
             kind: kind,
             language: language,
             relativePresentationURL: relativePresentationURL,
-            referenceURL: referenceURL,
+            referenceIdentifier: .init(referenceIdentifier),
             title: title,
             abstract: abstract.map { [.text($0)] },
             availableLanguages: availableLanguages,
