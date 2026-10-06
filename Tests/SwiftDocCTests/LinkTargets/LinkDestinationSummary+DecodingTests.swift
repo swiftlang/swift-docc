@@ -622,7 +622,7 @@ struct LinkDestinationSummaryDecodingTests {
             kind: kind,
             language: language,
             relativePresentationURL: referenceURL.withoutHostAndPortAndScheme(),
-            referenceURL: referenceURL,
+            referenceIdentifier: .init(referenceURL.absoluteString),
             title: title,
             abstract: abstract,
             availableLanguages: availableLanguages,

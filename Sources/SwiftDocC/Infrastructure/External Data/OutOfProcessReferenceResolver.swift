@@ -364,7 +364,7 @@ extension OutOfProcessReferenceResolver {
                 kind: resolvedInformation.kind,
                 language: resolvedInformation.language,
                 relativePresentationURL: resolvedInformation.url.withoutHostAndPortAndScheme(),
-                referenceURL: URL(string: reference)!,
+                referenceIdentifier: .init(reference),
                 title: resolvedInformation.title,
                 // The resolved information only stores the plain text abstract and can't be changed. Use the version 2 communication protocol to support rich abstracts.
                 abstract: [.text(resolvedInformation.abstract)],
@@ -429,7 +429,7 @@ extension OutOfProcessReferenceResolver {
         func resolve(unresolvedReference: UnresolvedTopicReference) throws -> TopicReferenceResolutionResult {
             let unresolvedReferenceString = unresolvedReference.topicURL.absoluteString
             if let cachedSummary = linkCache[unresolvedReferenceString] {
-                return .success( makeReference(for: cachedSummary) )
+                return .success( cachedSummary.makeResolvedTopicReference() )
             }
             
             let linkString = String(
@@ -463,7 +463,7 @@ extension OutOfProcessReferenceResolver {
                     // Cache the information for the original authored link
                     linkCache[unresolvedReferenceString] = linkSummary
                     // Cache the information for the resolved reference. That's what's will be used when returning the entity later.
-                    let reference = makeReference(for: linkSummary)
+                    let reference = linkSummary.makeResolvedTopicReference()
                     linkCache[reference.absoluteString] = linkSummary
                     if let usr = linkSummary.usr {
                         // If the page is a symbol, cache its information for the USR as well.
@@ -485,7 +485,7 @@ extension OutOfProcessReferenceResolver {
         
         func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
             if let cachedSummary = linkCache[preciseIdentifier] {
-                return (makeReference(for: cachedSummary), cachedSummary)
+                return (cachedSummary.makeResolvedTopicReference(), cachedSummary)
             }
             
             guard case ResponseV2.resolved(let linkSummary)? = try? longRunningProcess.sendAndWait(request: RequestV2.symbol(preciseIdentifier)) else {
@@ -496,19 +496,10 @@ extension OutOfProcessReferenceResolver {
             linkCache[preciseIdentifier] = linkSummary
             
             // Cache the information for the resolved reference.
-            let reference = makeReference(for: linkSummary)
+            let reference = linkSummary.makeResolvedTopicReference()
             linkCache[reference.absoluteString] = linkSummary
             
             return (reference, linkSummary)
-        }
-        
-        private func makeReference(for linkSummary: LinkDestinationSummary) -> ResolvedTopicReference {
-            ResolvedTopicReference(
-                bundleID: linkSummary.referenceURL.host.map { .init(rawValue: $0) } ?? "unknown",
-                path: linkSummary.referenceURL.path,
-                fragment: linkSummary.referenceURL.fragment,
-                sourceLanguages: linkSummary.availableLanguages
-            )
         }
     }
 }

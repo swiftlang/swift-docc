@@ -28,7 +28,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
                 kind: .class,
                 language: .swift,
                 relativePresentationURL: URL(string: "/\(preciseIdentifier)")!,
-                referenceURL: reference.url,
+                referenceIdentifier: .init(reference.absoluteString),
                 title: preciseIdentifier,
                 availableLanguages: [.swift],
                 variants: []
