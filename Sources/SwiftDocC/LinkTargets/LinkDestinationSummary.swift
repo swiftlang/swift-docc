@@ -611,6 +611,7 @@ extension LinkDestinationSummary {
             availableLanguages: documentationNode.availableSourceLanguages,
             isDeprecated: isDeprecated,
             isBeta: isBeta,
+            platforms: includePerPlatformAvailabilityInformation ? renderNode.metadata.platforms : nil,
             usr: usr,
             plainTextDeclaration: plainTextDeclaration,
             subheadingDeclarationFragments: subheadingDeclarationFragments,
@@ -730,6 +731,7 @@ extension LinkDestinationSummary {
         }
         try container.encodeIfTrue(isBeta, forKey: .isBeta)
         try container.encodeIfTrue(isDeprecated, forKey: .isDeprecated)
+        try container.encodeIfPresent(platforms, forKey: .platforms)
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(subheadingDeclarationFragments, forKey: .subheadingDeclarationFragments)

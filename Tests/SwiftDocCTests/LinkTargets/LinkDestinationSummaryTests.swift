@@ -1108,6 +1108,46 @@ struct LinkDestinationSummaryTests {
         let reference = summary.makeResolvedTopicReference()
         #expect(reference == ResolvedTopicReference(bundleID: "unsupported-host-name", path: "/documentation/SomeModule/somePage", fragment: "fragment", sourceLanguage: .swift),)
     }
+    
+    @Test(arguments: [true, false])
+    func onlyIncludesPerPlatformAvailabilityInformationWhenRequested(shouldIncludePerPlatformInformation: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "macOS", introduced: .init(major: 1, minor: 2, patch: 3), deprecated: .init(major: 3, minor: 2, patch: 1)),
+                    .init(domainName: "iOS",   introduced: .init(major: 2, minor: 3, patch: 4), deprecated: .init(major: 4, minor: 5, patch: 6)),
+                ])
+            ]))
+            
+            // Configure the "default availability" to not infer any fallbacks.
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(unavailablePlatformName: .iPadOS),
+                .init(unavailablePlatformName: .catalyst),
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let node       = try #require(context.documentationCache["some-symbol-id"])
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        #expect(renderNode.metadata.platforms == [
+            .init(name: "iOS",   introduced: "2.3.4", deprecated: "4.5.6", isBeta: false),
+            .init(name: "macOS", introduced: "1.2.3", deprecated: "3.2.1", isBeta: false),
+        ])
+        
+        let linkSummaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includePerPlatformAvailabilityInformation: shouldIncludePerPlatformInformation)
+        #expect(linkSummaries.count == 1)
+        let linkSummary = try #require(linkSummaries.first)
+        
+        #expect(linkSummary.isBeta       == false)
+        #expect(linkSummary.isDeprecated == true)
+        
+        if shouldIncludePerPlatformInformation {
+            #expect(linkSummary.platforms == renderNode.metadata.platforms)
+        } else {
+            #expect(linkSummary.platforms == nil)
+        }
+    }
 }
 
 private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
