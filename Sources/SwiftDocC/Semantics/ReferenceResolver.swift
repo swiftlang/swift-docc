@@ -497,6 +497,7 @@ struct ReferenceResolver: SemanticVisitor {
             externalIDVariants: symbol.externalIDVariants,
             accessLevelVariants: symbol.accessLevelVariants,
             availabilityVariants: symbol.availabilityVariants,
+            consolidatedAvailabilityVariants: symbol.consolidatedAvailability,
             deprecatedSummaryVariants: newDeprecatedSummaryVariants,
             mixinsVariants: symbol.mixinsVariants,
             declarationVariants: symbol.declarationVariants,

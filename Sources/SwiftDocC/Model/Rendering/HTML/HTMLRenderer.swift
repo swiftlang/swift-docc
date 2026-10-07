@@ -281,17 +281,15 @@ package struct HTMLRenderer {
         }
         
         // Availability
-        if let availability = symbol.availability?.availability.filter({ $0.domain != nil }).sorted(by: \.domain!.rawValue),
-           !availability.isEmpty
-        {
+        if let availability = symbol.consolidatedAvailability.firstValue?.makePlatforms(context.currentBetaPlatforms) {
             heroElements.append(
                 renderer.availability(availability.map { item in
                     .init(
-                        name: item.domain!.rawValue, // Verified non-empty above
-                        introduced: item.introducedVersion.map { "\($0.major).\($0.minor)" },
-                        deprecated: item.deprecatedVersion.map { "\($0.major).\($0.minor)" },
+                        name: item.name,
+                        introduced: item.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        deprecated: item.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
                         isUnconditionallyDeprecated: item.isUnconditionallyDeprecated,
-                        isBeta: false // TODO: Derive and pass beta information
+                        isBeta: item.isBeta
                     )
                 })
             )

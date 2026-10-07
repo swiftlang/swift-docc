@@ -1748,8 +1748,7 @@ struct MarkdownOutputTests {
         #expect(macAvailability.deprecated == "4.0.0")
         #expect(macAvailability.unavailable == false)
         
-        let visionAvailability = try #require(node.metadata.availability(for: "visionOS"))
-        #expect(visionAvailability.unavailable)
+        #expect(node.metadata.availability(for: "visionOS") == nil)
     }
     
     

@@ -87,7 +87,8 @@ class DefaultAvailabilityTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), ["Mac Catalyst ", "iOS ", "iPadOS ", "macOS 10.15.1"])
+            // Don't override the Catalyst version from the Info.plist with the versionless fallback information from the symbol being found in an iOS symbol graph file
+            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), ["Mac Catalyst 13.5", "iOS ", "iPadOS ", "macOS 10.15.1"])
         }
 
         // Test if the default availability is NOT used for symbols with explicit availability

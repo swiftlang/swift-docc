@@ -296,6 +296,7 @@ public struct DocumentationNode {
                 keyPath: \.rawValue
             ),
             availabilityVariants: symbolAvailabilityVariants,
+            consolidatedAvailabilityVariants: .empty,
             deprecatedSummaryVariants: .empty,
             mixinsVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.mixins,
@@ -821,6 +822,7 @@ public struct DocumentationNode {
             externalIDVariants: .init(swiftVariant: symbol.identifier.precise),
             accessLevelVariants: .init(swiftVariant: symbol.accessLevel.rawValue),
             availabilityVariants: .init(swiftVariant: symbolAvailability),
+            consolidatedAvailabilityVariants: .empty,
             deprecatedSummaryVariants: .init(swiftVariant: deprecated),
             mixinsVariants: .init(swiftVariant: symbol.mixins),
             relationshipsVariants: .init(swiftVariant: RelationshipsSection()),

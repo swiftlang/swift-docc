@@ -190,6 +190,9 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         }
     }
     
+    /// The consolidated availability information for each language variant the symbol is available in.
+    var consolidatedAvailability: DocumentationDataVariants<Availability>
+    
     /// The presentation-friendly relationships of this symbol to other symbols, in each language variant the symbol is available in.
     public var relationshipsVariants = DocumentationDataVariants<RelationshipsSection>(defaultVariantValue: .init())
     
@@ -278,6 +281,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         externalIDVariants: DocumentationDataVariants<String>,
         accessLevelVariants: DocumentationDataVariants<String>,
         availabilityVariants: DocumentationDataVariants<SymbolGraph.Symbol.Availability>,
+        consolidatedAvailabilityVariants: DocumentationDataVariants<Availability>,
         deprecatedSummaryVariants: DocumentationDataVariants<DeprecatedSection>,
         mixinsVariants: DocumentationDataVariants<[String: any Mixin]>,
         declarationVariants: DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
@@ -316,6 +320,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.externalIDVariants = externalIDVariants
         self.accessLevelVariants = accessLevelVariants
         self.availabilityVariants = availabilityVariants
+        self.consolidatedAvailability = consolidatedAvailabilityVariants
         
         for (trait, variant) in availabilityVariants.allValues {
             self.isDeprecatedVariants[trait] = AvailabilityParser(variant).isDeprecated()

@@ -1305,6 +1305,53 @@ public class DocumentationContext {
                 // Remove the matched article
                 uncuratedDocumentationExtensions.removeValue(forKey: reference)
             }
+            
+            // It's fairly likely that we'll want to move this into the main register/update loop in the future.
+            // The primary reason for not doing this yet is that the symbol needs to both:
+            //  - have easy and fast access to its module so that we can precompute the base availability once per module
+            //  - have been associated with its potential extension file first so that we can add information about directive availability
+            signposter.withIntervalSignpost("Compute consolidated availability") {
+                for (moduleName, unifiedGraph) in symbolGraphLoader.unifiedGraphs {
+                    var symbolBaseAvailability = Availability(defaultAvailability: inputs.info.defaultAvailability?.modules[moduleName])
+                    
+                    documentationCache.reference(symbolID: moduleName).map { moduleReference in
+                        var moduleAvailability = symbolBaseAvailability
+                        moduleAvailability.finalizePlatformFallbacks()
+                        (documentationCache[moduleReference]?.semantic as! Symbol).consolidatedAvailability = .init(defaultVariantValue: moduleAvailability)
+                    }
+                    symbolBaseAvailability.markAllEncounteredPlatforms(in: unifiedGraph)
+                    
+                    for symbol in unifiedGraph.symbols.values {
+                        guard let reference = documentationCache.reference(symbolID: symbol.uniqueIdentifier) else {
+                            continue
+                        }
+                        
+                        var languages = Set<DocumentationDataVariantsTrait>()
+                        for selector in symbol.allSelectors {
+                            languages.insert(.init(interfaceLanguage: selector.interfaceLanguage))
+                        }
+                        let directiveAvailability = documentationCache[reference]?.metadata?.availability
+                        
+                        func makeAvailability(languageFilter: String) -> Availability {
+                            var availability = symbolBaseAvailability
+                            availability.addInSourceAvailability(from: symbol, matchingLanguage: languageFilter)
+                            
+                            if let directiveAvailability {
+                                availability.addDirectiveAvailability(directiveAvailability, preservingBugOfFirstResettingAvailabilityTo: symbolBaseAvailability)
+                            }
+                            availability.finalizePlatformFallbacks()
+                            
+                            return availability
+                        }
+                        
+                        (documentationCache[reference]?.semantic as! Symbol).consolidatedAvailability = .init(
+                            values: .init(uniqueKeysWithValues: languages.map { trait in
+                                (key: trait, value: makeAvailability(languageFilter: trait.interfaceLanguage! /* all entries in `otherLanguages` have a language */))
+                            })
+                        )
+                    }
+                }
+            }
 
             // Resolve any external references first
             preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }))

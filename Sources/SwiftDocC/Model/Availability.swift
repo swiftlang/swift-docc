@@ -240,13 +240,13 @@ struct Availability {
         
         guard case .available(let introduced, let deprecated, let isUnconditionallyDeprecated) = valueToCopy.state,
               // Only apply "fallback" behaviors if iOS has either an introduced version, a deprecated version, or is unconditionally deprecated
-              introduced != nil || deprecated != nil || isUnconditionallyDeprecated
+              introduced != nil || deprecated != nil || isUnconditionallyDeprecated || _canFillFallbackPlatformsWithoutIntroducedVersion
         else {
             return
         }
         
         // !!!: Preserve the bug that "iPadOS" availability only fills from in-source availability when it either comes from the iOS symbol graph or when it has an introduced version (rdar://172280267)
-        if valueToCopy.source == .inSourceAttribute {
+        if valueToCopy.source == .inSourceAttribute || valueToCopy.source == .foundInSymbolGraph {
             guard introduced != nil || _canFillFallbackPlatformsWithoutIntroducedVersion else {
                 return
             }
