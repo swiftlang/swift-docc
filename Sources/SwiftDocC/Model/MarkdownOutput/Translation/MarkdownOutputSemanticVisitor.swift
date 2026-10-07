@@ -148,8 +148,7 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [document])
         
-        let platforms = article.availability.makePlatforms(context.currentBetaPlatforms)
-        if !platforms.isEmpty {
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
             metadata.availability = platforms.map {
                 .init(
                     platform: $0.name,

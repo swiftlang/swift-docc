@@ -871,8 +871,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
-        let platforms = article.availability.makePlatforms(context.currentBetaPlatforms)
-        if !platforms.isEmpty {
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
             node.metadata.platformsVariants = .init(
                 defaultValue: platforms.map {
                     .init(

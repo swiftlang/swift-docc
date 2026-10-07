@@ -358,13 +358,13 @@ struct Availability {
     /// Creates a list of platform values with their respective combined availability information.
     ///
     /// - Parameter currentPlatform: The precomputed information regarding which platforms are considered in beta.
-    /// - Returns: A list of the final combined availability information for a each platform, in an order that's suitable for display on the rendered page.
-    func makePlatforms(_ currentPlatform: CurrentBetaPlatforms) -> [Platform] {
+    /// - Returns: A list of the final combined availability information for a each platform, in an order that's suitable for display on the rendered page, or `nil` if there's no availability information to display.
+    func makePlatforms(_ currentPlatform: CurrentBetaPlatforms) -> [Platform]? {
         // We don't want to display a list of _only_ platforms without version information.
         // If we have _some_ platforms with version information, or that come from "definite" sources of availability information,
         // then we want these versionless platforms to display but we don't want to display them if they're all there is.
         guard knownPlatforms.contains(where: { $0.state.hasVersions || $0.source != .foundInSymbolGraph && $0.source != .initialValue }) || !customPlatformsByName.isEmpty else {
-            return []
+            return nil
         }
         
         var platforms = [Platform]()
@@ -404,6 +404,9 @@ struct Availability {
             addPlatformIfInBeta(for: info.state, name: name, betaVersion: currentPlatform.customBetaPlatforms[name])
         }
         
+        guard !platforms.isEmpty else {
+            return nil
+        }
         return platforms
     }
     

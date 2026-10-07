@@ -176,8 +176,7 @@ package struct HTMLRenderer {
         }
         
         // Availability
-        let platforms = article.availability.makePlatforms(context.currentBetaPlatforms)
-        if !platforms.isEmpty {
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
             heroElements.append(
                 renderer.availability(platforms.map {
                     .init(
