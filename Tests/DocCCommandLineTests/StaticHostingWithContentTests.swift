@@ -73,6 +73,7 @@ struct StaticHostingWithContentTests {
             buildIndex: false,
             fileManager: fileSystem,
             temporaryDirectory: URL(fileURLWithPath: "/tmp"),
+            outputFileManager: fileSystem,
             experimentalEnableCustomTemplates: true,
             transformForStaticHostingOptions: includeHTMLContent ? .withContent : .withoutContent,
             hostingBasePath: basePath

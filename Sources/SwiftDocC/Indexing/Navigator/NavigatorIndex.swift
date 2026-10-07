@@ -594,7 +594,7 @@ extension NavigatorIndex {
         /// - Parameters:
         ///    - archiveURL: The location of the documentation archive that the builder builds an navigator index for.
         ///    - outputURL: The location where the builder will write the the built navigator index.
-        ///    - fileManager: The file manager in which we are to work.
+        ///    - fileManager: The file manager we use to read and write data.
         ///    - bundleIdentifier: The bundle identifier of the documentation that the builder builds a navigator index for.
         ///    - sortRootChildrenByName: Configure the builder to sort root's children by name.
         ///    - groupByLanguage: Configure the builder to group the entries by language.
@@ -1298,7 +1298,7 @@ extension NavigatorIndex {
                 try FileManager.default.moveItem(
                     at: lmdbTemporaryURL.appendingPathComponent("data.mdb"),
                     to: navigatorIndex.url.appendingPathComponent("data.mdb"),
-                    on: fileManager
+                    using: fileManager
                 )
                 try? FileManager.default.removeItem(at: lmdbTemporaryURL)
             } catch {
@@ -1374,7 +1374,7 @@ extension NavigatorIndex {
             let dataDirectory = archiveURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName, isDirectory: true)
             for file in fileManager.recursiveFiles(startingPoint: dataDirectory) where file.pathExtension.lowercased() == "json" {
                 do {
-                    let data = try Data(contentsOf: file)
+                    let data = try fileManager.contents(of: file)
                     let renderNode = try RenderNode.decode(fromJSON: data)
                     try index(renderNode: renderNode)
                 } catch {

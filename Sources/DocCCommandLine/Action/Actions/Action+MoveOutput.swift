@@ -27,7 +27,7 @@ extension AsyncAction {
             // If a template directory has been provided, create the temporary build folder with its contents
             // Ensure that the container exists
             try? outputFileManager.createDirectory(at: targetURL.deletingLastPathComponent(), withIntermediateDirectories: false, attributes: nil)
-            try fileManager.copyItem(at: template, to: targetURL, on: outputFileManager)
+            try fileManager.copyItem(at: template, to: targetURL, using: outputFileManager)
         } else {
             // Otherwise, create an empty directory
             try outputFileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
@@ -51,7 +51,7 @@ extension AsyncAction {
         }
         
         try ensureThatParentFolderExist(for: destination, fileManager: outputFileManager)
-        try fileManager.moveItem(at: source, to: destination, on: outputFileManager)
+        try fileManager.moveItem(at: source, to: destination, using: outputFileManager)
     }
     
     private static func ensureThatParentFolderExist(for location: URL, fileManager: any FileManagerProtocol) throws {

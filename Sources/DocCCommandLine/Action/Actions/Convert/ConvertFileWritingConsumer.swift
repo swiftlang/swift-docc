@@ -15,7 +15,7 @@ private import Markdown
 struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, ExternalNodeConsumer, ConvertOutputMarkdownConsumer {
     var targetFolder: URL
     var bundleRootFolder: URL?
-    var fileManager: any FileManagerProtocol
+    var fileManager: any ReadOnlyFileManagerProtocol
     var outputFileManager: any FileManagerProtocol
     var context: DocumentationContext
     var renderNodeWriter: JSONEncodingRenderNodeWriter
@@ -31,7 +31,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
     init(
         targetFolder: URL,
         catalogRootFolder: URL?,
-        fileManager: any FileManagerProtocol,
+        fileManager: any ReadOnlyFileManagerProtocol,
         outputFileManager: any FileManagerProtocol,
         context: DocumentationContext,
         indexer: ConvertAction.Indexer?,
@@ -89,7 +89,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
                 try fileManager.copyItem(
                     at: sourceURL,
                     to: destinationFolder.appendingPathComponent(assetName, isDirectory: false),
-                    on: outputFileManager
+                    using: outputFileManager
                 )
             }
         }
@@ -158,7 +158,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
             if outputFileManager.fileExists(atPath: targetFile.path) {
                 try outputFileManager.removeItem(at: targetFile)
             }
-            try fileManager.copyItem(at: themeSettings, to: targetFile, on: outputFileManager)
+            try fileManager.copyItem(at: themeSettings, to: targetFile, using: outputFileManager)
         }
 
         // If a custom favicon is provided, it will be copied in the output directory
@@ -168,7 +168,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
             if outputFileManager.fileExists(atPath: targetFile.path) {
                 try outputFileManager.removeItem(at: targetFile)
             }
-            try fileManager.copyItem(at: customFavicon, to: targetFile, on: outputFileManager)
+            try fileManager.copyItem(at: customFavicon, to: targetFile, using: outputFileManager)
         }
     }
     
@@ -195,7 +195,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
             
             return data
         }
-        try fileManager.createFile(at: linkableElementsURL, contents: data)
+        try outputFileManager.createFile(at: linkableElementsURL, contents: data)
     }
     
     func consume(linkableElementSummaries summaries: [LinkDestinationSummary]) throws {

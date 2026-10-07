@@ -101,7 +101,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     
     init(
         targetFolder: URL,
-        fileManager: some FileManagerProtocol,
+        fileManager: some ReadOnlyFileManagerProtocol,
         outputFileManager: some FileManagerProtocol,
         htmlTemplate: URL,
         customHeader: URL?,

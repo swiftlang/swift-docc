@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
+package import Foundation
 
 /// A read-only file manager.
 ///
@@ -22,7 +22,7 @@ public import Foundation
 /// Should you need a file system with a different storage, create your own
 /// protocol implementations to manage files in memory,
 /// on a network, in a database, or elsewhere.
-package protocol ReadOnlyFileManagerProtocol: DataProvider, Sendable {
+package protocol ReadOnlyFileManagerProtocol: AnyObject, DataProvider {
 
     /// Returns the data content of a file at the given path, if it exists.
     func contents(atPath: String) -> Data?
@@ -39,7 +39,7 @@ package protocol ReadOnlyFileManagerProtocol: DataProvider, Sendable {
     /// Returns `true` if a file exists at the given path.
     func fileExists(atPath: String) -> Bool
     /// Copies a file from one location on the file-system to another.
-    func copyItem(at: URL, to: URL, on: any FileManagerProtocol) throws
+    func copyItem(at: URL, to: URL, using: any FileManagerProtocol) throws
     /// Returns a list of items in a directory
     func contentsOfDirectory(atPath path: String) throws -> [String]
     func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL]
@@ -91,7 +91,7 @@ package protocol FileManagerProtocol: ReadOnlyFileManagerProtocol {
     /// Copies a file from one location on the file-system to another.
     func _copyItem(at: URL, to: URL) throws // Use a different name than FileManager to work around https://github.com/swiftlang/swift-foundation/issues/1125
     /// Moves a file from one location on the file-system to another.
-    func moveItem(at: URL, to: URL, on: any FileManagerProtocol) throws
+    func moveItem(at: URL, to: URL, using: any FileManagerProtocol) throws
     /// Moves a file from one location on the file-system to another.
     func moveItem(at: URL, to: URL) throws
     /// Returns a list of items in a directory
@@ -140,7 +140,7 @@ package protocol FileManagerProtocol: ReadOnlyFileManagerProtocol {
 
 extension ReadOnlyFileManagerProtocol {
 
-    public func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
+    package func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
         guard let content1 = contents(atPath: path1),
               let content2 = contents(atPath: path2) else {
             return false
@@ -150,24 +150,30 @@ extension ReadOnlyFileManagerProtocol {
     }
 
     /// Returns a Boolean value that indicates whether a directory exists at a specified path.
-    public func directoryExists(atPath path: String) -> Bool {
+    package func directoryExists(atPath path: String) -> Bool {
         var isDirectory = ObjCBool(booleanLiteral: false)
         let fileExistsAtPath = fileExists(atPath: path, isDirectory: &isDirectory)
         return fileExistsAtPath && isDirectory.boolValue
     }
 
-    public func copyItem(at source: URL, to destination: URL, on otherFileManager: any FileManagerProtocol) throws {
+    package func copyItem(at source: URL, to destination: URL, using otherFileManager: any FileManagerProtocol) throws {
+        if destination.path != "/" && otherFileManager.directoryExists(atPath: destination.path) {
+            try otherFileManager.removeItem(at: destination)
+        }
+        
+        if self as? any FileManagerProtocol === otherFileManager {
+            try otherFileManager._copyItem(at: source, to: destination)
+            return
+        }
+
         if directoryExists(atPath: source.path) {
             if destination.path != "/" {
-                if otherFileManager.directoryExists(atPath: destination.path) {
-                    try otherFileManager.removeItem(at: destination)
-                }
                 try otherFileManager.createDirectory(at: destination, withIntermediateDirectories: false, attributes: [:])
             }
             for item in try contentsOfDirectory(at: source, includingPropertiesForKeys: [], options: []) {
                 if let relativeItem = item.relative(to: source) {
                     let destinationItem = destination.appendingPathComponent(relativeItem.path)
-                    try copyItem(at: item, to: destinationItem, on: otherFileManager)
+                    try copyItem(at: item, to: destinationItem, using: otherFileManager)
                 }
             }
         } else {
@@ -177,7 +183,7 @@ extension ReadOnlyFileManagerProtocol {
 
     }
 
-    public func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL]) {
+    package func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL]) {
         var allContents = try contentsOfDirectory(at: url, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles)
 
         let partitionIndex = try allContents.partition {
@@ -193,8 +199,8 @@ extension ReadOnlyFileManagerProtocol {
 
 extension FileManagerProtocol {
 
-    public func moveItem(at source: URL, to destination: URL, on otherFileManager: any FileManagerProtocol) throws {
-        try self.copyItem(at: source, to: destination, on: otherFileManager)
+    package func moveItem(at source: URL, to destination: URL, using otherFileManager: any FileManagerProtocol) throws {
+        try self.copyItem(at: source, to: destination, using: otherFileManager)
         try self.removeItem(at: source)
     }
 
@@ -204,16 +210,16 @@ extension FileManagerProtocol {
 /// most of the methods are already implemented in Foundation.
 extension FileManager: FileManagerProtocol {
     // This method doesn't exist on `FileManager`. There is a similar looking method but it doesn't provide information about potential errors.
-    public func contents(of url: URL) throws -> Data {
+    package func contents(of url: URL) throws -> Data {
         return try Data(contentsOf: url)
     }
     
     // This method doesn't exist on `FileManager`. There is a similar looking method but it doesn't provide information about potential errors.
-    public func createFile(at location: URL, contents: Data) throws {
+    package func createFile(at location: URL, contents: Data) throws {
         try contents.write(to: location, options: .atomic)
     }
     
-    public func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
+    package func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
         if let writingOptions {
             try contents.write(to: location, options: writingOptions)
         } else {
@@ -222,11 +228,11 @@ extension FileManager: FileManagerProtocol {
     }
     
     // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol/
-    public func uniqueTemporaryDirectory() -> URL {
+    package func uniqueTemporaryDirectory() -> URL {
         temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)
     }
 
-    public func _copyItem(at source: URL, to destination: URL) throws {
+    package func _copyItem(at source: URL, to destination: URL) throws {
         // Call `NSFileManager/copyItem(at:to:)` and catch the error to workaround https://github.com/swiftlang/swift-foundation/issues/1125
         do {
             try copyItem(at: source, to: destination)
@@ -281,7 +287,7 @@ extension FileManager: FileManagerProtocol {
         case unableToEnumerate
     }
 
-    public func sizeOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> Int64 {
+    package func sizeOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> Int64 {
         guard let enumerator = enumerator(
             at: url,
             includingPropertiesForKeys: [.totalFileAllocatedSizeKey, .fileAllocatedSizeKey],

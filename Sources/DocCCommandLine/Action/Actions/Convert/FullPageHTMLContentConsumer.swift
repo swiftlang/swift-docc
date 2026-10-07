@@ -27,7 +27,7 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     
     init(
         targetFolder: URL,
-        fileManager: some FileManagerProtocol,
+        fileManager: some ReadOnlyFileManagerProtocol,
         outputFileManager: some FileManagerProtocol,
         prettyPrint: Bool,
         customHeader: URL?,
