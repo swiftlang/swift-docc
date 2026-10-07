@@ -52,11 +52,11 @@ class StaticHostingDeprecationMessageTests: XCTestCase {
         try await command.run()
         XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
         warning: The `process-archive transform-for-static-hosting` subcommand is deprecated and scheduled to be removed after the Swift 6.6 release; the `convert` command produces static hosting compatible output by default [DeprecatedStaticHostingCommand]
-        The `convert` command has produced output that is compatible with static hosting environments by default since the 5.10 release in 2022.
+        The `convert` command defaults to static-hosting compatible output since Swift 5.10 (2022).
 
         Calling `process-archive transform-for-static-hosting` on documentation output that's already compatible with static hosting environments is unnecessary. It is also a destructive operation that loses information about custom headers and footers and per-page content for accessing the documentation without JavaScript.
 
-        If your documentation output isn't compatible with static hosting environments, don't pass the `--no-transform-for-static-hosting` flag to the `convert` command.
+        If your documentation output isn't compatible with static hosting environments, check if you're passing the `--no-transform-for-static-hosting` flag to the `convert` command. If so, remove it to generate content suitable for static hosting.
         """)
     }
 }
