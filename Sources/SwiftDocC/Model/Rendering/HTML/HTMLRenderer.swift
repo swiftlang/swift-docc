@@ -175,6 +175,22 @@ package struct HTMLRenderer {
             heroElements.append(renderer.visit(abstract))
         }
         
+        // Availability
+        let platforms = article.availability.makePlatforms(context.currentBetaPlatforms)
+        if !platforms.isEmpty {
+            heroElements.append(
+                renderer.availability(platforms.map {
+                    .init(
+                        name: $0.name,
+                        introduced: $0.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        deprecated: $0.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        isUnconditionallyDeprecated: $0.isUnconditionallyDeprecated,
+                        isBeta: $0.isBeta
+                    )
+                })
+            )
+        }
+        
         // Deprecation message
         if let deprecationMessage = article.deprecationSummary?.elements {
             heroElements.append(makeDeprecationSummaryAside(for: deprecationMessage))
