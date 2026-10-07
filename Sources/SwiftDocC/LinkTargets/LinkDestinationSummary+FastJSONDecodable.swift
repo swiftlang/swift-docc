@@ -23,14 +23,17 @@ extension LinkDestinationSummary: FastJSONDecodable {
         var relativePresentationURL: _MaybeDecodedValue<URL>                       = nil
         var referenceIdentifier:     _MaybeDecodedValue<RenderReferenceIdentifier> = nil
         var title:                   _MaybeDecodedValue<String>                    = nil
-        // 10 properties with default values
+        // 14 properties with default values
         var absolutePresentationURL:        URL? = nil
         var abstract:                       Abstract?               = nil
+        var isBeta:                         Bool                    = false
+        var isDeprecated:                   Bool                    = false
         var platforms:                      [PlatformAvailability]? = nil
         var usr:                            String?                 = nil
         var plainTextDeclaration:           String?                 = nil
         var subheadingDeclarationFragments: DeclarationFragments?   = nil
         var navigatorDeclarationFragments:  DeclarationFragments?   = nil
+        var navigatorTitle:                 String?                 = nil
         var redirects:                      [URL]?                  = nil
         var topicImages:                    [TopicImage]?           = nil
         var references:                     [any RenderReference]?  = nil
@@ -49,6 +52,9 @@ extension LinkDestinationSummary: FastJSONDecodable {
             else if decoder.matchKey("usr\"") {
                 usr = try decoder.decode(String?.self)
             }
+            else if decoder.matchKey("beta") {
+                isBeta = try decoder.decode(Bool.self)
+            }
             else if decoder.matchKey("title") {
                 title = try decoder.decode(String.self)
             }
@@ -64,11 +70,14 @@ extension LinkDestinationSummary: FastJSONDecodable {
             else if decoder.matchKey("fragments") {
                 subheadingDeclarationFragments = try decoder.decode(DeclarationFragments?.self)
             }
+            else if decoder.matchKey("platforms") {
+                platforms = try decoder.decode([PlatformAvailability]?.self)
+            }
             else if decoder.matchKey("redirects") {
                 redirects = try decoder.decode([URL]?.self)
             }
-            else if decoder.matchKey("platforms") {
-                platforms = try decoder.decode([PlatformAvailability]?.self)
+            else if decoder.matchKey("deprecated") {
+                isDeprecated = try decoder.decode(Bool.self)
             }
             else if decoder.matchKey("references") {
                 references = try decoder._decodeArray { decoder throws(DecodingError) -> any RenderReference in
@@ -80,6 +89,9 @@ extension LinkDestinationSummary: FastJSONDecodable {
             }
             else if decoder.matchKey("referenceURL") {
                 referenceIdentifier = try decoder.decode(RenderReferenceIdentifier.self)
+            }
+            else if decoder.matchKey("navigatorTitle") {
+                navigatorTitle = try decoder.decode(String?.self)
             }
             else if decoder.matchKey("availableLanguages") {
                 availableLanguages = try decoder._decodeArray { decoder throws(DecodingError) -> SourceLanguage in
@@ -126,11 +138,13 @@ extension LinkDestinationSummary: FastJSONDecodable {
         self.title                          = consume title
         self.abstract                       = consume abstract
         self.availableLanguages             = Set(consume availableLanguages)
+        self.isBeta                         = isBeta
+        self.isDeprecated                   = isDeprecated
         self.platforms                      = consume platforms
         self.usr                            = consume usr
         self.plainTextDeclaration           = consume plainTextDeclaration
         self.subheadingDeclarationFragments = consume subheadingDeclarationFragments
-        self.navigatorDeclarationFragments  = consume navigatorDeclarationFragments
+        self.navigatorTitle                 = consume navigatorTitle ?? navigatorDeclarationFragments.map { $0.map(\.text).joined() }
         self.redirects                      = consume redirects
         self.topicImages                    = consume topicImages
         self.references                     = consume references
@@ -144,11 +158,12 @@ extension LinkDestinationSummary.Variant: FastJSONDecodable {
 
         // 1 required property
         var traits: _MaybeDecodedValue<[RenderNode.Variant.Trait]> = nil
-        // 10 properties with default values
+        // 9 properties with default values
         var abstract:                       LinkDestinationSummary.Abstract??             = nil
         var kind:                           DocumentationNode.Kind?                       = nil
         var language:                       SourceLanguage?                               = nil
         var navigatorDeclarationFragments:  LinkDestinationSummary.DeclarationFragments?? = nil
+        var navigatorTitle:                 String??                                      = nil
         var plainTextDeclaration:           String??                                      = nil
         var relativePresentationURL:        URL?                                          = nil
         var subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments?? = nil
@@ -182,6 +197,9 @@ extension LinkDestinationSummary.Variant: FastJSONDecodable {
             else if decoder.matchKey("fragments") {
                 subheadingDeclarationFragments = try decoder.decode(LinkDestinationSummary.DeclarationFragments?.self)
             }
+            else if decoder.matchKey("navigatorTitle") {
+                navigatorTitle = try decoder.decode(String?.self)
+            }
             else if decoder.matchKey("navigatorFragments") {
                 navigatorDeclarationFragments = try decoder.decode(LinkDestinationSummary.DeclarationFragments?.self)
             }
@@ -209,7 +227,7 @@ extension LinkDestinationSummary.Variant: FastJSONDecodable {
             usr:                            consume usr,
             plainTextDeclaration:           consume plainTextDeclaration,
             subheadingDeclarationFragments: consume subheadingDeclarationFragments,
-            navigatorDeclarationFragments:  consume navigatorDeclarationFragments
+            navigatorTitle:                 consume navigatorTitle ?? navigatorDeclarationFragments.map { $0?.map(\.text).joined() }
         )
     }
 }

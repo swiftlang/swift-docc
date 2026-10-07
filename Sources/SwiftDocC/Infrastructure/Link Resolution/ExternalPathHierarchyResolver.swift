@@ -150,15 +150,6 @@ final class ExternalPathHierarchyResolver {
 // MARK: ExternalEntity
 
 extension LinkDestinationSummary {
-    /// A value that indicates whether this symbol is under development and likely to change.
-    private var isBeta: Bool {
-        guard let platforms, !platforms.isEmpty else {
-            return false
-        }
-        
-        return platforms.allSatisfy { $0.beta }
-    }
-    
     /// Create a topic render render reference for this link summary and its content variants.
     func makeTopicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
@@ -166,7 +157,7 @@ extension LinkDestinationSummary {
         var titleVariants = VariantCollection(defaultValue: title)
         var abstractVariants = VariantCollection(defaultValue: abstract ?? [])
         var fragmentVariants = VariantCollection(defaultValue: subheadingDeclarationFragments)
-        var navigatorTitleVariants = VariantCollection(defaultValue: navigatorDeclarationFragments)
+        var navigatorTitleVariants = VariantCollection(defaultValue: navigatorTitle.map { [DeclarationRenderSection.Token(text: $0, kind: .text)] })
         
         for variant in variants {
             let traits = variant.traits
@@ -179,8 +170,8 @@ extension LinkDestinationSummary {
             if let fragment = variant.subheadingDeclarationFragments {
                 fragmentVariants.variants.append(.init(traits: traits, patch: [.replace(value: fragment)]))
             }
-            if let navigatorTitle = variant.navigatorDeclarationFragments {
-                navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle)]))
+            if let navigatorTitle = variant.navigatorTitle {
+                navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle.map { [DeclarationRenderSection.Token(text: $0, kind: .text)] })]))
             }
         }
         
@@ -197,7 +188,7 @@ extension LinkDestinationSummary {
             estimatedTime: nil,
             conformance: nil,
             isBeta: isBeta,
-            isDeprecated: platforms?.contains(where: { $0.isUnconditionallyDeprecated || $0.deprecated != nil }) ?? false,
+            isDeprecated: isDeprecated,
             defaultImplementationCount: nil,
             propertyListKeyNames: nil,
             tags: nil,

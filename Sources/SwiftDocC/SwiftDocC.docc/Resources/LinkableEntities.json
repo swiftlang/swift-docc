@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Specification of the DocC linkable-entities.json digest file.",
-        "version": "0.3.1",
+        "version": "0.3.2",
         "title": "Linkable Entities"
     },
     "paths": { },
@@ -52,6 +52,12 @@
                         "items": {
                             "type": "string"
                         }
+                    },
+                    "beta": {
+                        "type": "boolean"
+                    },
+                    "deprecated": {
+                        "type": "boolean"
                     },
                     "platforms": {
                         "type": "array",
