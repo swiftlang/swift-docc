@@ -871,39 +871,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
-        if let availabilities = article.metadata?.availability, !availabilities.isEmpty {
-            // FIXME: Move this logic out of the rendering code (rdar://172280267)
-            let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
-            // These are the same for all platforms, so we only need to compute them once.
-            var directiveAvailabilityByPlatform = documentationNode.metadata.map {
-                renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
-            } ?? .init()
-            
-            if let iOSAvailability = directiveAvailabilityByPlatform[PlatformName.iOS.displayName] {
-                var unavailableDefaultPlatformNames = Set<String>()
-                if let defaultAvailability = context.inputs.info.defaultAvailability {
-                    for availabilities in defaultAvailability.modules.values {
-                        for availability in availabilities where availability.versionInformation == .unavailable {
-                            unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
-                        }
-                    }
-                }
-                
-                func addFallbackIfNeeded(named name: String) {
-                    guard directiveAvailabilityByPlatform[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
-                        return
-                    }
-                    var copy = iOSAvailability
-                    copy.name = name
-                    directiveAvailabilityByPlatform[name] = copy
-                }
-                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
-                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
-            }
-            
-            if !directiveAvailabilityByPlatform.isEmpty {
-                node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder))
-            }
+        let platforms = article.availability.makePlatforms(context.currentBetaPlatforms)
+        if !platforms.isEmpty {
+            node.metadata.platformsVariants = .init(
+                defaultValue: platforms.map {
+                    .init(
+                        name: $0.name,
+                        introduced: $0.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        deprecated: $0.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        unconditionallyDeprecated: $0.isUnconditionallyDeprecated,
+                        isBeta: $0.isBeta
+                    )
+            })
         }
         
         if let pageKind = article.metadata?.pageKind {

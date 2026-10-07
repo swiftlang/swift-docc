@@ -207,6 +207,9 @@ public class DocumentationContext {
     /// Mentions of symbols within articles.
     var articleSymbolMentions = ArticleSymbolMentions()
 
+    /// An opaque precomputed value that represents which platforms are considered "in beta".
+    let currentBetaPlatforms: Availability.CurrentBetaPlatforms
+
     /// Initializes a documentation context from a collection of input files.
     ///
     /// - Parameters:
@@ -232,6 +235,7 @@ public class DocumentationContext {
         self.configuration = configuration
         
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
+        self.currentBetaPlatforms = .init(currentPlatformVersions: configuration.externalMetadata.currentPlatforms)
 
         ResolvedTopicReference.enableReferenceCaching(for: inputs.id)
         try await register()
@@ -1865,7 +1869,8 @@ public class DocumentationContext {
                 markup: articleResult.value.markup,
                 metadata: Metadata(from: metadataMarkup, for: inputs, featureFlags: configuration.featureFlags),
                 redirects: articleResult.value.redirects,
-                options: articleResult.value.options
+                options: articleResult.value.options,
+                availability: articleResult.value.availability
             )
             
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: articleResult.topicGraphNode.source, title: title)
@@ -1897,7 +1902,7 @@ public class DocumentationContext {
                 metadataDirectiveMarkup
             )
             let metadata = Metadata(from: metadataDirectiveMarkup, for: inputs, featureFlags: configuration.featureFlags)
-            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
+            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:], availability: Availability.makeNewArticleBaseAvailability(info: inputs.info))
             let documentationNode = DocumentationNode(
                 reference: reference,
                 kind: .collection,

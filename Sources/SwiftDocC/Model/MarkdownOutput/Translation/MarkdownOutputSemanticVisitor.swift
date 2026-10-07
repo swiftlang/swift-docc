@@ -148,10 +148,17 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [document])
         
-        if let metadataAvailability = article.metadata?.availability,
-           !metadataAvailability.isEmpty
-        {
-            metadata.availability = metadataAvailability.map { .init($0) }
+        let platforms = article.availability.makePlatforms(context.currentBetaPlatforms)
+        if !platforms.isEmpty {
+            metadata.availability = platforms.map {
+                .init(
+                    platform: $0.name,
+                    // FIXME: It would be more consistent with other output to use `stringRepresentation(precisionUpToNonsignificant: .minor)` for both these versions.
+                    introduced: $0.introduced?.description,
+                    deprecated: $0.deprecated?.description,
+                    unavailable: false
+                )
+            }
         }
         metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         markdownWalker.visit(article.title)

@@ -766,3 +766,26 @@ private extension UTF8.CodeUnit {
         self == UInt8(ascii: ".")
     }
 }
+
+extension Availability {
+    /// Creates a new base availability for articles based on the input's metadata information.
+    ///
+    /// This base value can be precomputed once and reused for all articles, which may customize it with their page-specific information.
+    ///
+    /// - Note: This base value is not suitable as a base for symbol page's availability.
+    ///
+    /// - Parameter info: Metadata information about the documentation inputs.
+    /// - Returns: A new base availability value that article pages can customize with their page-specific information.
+    static func makeNewArticleBaseAvailability(info: DocumentationContext.Inputs.Info) -> Availability {
+        // FIXME: It's not supported to mix different modules in one catalog. The default availability shouldn't support this either. (rdar://188797956)
+        let soleModuleName: String? = switch info.defaultAvailability?.modules.count {
+            case 1:  info.defaultAvailability!.modules.keys.first!
+            default: info.displayName
+        }
+        // Even though articles don't _display_ "default" availability they need to be initialized with it to know if a platform has been marked as "unavailable";
+        // meaning that it shouldn't inherit its "fallback" availability from another platform.
+        return Availability(defaultAvailability: soleModuleName.flatMap { info.defaultAvailability?.modules[$0] })
+            // !!!: Preserve the bug that articles don't display default availability (rdar://173688303)
+            .preservingBugThatArticlesDoNotDisplayDefaultAvailability()
+    }
+}

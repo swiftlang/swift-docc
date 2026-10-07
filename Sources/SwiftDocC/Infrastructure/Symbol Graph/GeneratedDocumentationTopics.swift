@@ -167,7 +167,9 @@ enum GeneratedDocumentationTopics {
                 seeAlso: nil,
                 deprecationSummary: nil,
                 metadata: nil,
-                redirects: nil
+                redirects: nil,
+                // Because API collections don't have any markup and articles don't display default availability, they don't have any specfic availability to display.
+                availability: .init(defaultAvailability: nil)
             )
         }
 

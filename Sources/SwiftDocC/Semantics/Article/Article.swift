@@ -32,7 +32,8 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     ///   - markup: The markup that makes up this article's content.
     ///   - metadata: An optional container for metadata that's unrelated to the article's content.
     ///   - redirects: An optional list of previously known locations for this article.
-    init(markup: (any Markup)?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options]) {
+    ///   - availability: The already computer consolidated availability for this article.
+    init(markup: (any Markup)?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options], availability: Availability) {
         let markupModel = markup.map { DocumentationMarkup(markup: $0) }
 
         self.markup = markup
@@ -46,10 +47,11 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
         self.title = markupModel?.titleHeading
         self.deprecationSummary = markupModel?.deprecation
         self.automaticTaskGroups = []
+        self.availability = availability
     }
 
-    convenience init(title: Heading?, abstractSection: AbstractSection?, discussion: DiscussionSection?, topics: TopicsSection?, seeAlso: SeeAlsoSection?, deprecationSummary: MarkupContainer?, metadata: Metadata?, redirects: [Redirect]?, automaticTaskGroups: [AutomaticTaskGroupSection]? = nil) {
-        self.init(markup: nil, metadata: metadata, redirects: redirects, options: [:])
+    convenience init(title: Heading?, abstractSection: AbstractSection?, discussion: DiscussionSection?, topics: TopicsSection?, seeAlso: SeeAlsoSection?, deprecationSummary: MarkupContainer?, metadata: Metadata?, redirects: [Redirect]?, automaticTaskGroups: [AutomaticTaskGroupSection]? = nil, availability: Availability) {
+        self.init(markup: nil, metadata: metadata, redirects: redirects, options: [:], availability: availability)
         self.title = title
         self.abstractSection = abstractSection
         self.discussion = discussion
@@ -101,6 +103,9 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     /// Any automatically created task groups.
     var automaticTaskGroups: [AutomaticTaskGroupSection]
 
+    /// The consolidated availability information for this article.
+    var availability: Availability
+    
     @available(*, deprecated, renamed: "init(from:source:for:featureFlags:diagnostics:)", message: "Use 'init(from:source:for:featureFlags:diagnostics:)' instead. This deprecated API will be removed after 6.5 is released.")
     public convenience init?(from markup: any Markup, source: URL?, for bundle: DocumentationBundle, featureFlags: FeatureFlags, problems: inout [Problem]) {
         var diagnostics = [Diagnostic]()
@@ -119,6 +124,12 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     ///   - featureFlags: A set of feature flags that conditionally enable certain behaviors.
     ///   - diagnostics: A mutable collection of diagnostics to update with any additional issues encountered while initializing the article.
     public convenience init?(from markup: any Markup, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic]) {
+        // It is correct but slightly suboptimal to use this initializer from within DocC because it needs to recompute the base availability for each article.
+        // Instead, if callers use `init(from:source:for:featureFlags:diagnostics:baseAvailability:)` just below they can compute the base information only once and apply article-specific modifications to that base value.
+        self.init(from: markup, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics, baseAvailability: Availability.makeNewArticleBaseAvailability(info: inputs.info))
+    }
+    
+    convenience init?(from markup: any Markup, source: URL?, for inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags, diagnostics: inout [Diagnostic], baseAvailability: Availability) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
             let range = markup.child(at: 0)?.range ?? .makeEmptyStartOfFileRangeWhenSpecificInformationIsUnavailable(source: nil)
 
@@ -244,11 +255,18 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
             optionalMetadata = metadata
         }
         
+        var availability = baseAvailability
+        if let directiveAvailability = optionalMetadata?.availability {
+            availability.addDirectiveAvailability(directiveAvailability, preservingBugOfFirstResettingAvailabilityTo: baseAvailability)
+        }
+        availability.finalizePlatformFallbacks()
+        
         self.init(
             markup: markup,
             metadata: optionalMetadata,
             redirects: redirects.isEmpty ? nil : redirects,
-            options: relevantCategorizedOptions
+            options: relevantCategorizedOptions,
+            availability: availability
         )
     }
     

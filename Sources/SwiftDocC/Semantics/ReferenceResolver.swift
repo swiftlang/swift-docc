@@ -379,7 +379,8 @@ struct ReferenceResolver: SemanticVisitor {
             deprecationSummary: newDeprecationSummary,
             metadata: article.metadata,
             redirects: article.redirects,
-            automaticTaskGroups: article.automaticTaskGroups
+            automaticTaskGroups: article.automaticTaskGroups,
+            availability: article.availability
         )
     }
 
