@@ -191,6 +191,8 @@ public struct ConvertAction: AsyncAction {
             break
         }
         
+        configuration.experimentalMarkdownOutputConfiguration.hostingBasePath = hostingBasePath
+        
         if let outOfProcessResolver {
             configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.id] = outOfProcessResolver
             configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
