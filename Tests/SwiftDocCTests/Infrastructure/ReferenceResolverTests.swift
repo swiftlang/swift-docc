@@ -713,7 +713,7 @@ class ReferenceResolverTests: XCTestCase {
             // Otherwise, for variants properties that don't a value that is Equatable, populate the Objective-C variant
             // and specify an assertion.
             
-            populateObjCVariantAndCreateAssertion(keyPath: \.availabilityVariants) { value1, value2 in
+            populateObjCVariantAndCreateAssertion(keyPath: \._availabilityVariants) { value1, value2 in
                 XCTAssertEqual(value1.availability.count, value2.availability.count)
             },
             populateObjCVariantAndCreateAssertion(keyPath: \.deprecatedSummaryVariants) { value1, value2 in

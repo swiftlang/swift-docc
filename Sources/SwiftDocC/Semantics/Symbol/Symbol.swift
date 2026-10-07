@@ -180,12 +180,17 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// The platforms on which the symbol is available in each language variant the symbol is available in.
     ///
     /// - Note: Updating this property recalculates ``isDeprecatedVariants``.
+    @available(*, deprecated, message: "Use the consolidated availability information instead. This deprecated API will be removed after 6.6 is released")
     public var availabilityVariants: DocumentationDataVariants<SymbolGraph.Symbol.Availability> {
+        get { _availabilityVariants }
+        set { _availabilityVariants = newValue }
+    }
+    var _availabilityVariants: DocumentationDataVariants<SymbolGraph.Symbol.Availability> {
         didSet {
-            for (trait, variant) in availabilityVariants.allValues {
+            for (trait, variant) in _availabilityVariants.allValues {
                 // When appending more platform availabilities to the symbol
                 // update its deprecation status
-                isDeprecatedVariants[trait] = AvailabilityParser(variant).isDeprecated()
+                _isDeprecatedVariants[trait] = AvailabilityParser(variant).isDeprecated()
             }
         }
     }
@@ -246,7 +251,12 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     }
     
     /// Whether the symbol is deprecated, in each language variant the symbol is available in.
-    public var isDeprecatedVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
+    @available(*, deprecated, message: "Use the consolidated availability information instead. This deprecated API will be removed after 6.6 is released")
+    public var isDeprecatedVariants: DocumentationDataVariants<Bool> {
+        get { _isDeprecatedVariants }
+        set { _isDeprecatedVariants = newValue }
+    }
+    private var _isDeprecatedVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
     
     /// Whether the symbol is declared as an SPI, in each language variant the symbol is available in.
     public var isSPIVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
@@ -319,11 +329,11 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.isRequiredVariants = requiredVariants
         self.externalIDVariants = externalIDVariants
         self.accessLevelVariants = accessLevelVariants
-        self.availabilityVariants = availabilityVariants
+        self._availabilityVariants = availabilityVariants
         self.consolidatedAvailability = consolidatedAvailabilityVariants
         
         for (trait, variant) in availabilityVariants.allValues {
-            self.isDeprecatedVariants[trait] = AvailabilityParser(variant).isDeprecated()
+            self._isDeprecatedVariants[trait] = AvailabilityParser(variant).isDeprecated()
         }
         
         self.deprecatedSummaryVariants = deprecatedSummaryVariants
@@ -531,9 +541,9 @@ extension Symbol {
 
         // Merge the new symbol with the existing availability. If a value already exist, only override if it's for this platform.
         if let symbolAvailability,
-            symbolAvailability.availability.isEmpty == false || availabilityVariants[trait]?.availability.isEmpty == false // Nothing to merge if both are empty
+            symbolAvailability.availability.isEmpty == false || _availabilityVariants[trait]?.availability.isEmpty == false // Nothing to merge if both are empty
         {
-            var items = availabilityVariants[trait]?.availability ?? []
+            var items = _availabilityVariants[trait]?.availability ?? []
 
             // Add all the domains that don't already have availability information
             for availability in symbolAvailability.availability {
@@ -551,7 +561,7 @@ extension Symbol {
                 }
             }
 
-            availabilityVariants[trait] = SymbolGraph.Symbol.Availability(availability: items)
+            _availabilityVariants[trait] = SymbolGraph.Symbol.Availability(availability: items)
         }
     }
 
@@ -573,11 +583,11 @@ extension Symbol {
             let trait = DocumentationDataVariantsTrait(for: selector)
             if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
                 for availabilityItem in unifiedSymbolAvailability.availability {
-                    guard let availabilityVariantTrait = availabilityVariants[trait] else { continue }
+                    guard let availabilityVariantTrait = _availabilityVariants[trait] else { continue }
                     if (availabilityVariantTrait.availability.contains(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
                         continue
                     }
-                    availabilityVariants[trait]?.availability.append(availabilityItem)
+                    _availabilityVariants[trait]?.availability.append(availabilityItem)
                 }
             }
         }
@@ -655,6 +665,7 @@ extension Symbol {
     
     /// The platforms on which the first variant of the symbol is available.
     /// - note: Updating this property recalculates `isDeprecated`.
+    @available(*, deprecated, message: "Use the consolidated availability information instead. This deprecated API will be removed after 6.6 is released")
     public var availability: SymbolGraph.Symbol.Availability? {
         get { availabilityVariants.firstValue }
         set { availabilityVariants.firstValue = newValue }
@@ -720,6 +731,7 @@ extension Symbol {
     }
     
     /// Whether the first variant of the symbol is deprecated.
+    @available(*, deprecated, message: "Use the consolidated availability information instead. This deprecated API will be removed after 6.6 is released")
     public var isDeprecated: Bool {
         get { isDeprecatedVariants.firstValue! }
         set { isDeprecatedVariants.firstValue = newValue }

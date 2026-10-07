@@ -638,7 +638,7 @@ struct LinkDestinationSummaryTests {
         #expect(summaryRenderReference.isDeprecated == isDeprecated)
         try assertRoundTripCoding(summaryRenderReference)
         
-        #expect((node.semantic as? Symbol)?.isDeprecated == isDeprecated)
+        #expect((node.semantic as? Symbol)?.consolidatedAvailability.firstValue?.isDeprecated == isDeprecated)
         
         // Verify that the summary's render reference matches the information from the full page's render reference.
         let pageRenderReference = try #require(RenderContext(documentationContext: context).store.content(for: reference)?.renderReference as? TopicRenderReference)
