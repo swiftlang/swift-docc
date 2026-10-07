@@ -729,9 +729,19 @@ extension LinkDestinationSummary {
                 try languagesContainer.encode(language)
             }
         }
-        try container.encodeIfTrue(isBeta, forKey: .isBeta)
-        try container.encodeIfTrue(isDeprecated, forKey: .isDeprecated)
-        try container.encodeIfPresent(platforms, forKey: .platforms)
+        if let platforms {
+            // If we're encoding the platforms we need to explicitly encode "beta" and "deprecated" statuses.
+            // Otherwise, there's a risk that the decoding logic for compatibility with older formats---
+            // which derives these values from the collection of platforms---will compute a different value than what the link summary was originally created with.
+            try container.encode(isBeta, forKey: .isBeta)
+            try container.encode(isDeprecated, forKey: .isDeprecated)
+            try container.encode(platforms, forKey: .platforms)
+        } else {
+            // If we're not encoding the platforms then we only need to encode the "beta" and "deprecated" statuses if they're `true`.
+            // If they're missing they default to `false` during decoding.
+            try container.encodeIfTrue(isBeta, forKey: .isBeta)
+            try container.encodeIfTrue(isDeprecated, forKey: .isDeprecated)
+        }
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(subheadingDeclarationFragments, forKey: .subheadingDeclarationFragments)
