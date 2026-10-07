@@ -904,7 +904,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertTrue(myClassSymbol.relationships.groups.contains { group -> Bool in
             return group.kind == .conformsTo && Array(group.destinations.map({ $0.url?.absoluteString })) == ["doc://com.example.documentation/documentation/MyKit/MyProtocol"]
         })
-        XCTAssertEqual(myClassSymbol.platformName, PlatformName(operatingSystemName: "ios"))
+        XCTAssertEqual(myClassSymbol._platformNameVariants.firstValue, PlatformName(operatingSystemName: "ios"))
         XCTAssertEqual(myClassSymbol.roleHeading, "Class")
         XCTAssertEqual(myClassSymbol.title, "MyClass")
         

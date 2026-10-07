@@ -704,7 +704,7 @@ class ReferenceResolverTests: XCTestCase {
             populateObjCVariantAndCreateAssertion(keyPath: \.subHeadingVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.navigatorVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.roleHeadingVariants),
-            populateObjCVariantAndCreateAssertion(keyPath: \.platformNameVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \._platformNameVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.isRequiredVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.externalIDVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.accessLevelVariants),

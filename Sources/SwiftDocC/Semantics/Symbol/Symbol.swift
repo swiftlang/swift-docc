@@ -120,7 +120,12 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     internal(set) public var kindVariants: DocumentationDataVariants<SymbolGraph.Symbol.Kind>
     
     /// The symbol's platform in each language variant the symbol is available in.
-    internal(set) public var platformNameVariants: DocumentationDataVariants<PlatformName>
+    @available(*, deprecated, message: "Use the consolidated availability information instead. This deprecated API will be removed after 6.6 is released")
+    internal(set) public var platformNameVariants: DocumentationDataVariants<PlatformName> {
+        get { _platformNameVariants }
+        set { _platformNameVariants = newValue }
+    }
+    var _platformNameVariants: DocumentationDataVariants<PlatformName>
     
     /// The reference to the documentation node that represents this symbol's module symbol.
     internal(set) public var moduleReference: ResolvedTopicReference
@@ -323,7 +328,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.subHeadingVariants = subHeadingVariants
         self.navigatorVariants = navigatorVariants
         self.roleHeadingVariants = roleHeadingVariants
-        self.platformNameVariants = platformNameVariants
+        self._platformNameVariants = platformNameVariants
         self.moduleReference = moduleReference
         self.crossImportOverlayModule = crossImportOverlayModule
         self.isRequiredVariants = requiredVariants
@@ -623,6 +628,7 @@ extension Symbol {
     public var roleHeading: String { roleHeadingVariants.firstValue! }
     
     /// The first variant of the symbol's platform, if available.
+    @available(*, deprecated, message: "Use the consolidated availability information instead. This deprecated API will be removed after 6.6 is released")
     public var platformName: PlatformName? { platformNameVariants.firstValue }
 
     /// Whether the first variant of the symbol is required in its context.

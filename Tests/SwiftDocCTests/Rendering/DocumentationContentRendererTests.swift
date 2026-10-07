@@ -190,8 +190,7 @@ struct DocumentationContentRendererTests {
             ],
             name: .symbol(name: ""),
             markup: Document(parsing: ""),
-            semantic: nil,
-            platformNames: nil
+            semantic: nil
         )
 
         node.semantic = Symbol(
