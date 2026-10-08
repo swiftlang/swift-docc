@@ -475,13 +475,13 @@ struct MarkdownRendererTests {
         assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
-                .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))]
+                .light: [1: try #require(URL(string: "/images/com.test.example/some-image.png"))]
             ]),
             prettyFormatted: true,
             matches: """
             <p>
               <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image.png">
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image.png">
               </picture>
             </p>
             """
@@ -492,15 +492,15 @@ struct MarkdownRendererTests {
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
                 .light: [
-                    1: try #require(URL(string: "images/com.test.example/some-image.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
+                    1: try #require(URL(string: "/images/com.test.example/some-image.png")),
+                    2: try #require(URL(string: "/images/com.test.example/some-image@2x.png")),
                 ]
             ]),
             prettyFormatted: true,
             matches: """
             <p>
               <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
               </picture>
             </p>
             """
@@ -510,15 +510,15 @@ struct MarkdownRendererTests {
         assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
-                .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))],
-                .dark:  [1: try #require(URL(string: "images/com.test.example/some-image~dark.png"))],
+                .light: [1: try #require(URL(string: "/images/com.test.example/some-image.png"))],
+                .dark:  [1: try #require(URL(string: "/images/com.test.example/some-image~dark.png"))],
             ]),
             prettyFormatted: true,
             matches: """
             <p>
               <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark.png">
+                <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image.png">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark.png">
                 <img alt="Some alt text" decoding="async" loading="lazy">
               </picture>
             </p>
@@ -530,20 +530,20 @@ struct MarkdownRendererTests {
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
                 .light: [
-                    1: try #require(URL(string: "images/com.test.example/some-image.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
+                    1: try #require(URL(string: "/images/com.test.example/some-image.png")),
+                    2: try #require(URL(string: "/images/com.test.example/some-image@2x.png")),
                 ],
                 .dark: [
-                    1: try #require(URL(string: "images/com.test.example/some-image~dark.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image~dark@2x.png")),
+                    1: try #require(URL(string: "/images/com.test.example/some-image~dark.png")),
+                    2: try #require(URL(string: "/images/com.test.example/some-image~dark@2x.png")),
                 ],
             ]),
             prettyFormatted: true,
             matches: """
             <p>
               <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../images/com.test.example/some-image~dark.png 1x">
+                <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
                 <img alt="Some alt text" decoding="async" loading="lazy">
               </picture>
             </p>
