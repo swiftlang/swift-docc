@@ -481,7 +481,7 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../images/com.test.example/some-image.png">
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image.png">
               </picture>
             </p>
             """
@@ -517,8 +517,8 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <picture>
-                <source media="(prefers-color-scheme: light)" src="../../../../images/com.test.example/some-image.png">
-                <source media="(prefers-color-scheme: dark)" src="../../../../images/com.test.example/some-image~dark.png">
+                <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image.png">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark.png">
                 <img alt="Some alt text" decoding="async" loading="lazy">
               </picture>
             </p>
