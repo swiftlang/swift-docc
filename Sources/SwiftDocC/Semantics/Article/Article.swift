@@ -32,7 +32,7 @@ public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroup
     ///   - markup: The markup that makes up this article's content.
     ///   - metadata: An optional container for metadata that's unrelated to the article's content.
     ///   - redirects: An optional list of previously known locations for this article.
-    ///   - availability: The already computer consolidated availability for this article.
+    ///   - availability: The already computed consolidated availability for this article.
     init(markup: (any Markup)?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options], availability: Availability) {
         let markupModel = markup.map { DocumentationMarkup(markup: $0) }
 
