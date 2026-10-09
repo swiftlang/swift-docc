@@ -11,6 +11,7 @@
 public import Foundation
 
 /// A utility type to apply variant overrides to an encoded render node.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.6 is released")
 public struct RenderNodeVariantOverridesApplier {
     /// Creates a variant overrides applier.
     public init() {}
