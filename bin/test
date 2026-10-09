@@ -22,9 +22,11 @@ DOCC_ROOT="$(dirname $(dirname $(filepath $0)))"
 # Build SwiftDocC.
 swift test --parallel --package-path "$DOCC_ROOT"
 
+# Set `DOCC_TEST_BASE_REF` to compare against a ref other than `origin/main`.
+candidate_ref="${DOCC_TEST_BASE_REF:-origin/main}"
 base_ref=""
-if git -C "$DOCC_ROOT" rev-parse --verify --quiet origin/main >/dev/null 2>&1; then
-    base_ref="origin/main"
+if git -C "$DOCC_ROOT" rev-parse --verify --quiet "$candidate_ref" >/dev/null 2>&1; then
+    base_ref="$candidate_ref"
 fi
 # Build and test auxiliary Swift packages under `bin/`.
 # These are separate packages that aren't covered by `swift test` above.
