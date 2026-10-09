@@ -88,8 +88,10 @@ private struct ContextLinkProvider: LinkProvider {
     }
     
     func assetNamed(_ assetName: String) -> LinkedAsset? {
-        guard let asset = context.resolveAsset(named: assetName, in: reference) else {
-            // The context
+        guard let asset = context.resolveAsset(named: assetName, in: reference),
+              let imagesBaseLocation = URL(string: "/images/\(context.inputs.id.rawValue)/")
+            else {
+            // The context doesn't have an asset with this name
             return nil
         }
         
@@ -97,7 +99,7 @@ private struct ContextLinkProvider: LinkProvider {
         for (traits, url) in asset.variants {
             let scale = (traits.displayScale ?? .standard).scaleFactor
             
-            files[traits.userInterfaceStyle == .dark ? .dark : .light, default: [:]][scale] = url
+            files[traits.userInterfaceStyle == .dark ? .dark : .light, default: [:]][scale] = imagesBaseLocation.appending(path: url.lastPathComponent, directoryHint: .notDirectory)
         }
         
         return .init(files: files)

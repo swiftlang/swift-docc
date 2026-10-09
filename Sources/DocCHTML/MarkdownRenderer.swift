@@ -371,8 +371,8 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// into XML nodes representing this HTML structure
     /// ```
     /// <picture>
-    ///   <source media="(prefers-color-scheme: light)" src="relative/path/to/some-image.png"/>
-    ///   <source media="(prefers-color-scheme: dark)" src="relative/path/some-image~dark.png"/>
+    ///   <source media="(prefers-color-scheme: light)" srcset="relative/path/to/some-image.png"/>
+    ///   <source media="(prefers-color-scheme: dark)" srcset="relative/path/some-image~dark.png"/>
     ///   <img alt="Some alt text" decoding="async" loading="lazy"/>
     /// </picture>
     /// ```
@@ -384,7 +384,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         func srcAttributes(for images: [Int: URL]) -> [HTMLNode.Attribute] {
             switch images.count {
                 case 0: []
-                case 1: [.src(path(to: images.first!.value))]
+                case 1: [.srcSet([path(to: images.first!.value)])] // No scale factor when there's only one source.
                 default: [.srcSet(images.sorted(by: { $0.key > $1.key }) // large scale factors first
                     .map { scale, url in "\(path(to: url)) \(scale)x" }
                 )]
