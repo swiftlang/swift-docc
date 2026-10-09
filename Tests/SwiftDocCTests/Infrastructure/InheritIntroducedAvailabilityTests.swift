@@ -18,18 +18,7 @@ private extension SymbolGraph.Symbol {
     }
 }
 
-/// Tests inheritability of `introduced` availability versions
-/// when symbols don't have that annotation from source.
-///
-/// This information should come from a documentation catalog's
-/// Info.plist `CDAppleDefaultAvailability` dictionary: the
-/// platform version is assumed to a be a symbols `introduced`
-/// availability version for that platform.
-///
-/// This test makes use of the `FillIntroduced.symbols.json`
-/// symbol graph file in `TestBundle.docc`, along with its `Info.plist`
-/// with the aforementioned `CDAppleDefaultAvailability` dictionary
-/// added for macOS, iOS, tvOS, and watchOS.
+/// Tests that the decoded symbol's availability only includes the information in the symbol graph.
 class InheritIntroducedAvailabilityTests: XCTestCase {
     typealias Domain = SymbolGraph.Symbol.Availability.Domain
     typealias Version = SymbolGraph.SemanticVersion
@@ -46,8 +35,6 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
         super.tearDown()
     }
 
-    /// Tests that the `introduced` availability version comes from
-    /// the macOS version in the Info.plist
     func testMacOSOnlyDeprecated() {
         let macOSOnlyDeprecated =
             context.documentationCache["s:14FillIntroduced19macOSOnlyDeprecatedyyF"]!
@@ -55,7 +42,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
             $0.domain?.rawValue == PlatformName.macOS.rawValue
         }!
 
-        // From Info.plist
+        // Not filled from the Info.plist
         XCTAssertNil(macOSOnlyDeprecated.introducedVersion)
 
         // From symbol graph
@@ -76,8 +63,6 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
         XCTAssertEqual(Version(major: 10, minor: 10, patch: 0), macOSOnlyIntroduced.introducedVersion)
     }
 
-    /// Tests that the `introduced` availability version comes from
-    /// the iOS version in the Info.plist
     func testiOSOnlyDeprecated() {
         let iOSOnlyDeprecated =
             context.documentationCache["s:14FillIntroduced17iOSOnlyDeprecatedyyF"]!
@@ -85,7 +70,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
             $0.domain?.rawValue == PlatformName.iOS.rawValue
         }!
 
-        // From Info.plist
+        // Not filled from the Info.plist
         XCTAssertNil(iOSOnlyDeprecated.introducedVersion)
 
         // From symbol graph
@@ -106,8 +91,6 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
         XCTAssertEqual(Version(major: 13, minor: 0, patch: 0), iOSOnlyIntroduced.introducedVersion)
     }
 
-    /// Tests that the `introduced` availability version comes from
-    /// the iOS version in the Info.plist via a fallback mechanism.
     func testCatalystOnlyDeprecated() {
         let catalystOnlyDeprecated =
             context.documentationCache["s:14FillIntroduced25macCatalystOnlyDeprecatedyyF"]!
@@ -115,7 +98,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
             $0.domain?.rawValue == PlatformName.catalyst.rawValue
         }!
 
-        // From Info.plist
+        // Not filled from the Info.plist
         XCTAssertNil(catalystOnlyDeprecated.introducedVersion)
 
         // From symbol graph
