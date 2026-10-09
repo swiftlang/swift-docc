@@ -170,16 +170,8 @@ public struct ConvertAction: AsyncAction {
         
         var configuration = DocumentationContext.Configuration()
         configuration.featureFlags = featureFlags
-        
         configuration.externalMetadata.diagnosticLevel = filterLevel
-        // Inject current platform versions if provided
-        if var currentPlatforms {
-            // Add missing platforms if their fallback platform is present.
-            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
-                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
-            }
-            configuration.externalMetadata.currentPlatforms = currentPlatforms
-        }
+        configuration.externalMetadata.currentPlatforms = currentPlatforms
 
         // Inject user-set flags.
         configuration.externalMetadata.inheritDocs = inheritDocs

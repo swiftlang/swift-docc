@@ -207,6 +207,9 @@ public class DocumentationContext {
     /// Mentions of symbols within articles.
     var articleSymbolMentions = ArticleSymbolMentions()
 
+    /// An opaque precomputed value that represents which platforms are considered "in beta".
+    let currentBetaPlatforms: Availability.CurrentBetaPlatforms
+
     /// Initializes a documentation context from a collection of input files.
     ///
     /// - Parameters:
@@ -232,6 +235,7 @@ public class DocumentationContext {
         self.configuration = configuration
         
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
+        self.currentBetaPlatforms = .init(currentPlatformVersions: configuration.externalMetadata.currentPlatforms)
 
         ResolvedTopicReference.enableReferenceCaching(for: inputs.id)
         try await register()
@@ -1301,6 +1305,53 @@ public class DocumentationContext {
                 // Remove the matched article
                 uncuratedDocumentationExtensions.removeValue(forKey: reference)
             }
+            
+            // It's fairly likely that we'll want to move this into the main register/update loop in the future.
+            // The primary reason for not doing this yet is that the symbol needs to both:
+            //  - have easy and fast access to its module so that we can precompute the base availability once per module
+            //  - have been associated with its potential extension file first so that we can add information about directive availability
+            signposter.withIntervalSignpost("Compute consolidated availability") {
+                for (moduleName, unifiedGraph) in symbolGraphLoader.unifiedGraphs {
+                    var symbolBaseAvailability = Availability(defaultAvailability: inputs.info.defaultAvailability?.modules[moduleName])
+                    
+                    documentationCache.reference(symbolID: moduleName).map { moduleReference in
+                        var moduleAvailability = symbolBaseAvailability
+                        moduleAvailability.finalizePlatformFallbacks()
+                        (documentationCache[moduleReference]?.semantic as! Symbol).consolidatedAvailability = .init(defaultVariantValue: moduleAvailability)
+                    }
+                    symbolBaseAvailability.markAllEncounteredPlatforms(in: unifiedGraph)
+                    
+                    for symbol in unifiedGraph.symbols.values {
+                        guard let reference = documentationCache.reference(symbolID: symbol.uniqueIdentifier) else {
+                            continue
+                        }
+                        
+                        var languages = Set<DocumentationDataVariantsTrait>()
+                        for selector in symbol.allSelectors {
+                            languages.insert(.init(interfaceLanguage: selector.interfaceLanguage))
+                        }
+                        let directiveAvailability = documentationCache[reference]?.metadata?.availability
+                        
+                        func makeAvailability(languageFilter: String) -> Availability {
+                            var availability = symbolBaseAvailability
+                            availability.addInSourceAvailability(from: symbol, matchingLanguage: languageFilter)
+                            
+                            if let directiveAvailability {
+                                availability.addDirectiveAvailability(directiveAvailability, preservingBugOfFirstResettingAvailabilityTo: symbolBaseAvailability)
+                            }
+                            availability.finalizePlatformFallbacks()
+                            
+                            return availability
+                        }
+                        
+                        (documentationCache[reference]?.semantic as! Symbol).consolidatedAvailability = .init(
+                            values: .init(uniqueKeysWithValues: languages.map { trait in
+                                (key: trait, value: makeAvailability(languageFilter: trait.interfaceLanguage! /* all entries in `otherLanguages` have a language */))
+                            })
+                        )
+                    }
+                }
+            }
 
             // Resolve any external references first
             preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }))
@@ -1865,7 +1916,8 @@ public class DocumentationContext {
                 markup: articleResult.value.markup,
                 metadata: Metadata(from: metadataMarkup, for: inputs, featureFlags: configuration.featureFlags),
                 redirects: articleResult.value.redirects,
-                options: articleResult.value.options
+                options: articleResult.value.options,
+                availability: articleResult.value.availability
             )
             
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: articleResult.topicGraphNode.source, title: title)
@@ -1897,7 +1949,7 @@ public class DocumentationContext {
                 metadataDirectiveMarkup
             )
             let metadata = Metadata(from: metadataDirectiveMarkup, for: inputs, featureFlags: configuration.featureFlags)
-            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
+            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:], availability: Availability.makeNewArticleBaseAvailability(info: inputs.info))
             let documentationNode = DocumentationNode(
                 reference: reference,
                 kind: .collection,

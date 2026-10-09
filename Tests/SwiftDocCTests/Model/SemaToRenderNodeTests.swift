@@ -1490,9 +1490,6 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Ensure the availability has platform and version.
         let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
-        
-        // Verify there are 6 availability items in the symbol graph
-        XCTAssertEqual(symbol.availability?.availability.count, 6)
 
         // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid
         // and therefore Catalyst and iPadOS are also invalid.

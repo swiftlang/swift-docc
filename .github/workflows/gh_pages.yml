@@ -21,7 +21,7 @@ jobs:
     name: Build and publish documentation
     runs-on: ubuntu-latest
     container:
-      image: swift:6.3-jammy
+      image: swiftlang/swift:nightly-main-noble
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -61,11 +61,14 @@ jobs:
       - name: Publish documentation to gh-pages
         working-directory: gh-pages
         env:
-          GIT_AUTHOR_NAME: ${{ github.actor }}
+          # Use the GitHub Actions bot identity to create the commit with the updated documentation.
+          #
+          # https://api.github.com/users/github-actions%5Bbot%5D
+          GIT_AUTHOR_NAME: github-actions[bot]
           # https://docs.github.com/en/account-and-profile/reference/email-addresses-reference#your-noreply-email-address
-          GIT_AUTHOR_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
-          GIT_COMMITTER_NAME: ${{ github.actor }}
-          GIT_COMMITTER_EMAIL: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
         run: |
           git config --global --add safe.directory '*'
           git add docs
