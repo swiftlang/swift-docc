@@ -261,7 +261,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         get { _isDeprecatedVariants }
         set { _isDeprecatedVariants = newValue }
     }
-    private var _isDeprecatedVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
+    var _isDeprecatedVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
     
     /// Whether the symbol is declared as an SPI, in each language variant the symbol is available in.
     public var isSPIVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)

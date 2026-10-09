@@ -934,6 +934,10 @@ public struct DocumentationNode {
     public var tags: Tags = (returns: [], throws: [], parameters: [])
     
     private func warnAboutDeprecationSummaryForAvailableSymbol(semantic: Symbol, engine: DiagnosticEngine) {
+        guard semantic._isDeprecatedVariants.firstValue == false else {
+            return
+        }
+        
         let deprecationSummaryDirective = markup.children.mapFirst { markup in
             (markup as? BlockDirective).flatMap { directive in
                 directive.name == DeprecationSummary.directiveName ? directive : nil
