@@ -190,8 +190,7 @@ struct DocumentationContentRendererTests {
             ],
             name: .symbol(name: ""),
             markup: Document(parsing: ""),
-            semantic: nil,
-            platformNames: nil
+            semantic: nil
         )
 
         node.semantic = Symbol(
@@ -233,6 +232,7 @@ struct DocumentationContentRendererTests {
             externalIDVariants: .init(swiftVariant: nil),
             accessLevelVariants: .init(swiftVariant: nil),
             availabilityVariants: .init(swiftVariant: Availability(availability: [])),
+            consolidatedAvailabilityVariants: .empty,
             deprecatedSummaryVariants: .init(swiftVariant: nil),
             mixinsVariants: .init(swiftVariant: nil),
             abstractSectionVariants: .init(swiftVariant: nil),

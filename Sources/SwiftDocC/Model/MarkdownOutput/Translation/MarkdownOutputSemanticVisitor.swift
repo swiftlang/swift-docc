@@ -148,10 +148,8 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [document])
         
-        if let metadataAvailability = article.metadata?.availability,
-           !metadataAvailability.isEmpty
-        {
-            metadata.availability = metadataAvailability.map { .init($0) }
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
+            metadata.availability = platforms.map { .init($0) }
         }
         metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         markdownWalker.visit(article.title)
@@ -227,30 +225,10 @@ extension MarkdownOutputSemanticVisitor {
         )
         manifest = MarkdownOutputManifest(title: inputs.displayName, documents: [document])
         
-        // Availability - defaults, overridden with symbol, overridden with metadata
-        
-        var availabilities: [String: MarkdownOutputNode.Metadata.Availability] = [:]
-        
-        let symbolAvailability = symbol.availability?.availability ?? []
-        // Framework defaults only apply if there are no specific availabilities at symbol level.
-        if !symbolAvailability.contains(where: { $0.domain != nil }), let primaryModule = metadata.symbol?.modules.first {
-            for availability in inputs.info.defaultAvailability?.modules[primaryModule] ?? [] {
-                let meta = MarkdownOutputNode.Metadata.Availability(availability)
-                availabilities[meta.platform] = meta
-            }
+        // Availability
+        if let platforms = symbol.consolidatedAvailability.firstValue?.makePlatforms(context.currentBetaPlatforms) {
+            metadata.availability = platforms.map { .init($0) }
         }
-        
-        for availability in symbolAvailability {
-            let meta = MarkdownOutputNode.Metadata.Availability(availability)
-            availabilities[meta.platform] = meta
-        }
-        
-        for availability in documentationNode.metadata?.availability ?? [] {
-            let meta = MarkdownOutputNode.Metadata.Availability(availability)
-            availabilities[meta.platform] = meta
-        }
-        
-        metadata.availability = availabilities.values.sorted(by: \.platform)
          
         // Content
         
@@ -404,30 +382,12 @@ private extension MarkdownOutputNode.Metadata.Symbol {
 }
 
 private extension MarkdownOutputNode.Metadata.Availability {
-    init(_ item: SymbolGraph.Symbol.Availability.AvailabilityItem) {
+    init(_ platform: Availability.Platform) {
         self.init(
-            platform: item.domain?.rawValue ?? "*",
-            introduced: item.introducedVersion?.description,
-            deprecated: item.deprecatedVersion?.description,
-            unavailable: item.obsoletedVersion != nil
-        )
-    }
-    
-    // From the info.plist of the module
-    init(_ availability: DefaultAvailability.ModuleAvailability) {
-        self.init(
-            platform: availability.platformName.rawValue,
-            introduced: availability.introducedVersion,
-            deprecated: nil,
-            unavailable: availability.versionInformation == .unavailable
-        )
-    }
-    
-    init(_ availability: Metadata.Availability) {
-        self.init(
-            platform: availability.platform.rawValue,
-            introduced: availability.introduced.description,
-            deprecated: availability.deprecated?.description,
+            platform: platform.name,
+            // FIXME: It would be more consistent with other output to use `stringRepresentation(precisionUpToNonsignificant: .minor)` for both these versions.
+            introduced: platform.introduced?.description,
+            deprecated: platform.deprecated?.description,
             unavailable: false
         )
     }

@@ -904,7 +904,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertTrue(myClassSymbol.relationships.groups.contains { group -> Bool in
             return group.kind == .conformsTo && Array(group.destinations.map({ $0.url?.absoluteString })) == ["doc://com.example.documentation/documentation/MyKit/MyProtocol"]
         })
-        XCTAssertEqual(myClassSymbol.platformName, PlatformName(operatingSystemName: "ios"))
+        XCTAssertEqual(myClassSymbol._platformNameVariants.firstValue, PlatformName(operatingSystemName: "ios"))
         XCTAssertEqual(myClassSymbol.roleHeading, "Class")
         XCTAssertEqual(myClassSymbol.title, "MyClass")
         
@@ -2888,11 +2888,11 @@ let expected = """
         Article Abstract.
         """
         // Assert we can create a documentation node from markup
-        let markupArticle = Article(markup: Document(parsing: source), metadata: nil, redirects: nil, options: [:])
+        let markupArticle = Article(markup: Document(parsing: source), metadata: nil, redirects: nil, options: [:], availability: .init(defaultAvailability: nil))
         XCTAssertNoThrow(try DocumentationNode(reference: reference, article: markupArticle))
         
         // Assert we cannot create new nodes from semantic article data
-        let semanticArticle = Article(title: Heading(level: 1, [Text("New Article")]), abstractSection: nil, discussion: nil, topics: nil, seeAlso: nil, deprecationSummary: nil, metadata: nil, redirects: nil)
+        let semanticArticle = Article(title: Heading(level: 1, [Text("New Article")]), abstractSection: nil, discussion: nil, topics: nil, seeAlso: nil, deprecationSummary: nil, metadata: nil, redirects: nil, availability: .init(defaultAvailability: nil))
         XCTAssertThrowsError(try DocumentationNode(reference: reference, article: semanticArticle))
     }
     
