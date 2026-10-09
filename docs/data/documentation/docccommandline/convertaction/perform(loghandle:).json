@@ -99,7 +99,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertAction.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/Action\/Actions\/Convert\/ConvertAction.swift#L229"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/Action\/Actions\/Convert\/ConvertAction.swift#L221"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

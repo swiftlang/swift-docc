@@ -141,7 +141,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Article.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L266"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L284"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

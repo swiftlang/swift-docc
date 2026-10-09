@@ -40,7 +40,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeTranslator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L2208"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L2060"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",

@@ -169,6 +169,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleReference:article:featureFlags:engine:)"
       ],
@@ -640,13 +641,188 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)": {
   "abstract" : [
     {
       "text" : "Initializes a documentation node with all its initial values.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "reference"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
+      "text" : "ResolvedTopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "kind"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sourceLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
+      "text" : "SourceLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "availableSourceLanguages"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
+      "text" : "SourceLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4NameO",
+      "text" : "Name"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "semantic"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
+      "text" : "Semantic"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isVirtual"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:kind:sourcelanguage:availablesourcelanguages:name:markup:semantic:isvirtual:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -1241,6 +1417,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

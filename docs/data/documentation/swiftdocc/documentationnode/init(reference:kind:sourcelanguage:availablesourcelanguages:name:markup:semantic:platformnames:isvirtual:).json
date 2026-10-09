@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Initializes a documentation node with all its initial values.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)' instead. This deprecated API will be removed after 6.6 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -216,7 +221,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationNode.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L167"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L187"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -431,153 +436,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The unique reference to the node.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "reference"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The type of node.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "kind"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The programming language in which the node is relevant.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "sourceLanguage"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "All the languages in which the node is available.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "availableSourceLanguages"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The name of the node.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "name"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The markup that makes up the content for the node.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "markup"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The parsed documentation structure that’s described by the documentation content.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "semantic"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The names of the platforms for which the node is available.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "platformNames"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "",
-                  "type" : "text"
-                },
-                {
-                  "code" : "true",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the node represents a virtual element that doesn’t represent a rendered page of documentation, ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "false",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " otherwise.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "isVirtual"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
@@ -720,11 +578,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)": {
   "abstract" : [
-    {
-      "text" : "Initializes a documentation node with all its initial values.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

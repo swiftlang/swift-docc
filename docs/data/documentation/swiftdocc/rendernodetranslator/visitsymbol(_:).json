@@ -79,7 +79,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeTranslator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L1326"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L1304"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

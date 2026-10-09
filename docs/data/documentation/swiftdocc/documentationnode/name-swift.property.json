@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationNode.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L42"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L47"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

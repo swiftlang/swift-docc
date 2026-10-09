@@ -44,7 +44,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownOutputSemanticVisitor.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/MarkdownOutput\/Translation\/MarkdownOutputSemanticVisitor.swift#L633"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/MarkdownOutput\/Translation\/MarkdownOutputSemanticVisitor.swift#L593"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

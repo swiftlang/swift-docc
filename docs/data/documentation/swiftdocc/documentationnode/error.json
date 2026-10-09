@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationNode.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L847"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L883"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",

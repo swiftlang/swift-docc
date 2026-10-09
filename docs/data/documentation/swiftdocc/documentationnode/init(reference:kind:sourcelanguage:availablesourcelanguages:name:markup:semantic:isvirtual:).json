@@ -1,19 +1,8 @@
 {
   "abstract" : [
     {
-      "text" : "Initializes a documentation node to represent a symbol from a symbol graph.",
+      "text" : "Initializes a documentation node with all its initial values.",
       "type" : "text"
-    }
-  ],
-  "deprecationSummary" : [
-    {
-      "inlineContent" : [
-        {
-          "text" : "This API is only used from tests. It will be removed after 6.5 is released.",
-          "type" : "text"
-        }
-      ],
-      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -26,11 +15,11 @@
   },
   "identifier" : {
     "interfaceLanguage" : "swift",
-    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleReference:article:featureFlags:engine:)"
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)"
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC17DocumentationNodeV9reference6symbol12platformName15moduleReference7article12featureFlags6engineAcA013ResolvedTopicJ0V_9SymbolKit0Q5GraphV0Q0VSSSgAlA7ArticleCSgAA07FeatureM0VAA16DiagnosticEngineCtcfc",
+    "externalID" : "s:9SwiftDocC17DocumentationNodeV9reference4kind14sourceLanguage24availableSourceLanguages4name6markup8semantic9isVirtualAcA22ResolvedTopicReferenceV_AC4KindV0B7CCommon0jH0VShyARGSgAC4NameO8Markdown6Markup_pAA8SemanticCSgSbtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -59,7 +48,7 @@
       },
       {
         "kind" : "externalParam",
-        "text" : "symbol"
+        "text" : "kind"
       },
       {
         "kind" : "text",
@@ -67,17 +56,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-        "text" : "SymbolGraph"
-      },
-      {
-        "kind" : "text",
-        "text" : "."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-        "text" : "Symbol"
+        "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+        "text" : "Kind"
       },
       {
         "kind" : "text",
@@ -85,7 +65,7 @@
       },
       {
         "kind" : "externalParam",
-        "text" : "platformName"
+        "text" : "sourceLanguage"
       },
       {
         "kind" : "text",
@@ -93,8 +73,93 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:SS",
-        "text" : "String"
+        "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
+        "text" : "SourceLanguage"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "availableSourceLanguages"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sh",
+        "text" : "Set"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
+        "text" : "SourceLanguage"
+      },
+      {
+        "kind" : "text",
+        "text" : ">?, "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "name"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4NameO",
+        "text" : "Name"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "markup"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8Markdown6MarkupP",
+        "text" : "Markup"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "semantic"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
+        "text" : "Semantic"
       },
       {
         "kind" : "text",
@@ -102,7 +167,7 @@
       },
       {
         "kind" : "externalParam",
-        "text" : "moduleReference"
+        "text" : "isVirtual"
       },
       {
         "kind" : "text",
@@ -110,59 +175,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
-        "text" : "ResolvedTopicReference"
-      },
-      {
-        "kind" : "text",
-        "text" : ", "
-      },
-      {
-        "kind" : "externalParam",
-        "text" : "article"
-      },
-      {
-        "kind" : "text",
-        "text" : ": "
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC7ArticleC",
-        "text" : "Article"
-      },
-      {
-        "kind" : "text",
-        "text" : "?, "
-      },
-      {
-        "kind" : "externalParam",
-        "text" : "featureFlags"
-      },
-      {
-        "kind" : "text",
-        "text" : ": "
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
-        "text" : "FeatureFlags"
-      },
-      {
-        "kind" : "text",
-        "text" : ", "
-      },
-      {
-        "kind" : "externalParam",
-        "text" : "engine"
-      },
-      {
-        "kind" : "text",
-        "text" : ": "
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC16DiagnosticEngineC",
-        "text" : "DiagnosticEngine"
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
       },
       {
         "kind" : "text",
@@ -176,12 +190,12 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationNode.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L791"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L171"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
     "symbolKind" : "init",
-    "title" : "init(reference:symbol:platformName:moduleReference:article:featureFlags:engine:)"
+    "title" : "init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)"
   },
   "primaryContentSections" : [
     {
@@ -222,25 +236,17 @@
             },
             {
               "kind" : "externalParam",
-              "text" : "symbol"
+              "text" : "kind"
             },
             {
               "kind" : "text",
               "text" : ": "
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-              "text" : "SymbolGraph"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-              "text" : "Symbol"
+              "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+              "text" : "Kind"
             },
             {
               "kind" : "text",
@@ -248,34 +254,17 @@
             },
             {
               "kind" : "externalParam",
-              "text" : "platformName"
+              "text" : "sourceLanguage"
             },
             {
               "kind" : "text",
               "text" : ": "
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:SS",
-              "text" : "String"
-            },
-            {
-              "kind" : "text",
-              "text" : "?, "
-            },
-            {
-              "kind" : "externalParam",
-              "text" : "moduleReference"
-            },
-            {
-              "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
-              "text" : "ResolvedTopicReference"
+              "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
+              "text" : "SourceLanguage"
             },
             {
               "kind" : "text",
@@ -283,17 +272,87 @@
             },
             {
               "kind" : "externalParam",
-              "text" : "article"
+              "text" : "availableSourceLanguages"
             },
             {
               "kind" : "text",
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC7ArticleC",
-              "text" : "Article"
+              "preciseIdentifier" : "s:Sh",
+              "text" : "Set"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
+              "text" : "SourceLanguage"
+            },
+            {
+              "kind" : "text",
+              "text" : ">? = nil, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "name"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Name-swift.enum",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4NameO",
+              "text" : "Name"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "markup"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8Markdown6MarkupP",
+              "text" : "Markup"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "semantic"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
+              "text" : "Semantic"
             },
             {
               "kind" : "text",
@@ -301,39 +360,20 @@
             },
             {
               "kind" : "externalParam",
-              "text" : "featureFlags"
+              "text" : "isVirtual"
             },
             {
               "kind" : "text",
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
-              "text" : "FeatureFlags"
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
             },
             {
               "kind" : "text",
-              "text" : " = .init(), "
-            },
-            {
-              "kind" : "externalParam",
-              "text" : "engine"
-            },
-            {
-              "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC16DiagnosticEngineC",
-              "text" : "DiagnosticEngine"
-            },
-            {
-              "kind" : "text",
-              "text" : ")"
+              "text" : " = false)"
             }
           ]
         }
@@ -362,84 +402,114 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The symbol to create a documentation node for.",
+                  "text" : "The type of node.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "symbol"
+          "name" : "kind"
         },
         {
           "content" : [
             {
               "inlineContent" : [
                 {
-                  "text" : "The names of the platform that the symbol is available for.",
+                  "text" : "The programming language in which the node is relevant.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "platformName"
+          "name" : "sourceLanguage"
         },
         {
           "content" : [
             {
               "inlineContent" : [
                 {
-                  "text" : "A reference to the module that the symbol belongs to.",
+                  "text" : "All the languages in which the node is available.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "moduleReference"
+          "name" : "availableSourceLanguages"
         },
         {
           "content" : [
             {
               "inlineContent" : [
                 {
-                  "text" : "The documentation extension content for this symbol.",
+                  "text" : "The name of the node.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "article"
+          "name" : "name"
         },
         {
           "content" : [
             {
               "inlineContent" : [
                 {
-                  "text" : "A collection of feature flags.",
+                  "text" : "The markup that makes up the content for the node.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "featureFlags"
+          "name" : "markup"
         },
         {
           "content" : [
             {
               "inlineContent" : [
                 {
-                  "text" : "The engine that collects any diagnostics encountered during initialization.",
+                  "text" : "The parsed documentation structure that’s described by the documentation content.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "engine"
+          "name" : "semantic"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "code" : "true",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " if the node represents a virtual element that doesn’t represent a rendered page of documentation, ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "false",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " otherwise.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "isVirtual"
         }
       ]
     }
@@ -455,7 +525,7 @@
   "variants" : [
     {
       "paths" : [
-        "\/documentation\/swiftdocc\/documentationnode\/init(reference:symbol:platformname:modulereference:article:featureflags:engine:)"
+        "\/documentation\/swiftdocc\/documentationnode\/init(reference:kind:sourcelanguage:availablesourcelanguages:name:markup:semantic:isvirtual:)"
       ],
       "traits" : [
         {
@@ -479,74 +549,6 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Article": {
-  "abstract" : [
-    {
-      "text" : "The in-memory representation of an article.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Article"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Article"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Article",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/article"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine": {
-  "abstract" : [
-    {
-      "text" : "A type that collects and dispatches diagnostics during compilation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "class"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DiagnosticEngine"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DiagnosticEngine"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DiagnosticEngine",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticengine"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode": {
   "abstract" : [
@@ -582,14 +584,81 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:symbol:platformName:moduleReference:article:featureFlags:engine:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct": {
   "abstract" : [
     {
-      "text" : "Initializes a documentation node to represent a symbol from a symbol graph.",
+      "text" : "The kind of a documentation node.",
       "type" : "text"
     }
   ],
-  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Kind"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationNode.Kind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Name-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "The annotated name of a node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Name"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Name-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Name"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationNode.Name",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/name-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)": {
+  "abstract" : [
+    {
+      "text" : "Initializes a documentation node with all its initial values.",
+      "type" : "text"
+    }
+  ],
   "fragments" : [
     {
       "kind" : "identifier",
@@ -618,7 +687,7 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "symbol"
+      "text" : "kind"
     },
     {
       "kind" : "text",
@@ -626,17 +695,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
-      "text" : "SymbolGraph"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
-      "text" : "Symbol"
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
     },
     {
       "kind" : "text",
@@ -644,7 +704,7 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "platformName"
+      "text" : "sourceLanguage"
     },
     {
       "kind" : "text",
@@ -652,25 +712,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "moduleReference"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
-      "text" : "ResolvedTopicReference"
+      "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
+      "text" : "SourceLanguage"
     },
     {
       "kind" : "text",
@@ -678,7 +721,7 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "article"
+      "text" : "availableSourceLanguages"
     },
     {
       "kind" : "text",
@@ -686,16 +729,25 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ArticleC",
-      "text" : "Article"
+      "preciseIdentifier" : "s:Sh",
+      "text" : "Set"
     },
     {
       "kind" : "text",
-      "text" : "?, "
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14SourceLanguagea",
+      "text" : "SourceLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">?, "
     },
     {
       "kind" : "externalParam",
-      "text" : "featureFlags"
+      "text" : "name"
     },
     {
       "kind" : "text",
@@ -703,8 +755,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
-      "text" : "FeatureFlags"
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4NameO",
+      "text" : "Name"
     },
     {
       "kind" : "text",
@@ -712,62 +764,70 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "engine"
+      "text" : "markup"
     },
     {
       "kind" : "text",
       "text" : ": "
     },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiagnosticEngineC",
-      "text" : "DiagnosticEngine"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleReference:article:featureFlags:engine:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(reference:symbol:platformName:moduleReference:article:featureFlags:engine:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:symbol:platformname:modulereference:article:featureflags:engine:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags": {
-  "abstract" : [
-    {
-      "text" : "A set of feature flags that conditionally enable (usually experimental) behavior in Swift-DocC.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "any"
     },
     {
       "kind" : "text",
       "text" : " "
     },
     {
-      "kind" : "identifier",
-      "text" : "FeatureFlags"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags",
-  "kind" : "symbol",
-  "navigatorTitle" : [
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
     {
-      "kind" : "identifier",
-      "text" : "FeatureFlags"
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "semantic"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
+      "text" : "Semantic"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isVirtual"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
     }
   ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)",
+  "kind" : "symbol",
   "role" : "symbol",
-  "title" : "FeatureFlags",
+  "title" : "init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/featureflags"
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:kind:sourcelanguage:availablesourcelanguages:name:markup:semantic:isvirtual:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ResolvedTopicReference": {
   "abstract" : [
@@ -802,6 +862,71 @@
   "title" : "ResolvedTopicReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/resolvedtopicreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
+  "abstract" : [
+    {
+      "text" : "A semantic object is an abstract element with children which also are semantic objects.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SourceLanguage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SourceLanguage",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcelanguage"
 }
 }
 }

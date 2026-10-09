@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L659"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L681"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -293,6 +293,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -848,6 +849,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

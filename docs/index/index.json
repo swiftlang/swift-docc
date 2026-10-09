@@ -7341,6 +7341,12 @@
                         "type" : "groupMarker"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:kind:sourcelanguage:availablesourcelanguages:name:markup:semantic:isvirtual:)",
+                        "title" : "init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>?, name: Name, markup: any Markup, semantic: Semantic?, isVirtual: Bool)",
+                        "type" : "init"
+                      },
+                      {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:kind:sourcelanguage:availablesourcelanguages:name:markup:semantic:platformnames:isvirtual:)",
                         "title" : "init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>?, name: Name, markup: any Markup, semantic: Semantic?, platformNames: Set<String>?, isVirtual: Bool)",
                         "type" : "init"
@@ -7396,6 +7402,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/documentationnode\/platformnames",
                         "title" : "var platformNames: Set<String>?",
                         "type" : "property"
@@ -26173,6 +26180,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/symbol\/platformnamevariants",
                         "title" : "var platformNameVariants: DocumentationDataVariants<PlatformName>",
                         "type" : "property"
@@ -26233,6 +26241,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/symbol\/availabilityvariants",
                         "title" : "var availabilityVariants: DocumentationDataVariants<SymbolGraph.Symbol.Availability>",
                         "type" : "property"
@@ -26283,6 +26292,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/symbol\/isdeprecatedvariants",
                         "title" : "var isDeprecatedVariants: DocumentationDataVariants<Bool>",
                         "type" : "property"
@@ -26322,6 +26332,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/symbol\/platformname",
                         "title" : "var platformName: PlatformName?",
                         "type" : "property"
@@ -26362,6 +26373,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/symbol\/availability",
                         "title" : "var availability: SymbolGraph.Symbol.Availability?",
                         "type" : "property"
@@ -26422,6 +26434,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/symbol\/isdeprecated",
                         "title" : "var isDeprecated: Bool",
                         "type" : "property"

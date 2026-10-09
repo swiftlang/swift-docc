@@ -5,6 +5,17 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use the consolidated availability information instead. This deprecated API will be removed after 6.6 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -73,7 +84,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L653"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L675"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -333,6 +344,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -888,6 +900,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
