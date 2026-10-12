@@ -87,7 +87,8 @@ class DefaultAvailabilityTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), ["Mac Catalyst ", "iOS ", "iPadOS ", "macOS 10.15.1"])
+            // Don't override the Catalyst version from the Info.plist with the versionless fallback information from the symbol being found in an iOS symbol graph file
+            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), ["Mac Catalyst 13.5", "iOS ", "iPadOS ", "macOS 10.15.1"])
         }
 
         // Test if the default availability is NOT used for symbols with explicit availability
@@ -283,9 +284,9 @@ class DefaultAvailabilityTests: XCTestCase {
         )
         
         let module = try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
-        XCTAssertEqual(module.count, 6)
+        XCTAssertEqual(module.count, 5, "There are 5 values in the Info.plist file")
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
-        XCTAssertEqual(module.filter({ $0.platformName.displayName == "iPadOS" }).count, 1)
+        XCTAssertEqual(module.filter({ $0.platformName.displayName == "iPadOS" }).count, 0)
     }
 
     func testInitializeWithCorrectAvailabilityWithRawValue() throws {
@@ -320,10 +321,10 @@ class DefaultAvailabilityTests: XCTestCase {
         )
         
         let module = try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
-        XCTAssertEqual(module.count, 6)
+        XCTAssertEqual(module.count, 5, "There are 5 values in the Info.plist file")
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
         XCTAssertEqual(module.filter({ $0.platformName.rawValue == "macCatalyst" }).count, 1)
-        XCTAssertEqual(module.filter({ $0.platformName.displayName == "iPadOS" }).count, 1)
+        XCTAssertEqual(module.filter({ $0.platformName.displayName == "iPadOS" }).count, 0)
     }
     
     // Test that setting default availability doesn't prevent symbols with "universal" deprecation
@@ -416,7 +417,7 @@ class DefaultAvailabilityTests: XCTestCase {
             from: reEncodedInfo
         )
         let module = try XCTUnwrap(defaultAvailability.modules["MyModule"])
-        XCTAssertEqual(module.count, 7)
+        XCTAssertEqual(module.count, 5, "There are 5 values in the Info.plist file")
         XCTAssertEqual(
             module.filter({ $0.platformName.displayName == "visionOS" }).first?.versionInformation,
             .unavailable
@@ -437,100 +438,51 @@ class DefaultAvailabilityTests: XCTestCase {
             module.filter({ $0.platformName.displayName == "iOS" }).first?.introducedVersion,
             "1.0"
         )
-        XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.introducedVersion,
-            "1.0"
-        )
     }
     
-    func testFallbackAvailability() throws {
-        func unwrapModuleDefaultAvailability(_ plistEntries: [String: [[String: String]]]) throws -> [DefaultAvailability.ModuleAvailability] {
-            let plistData = try PropertyListEncoder().encode(plistEntries)
+    func testOnlyDecodedEncounteredPlatforms() throws {
+        func unwrapModuleDefaultAvailability(_ platforms: [[String: String]]) throws -> [DefaultAvailability.ModuleAvailability] {
+            let plistData = try PropertyListEncoder().encode(["ModuleName": platforms])
             let defaultAvailability = try PropertyListDecoder().decode(
                 DefaultAvailability.self,
                 from: plistData
             )
             
-            return try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
+            return try XCTUnwrap(defaultAvailability.modules["ModuleName"])
         }
-        // When there's no iOS availability test that Catalyst and iPadOS
-        // are not added through fallback behaviour.
-        var plistEntries: [String: [[String: String]]] = [
-            "SwiftUI": [
-                [
-                    "name": "macOS",
-                    "version": "10.15",
-                ]
-            ],
-        ]
-        var module = try unwrapModuleDefaultAvailability(plistEntries)
+        // Only decodes macOS when that's the only platform in the Info.plist
+        var module = try unwrapModuleDefaultAvailability([
+            [ "name": "macOS", "version": "10.15" ],
+        ])
         XCTAssertEqual(module.count, 1)
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "macOS" }).count, 1)
-        // When there is iOS availability test that Catalyst and iPadOS
-        // are added through fallback behaviour.
-        plistEntries = [
-            "SwiftUI": [
-                [
-                    "name": "iOS",
-                    "version": "8.0",
-                ]
-            ],
-        ]
-        module = try unwrapModuleDefaultAvailability(plistEntries)
-        XCTAssertEqual(module.count, 3)
+        
+        // Only decodes iOS when that's the only platform in the Info.plist
+        module = try unwrapModuleDefaultAvailability([
+            [ "name": "iOS", "version": "8.0" ],
+        ])
+        XCTAssertEqual(module.count, 1, "There's only one value in the Info.plist file")
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "iOS" }).count, 1)
-        XCTAssertEqual(module.filter({ $0.platformName.displayName == "iPadOS" }).count, 1)
-        XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
-        XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.versionInformation,
-            .available(version: "8.0")
-        )
-        XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "Mac Catalyst" }).first?.versionInformation,
-            .available(version: "8.0")
-        )
-        // When there is iOS availability test that Catalyst and iPadOS
-        // are added through fallback behaviour.
-        plistEntries = [
-            "SwiftUI": [
-                [
-                    "name": "iOS",
-                    "version": "8.0",
-                ],
-                [
-                    "name": "Mac Catalyst",
-                    "version": "9.0",
-                ]
-            ],
-        ]
-        module = try unwrapModuleDefaultAvailability(plistEntries)
-        XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.versionInformation,
-            .available(version: "8.0")
-        )
+        XCTAssert(module.filter({ $0.platformName.displayName == "iPadOS" }).isEmpty, "The Info.plist doesn't contain a 'iPadOS' value.")
+        XCTAssert(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).isEmpty, "The Info.plist doesn't contain a 'Mac Catalyst' value.")
+        
+        // Only decodes iOS and Catalyst when those are the only platforms in the Info.plist
+        module = try unwrapModuleDefaultAvailability([
+            [ "name": "iOS",          "version": "8.0" ],
+            [ "name": "Mac Catalyst", "version": "9.0" ],
+        ])
+        XCTAssert(module.filter({ $0.platformName.displayName == "iPadOS" }).isEmpty, "The Info.plist doesn't contain a 'iPadOS' value.")
         XCTAssertEqual(
             module.filter({ $0.platformName.displayName == "Mac Catalyst" }).first?.versionInformation,
             .available(version: "9.0")
         )
-        // When there is iOS availability test that Catalyst and iPadOS
-        // are added through fallback behaviour.
-        plistEntries = [
-            "SwiftUI": [
-                [
-                    "name": "iOS",
-                    "version": "8.0",
-                ],
-                [
-                    "name": "Mac Catalyst",
-                    "version": "9.0",
-                ],
-                [
-                    "name": "iPadOS",
-                    "version": "10.0",
-                ]
-            ],
-        ]
-        module = try unwrapModuleDefaultAvailability(plistEntries)
+
+        // decodes iOS and Catalyst when those are the only platforms in the Info.plist
+        module = try unwrapModuleDefaultAvailability([
+            [ "name": "iOS",          "version":  "8.0" ],
+            [ "name": "Mac Catalyst", "version":  "9.0" ],
+            [ "name": "iPadOS",       "version": "10.0" ],
+        ])
         XCTAssertEqual(
             module.filter({ $0.platformName.displayName == "iOS" }).first?.versionInformation,
             .available(version: "8.0")
@@ -570,8 +522,7 @@ class DefaultAvailabilityTests: XCTestCase {
             XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
             XCTAssertEqual( withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "10.0.0")
             
-            XCTAssertNotNil(withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
-            XCTAssertNil(   withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description)
+            XCTAssert(withoutInSourceAvailability.isEmpty)
             
             // Verify that the module page displays only the default availability
             let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
@@ -593,13 +544,8 @@ class DefaultAvailabilityTests: XCTestCase {
             
             XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
             XCTAssertEqual( withInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "10.0.0")
-            XCTAssertNotNil(withInSourceAvailability.first(where: { $0.domain?.rawValue == "watchOS" }))
-            XCTAssertNil(   withInSourceAvailability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion?.description)
             
-            XCTAssertNotNil(withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" }))
-            XCTAssertEqual( withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion?.description, "8.0.0")
-            XCTAssertNotNil(withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "watchOS" }))
-            XCTAssertNil(   withoutInSourceAvailability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion?.description)
+            XCTAssert(withoutInSourceAvailability.isEmpty)
             
             // Verify that the module page displays only the default availability
             let moduleReference = try XCTUnwrap(context.soleRootModuleReference)

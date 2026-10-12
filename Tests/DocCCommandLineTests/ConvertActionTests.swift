@@ -1423,12 +1423,10 @@ class ConvertActionTests: XCTestCase {
             )
         }
         
-        // Test whether the missing platforms copy the availability information from the fallback platform.
+        // The current platforms forward the current platforms as-is without applying fallback logic.
         var action = try makeConvertAction(currentPlatforms: ["iOS": PlatformVersion(.init(10, 0, 0), beta: true)])
         XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
-            "Mac Catalyst" : PlatformVersion(.init(10, 0, 0), beta: true),
-            "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true),
         ])
         // Test whether the non-missing platforms don't copy the availability information from the fallback platform.
         action = try makeConvertAction(currentPlatforms: [
@@ -1438,13 +1436,11 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: false),
-            "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true)
         ])
         action = try makeConvertAction(currentPlatforms: [
             "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
             "iPadOS": PlatformVersion(.init(12, 0, 0), beta: false),
-            
         ])
         XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
@@ -1454,7 +1450,6 @@ class ConvertActionTests: XCTestCase {
         // Test whether the non-missing platforms don't copy the availability information from the non-fallback platform.
         action = try makeConvertAction(currentPlatforms: [
             "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
-            
         ])
         XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)

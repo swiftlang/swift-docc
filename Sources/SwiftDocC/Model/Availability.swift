@@ -240,13 +240,13 @@ struct Availability {
         
         guard case .available(let introduced, let deprecated, let isUnconditionallyDeprecated) = valueToCopy.state,
               // Only apply "fallback" behaviors if iOS has either an introduced version, a deprecated version, or is unconditionally deprecated
-              introduced != nil || deprecated != nil || isUnconditionallyDeprecated
+              introduced != nil || deprecated != nil || isUnconditionallyDeprecated || _canFillFallbackPlatformsWithoutIntroducedVersion
         else {
             return
         }
         
         // !!!: Preserve the bug that "iPadOS" availability only fills from in-source availability when it either comes from the iOS symbol graph or when it has an introduced version (rdar://172280267)
-        if valueToCopy.source == .inSourceAttribute {
+        if valueToCopy.source == .inSourceAttribute || valueToCopy.source == .foundInSymbolGraph {
             guard introduced != nil || _canFillFallbackPlatformsWithoutIntroducedVersion else {
                 return
             }
@@ -358,13 +358,13 @@ struct Availability {
     /// Creates a list of platform values with their respective combined availability information.
     ///
     /// - Parameter currentPlatform: The precomputed information regarding which platforms are considered in beta.
-    /// - Returns: A list of the final combined availability information for a each platform, in an order that's suitable for display on the rendered page.
-    func makePlatforms(_ currentPlatform: CurrentBetaPlatforms) -> [Platform] {
+    /// - Returns: A list of the final combined availability information for a each platform, in an order that's suitable for display on the rendered page, or `nil` if there's no availability information to display.
+    func makePlatforms(_ currentPlatform: CurrentBetaPlatforms) -> [Platform]? {
         // We don't want to display a list of _only_ platforms without version information.
         // If we have _some_ platforms with version information, or that come from "definite" sources of availability information,
         // then we want these versionless platforms to display but we don't want to display them if they're all there is.
         guard knownPlatforms.contains(where: { $0.state.hasVersions || $0.source != .foundInSymbolGraph && $0.source != .initialValue }) || !customPlatformsByName.isEmpty else {
-            return []
+            return nil
         }
         
         var platforms = [Platform]()
@@ -404,6 +404,9 @@ struct Availability {
             addPlatformIfInBeta(for: info.state, name: name, betaVersion: currentPlatform.customBetaPlatforms[name])
         }
         
+        guard !platforms.isEmpty else {
+            return nil
+        }
         return platforms
     }
     
@@ -764,5 +767,28 @@ private extension UTF8.CodeUnit {
     
     var isVersionComponentSeparator: Bool {
         self == UInt8(ascii: ".")
+    }
+}
+
+extension Availability {
+    /// Creates a new base availability for articles based on the input's metadata information.
+    ///
+    /// This base value can be precomputed once and reused for all articles, which may customize it with their page-specific information.
+    ///
+    /// - Note: This base value is not suitable as a base for symbol page's availability.
+    ///
+    /// - Parameter info: Metadata information about the documentation inputs.
+    /// - Returns: A new base availability value that article pages can customize with their page-specific information.
+    static func makeNewArticleBaseAvailability(info: DocumentationContext.Inputs.Info) -> Availability {
+        // FIXME: It's not supported to mix different modules in one catalog. The default availability shouldn't support this either. (rdar://188797956)
+        let soleModuleName: String? = switch info.defaultAvailability?.modules.count {
+            case 1:  info.defaultAvailability!.modules.keys.first!
+            default: info.displayName
+        }
+        // Even though articles don't _display_ "default" availability they need to be initialized with it to know if a platform has been marked as "unavailable";
+        // meaning that it shouldn't inherit its "fallback" availability from another platform.
+        return Availability(defaultAvailability: soleModuleName.flatMap { info.defaultAvailability?.modules[$0] })
+            // !!!: Preserve the bug that articles don't display default availability (rdar://173688303)
+            .preservingBugThatArticlesDoNotDisplayDefaultAvailability()
     }
 }

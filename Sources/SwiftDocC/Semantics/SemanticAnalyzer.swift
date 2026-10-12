@@ -16,11 +16,13 @@ struct SemanticAnalyzer: MarkupVisitor {
     let source: URL?
     let inputs: DocumentationContext.Inputs
     let featureFlags: FeatureFlags
+    let baseArticleAvailability: Availability
     
     init(source: URL?, inputs: DocumentationContext.Inputs, featureFlags: FeatureFlags) {
         self.source = source
         self.inputs = inputs
         self.featureFlags = featureFlags
+        self.baseArticleAvailability = Availability.makeNewArticleBaseAvailability(info: inputs.info)
     }
 
     private mutating func analyzeChildren(of markup: any Markup) -> [Semantic] {
@@ -79,7 +81,7 @@ struct SemanticAnalyzer: MarkupVisitor {
         }
         
         if topLevelChildren.isEmpty {
-            guard let article = Article(from: document, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics) else {
+            guard let article = Article(from: document, source: source, for: inputs, featureFlags: featureFlags, diagnostics: &diagnostics, baseAvailability: baseArticleAvailability) else {
                 // We've already diagnosed the invalid article.
                 return nil
             }
