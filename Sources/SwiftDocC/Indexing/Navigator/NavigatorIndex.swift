@@ -673,33 +673,7 @@ extension NavigatorIndex {
                 return
             }
             
-            // A render node is structured differently depending on if it was created by "rendering" a documentation node 
-            // or if it was deserialized from a documentation archive.
-            //
-            // If it was created by rendering a documentation node, all variant information is stored in each individual variant collection and the variant overrides are nil.
-            // If it was deserialized from a documentation archive, all variant information is stored in the variant overrides and the variant collections are empty.
-            
-            // Operating on the variant override is _significantly_ slower, so we only take that code path if we have to.
-            // The only reason why this code path still exists is to support the `docc process-archive index` command, which creates an navigation index from an already build documentation archive.
-            if let overrides = renderNode.variantOverrides, !overrides.isEmpty {
-                // This code looks peculiar and very inefficient because it is.
-                // I didn't write it and I really wanted to remove it, but it's the only way to support the `docc process-archive index` command for now.
-                // rdar://128050800 Tracks fixing the inefficiencies with this code, to make `docc process-archive index` command as fast as indexing during a `docc convert` command.
-                //
-                // First, it encodes the render node, which was read from a file, back to data; because that's what the overrides applier operates on
-                let encodedRenderNode = try renderNode.encodeToJSON()
-                // Second, the overrides applier will decode that data into an abstract JSON representation of arrays, dictionaries, string, numbers, etc.
-                // After that the overrides applier loops over all the JSON patches and applies them to the abstract JSON representation.
-                // With all the patches applies, the overrides applier encodes the abstract JSON representation into data again and returns it.
-                let transformedData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(in: encodedRenderNode, for: [objCVariantTrait])
-                // Third, this code decodes the render node from the transformed data. If you count reading the render node from the documentation archive, 
-                // this is the fifth time that the same node is either encoded or decoded.
-                let variantRenderNode = try RenderNode.decode(fromJSON: transformedData)
-                // Finally, the decoded node is in a way flattened, so that it only contains its Objective-C content. That's why we pass `nil` instead of `[objCVariantTrait]` to this call.
-                _ = try index(variantRenderNode, traits: nil)
-            }
-            
-            // If this render node was created by rendering a documentation node, we create a "view" into its Objective-C specific data and index that.
+            // Also index the render node's Objective-C specific data.
             let objVariantView = RenderNodeVariantView(wrapped: renderNode, traits: [objCVariantTrait])
             _ = try index(objVariantView, traits: [objCVariantTrait])
         }
