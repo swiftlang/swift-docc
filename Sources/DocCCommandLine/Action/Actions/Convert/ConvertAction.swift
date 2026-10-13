@@ -202,9 +202,9 @@ public struct ConvertAction: AsyncAction {
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
-        let theFileManager = self.fileManager
         let (inputs, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
-            try DocumentationContext.InputsProvider(fileManager: theFileManager)
+            [fileManager = self.fileManager] in
+            try DocumentationContext.InputsProvider(fileManager: fileManager)
             .inputsAndDataProvider(
                 startingPoint: documentationBundleURL,
                 allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
@@ -265,7 +265,7 @@ public struct ConvertAction: AsyncAction {
                     try fileManager.copyItem(
                         at: htmlTemplateDirectory,
                         to: temporaryFolder,
-                        using: outputFileManager
+                        writingUsing: outputFileManager
                     )
                 }
             case .experimentalHTML:
@@ -353,7 +353,7 @@ public struct ConvertAction: AsyncAction {
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
             catalogRootFolder: rootURL,
-            fileManager: fileManager,
+            inputFileManager: fileManager,
             outputFileManager: outputFileManager,
             context: context,
             indexer: indexer,
@@ -474,7 +474,7 @@ public struct ConvertAction: AsyncAction {
         // However, if the `emitDigest` flag is true, we should replace the current output with our digest of diagnostics.
         // FIXME: We no longer output a diagnostics file in the output. We can remove the `emitDigest` check below.
         if !didEncounterError || emitDigest {
-            try moveOutput(from: temporaryFolder, to: targetDirectory, fileManager: outputFileManager)
+            try moveOutput(from: temporaryFolder, to: targetDirectory)
         }
 
         // Log the output size.
@@ -508,7 +508,7 @@ public struct ConvertAction: AsyncAction {
             let outputConsumer = ConvertFileWritingConsumer(
                 targetFolder: targetDirectory,
                 catalogRootFolder: rootURL,
-                fileManager: fileManager,
+                inputFileManager: fileManager,
                 outputFileManager: outputFileManager,
                 context: context,
                 indexer: nil,
@@ -526,9 +526,9 @@ public struct ConvertAction: AsyncAction {
         return try Self.createUniqueDirectory(inside: temporaryDirectory, template: templateURL, fileManager: outputFileManager)
     }
 
-    func moveOutput(from: URL, to: URL, fileManager: any FileManagerProtocol) throws {
+    func moveOutput(from: URL, to: URL) throws {
         try signposter.withIntervalSignpost("Move output") {
-            try Self.moveOutput(from: from, to: to, fileManager: fileManager)
+            try Self.moveOutput(from: from, to: to, fileManager: outputFileManager)
         }
     }
 }

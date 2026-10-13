@@ -39,7 +39,7 @@ package protocol ReadOnlyFileManagerProtocol: AnyObject, DataProvider {
     /// Returns `true` if a file exists at the given path.
     func fileExists(atPath: String) -> Bool
     /// Copies a file from one location on the file-system to another.
-    func copyItem(at: URL, to: URL, using: any FileManagerProtocol) throws
+    func copyItem(at: URL, to: URL, writingUsing: any FileManagerProtocol) throws
     /// Returns a list of items in a directory
     func contentsOfDirectory(atPath path: String) throws -> [String]
     func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL]
@@ -91,7 +91,7 @@ package protocol FileManagerProtocol: ReadOnlyFileManagerProtocol {
     /// Copies a file from one location on the file-system to another.
     func _copyItem(at: URL, to: URL) throws // Use a different name than FileManager to work around https://github.com/swiftlang/swift-foundation/issues/1125
     /// Moves a file from one location on the file-system to another.
-    func moveItem(at: URL, to: URL, using: any FileManagerProtocol) throws
+    func moveItem(at: URL, to: URL, writingUsing: any FileManagerProtocol) throws
     /// Moves a file from one location on the file-system to another.
     func moveItem(at: URL, to: URL) throws
     /// Returns a list of items in a directory
@@ -156,7 +156,7 @@ extension ReadOnlyFileManagerProtocol {
         return fileExistsAtPath && isDirectory.boolValue
     }
 
-    package func copyItem(at source: URL, to destination: URL, using otherFileManager: any FileManagerProtocol) throws {
+    package func copyItem(at source: URL, to destination: URL, writingUsing otherFileManager: any FileManagerProtocol) throws {
         if destination.path != "/" && otherFileManager.directoryExists(atPath: destination.path) {
             try otherFileManager.removeItem(at: destination)
         }
@@ -173,7 +173,7 @@ extension ReadOnlyFileManagerProtocol {
             for item in try contentsOfDirectory(at: source, includingPropertiesForKeys: [], options: []) {
                 if let relativeItem = item.relative(to: source) {
                     let destinationItem = destination.appendingPathComponent(relativeItem.path)
-                    try copyItem(at: item, to: destinationItem, using: otherFileManager)
+                    try copyItem(at: item, to: destinationItem, writingUsing: otherFileManager)
                 }
             }
         } else {
@@ -199,8 +199,8 @@ extension ReadOnlyFileManagerProtocol {
 
 extension FileManagerProtocol {
 
-    package func moveItem(at source: URL, to destination: URL, using otherFileManager: any FileManagerProtocol) throws {
-        try self.copyItem(at: source, to: destination, using: otherFileManager)
+    package func moveItem(at source: URL, to destination: URL, writingUsing otherFileManager: any FileManagerProtocol) throws {
+        try self.copyItem(at: source, to: destination, writingUsing: otherFileManager)
         try self.removeItem(at: source)
     }
 

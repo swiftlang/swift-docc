@@ -1298,7 +1298,7 @@ extension NavigatorIndex {
                 try FileManager.default.moveItem(
                     at: lmdbTemporaryURL.appendingPathComponent("data.mdb"),
                     to: navigatorIndex.url.appendingPathComponent("data.mdb"),
-                    using: fileManager
+                    writingUsing: fileManager
                 )
                 try? FileManager.default.removeItem(at: lmdbTemporaryURL)
             } catch {

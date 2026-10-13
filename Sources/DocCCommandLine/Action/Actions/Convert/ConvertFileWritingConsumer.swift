@@ -15,7 +15,7 @@ private import Markdown
 struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, ExternalNodeConsumer, ConvertOutputMarkdownConsumer {
     var targetFolder: URL
     var bundleRootFolder: URL?
-    var fileManager: any ReadOnlyFileManagerProtocol
+    var inputFileManager: any ReadOnlyFileManagerProtocol
     var outputFileManager: any FileManagerProtocol
     var context: DocumentationContext
     var renderNodeWriter: JSONEncodingRenderNodeWriter
@@ -31,7 +31,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
     init(
         targetFolder: URL,
         catalogRootFolder: URL?,
-        fileManager: any ReadOnlyFileManagerProtocol,
+        inputFileManager: any ReadOnlyFileManagerProtocol,
         outputFileManager: any FileManagerProtocol,
         context: DocumentationContext,
         indexer: ConvertAction.Indexer?,
@@ -41,7 +41,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
     ) {
         self.targetFolder = targetFolder
         self.bundleRootFolder = catalogRootFolder
-        self.fileManager = fileManager
+        self.inputFileManager = inputFileManager
         self.outputFileManager = outputFileManager
         self.context = context
         self.renderNodeWriter = JSONEncodingRenderNodeWriter(
@@ -86,10 +86,10 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
         func copyAsset(_ asset: DataAsset, to destinationFolder: URL) throws {
             for sourceURL in asset.variants.values where !sourceURL.isAbsoluteWebURL {
                 let assetName = sourceURL.lastPathComponent
-                try fileManager.copyItem(
+                try inputFileManager.copyItem(
                     at: sourceURL,
                     to: destinationFolder.appendingPathComponent(assetName, isDirectory: false),
-                    using: outputFileManager
+                    writingUsing: outputFileManager
                 )
             }
         }
@@ -158,7 +158,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
             if outputFileManager.fileExists(atPath: targetFile.path) {
                 try outputFileManager.removeItem(at: targetFile)
             }
-            try fileManager.copyItem(at: themeSettings, to: targetFile, using: outputFileManager)
+            try inputFileManager.copyItem(at: themeSettings, to: targetFile, writingUsing: outputFileManager)
         }
 
         // If a custom favicon is provided, it will be copied in the output directory
@@ -168,7 +168,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
             if outputFileManager.fileExists(atPath: targetFile.path) {
                 try outputFileManager.removeItem(at: targetFile)
             }
-            try fileManager.copyItem(at: customFavicon, to: targetFile, using: outputFileManager)
+            try inputFileManager.copyItem(at: customFavicon, to: targetFile, writingUsing: outputFileManager)
         }
     }
     
@@ -262,9 +262,9 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
     // the given URL for the provided HTML file
     private func injectCustomTemplate(_ templateURL: URL, identifiedBy id: CustomTemplateIdentifier) throws {
         let index = targetFolder.appendingPathComponent("index.html", isDirectory: false)
-        guard let indexData = fileManager.contents(atPath: index.path),
+        guard let indexData = inputFileManager.contents(atPath: index.path),
               let indexContents = String(data: indexData, encoding: .utf8),
-              let templateData = fileManager.contents(atPath: templateURL.path),
+              let templateData = inputFileManager.contents(atPath: templateURL.path),
               let templateContents = String(data: templateData, encoding: .utf8),
               let bodyTagRange = indexContents.range(of: "<body[^>]*>", options: .regularExpression) else {
             return
