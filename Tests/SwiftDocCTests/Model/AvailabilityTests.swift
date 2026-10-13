@@ -2286,10 +2286,10 @@ struct AvailabilityTests {
         #expect(swiftRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
         #expect(swiftRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.7")
         
+        let objcRenderPlatforms = try #require(renderNode.metadata.platformsVariants.value(for: .objectiveC))
+        #expect(objcRenderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "12.1")
+
         withKnownIssue("Language specific availability isn't reflected on the rendered page (rdar://174818876)") {
-            #expect(!renderNode.metadata.platformsVariants.variants.isEmpty)
-            let objcRenderPlatforms = try #require(renderNode.metadata.platformsVariants.value(for: .objectiveC))
-            
             if defaultIntroducedVersion != nil {
                 #expect(objcRenderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
             } else {
@@ -2299,10 +2299,42 @@ struct AvailabilityTests {
             #expect(objcRenderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
             #expect(objcRenderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
             #expect(objcRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
-            #expect(objcRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "12.1")
         }
     }
     
+    @Test
+    func combinesInSourceAvailabilityFromDifferentSpellingsOfTheSameLanguage() async throws {
+        var macOSSymbol = makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"], availability: [
+            .init(domainName: "macOS", introduced: .init(major: 12, minor: 1, patch: 0), deprecated: nil)
+        ])
+        macOSSymbol.identifier.interfaceLanguage = "objective-c"
+
+        var iOSSymbol = makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"], availability: [
+            .init(domainName: "iOS", introduced: .init(major: 15, minor: 0, patch: 0), deprecated: nil)
+        ])
+        iOSSymbol.identifier.interfaceLanguage = "occ"
+
+        let catalog = Folder(name: "unit-test.docc") {
+            Folder(name: "macos") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "macosx")), symbols: [macOSSymbol]))
+            }
+            Folder(name: "ios") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [iOSSymbol]))
+            }
+        }
+
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"   })?.introduced == "15.0")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "12.1")
+    }
+
     // MARK: Mixed sources
     
     @Test(arguments: DirectiveLocation.allCases)
