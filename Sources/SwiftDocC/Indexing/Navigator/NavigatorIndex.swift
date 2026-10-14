@@ -1091,7 +1091,6 @@ extension NavigatorIndex {
                         )
                     )
                 }
-                
             }
             
             guard emitLMDBRepresentation else {
@@ -1115,7 +1114,6 @@ extension NavigatorIndex {
                 )
 
                 return
-
             }
             let environment: LMDB.Environment
             if let alreadyDefinedEnvironment = navigatorIndex.environment {

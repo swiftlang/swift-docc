@@ -194,8 +194,7 @@ public struct ConvertAction: AsyncAction {
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
-        let (inputs, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
-            [fileManager = self.inputFileManager] in
+        let (inputs, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) { [fileManager = self.inputFileManager] in
             try DocumentationContext.InputsProvider(fileManager: fileManager)
             .inputsAndDataProvider(
                 startingPoint: documentationBundleURL,
