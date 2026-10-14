@@ -83,7 +83,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileManagerProtocol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L96"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L95"
     },
     "required" : true,
     "role" : "symbol",

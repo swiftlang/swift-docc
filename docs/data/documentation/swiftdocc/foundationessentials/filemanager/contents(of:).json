@@ -88,7 +88,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileManagerProtocol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L213"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L207"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

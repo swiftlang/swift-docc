@@ -1,7 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "The filesystem in which to work.",
+      "text" : "The file manager that the builder uses to write the JSON index file and to move the LMDB index file from its temporary ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileManager.default",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " location",
       "type" : "text"
     }
   ],
@@ -59,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L509"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L502"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -298,7 +306,15 @@
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/fileManager": {
   "abstract" : [
     {
-      "text" : "The filesystem in which to work.",
+      "text" : "The file manager that the builder uses to write the JSON index file and to move the LMDB index file from its temporary ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileManager.default",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " location",
       "type" : "text"
     }
   ],

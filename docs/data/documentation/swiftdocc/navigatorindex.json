@@ -343,7 +343,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/availabilityIndex",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/count",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/fileManager",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/languageMaskToLanguage",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/languages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/navigatorTree",
@@ -910,52 +909,6 @@
   "title" : "count",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/count"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/fileManager": {
-  "abstract" : [
-    {
-      "text" : "The filesystem to use.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "fileManager"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "any"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
-      "text" : "FileManagerProtocol"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/fileManager",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "fileManager",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatorindex\/filemanager"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/id(for:with:)": {
   "abstract" : [

@@ -15,11 +15,11 @@
   },
   "identifier" : {
     "interfaceLanguage" : "swift",
-    "url" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:fileManager:temporaryDirectory:outputFormat:outputFileManager:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)"
+    "url" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)"
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:15DocCCommandLine13ConvertActionV22documentationBundleURL20outOfProcessResolver7analyze15targetDirectory012htmlTemplateO010emitDigest16currentPlatforms10buildIndex11fileManager09temporaryO012outputFormat010outputFileY00F15CoverageOptions23catalogDiscoveryOptions15diagnosticLevel16diagnosticEngine18diagnosticFilePath27formatConsoleOutputForTools11inheritDocs21treatWarningsAsErrors32diagnosticIDsWithWarningSeverity30diagnosticIDsWithErrorSeverity33experimentalEnableCustomTemplates46experimentalModifyCatalogWithGeneratedCuration12featureFlags32transformForStaticHostingOptions32allowArbitraryCatalogDirectories15hostingBasePath16sourceRepository12dependenciesAC20FoundationEssentials0H0VSg_05SwiftA1C03Outjk9ReferenceL0CSgSbA8_A9_SbSDySSA10_15PlatformVersionVGSgSbA10_012ReadOnlyFileY8Protocol_pSgA8_AA4DoccV0D0V12OutputFormatOA10_04FileY8Protocol_pA10_28DocumentationCoverageOptionsVA10_23CatalogDiscoveryOptionsVSSSgA10_16DiagnosticEngineCSgA9_S3bShySSGA35_S2bA10_12FeatureFlagsVAC32TransformForStaticHostingOptionsOSbA31_A10_16SourceRepositoryVSgSayA8_GtKcfc",
+    "externalID" : "s:15DocCCommandLine13ConvertActionV22documentationBundleURL20outOfProcessResolver7analyze15targetDirectory012htmlTemplateO010emitDigest16currentPlatforms10buildIndex16inputFileManager06outputyZ009temporaryO012outputFormat0F15CoverageOptions23catalogDiscoveryOptions15diagnosticLevel16diagnosticEngine010diagnosticY4Path27formatConsoleOutputForTools11inheritDocs21treatWarningsAsErrors32diagnosticIDsWithWarningSeverity30diagnosticIDsWithErrorSeverity33experimentalEnableCustomTemplates46experimentalModifyCatalogWithGeneratedCuration12featureFlags32transformForStaticHostingOptions32allowArbitraryCatalogDirectories15hostingBasePath16sourceRepository12dependenciesAC20FoundationEssentials0H0VSg_05SwiftA1C03Outjk9ReferenceL0CSgSbA8_A9_SbSDySSA10_15PlatformVersionVGSgSbA10_08ReadOnlyyZ8Protocol_pSgA10_0yZ8Protocol_pA8_AA4DoccV0D0V12OutputFormatOA10_28DocumentationCoverageOptionsVA10_23CatalogDiscoveryOptionsVSSSgA10_16DiagnosticEngineCSgA9_S3bShySSGA35_S2bA10_12FeatureFlagsVAC32TransformForStaticHostingOptionsOSbA31_A10_16SourceRepositoryVSgSayA8_GtKcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -176,7 +176,7 @@
       },
       {
         "kind" : "externalParam",
-        "text" : "fileManager"
+        "text" : "inputFileManager"
       },
       {
         "kind" : "text",
@@ -198,6 +198,31 @@
       {
         "kind" : "text",
         "text" : ")?, "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "outputFileManager"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+        "text" : "FileManagerProtocol"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
       },
       {
         "kind" : "externalParam",
@@ -246,31 +271,6 @@
         "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:15DocCCommandLine4DoccV7ConvertV12OutputFormatO",
         "text" : "OutputFormat"
-      },
-      {
-        "kind" : "text",
-        "text" : ", "
-      },
-      {
-        "kind" : "externalParam",
-        "text" : "outputFileManager"
-      },
-      {
-        "kind" : "text",
-        "text" : ": "
-      },
-      {
-        "kind" : "keyword",
-        "text" : "any"
-      },
-      {
-        "kind" : "text",
-        "text" : " "
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
-        "text" : "FileManagerProtocol"
       },
       {
         "kind" : "text",
@@ -617,7 +617,7 @@
     "role" : "symbol",
     "roleHeading" : "Initializer",
     "symbolKind" : "init",
-    "title" : "init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:fileManager:temporaryDirectory:outputFormat:outputFileManager:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)"
+    "title" : "init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)"
   },
   "primaryContentSections" : [
     {
@@ -787,7 +787,7 @@
             },
             {
               "kind" : "externalParam",
-              "text" : "fileManager"
+              "text" : "inputFileManager"
             },
             {
               "kind" : "text",
@@ -810,6 +810,32 @@
             {
               "kind" : "text",
               "text" : ")? = nil, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "outputFileManager"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+              "text" : "FileManagerProtocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " = FileManager.default, "
             },
             {
               "kind" : "externalParam",
@@ -865,32 +891,6 @@
             {
               "kind" : "text",
               "text" : " = .json, "
-            },
-            {
-              "kind" : "externalParam",
-              "text" : "outputFileManager"
-            },
-            {
-              "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "any"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
-              "text" : "FileManagerProtocol"
-            },
-            {
-              "kind" : "text",
-              "text" : " = FileManager.default, "
             },
             {
               "kind" : "externalParam",
@@ -1399,7 +1399,21 @@
               "type" : "paragraph"
             }
           ],
-          "name" : "fileManager"
+          "name" : "inputFileManager"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The file manager that the convert action uses to create directories and write data to files.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "outputFileManager"
         },
         {
           "content" : [
@@ -1428,20 +1442,6 @@
             }
           ],
           "name" : "outputFormat"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The file manager that the convert action uses to create directories and write data to files.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "outputFileManager"
         },
         {
           "content" : [
@@ -1829,7 +1829,7 @@
   "variants" : [
     {
       "paths" : [
-        "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:filemanager:temporarydirectory:outputformat:outputfilemanager:documentationcoverageoptions:catalogdiscover-5n5r5"
+        "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:inputfilemanager:outputfilemanager:temporarydirectory:outputformat:documentationcoverageoptions:catalogdis-7w661"
       ],
       "traits" : [
         {
@@ -1925,7 +1925,7 @@
   "type" : "topic",
   "url" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions"
 },
-"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:fileManager:temporaryDirectory:outputFormat:outputFileManager:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)": {
+"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)": {
   "abstract" : [
     {
       "text" : "Initializes the action with the given validated options.",
@@ -2089,7 +2089,7 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "fileManager"
+      "text" : "inputFileManager"
     },
     {
       "kind" : "text",
@@ -2111,6 +2111,31 @@
     {
       "kind" : "text",
       "text" : ")?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "outputFileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+      "text" : "FileManagerProtocol"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
     },
     {
       "kind" : "externalParam",
@@ -2159,31 +2184,6 @@
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:15DocCCommandLine4DoccV7ConvertV12OutputFormatO",
       "text" : "OutputFormat"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "outputFileManager"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "any"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
-      "text" : "FileManagerProtocol"
     },
     {
       "kind" : "text",
@@ -2518,12 +2518,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:fileManager:temporaryDirectory:outputFormat:outputFileManager:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:fileManager:temporaryDirectory:outputFormat:outputFileManager:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
+  "title" : "init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
   "type" : "topic",
-  "url" : "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:filemanager:temporarydirectory:outputformat:outputfilemanager:documentationcoverageoptions:catalogdiscover-5n5r5"
+  "url" : "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:inputfilemanager:outputfilemanager:temporarydirectory:outputformat:documentationcoverageoptions:catalogdis-7w661"
 },
 "doc://DocCCommandLine/documentation/DocCCommandLine/Docc": {
   "abstract" : [
