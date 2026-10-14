@@ -82,9 +82,11 @@ struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
     func renderingAvailability(goal: RenderGoal) {
         let availability = makeRenderer(goal: goal).availability([
-            .init(name: "First",  introduced: "1.2", deprecated: "3.4", isBeta: false),
-            .init(name: "Second", introduced: "1.2.3",                  isBeta: false),
-            .init(name: "Third",  introduced: "4.5",                    isBeta: true),
+            .init(name: "First",  introduced: "1.2", deprecated: "3.4", isUnconditionallyDeprecated: false, isBeta: false),
+            .init(name: "Second", introduced: "1.2.3",                  isUnconditionallyDeprecated: false, isBeta: false),
+            .init(name: "Third",  introduced: "4.5",                    isUnconditionallyDeprecated: false, isBeta: true),
+            .init(name: "Fourth", introduced: "5.6",                    isUnconditionallyDeprecated: true,  isBeta: false),
+            .init(name: "Fifth",  introduced: nil,                      isUnconditionallyDeprecated: true,  isBeta: false),
         ])
         switch goal {
         case .richness:
@@ -99,6 +101,12 @@ struct MarkdownRenderer_PageElementsTests {
               <li aria-label="Third 4.5+, Available on Third 4.5 and later" class="beta" title="Available on Third 4.5 and later">
                 Third 4.5+
               </li>
+              <li aria-label="Fourth 5.6+, Unconditionally deprecated on Fourth 5.6 and later" class="deprecated" title="Unconditionally deprecated on Fourth 5.6 and later">
+                Fourth 5.6+
+              </li>
+              <li aria-label="Fifth, Unconditionally deprecated on Fifth" class="deprecated" title="Unconditionally deprecated on Fifth">
+                Fifth
+              </li>
             </ul>
             """)
         case .conciseness:
@@ -107,6 +115,8 @@ struct MarkdownRenderer_PageElementsTests {
               <li>First 1.2–3.4</li>
               <li>Second 1.2.3+</li>
               <li>Third 4.5+</li>
+              <li>Fourth 5.6+</li>
+              <li>Fifth</li>
             </ul>
             """)
         }

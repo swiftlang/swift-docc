@@ -595,7 +595,7 @@ class ReferenceResolverTests: XCTestCase {
         
         let (_, context) = try await testBundleAndContext()
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:]))
+        let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:], availability: .init(defaultAvailability: nil)))
         
         var resolver = ReferenceResolver(context: context)
         let resolvedArticle = try XCTUnwrap(resolver.visitArticle(article) as? Article)
@@ -704,7 +704,7 @@ class ReferenceResolverTests: XCTestCase {
             populateObjCVariantAndCreateAssertion(keyPath: \.subHeadingVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.navigatorVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.roleHeadingVariants),
-            populateObjCVariantAndCreateAssertion(keyPath: \.platformNameVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \._platformNameVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.isRequiredVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.externalIDVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.accessLevelVariants),
@@ -713,7 +713,7 @@ class ReferenceResolverTests: XCTestCase {
             // Otherwise, for variants properties that don't a value that is Equatable, populate the Objective-C variant
             // and specify an assertion.
             
-            populateObjCVariantAndCreateAssertion(keyPath: \.availabilityVariants) { value1, value2 in
+            populateObjCVariantAndCreateAssertion(keyPath: \._availabilityVariants) { value1, value2 in
                 XCTAssertEqual(value1.availability.count, value2.availability.count)
             },
             populateObjCVariantAndCreateAssertion(keyPath: \.deprecatedSummaryVariants) { value1, value2 in

@@ -62,16 +62,14 @@ public struct DefaultAvailability: Codable, Equatable {
         public var platformName: PlatformName
         
         /// The availability version state information, e.g unavailable
-        internal var versionInformation: VersionInformation
+        var versionInformation: VersionInformation
 
         /// A string representation of the version for this platform
         /// or nil if it's unavailable.
         public var introducedVersion: String? {
             switch versionInformation {
-            case .available(let introduced):
-                return introduced?.description
-            case .unavailable:
-                return nil
+                case .available(let introduced): introduced
+                case .unavailable:               nil
             }
         }
 
@@ -139,22 +137,7 @@ public struct DefaultAvailability: Codable, Equatable {
     /// Creates a default availability module.
     /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
     public init(with modules: [String: [ModuleAvailability]]) {
-            self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
-            // If a module doesn't contain default availability information for any of the fallback platforms,
-            // infer it from the corresponding mapped value.
-            platformAvailabilities + DefaultAvailability.fallbackPlatforms.compactMap { (platform, fallbackPlatform) in
-                if !platformAvailabilities.contains(where: { $0.platformName == platform }),
-                   let fallbackAvailability = platformAvailabilities.first(where: { $0.platformName == fallbackPlatform }),
-                   let fallbackIntroducedVersion = fallbackAvailability.introducedVersion
-                {
-                    return DefaultAvailability.ModuleAvailability(
-                        platformName: platform,
-                        platformVersion: fallbackIntroducedVersion
-                    )
-                }
-                return nil
-            }
-        }
+        self.modules = modules
     }
     
     public init(from decoder: any Decoder) throws {

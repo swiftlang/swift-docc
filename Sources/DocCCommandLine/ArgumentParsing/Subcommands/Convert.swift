@@ -470,11 +470,17 @@ extension Docc {
             @Flag(help: "Allows for custom templates, like `header.html`.")
             var experimentalEnableCustomTemplates = false
 
-            /// A user-provided value that is true if the user enables experimental support for code block annotation.
+            /// A user-provided value that is true if the user enables support for code block annotations.
             @Flag(
-                name: .customLong("enable-experimental-code-block-annotations"),
+                name: .customLong("code-block-annotations"),
+                inversion: .prefixedEnableDisable,
                 help: "Support annotations for code blocks."
             )
+            var enableCodeBlockAnnotations = true
+
+            // backwards compatibility: allow developers to pass the previous '--enable-experimental-...' flag without errors.
+            @Flag(name: .customLong("enable-experimental-code-block-annotations"), help: .hidden)
+            @available(*, deprecated, message: "This deprecated API will be removed after 6.5 is released")
             var enableExperimentalCodeBlockAnnotations = false
 
             /// A user-provided value that is true if the user enables experimental support for device frames.
@@ -571,6 +577,7 @@ extension Docc {
                 Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "This flag has no effect. Doxygen support is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-parameters-and-returns-validation", message: "This flag has no effect. Parameter and return value validation is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-mentioned-in", message: "This flag has no effect. Automatic mentioned in sections is enabled by default.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-code-block-annotations", message: "This flag has no effect. Code block annotations are enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-external-link-support", message: "Use `--enable-external-link-support` instead.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "Use '--emit-lmdb-index' indead.")
                 if enableExperimentalLinkHierarchySerialization {

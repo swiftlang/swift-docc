@@ -39,14 +39,19 @@ struct MarkdownOutputSemanticVisitor: SemanticVisitor {
     }
 }
 
-extension MarkdownOutputNode.Metadata {
-    init(documentType: DocumentType, inputs: DocumentationContext.Inputs, reference: ResolvedTopicReference, title: String) {
-        self.init(
-            documentType: documentType,
-            identifier: reference.path,
-            title: title,
-            framework: inputs.displayName
-        )
+private extension MarkdownOutputSemanticVisitor {
+    /// Finds the name of the module that owns the given reference, by walking up its curation ancestors
+    /// looking for the nearest symbol.
+    ///
+    /// Based on the logic from ``RenderNodeTranslator/visitArticle(_:)``
+    func nearestCuratingModuleName(for reference: ResolvedTopicReference) -> String? {
+        for ancestor in context.topicGraph.reverseEdgesGraph.breadthFirstSearch(from: reference) {
+            guard let moduleReference = (try? context.entity(with: ancestor).semantic as? Symbol)?.moduleReference else {
+                continue
+            }
+            return context.moduleName(forModuleReference: moduleReference).symbolName
+        }
+        return nil
     }
 }
 
@@ -132,7 +137,8 @@ extension MarkdownOutputSemanticVisitor {
 extension MarkdownOutputSemanticVisitor {
     
     mutating func visitArticle(_ article: Article) -> MarkdownOutputNode? {
-        var metadata = MarkdownOutputNode.Metadata(documentType: .article, inputs: context.inputs, reference: identifier, title: article.title?.plainText ?? identifier.lastPathComponent)
+        let framework = nearestCuratingModuleName(for: identifier) ?? context.inputs.displayName
+        var metadata = MarkdownOutputNode.Metadata(documentType: .article, identifier: identifier.path, title: article.title?.plainText ?? identifier.lastPathComponent, framework: framework)
                 
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,
@@ -142,10 +148,8 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [document])
         
-        if let metadataAvailability = article.metadata?.availability,
-           !metadataAvailability.isEmpty
-        {
-            metadata.availability = metadataAvailability.map { .init($0) }
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
+            metadata.availability = platforms.map { .init($0) }
         }
         metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         markdownWalker.visit(article.title)
@@ -208,7 +212,8 @@ extension MarkdownOutputSemanticVisitor {
     
     mutating func visitSymbol(_ symbol: Symbol) -> MarkdownOutputNode? {
         let inputs = context.inputs
-        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, inputs: inputs, reference: identifier, title: symbol.title)
+        let framework = context.moduleName(forModuleReference: symbol.moduleReference).symbolName
+        var metadata = MarkdownOutputNode.Metadata(documentType: .symbol, identifier: identifier.path, title: symbol.title, framework: framework)
         
         metadata.symbol = .init(symbol, context: context)
         metadata.role = symbol.kind.displayName
@@ -220,30 +225,10 @@ extension MarkdownOutputSemanticVisitor {
         )
         manifest = MarkdownOutputManifest(title: inputs.displayName, documents: [document])
         
-        // Availability - defaults, overridden with symbol, overridden with metadata
-        
-        var availabilities: [String: MarkdownOutputNode.Metadata.Availability] = [:]
-        
-        let symbolAvailability = symbol.availability?.availability ?? []
-        // Framework defaults only apply if there are no specific availabilities at symbol level.
-        if !symbolAvailability.contains(where: { $0.domain != nil }), let primaryModule = metadata.symbol?.modules.first {
-            for availability in inputs.info.defaultAvailability?.modules[primaryModule] ?? [] {
-                let meta = MarkdownOutputNode.Metadata.Availability(availability)
-                availabilities[meta.platform] = meta
-            }
+        // Availability
+        if let platforms = symbol.consolidatedAvailability.firstValue?.makePlatforms(context.currentBetaPlatforms) {
+            metadata.availability = platforms.map { .init($0) }
         }
-        
-        for availability in symbolAvailability {
-            let meta = MarkdownOutputNode.Metadata.Availability(availability)
-            availabilities[meta.platform] = meta
-        }
-        
-        for availability in documentationNode.metadata?.availability ?? [] {
-            let meta = MarkdownOutputNode.Metadata.Availability(availability)
-            availabilities[meta.platform] = meta
-        }
-        
-        metadata.availability = availabilities.values.sorted(by: \.platform)
          
         // Content
         
@@ -397,30 +382,12 @@ private extension MarkdownOutputNode.Metadata.Symbol {
 }
 
 private extension MarkdownOutputNode.Metadata.Availability {
-    init(_ item: SymbolGraph.Symbol.Availability.AvailabilityItem) {
+    init(_ platform: Availability.Platform) {
         self.init(
-            platform: item.domain?.rawValue ?? "*",
-            introduced: item.introducedVersion?.description,
-            deprecated: item.deprecatedVersion?.description,
-            unavailable: item.obsoletedVersion != nil
-        )
-    }
-    
-    // From the info.plist of the module
-    init(_ availability: DefaultAvailability.ModuleAvailability) {
-        self.init(
-            platform: availability.platformName.rawValue,
-            introduced: availability.introducedVersion,
-            deprecated: nil,
-            unavailable: availability.versionInformation == .unavailable
-        )
-    }
-    
-    init(_ availability: Metadata.Availability) {
-        self.init(
-            platform: availability.platform.rawValue,
-            introduced: availability.introduced.description,
-            deprecated: availability.deprecated?.description,
+            platform: platform.name,
+            // FIXME: It would be more consistent with other output to use `stringRepresentation(precisionUpToNonsignificant: .minor)` for both these versions.
+            introduced: platform.introduced?.description,
+            deprecated: platform.deprecated?.description,
             unavailable: false
         )
     }
@@ -435,7 +402,7 @@ extension MarkdownOutputSemanticVisitor {
     
     mutating func visitTutorial(_ tutorial: Tutorial) -> MarkdownOutputNode? {
         let title = tutorial.intro.title.isEmpty ? identifier.lastPathComponent : tutorial.intro.title
-        let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, inputs: context.inputs, reference: identifier, title: title)
+        let metadata = MarkdownOutputNode.Metadata(documentType: .tutorial, identifier: identifier.path, title: title, framework: context.inputs.displayName)
         
         let document = MarkdownOutputManifest.Document(
             identifier: identifier.path,

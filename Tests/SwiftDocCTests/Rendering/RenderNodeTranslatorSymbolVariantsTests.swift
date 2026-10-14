@@ -1001,26 +1001,6 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 symbol.deprecatedSummaryVariants[.objectiveC] = DeprecatedSection(
                     text: "Objective-C Deprecation Variant"
                 )
-                
-                // Explicitly mark this symbol as deprecated in both Swift and Objective-C,
-                // otherwise the deprecation summary is ignored.
-                symbol.availabilityVariants[.swift] = .init(
-                    availability: [
-                        .init(
-                            domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.macOS),
-                            introducedVersion: .init(major: 15, minor: 0, patch: 0),
-                            deprecatedVersion: .init(major: 15, minor: 1, patch: 0),
-                            obsoletedVersion: nil,
-                            message: nil,
-                            renamed: nil,
-                            isUnconditionallyDeprecated: false,
-                            isUnconditionallyUnavailable: false,
-                            willEventuallyBeDeprecated: false
-                        )
-                    ]
-                )
-                
-                symbol.availabilityVariants[.objectiveC] = symbol.availabilityVariants[.swift]
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(

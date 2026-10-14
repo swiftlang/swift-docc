@@ -13,8 +13,14 @@ public struct FeatureFlags: Codable {
     @available(*, deprecated, message: "Pass a feature flags value instead. This deprecated API will be removed after 6.5 is released.")
     public static var current = FeatureFlags()
 
-    /// Whether or not experimental annotation of code blocks is enabled.
-    public var isExperimentalCodeBlockAnnotationsEnabled = false
+    /// Whether or not annotation of code blocks is enabled.
+    public var isCodeBlockAnnotationsEnabled = true
+
+    @available(*, deprecated, renamed: "isCodeBlockAnnotationsEnabled", message: "Use 'isCodeBlockAnnotationsEnabled' instead. This deprecated API will be removed after 6.5 is released")
+    public var isExperimentalCodeBlockAnnotationsEnabled: Bool {
+        get { isCodeBlockAnnotationsEnabled }
+        set { isCodeBlockAnnotationsEnabled = newValue }
+    }
 
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
@@ -50,6 +56,9 @@ public struct FeatureFlags: Codable {
     internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationContext.Inputs.Info.CatalogFeatureFlags) {
         if let overloadsPresentation = bundleFlags.experimentalOverloadedSymbolPresentation {
             self.isExperimentalOverloadedSymbolPresentationEnabled = overloadsPresentation
+        }
+        if let codeBlockAnnotations = bundleFlags.codeBlockAnnotations {
+            self.isCodeBlockAnnotationsEnabled = codeBlockAnnotations
         }
     }
 }

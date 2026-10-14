@@ -104,12 +104,7 @@ final class ExternalPathHierarchyResolver {
         entities.reserveCapacity(linkDestinationSummaries.count)
         symbols.reserveCapacity(linkDestinationSummaries.count)
         for entity in linkDestinationSummaries {
-            let reference = ResolvedTopicReference(
-                bundleID: .init(rawValue: entity.referenceURL.host!),
-                path: entity.referenceURL.path,
-                fragment: entity.referenceURL.fragment,
-                sourceLanguage: entity.language
-            )
+            let reference = entity.makeResolvedTopicReference()
             entities[reference] = entity
             if let usr = entity.usr {
                 symbols[usr] = reference
@@ -147,7 +142,7 @@ final class ExternalPathHierarchyResolver {
         
         self.init(
             linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: dataProvider.contents(of: linkHierarchyFile)),
-            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
+            entityInformation: try FastSymbolGraphJSONDecoder.decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
         )
     }
 }
@@ -190,7 +185,7 @@ extension LinkDestinationSummary {
         }
         
         return TopicRenderReference(
-            identifier: .init(referenceURL.absoluteString),
+            identifier: referenceIdentifier,
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
             url: absolutePresentationURL?.absoluteString ?? relativePresentationURL.absoluteString,

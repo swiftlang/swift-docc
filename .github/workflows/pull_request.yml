@@ -18,8 +18,8 @@ jobs:
     with:
       enable_macos_checks: true
       linux_host_archs: '["x86_64", "aarch64"]'
-      linux_swift_versions: '["nightly-main", "nightly-6.3"]'
-      windows_swift_versions: '["nightly-main", "nightly-6.3"]'
+      linux_swift_versions: '["nightly-main", "nightly-6.4.x"]'
+      windows_swift_versions: '["nightly-main", "nightly-6.4.x"]'
       # The package and tests build on Windows, but the tests don't pass yet,
       # due to issues with filenames on Windows. For now, the Windows CI runs
       # build the package, and only build the tests without running them.
@@ -31,7 +31,7 @@ jobs:
     uses: swiftlang/github-workflows/.github/workflows/swift_package_test.yml@0.0.15
     with:
       enable_linux_checks: false
-      windows_swift_versions: '["nightly-6.3"]'
+      windows_swift_versions: '["nightly-6.4.x"]'
       windows_pre_build_command: 'Invoke-Program .\.github\scripts\prebuild.ps1 -InstallCMake -SkipAndroid'
       windows_build_command: |
         $Src = Join-Path $PWD ".build\checkouts"
@@ -119,7 +119,7 @@ jobs:
     if: ${{ needs.changes.outputs.make_test_bundle == 'true' }}
     runs-on: ubuntu-latest
     container:
-      image: swiftlang/swift:nightly-main-jammy
+      image: swiftlang/swift:nightly-main-noble
     steps:
       - uses: actions/checkout@v7
       - run: swift build --package-path bin/make-test-bundle
@@ -130,7 +130,7 @@ jobs:
     if: ${{ needs.changes.outputs.benchmark == 'true' }}
     runs-on: ubuntu-latest
     container:
-      image: swiftlang/swift:nightly-main-jammy
+      image: swiftlang/swift:nightly-main-noble
     steps:
       - uses: actions/checkout@v7
       - run: swift test --parallel --package-path bin/benchmark

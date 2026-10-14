@@ -151,7 +151,7 @@ extension DocumentationContext.InputsProvider {
         let info = try DocumentationContext.Inputs.Info(
             from: infoPlistData,
             catalogDiscoveryOptions: options,
-            derivedDisplayName: url.deletingPathExtension().lastPathComponent
+            derivedDisplayName: url.standardizedFileURL.deletingPathExtension().lastPathComponent
         )
 
         let foundContents = try findContents(in: url)

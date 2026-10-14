@@ -90,7 +90,7 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             kind: entityInfo.kind,
             language: entityInfo.language,
             relativePresentationURL: reference.url.withoutHostAndPortAndScheme(),
-            referenceURL: reference.url,
+            referenceIdentifier: .init(reference.absoluteString),
             title: entityInfo.title,
             availableLanguages: [entityInfo.language],
             platforms: entityInfo.platforms,

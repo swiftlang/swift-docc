@@ -106,7 +106,6 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         }
         
         enum CodingKeys: String, CodingKey {
-            case size
             case url
             case traits
             case svgID
