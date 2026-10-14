@@ -1,0 +1,293 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/ReadOnlyFileManagerProtocol-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
+    "title" : "ReadOnlyFileManagerProtocol Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/contents(of:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/sizeOfDirectory(at:options:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/readonlyfilemanagerprotocol-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "FoundationEssentials",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundationessentials"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/FileManager": {
+  "abstract" : [
+    {
+      "text" : "Add compliance to ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileManagerProtocol",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileManager",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ",",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "most of the methods are already implemented in Foundation.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
+      "text" : "FileManager"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileManager"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileManager",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/FileManager/contents(of:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contents"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "of"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
+      "text" : "Data"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/contents(of:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "contents(of:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/contents(of:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/FileManager/sizeOfDirectory(at:options:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sizeOfDirectory"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "at"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
+      "text" : "FileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
+      "text" : "DirectoryEnumerationOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5Int64V",
+      "text" : "Int64"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/sizeOfDirectory(at:options:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sizeOfDirectory(at:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/sizeofdirectory(at:options:)"
+}
+}
+}

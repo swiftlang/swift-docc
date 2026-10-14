@@ -5082,7 +5082,7 @@
                       },
                       {
                         "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputsprovider\/init(filemanager:)",
-                        "title" : "init(fileManager: any FileManagerProtocol)",
+                        "title" : "init(fileManager: any ReadOnlyFileManagerProtocol)",
                         "type" : "init"
                       },
                       {
@@ -6719,7 +6719,7 @@
                           },
                           {
                             "path" : "\/documentation\/swiftdocc\/documentationcontext\/inputsprovider\/init(filemanager:)",
-                            "title" : "init(fileManager: any FileManagerProtocol)",
+                            "title" : "init(fileManager: any ReadOnlyFileManagerProtocol)",
                             "type" : "init"
                           },
                           {
@@ -19263,6 +19263,11 @@
                             "type" : "init"
                           },
                           {
+                            "path" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/init(archiveurl:outputurl:filemanager:bundleidentifier:sortrootchildrenbyname:groupbylanguage:writepathsondisk:usepagetitle:)",
+                            "title" : "init(archiveURL: URL?, outputURL: URL, fileManager: any FileManagerProtocol, bundleIdentifier: String, sortRootChildrenByName: Bool, groupByLanguage: Bool, writePathsOnDisk: Bool, usePageTitle: Bool)",
+                            "type" : "init"
+                          },
+                          {
                             "title" : "Instance Properties",
                             "type" : "groupMarker"
                           },
@@ -19284,6 +19289,11 @@
                           {
                             "path" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/diagnostics",
                             "title" : "var diagnostics: [Diagnostic]",
+                            "type" : "property"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/filemanager",
+                            "title" : "let fileManager: any FileManagerProtocol",
                             "type" : "property"
                           },
                           {
@@ -19383,6 +19393,11 @@
                       {
                         "path" : "\/documentation\/swiftdocc\/navigatorindex\/count",
                         "title" : "var count: Int",
+                        "type" : "property"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/navigatorindex\/filemanager",
+                        "title" : "var fileManager: any FileManagerProtocol",
                         "type" : "property"
                       },
                       {
@@ -22284,6 +22299,11 @@
                             "type" : "init"
                           },
                           {
+                            "path" : "\/documentation\/swiftdocc\/benchmark\/archiveoutputsize\/init(archivedirectory:filemanager:)",
+                            "title" : "init(archiveDirectory: URL, fileManager: some FileManagerProtocol)",
+                            "type" : "init"
+                          },
+                          {
                             "title" : "Instance Properties",
                             "type" : "groupMarker"
                           },
@@ -22323,6 +22343,11 @@
                             "type" : "init"
                           },
                           {
+                            "path" : "\/documentation\/swiftdocc\/benchmark\/datadirectoryoutputsize\/init(datadirectory:filemanager:)",
+                            "title" : "init(dataDirectory: URL, fileManager: some FileManagerProtocol)",
+                            "type" : "init"
+                          },
+                          {
                             "title" : "Instance Properties",
                             "type" : "groupMarker"
                           },
@@ -22359,6 +22384,11 @@
                           {
                             "path" : "\/documentation\/swiftdocc\/benchmark\/indexdirectoryoutputsize\/init(indexdirectory:)",
                             "title" : "init(indexDirectory: URL)",
+                            "type" : "init"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/benchmark\/indexdirectoryoutputsize\/init(indexdirectory:filemanager:)",
+                            "title" : "init(indexDirectory: URL, fileManager: some FileManagerProtocol)",
                             "type" : "init"
                           },
                           {
@@ -22535,6 +22565,11 @@
                         "type" : "init"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/benchmark\/datadirectoryoutputsize\/init(datadirectory:filemanager:)",
+                        "title" : "init(dataDirectory: URL, fileManager: some FileManagerProtocol)",
+                        "type" : "init"
+                      },
+                      {
                         "title" : "Instance Properties",
                         "type" : "groupMarker"
                       },
@@ -22571,6 +22606,11 @@
                       {
                         "path" : "\/documentation\/swiftdocc\/benchmark\/indexdirectoryoutputsize\/init(indexdirectory:)",
                         "title" : "init(indexDirectory: URL)",
+                        "type" : "init"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/benchmark\/indexdirectoryoutputsize\/init(indexdirectory:filemanager:)",
+                        "title" : "init(indexDirectory: URL, fileManager: some FileManagerProtocol)",
                         "type" : "init"
                       },
                       {
@@ -29132,41 +29172,12 @@
               {
                 "children" : [
                   {
-                    "title" : "Instance Properties",
-                    "type" : "groupMarker"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/currentdirectorypath",
-                    "title" : "var currentDirectoryPath: String",
-                    "type" : "property"
-                  },
-                  {
                     "title" : "Instance Methods",
                     "type" : "groupMarker"
                   },
                   {
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/contents(atpath:)",
-                    "title" : "func contents(atPath: String) -> Data?",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/contents(of:)",
-                    "title" : "func contents(of: URL) throws -> Data",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/contentsequal(atpath:andpath:)",
-                    "title" : "func contentsEqual(atPath: String, andPath: String) -> Bool",
-                    "type" : "method"
-                  },
-                  {
                     "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/contentsofdirectory(at:includingpropertiesforkeys:options:)",
                     "title" : "func contentsOfDirectory(at: URL, includingPropertiesForKeys: [URLResourceKey]?, options: FileManager.DirectoryEnumerationOptions) throws -> [URL]",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/contentsofdirectory(at:options:)",
-                    "title" : "func contentsOfDirectory(at: URL, options: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL])",
                     "type" : "method"
                   },
                   {
@@ -29190,34 +29201,24 @@
                     "type" : "method"
                   },
                   {
+                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/moveitem(at:to:)",
+                    "title" : "func moveItem(at: URL, to: URL) throws",
+                    "type" : "method"
+                  },
+                  {
                     "children" : [
                       {
                         "title" : "FileManagerProtocol Implementations",
                         "type" : "groupMarker"
                       },
                       {
-                        "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/directoryexists(atpath:)-8i17k",
-                        "title" : "func directoryExists(atPath: String) -> Bool",
+                        "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/moveitem(at:to:writingusing:)-7cfxd",
+                        "title" : "func moveItem(at: URL, to: URL, writingUsing: any FileManagerProtocol) throws",
                         "type" : "method"
                       }
                     ],
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/directoryexists(atpath:)",
-                    "title" : "func directoryExists(atPath: String) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/fileexists(atpath:)",
-                    "title" : "func fileExists(atPath: String) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/fileexists(atpath:isdirectory:)",
-                    "title" : "func fileExists(atPath: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/moveitem(at:to:)",
-                    "title" : "func moveItem(at: URL, to: URL) throws",
+                    "path" : "\/documentation\/swiftdocc\/filemanagerprotocol\/moveitem(at:to:writingusing:)",
+                    "title" : "func moveItem(at: URL, to: URL, writingUsing: any FileManagerProtocol) throws",
                     "type" : "method"
                   },
                   {
@@ -29254,6 +29255,125 @@
                 ],
                 "path" : "\/documentation\/swiftdocc\/htmlcontentconsumer",
                 "title" : "HTMLContentConsumer",
+                "type" : "protocol"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/currentdirectorypath",
+                    "title" : "var currentDirectoryPath: String",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contents(atpath:)",
+                    "title" : "func contents(atPath: String) -> Data?",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contents(of:)",
+                    "title" : "func contents(of: URL) throws -> Data",
+                    "type" : "method"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "ReadOnlyFileManagerProtocol Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsequal(atpath:andpath:)-9r8gr",
+                        "title" : "func contentsEqual(atPath: String, andPath: String) -> Bool",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsequal(atpath:andpath:)",
+                    "title" : "func contentsEqual(atPath: String, andPath: String) -> Bool",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsofdirectory(at:includingpropertiesforkeys:options:)",
+                    "title" : "func contentsOfDirectory(at: URL, includingPropertiesForKeys: [URLResourceKey]?, options: FileManager.DirectoryEnumerationOptions) throws -> [URL]",
+                    "type" : "method"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "ReadOnlyFileManagerProtocol Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsofdirectory(at:options:)-1c1ce",
+                        "title" : "func contentsOfDirectory(at: URL, options: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL])",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsofdirectory(at:options:)",
+                    "title" : "func contentsOfDirectory(at: URL, options: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL])",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsofdirectory(atpath:)",
+                    "title" : "func contentsOfDirectory(atPath: String) throws -> [String]",
+                    "type" : "method"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "ReadOnlyFileManagerProtocol Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/copyitem(at:to:writingusing:)-1mvik",
+                        "title" : "func copyItem(at: URL, to: URL, writingUsing: any FileManagerProtocol) throws",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/copyitem(at:to:writingusing:)",
+                    "title" : "func copyItem(at: URL, to: URL, writingUsing: any FileManagerProtocol) throws",
+                    "type" : "method"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "ReadOnlyFileManagerProtocol Implementations",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/directoryexists(atpath:)-92uy4",
+                        "title" : "func directoryExists(atPath: String) -> Bool",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/directoryexists(atpath:)",
+                    "title" : "func directoryExists(atPath: String) -> Bool",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/fileexists(atpath:)",
+                    "title" : "func fileExists(atPath: String) -> Bool",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/fileexists(atpath:isdirectory:)",
+                    "title" : "func fileExists(atPath: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/sizeofdirectory(at:options:)",
+                    "title" : "func sizeOfDirectory(at: URL, options: FileManager.DirectoryEnumerationOptions) throws -> Int64",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol",
+                "title" : "ReadOnlyFileManagerProtocol",
                 "type" : "protocol"
               },
               {
@@ -30768,7 +30888,7 @@
                   },
                   {
                     "path" : "\/documentation\/swiftdocc\/htmlrenderer\/prepareforfullpage(customheader:customfooter:filemanager:)",
-                    "title" : "static func prepareForFullPage(customHeader: URL?, customFooter: URL?, fileManager: some FileManagerProtocol) throws -> (customHeader: HTMLNode?, customFooter: HTMLNode?)",
+                    "title" : "static func prepareForFullPage(customHeader: URL?, customFooter: URL?, fileManager: some ReadOnlyFileManagerProtocol) throws -> (customHeader: HTMLNode?, customFooter: HTMLNode?)",
                     "type" : "method"
                   }
                 ],
@@ -33285,16 +33405,6 @@
                             "type" : "groupMarker"
                           },
                           {
-                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/contents(of:)",
-                            "title" : "func contents(of: URL) throws -> Data",
-                            "type" : "method"
-                          },
-                          {
-                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/contentsofdirectory(at:options:)",
-                            "title" : "func contentsOfDirectory(at: URL, options: DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL])",
-                            "type" : "method"
-                          },
-                          {
                             "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/createfile(at:contents:)",
                             "title" : "func createFile(at: URL, contents: Data) throws",
                             "type" : "method"
@@ -33312,6 +33422,27 @@
                         ],
                         "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/filemanagerprotocol-implementations",
                         "title" : "FileManagerProtocol Implementations",
+                        "type" : "collection"
+                      },
+                      {
+                        "children" : [
+                          {
+                            "title" : "Instance Methods",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/contents(of:)",
+                            "title" : "func contents(of: URL) throws -> Data",
+                            "type" : "method"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/sizeofdirectory(at:options:)",
+                            "title" : "func sizeOfDirectory(at: URL, options: FileManager.DirectoryEnumerationOptions) throws -> Int64",
+                            "type" : "method"
+                          }
+                        ],
+                        "path" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/readonlyfilemanagerprotocol-implementations",
+                        "title" : "ReadOnlyFileManagerProtocol Implementations",
                         "type" : "collection"
                       }
                     ],
@@ -34208,8 +34339,8 @@
                     "type" : "groupMarker"
                   },
                   {
-                    "path" : "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:filemanager:temporarydirectory:outputformat:documentationcoverageoptions:catalogdiscoveryoptions:diagnosti-2car4",
-                    "title" : "init(documentationBundleURL: URL?, outOfProcessResolver: OutOfProcessReferenceResolver?, analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool, currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool, fileManager: any FileManagerProtocol, temporaryDirectory: URL, outputFormat: Docc.Convert.OutputFormat, documentationCoverageOptions: DocumentationCoverageOptions, catalogDiscoveryOptions: CatalogDiscoveryOptions, diagnosticLevel: String?, diagnosticEngine: DiagnosticEngine?, diagnosticFilePath: URL?, formatConsoleOutputForTools: Bool, inheritDocs: Bool, treatWarningsAsErrors: Bool, diagnosticIDsWithWarningSeverity: Set<String>, diagnosticIDsWithErrorSeverity: Set<String>, experimentalEnableCustomTemplates: Bool, experimentalModifyCatalogWithGeneratedCuration: Bool, featureFlags: FeatureFlags, transformForStaticHostingOptions: TransformForStaticHostingOptions, allowArbitraryCatalogDirectories: Bool, hostingBasePath: String?, sourceRepository: SourceRepository?, dependencies: [URL]) throws",
+                    "path" : "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:filemanager:temporarydirectory:outputformat:outputfilemanager:documentationcoverageoptions:catalogdiscover-5n5r5",
+                    "title" : "init(documentationBundleURL: URL?, outOfProcessResolver: OutOfProcessReferenceResolver?, analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool, currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool, fileManager: (any ReadOnlyFileManagerProtocol)?, temporaryDirectory: URL, outputFormat: Docc.Convert.OutputFormat, outputFileManager: any FileManagerProtocol, documentationCoverageOptions: DocumentationCoverageOptions, catalogDiscoveryOptions: CatalogDiscoveryOptions, diagnosticLevel: String?, diagnosticEngine: DiagnosticEngine?, diagnosticFilePath: URL?, formatConsoleOutputForTools: Bool, inheritDocs: Bool, treatWarningsAsErrors: Bool, diagnosticIDsWithWarningSeverity: Set<String>, diagnosticIDsWithErrorSeverity: Set<String>, experimentalEnableCustomTemplates: Bool, experimentalModifyCatalogWithGeneratedCuration: Bool, featureFlags: FeatureFlags, transformForStaticHostingOptions: TransformForStaticHostingOptions, allowArbitraryCatalogDirectories: Bool, hostingBasePath: String?, sourceRepository: SourceRepository?, dependencies: [URL]) throws",
                     "type" : "init"
                   },
                   {

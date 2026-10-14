@@ -1,0 +1,1396 @@
+{
+  "abstract" : [
+    {
+      "text" : "A read-only file manager.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC27ReadOnlyFileManagerProtocolP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ReadOnlyFileManagerProtocol"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ReadOnlyFileManagerProtocol"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "FileManagerProtocol.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L25"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "ReadOnlyFileManagerProtocol"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "Linux"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ReadOnlyFileManagerProtocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " : AnyObject, "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataProvider",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC12DataProviderP",
+              "text" : "DataProvider"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A file-system manager is a type that’s central to ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "managing",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " files on",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "a file-system, it performs actions like creating new files, copying, renaming",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "and deleting files, and organizing them in directories.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The Cocoa ",
+              "type" : "text"
+            },
+            {
+              "code" : "FileManager",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " type is the default implementation of that protocol",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "that manages files stored on disk.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Should you need a file system with a different storage, create your own",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "protocol implementations to manage files in memory,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "on a network, in a database, or elsewhere.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataProvider"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherited By",
+      "type" : "inheritedBy"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/currentDirectoryPath"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contents(atPath:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contents(of:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contentsEqual(atPath:andPath:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contentsOfDirectory(at:includingPropertiesForKeys:options:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contentsOfDirectory(at:options:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contentsOfDirectory(atPath:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/copyItem(at:to:writingUsing:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/directoryExists(atPath:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/fileExists(atPath:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/fileExists(atPath:isDirectory:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/sizeOfDirectory(at:options:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DataProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that provides data for files.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/dataprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileManagerProtocol": {
+  "abstract" : [
+    {
+      "text" : "A read-write file manager.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileManagerProtocol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileManagerProtocol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileManagerProtocol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filemanagerprotocol"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/FileManager": {
+  "abstract" : [
+    {
+      "text" : "Add compliance to ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileManagerProtocol",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileManager",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ",",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "most of the methods are already implemented in Foundation.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
+      "text" : "FileManager"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileManager"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileManager",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol": {
+  "abstract" : [
+    {
+      "text" : "A read-only file manager.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReadOnlyFileManagerProtocol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/contents(atPath:)": {
+  "abstract" : [
+    {
+      "text" : "Returns the data content of a file at the given path, if it exists.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contents"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "atPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contents(atPath:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "contents(atPath:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contents(atpath:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/contents(of:)": {
+  "abstract" : [
+    {
+      "text" : "Returns the data content of a file at the given URL.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contents"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "of"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials4DataV",
+      "text" : "Data"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contents(of:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "contents(of:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contents(of:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/contentsEqual(atPath:andPath:)": {
+  "abstract" : [
+    {
+      "text" : "Compares the contents of two files at the given paths.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentsEqual"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "atPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "andPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contentsEqual(atPath:andPath:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "contentsEqual(atPath:andPath:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsequal(atpath:andpath:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/contentsOfDirectory(at:includingPropertiesForKeys:options:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentsOfDirectory"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "at"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includingPropertiesForKeys"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation14URLResourceKeyV",
+      "text" : "URLResourceKey"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
+      "text" : "FileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
+      "text" : "DirectoryEnumerationOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contentsOfDirectory(at:includingPropertiesForKeys:options:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "contentsOfDirectory(at:includingPropertiesForKeys:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsofdirectory(at:includingpropertiesforkeys:options:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/contentsOfDirectory(at:options:)": {
+  "abstract" : [
+    {
+      "text" : "Performs a shallow search of the specified directory and returns the file and directory URLs for the contained items.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentsOfDirectory"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "at"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
+      "text" : "FileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
+      "text" : "DirectoryEnumerationOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> (files"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "], directories"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contentsOfDirectory(at:options:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "contentsOfDirectory(at:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsofdirectory(at:options:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/contentsOfDirectory(atPath:)": {
+  "abstract" : [
+    {
+      "text" : "Returns a list of items in a directory",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentsOfDirectory"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "atPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/contentsOfDirectory(atPath:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "contentsOfDirectory(atPath:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/contentsofdirectory(atpath:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/copyItem(at:to:writingUsing:)": {
+  "abstract" : [
+    {
+      "text" : "Copies a file from one location on the file-system to another.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "copyItem"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "at"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "writingUsing"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+      "text" : "FileManagerProtocol"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/copyItem(at:to:writingUsing:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "copyItem(at:to:writingUsing:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/copyitem(at:to:writingusing:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/currentDirectoryPath": {
+  "abstract" : [
+    {
+      "text" : "The ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "current",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " directory path.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentDirectoryPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/currentDirectoryPath",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "currentDirectoryPath",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/currentdirectorypath"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/directoryExists(atPath:)": {
+  "abstract" : [
+    {
+      "text" : "Returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if a directory exists at the given path.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "directoryExists"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "atPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/directoryExists(atPath:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "directoryExists(atPath:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/directoryexists(atpath:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/fileExists(atPath:)": {
+  "abstract" : [
+    {
+      "text" : "Returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if a file exists at the given path.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fileExists"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "atPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/fileExists(atPath:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "fileExists(atPath:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/fileexists(atpath:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/fileExists(atPath:isDirectory:)": {
+  "abstract" : [
+    {
+      "text" : "Returns ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if a file or a directory exists at the given path.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fileExists"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "atPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isDirectory"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sp",
+      "text" : "UnsafeMutablePointer"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation8ObjCBoolV",
+      "text" : "ObjCBool"
+    },
+    {
+      "kind" : "text",
+      "text" : ">?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/fileExists(atPath:isDirectory:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "fileExists(atPath:isDirectory:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/fileexists(atpath:isdirectory:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol/sizeOfDirectory(at:options:)": {
+  "abstract" : [
+    {
+      "text" : "Calculates the total size of the files in the specified directory.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sizeOfDirectory"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "at"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC",
+      "text" : "FileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials11FileManagerC27DirectoryEnumerationOptionsV",
+      "text" : "DirectoryEnumerationOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5Int64V",
+      "text" : "Int64"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol\/sizeOfDirectory(at:options:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "sizeOfDirectory(at:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol\/sizeofdirectory(at:options:)"
+}
+}
+}

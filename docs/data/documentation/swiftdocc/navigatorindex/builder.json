@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L493"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L500"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -149,7 +149,8 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/init(archiveURL:outputURL:fileManager:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)"
       ],
       "title" : "Initializers"
     },
@@ -161,6 +162,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/counter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/diagnostics",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/fileManager",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/groupByLanguage",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/isCompleted",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/navigatorIndex",
@@ -563,6 +565,52 @@
   "title" : "diagnostics",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/diagnostics"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/fileManager": {
+  "abstract" : [
+    {
+      "text" : "The filesystem in which to work.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+      "text" : "FileManagerProtocol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/fileManager",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "fileManager",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/filemanager"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/finalize(estimatedCount:emitJSONRepresentation:emitLMDBRepresentation:)": {
   "abstract" : [
@@ -987,6 +1035,175 @@
   "title" : "init(archiveURL:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/init(archiveurl:outputurl:bundleidentifier:sortrootchildrenbyname:groupbylanguage:writepathsondisk:usepagetitle:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/init(archiveURL:outputURL:fileManager:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)": {
+  "abstract" : [
+    {
+      "text" : "Create a new a builder with the given data provider and output URL.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "archiveURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "outputURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+      "text" : "FileManagerProtocol"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sortRootChildrenByName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "groupByLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "writePathsOnDisk"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "usePageTitle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/init(archiveURL:outputURL:fileManager:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(archiveURL:outputURL:fileManager:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/builder\/init(archiveurl:outputurl:filemanager:bundleidentifier:sortrootchildrenbyname:groupbylanguage:writepathsondisk:usepagetitle:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/isCompleted": {
   "abstract" : [

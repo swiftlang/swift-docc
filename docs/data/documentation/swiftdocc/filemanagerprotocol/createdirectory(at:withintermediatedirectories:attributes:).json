@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Creates a new file folder at the given location.",
+      "text" : "Creates a directory at the given url with the specified attributes.",
       "type" : "text"
     }
   ],
@@ -108,7 +108,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileManagerProtocol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L46"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L137"
     },
     "required" : true,
     "role" : "symbol",
@@ -210,6 +210,96 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The location to create the directory",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "at"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "If ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "true",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : ", create any parent directories",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "that do not currently exist",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "withIntermediateDirectories"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Attributes to set on the newly created directory",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "attributes"
+        }
+      ]
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "If the directory couldn’t be created.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Throws",
+          "style" : "note",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -287,7 +377,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/FileManagerProtocol/createDirectory(at:withIntermediateDirectories:attributes:)": {
   "abstract" : [
     {
-      "text" : "Creates a new file folder at the given location.",
+      "text" : "Creates a directory at the given url with the specified attributes.",
       "type" : "text"
     }
   ],

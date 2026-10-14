@@ -85,7 +85,8 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol"
       ],
       "kind" : "relationships",
       "title" : "Inherited By",
@@ -340,6 +341,41 @@
   "title" : "FileManager",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol": {
+  "abstract" : [
+    {
+      "text" : "A read-only file manager.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReadOnlyFileManagerProtocol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol"
 }
 }
 }

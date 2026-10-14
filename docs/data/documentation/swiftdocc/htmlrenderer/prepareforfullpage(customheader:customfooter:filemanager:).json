@@ -20,7 +20,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC12HTMLRendererV18prepareForFullPage12customHeader0H6Footer11fileManager0B5CHTML8HTMLNodeVSgAE_AkFt20FoundationEssentials3URLVSg_AOxtKAA04FileL8ProtocolRzlFZ",
+    "externalID" : "s:9SwiftDocC12HTMLRendererV18prepareForFullPage12customHeader0H6Footer11fileManager0B5CHTML8HTMLNodeVSgAE_AkFt20FoundationEssentials3URLVSg_AOxtKAA012ReadOnlyFileL8ProtocolRzlFZ",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -98,8 +98,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
-        "text" : "FileManagerProtocol"
+        "preciseIdentifier" : "s:9SwiftDocC27ReadOnlyFileManagerProtocolP",
+        "text" : "ReadOnlyFileManagerProtocol"
       },
       {
         "kind" : "text",
@@ -240,10 +240,10 @@
               "text" : " "
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
-              "text" : "FileManagerProtocol"
+              "preciseIdentifier" : "s:9SwiftDocC27ReadOnlyFileManagerProtocolP",
+              "text" : "ReadOnlyFileManagerProtocol"
             },
             {
               "kind" : "text",
@@ -426,41 +426,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FileManagerProtocol": {
-  "abstract" : [
-    {
-      "text" : "A read-write file manager.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "FileManagerProtocol"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "FileManagerProtocol"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "FileManagerProtocol",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/filemanagerprotocol"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/HTMLRenderer": {
   "abstract" : [
     {
@@ -581,8 +546,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
-      "text" : "FileManagerProtocol"
+      "preciseIdentifier" : "s:9SwiftDocC27ReadOnlyFileManagerProtocolP",
+      "text" : "ReadOnlyFileManagerProtocol"
     },
     {
       "kind" : "text",
@@ -629,6 +594,41 @@
   "title" : "prepareForFullPage(customHeader:customFooter:fileManager:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/htmlrenderer\/prepareforfullpage(customheader:customfooter:filemanager:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol": {
+  "abstract" : [
+    {
+      "text" : "A read-only file manager.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReadOnlyFileManagerProtocol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol"
 }
 }
 }

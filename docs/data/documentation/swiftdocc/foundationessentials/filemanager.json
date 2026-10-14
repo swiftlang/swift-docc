@@ -114,6 +114,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataProvider",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
         "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/s9EscapableP"
@@ -136,7 +137,8 @@
       "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/FileManagerProtocol-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/FileManagerProtocol-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/ReadOnlyFileManagerProtocol-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -322,6 +324,52 @@
   "title" : "FileManagerProtocol Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/filemanagerprotocol-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FoundationEssentials/FileManager/ReadOnlyFileManagerProtocol-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials\/FileManager\/ReadOnlyFileManagerProtocol-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ReadOnlyFileManagerProtocol Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundationessentials\/filemanager\/readonlyfilemanagerprotocol-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol": {
+  "abstract" : [
+    {
+      "text" : "A read-only file manager.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReadOnlyFileManagerProtocol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol"
 },
 "doc://SwiftDocC/s10DeinitableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",

@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Converts each eligible file from the source documentation inputs,",
+      "text" : "Converts each eligible file from the source documentation bundle,",
       "type" : "text"
     },
     {
@@ -99,7 +99,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertAction.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/Action\/Actions\/Convert\/ConvertAction.swift#L221"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCCommandLine\/Action\/Actions\/Convert\/ConvertAction.swift#L222"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -297,7 +297,7 @@
 "doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/perform(logHandle:)": {
   "abstract" : [
     {
-      "text" : "Converts each eligible file from the source documentation inputs,",
+      "text" : "Converts each eligible file from the source documentation bundle,",
       "type" : "text"
     },
     {

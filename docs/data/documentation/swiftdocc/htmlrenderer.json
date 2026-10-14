@@ -398,8 +398,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
-      "text" : "FileManagerProtocol"
+      "preciseIdentifier" : "s:9SwiftDocC27ReadOnlyFileManagerProtocolP",
+      "text" : "ReadOnlyFileManagerProtocol"
     },
     {
       "kind" : "text",

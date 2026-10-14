@@ -5,7 +5,7 @@
       "type" : "text"
     },
     {
-      "code" : "FileManagerProtocol.contents(of:)",
+      "code" : "ReadOnlyFileManagerProtocol.contents(of:)",
       "type" : "codeVoice"
     },
     {
@@ -88,7 +88,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileManagerProtocol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L113"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L213"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

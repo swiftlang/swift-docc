@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutputSize.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/OutputSize.swift#L26"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/OutputSize.swift#L31"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -121,7 +121,8 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/DataDirectoryOutputSize\/init(dataDirectory:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/DataDirectoryOutputSize\/init(dataDirectory:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/DataDirectoryOutputSize\/init(dataDirectory:fileManager:)"
       ],
       "title" : "Initializers"
     },
@@ -366,6 +367,70 @@
   "title" : "init(dataDirectory:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/benchmark\/datadirectoryoutputsize\/init(datadirectory:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Benchmark/DataDirectoryOutputSize/init(dataDirectory:fileManager:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "dataDirectory"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fileManager"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "some"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19FileManagerProtocolP",
+      "text" : "FileManagerProtocol"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/DataDirectoryOutputSize\/init(dataDirectory:fileManager:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(dataDirectory:fileManager:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/benchmark\/datadirectoryoutputsize\/init(datadirectory:filemanager:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/DataDirectoryOutputSize/result": {
   "abstract" : [

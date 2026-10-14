@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Removes a file from the given location.",
+      "text" : "Removes an item from the filesystem.",
       "type" : "text"
     }
   ],
@@ -66,7 +66,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileManagerProtocol.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FileManagerProtocol.swift#L90"
     },
     "required" : true,
     "role" : "symbol",
@@ -203,7 +203,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/FileManagerProtocol/removeItem(at:)": {
   "abstract" : [
     {
-      "text" : "Removes a file from the given location.",
+      "text" : "Removes an item from the filesystem.",
       "type" : "text"
     }
   ],

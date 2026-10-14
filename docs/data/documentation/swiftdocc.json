@@ -354,7 +354,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DynamicallyIdentifiableMetric",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalNodeConsumer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTMLContentConsumer"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTMLContentConsumer",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol"
       ],
       "title" : "Protocols"
     },
@@ -3612,6 +3613,41 @@
   "title" : "RESTResponseRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/restresponserendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReadOnlyFileManagerProtocol": {
+  "abstract" : [
+    {
+      "text" : "A read-only file manager.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReadOnlyFileManagerProtocol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReadOnlyFileManagerProtocol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RemoveHierarchyTransformation": {
   "abstract" : [
