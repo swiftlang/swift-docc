@@ -62,7 +62,7 @@ struct StaticHostingWithContentTests {
         
         let basePath = "some/test/base-path"
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: URL(fileURLWithPath: "/path/to/\(catalog.name)"),
             outOfProcessResolver: nil,
             analyze: false,
