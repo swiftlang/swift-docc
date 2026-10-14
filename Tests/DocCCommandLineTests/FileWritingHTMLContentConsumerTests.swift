@@ -170,7 +170,7 @@ struct FileWritingHTMLContentConsumerTests {
         
         let htmlConsumer = try FileWritingHTMLContentConsumer(
             targetFolder: URL(fileURLWithPath: "/output-dir"),
-            fileManager: fileSystem,
+            inputFileManager: fileSystem,
             outputFileManager: fileSystem,
             htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
             customHeader: nil,
@@ -534,7 +534,7 @@ struct FileWritingHTMLContentConsumerTests {
         
         let htmlConsumer = try FileWritingHTMLContentConsumer(
             targetFolder: URL(fileURLWithPath: "/output-dir"),
-            fileManager: fileSystem,
+            inputFileManager: fileSystem,
             outputFileManager: fileSystem,
             htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
             customHeader: nil,
@@ -693,7 +693,7 @@ struct FileWritingHTMLContentConsumerTests {
         
         let htmlConsumer = try FileWritingHTMLContentConsumer(
             targetFolder: URL(fileURLWithPath: "/output-dir"),
-            fileManager: fileSystem,
+            inputFileManager: fileSystem,
             outputFileManager: fileSystem,
             htmlTemplate: URL(fileURLWithPath: "/template/index.html"),
             customHeader: nil,
