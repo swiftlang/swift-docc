@@ -9,34 +9,31 @@
 	<key>CDDefaultCodeListingLanguage</key>
 	<string>swift</string>
 	<key>CDAppleDefaultAvailability</key>
-	<dict>
-		<key>FillIntroduced</key>
-		<array>
-			<dict>
-				<key>name</key>
-				<string>macOS</string>
-				<key>version</key>
-				<string>10.9</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>iOS</string>
-				<key>version</key>
-				<string>11.1</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>tvOS</string>
-				<key>version</key>
-				<string>12.2</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>watchOS</string>
-				<key>version</key>
-				<string>13.3</string>
-			</dict>
-		</array>
-	</dict>
+    <array>
+        <dict>
+            <key>name</key>
+            <string>macOS</string>
+            <key>version</key>
+            <string>10.9</string>
+        </dict>
+        <dict>
+            <key>name</key>
+            <string>iOS</string>
+            <key>version</key>
+            <string>11.1</string>
+        </dict>
+        <dict>
+            <key>name</key>
+            <string>tvOS</string>
+            <key>version</key>
+            <string>12.2</string>
+        </dict>
+        <dict>
+            <key>name</key>
+            <string>watchOS</string>
+            <key>version</key>
+            <string>13.3</string>
+        </dict>
+    </array>
 </dict>
 </plist>

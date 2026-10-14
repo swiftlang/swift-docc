@@ -148,7 +148,7 @@ public struct InfoPlist: File, DataRepresentable {
     public init(
         displayName: String? = nil,
         identifier: String? = nil,
-        defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]? = nil,
+        defaultAvailability: [DefaultAvailability.ModuleAvailability]? = nil,
         defaultCodeListingLanguage: String? = nil
     ) {
         self.content = Content(
@@ -162,10 +162,10 @@ public struct InfoPlist: File, DataRepresentable {
     public struct Content: Codable, Equatable {
         public let displayName: String?
         public let identifier: String?
-        public let defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?
+        public let defaultAvailability: [DefaultAvailability.ModuleAvailability]?
         public let defaultCodeListingLanguage: String?
         
-        fileprivate init(displayName: String?, identifier: String?, defaultAvailability: [String: [DefaultAvailability.ModuleAvailability]]?, defaultCodeListingLanguage: String?) {
+        fileprivate init(displayName: String?, identifier: String?, defaultAvailability: [DefaultAvailability.ModuleAvailability]?, defaultCodeListingLanguage: String?) {
             self.displayName = displayName
             self.identifier = identifier
             self.defaultAvailability = defaultAvailability
@@ -176,7 +176,7 @@ public struct InfoPlist: File, DataRepresentable {
             let container = try decoder.container(keyedBy: DocumentationContext.Inputs.Info.CodingKeys.self)
             displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
             identifier = try container.decodeIfPresent(String.self, forKey: .id)
-            defaultAvailability = try container.decodeIfPresent([String : [DefaultAvailability.ModuleAvailability]].self, forKey: .defaultAvailability)
+            defaultAvailability = try container.decodeIfPresent([DefaultAvailability.ModuleAvailability].self, forKey: .defaultAvailability)
             defaultCodeListingLanguage = try container.decodeIfPresent(String.self, forKey: .defaultCodeListingLanguage)
         }
         

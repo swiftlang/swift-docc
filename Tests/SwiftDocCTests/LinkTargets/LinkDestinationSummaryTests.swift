@@ -590,9 +590,9 @@ struct LinkDestinationSummaryTests {
             ]))
             
             // Configure the "default availability" to not infer either iPadOS availability from the iOS availability (but still infer Mac Catalyst availability from the iOS availability)
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(unavailablePlatformName: .iPadOS),
-            ]])
+            ])
         }
 
         var configuration = DocumentationContext.Configuration()
@@ -669,9 +669,9 @@ struct LinkDestinationSummaryTests {
             """)
             
             // Configure the "default availability" to not infer either iPadOS availability from the iOS availability (but still infer Mac Catalyst availability from the iOS availability)
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(unavailablePlatformName: .iPadOS),
-            ]])
+            ])
         }
 
         var configuration = DocumentationContext.Configuration()
