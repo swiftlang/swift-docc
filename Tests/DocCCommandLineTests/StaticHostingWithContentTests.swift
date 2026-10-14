@@ -62,7 +62,7 @@ struct StaticHostingWithContentTests {
         
         let basePath = "some/test/base-path"
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: URL(fileURLWithPath: "/path/to/\(catalog.name)"),
             outOfProcessResolver: nil,
             analyze: false,
@@ -71,9 +71,9 @@ struct StaticHostingWithContentTests {
             emitDigest: false,
             currentPlatforms: nil,
             buildIndex: false,
-            fileManager: fileSystem,
-            temporaryDirectory: URL(fileURLWithPath: "/tmp"),
+            inputFileManager: fileSystem,
             outputFileManager: fileSystem,
+            temporaryDirectory: URL(fileURLWithPath: "/tmp"),
             experimentalEnableCustomTemplates: true,
             transformForStaticHostingOptions: includeHTMLContent ? .withContent : .withoutContent,
             hostingBasePath: basePath

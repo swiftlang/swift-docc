@@ -152,7 +152,8 @@ package class TestFileSystem: FileManagerProtocol, @unchecked Sendable {
                 default: break
             }
         }
-        return result    }
+        return result
+    }
 
     private func filesIn(folder: Folder, at url: URL) throws -> [String: Contents] {
         return try filesFrom(files: folder.content, at: url)
