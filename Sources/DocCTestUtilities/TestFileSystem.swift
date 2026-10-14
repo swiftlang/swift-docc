@@ -40,7 +40,7 @@ import SwiftDocC
 ///
 /// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
-package class TestFileSystem: FileManagerProtocol {
+package class TestFileSystem: FileManagerProtocol, @unchecked Sendable {
     package let currentDirectoryPath = "/"
         
     /// Thread safe access to the file system.
@@ -65,6 +65,17 @@ package class TestFileSystem: FileManagerProtocol {
     /// For example use this for large conversions when the output is not of interest.
     var disableWriting = false
     
+    package convenience init(files someFiles: [any File]) throws {
+        self.init()
+
+        files["/"] = .folder
+        files["/tmp"] = .folder
+
+        let rootURL = URL(filePath: "/")
+        let fileList = try filesFrom(files: someFiles, at: rootURL)
+        files.merge(fileList, uniquingKeysWith: { _, new in new })
+    }
+
     package convenience init(folders: [Folder]) throws {
         self.init()
         
@@ -103,12 +114,9 @@ package class TestFileSystem: FileManagerProtocol {
         try contentsOfURL(url)
     }
     
-    private func filesIn(folder: Folder, at: URL) throws -> [String: Contents] {
-        filesLock.lock()
-        defer { filesLock.unlock() }
-
+    private func filesFrom(files: [any File], at: URL) throws -> [String: Contents] {
         var result = [String: Contents]()
-        for file in folder.content {
+        for file in files {
             switch file {
                 case let folder as Folder:
                     result[at.appendingPathComponent(folder.name).path] = .folder
@@ -144,7 +152,10 @@ package class TestFileSystem: FileManagerProtocol {
                 default: break
             }
         }
-        return result
+        return result    }
+
+    private func filesIn(folder: Folder, at url: URL) throws -> [String: Contents] {
+        return try filesFrom(files: folder.content, at: url)
     }
     
     @discardableResult
@@ -332,6 +343,28 @@ package class TestFileSystem: FileManagerProtocol {
             files:       Array( allContents[..<partitionIndex] ),
             directories: Array( allContents[partitionIndex...] )
         )
+    }
+
+    package func sizeOfDirectory(
+        at url: URL,
+        options: FileManager.DirectoryEnumerationOptions
+    ) throws -> Int64 {
+        filesLock.lock()
+        defer {
+            filesLock.unlock()
+        }
+
+        var total: Int64 = 0
+
+        let path = url.path.appendingTrailingSlash
+
+        for (subpath, item) in files where subpath.hasPrefix(path) {
+            if case let .file(data) = item {
+                total += Int64(data.count)
+            }
+        }
+
+        return total
     }
 
     package func uniqueTemporaryDirectory() -> URL {
