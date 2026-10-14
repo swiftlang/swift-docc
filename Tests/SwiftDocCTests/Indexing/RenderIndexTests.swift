@@ -843,6 +843,7 @@ final class RenderIndexTests: XCTestCase {
         let indexDirectory = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(
             outputURL: indexDirectory,
+            fileManager: FileManager.default,
             bundleIdentifier: context.inputs.id.rawValue,
             sortRootChildrenByName: true
         )

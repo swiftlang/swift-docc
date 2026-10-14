@@ -111,9 +111,7 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.deprecated == "1.2.3")
         
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "1.2.3")
-        withKnownIssue("iPadOS availability should follow iOS availability (rdar://173704351)") {
-            #expect(renderPlatforms.first(where: { $0.name == "iPadOS"   })?.deprecated == "1.2.3")
-        }
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.deprecated == "1.2.3")
         
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "1.2.3")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.deprecated == "1.2.3")
@@ -1014,11 +1012,6 @@ struct AvailabilityTests {
                     .init(domainName: "macOS",   introduced: .init(major: 10, minor: 15, patch: 0), deprecated: nil),
                     .init(domainName: "tvOS",    introduced: .init(major: 13, minor:  0, patch: 0), deprecated: nil),
                     .init(domainName: "watchOS", introduced: .init(major:  6, minor:  0, patch: 0), deprecated: nil),
-                ], declaration: [
-                    // FIXME: Some availability logic only happens when symbols have declarations (rdar://172280267)
-                    .init(kind: .keyword,    spelling: "class",     preciseIdentifier: nil),
-                    .init(kind: .text,       spelling: " ",         preciseIdentifier: nil),
-                    .init(kind: .identifier, spelling: "SomeClass", preciseIdentifier: nil),
                 ]),
             ]))
             
@@ -1027,11 +1020,6 @@ struct AvailabilityTests {
                     // Change the symbol's availability to have some differing data to verify
                     .init(domainName: "iOS",         introduced: .init(major: 7, minor: 0, patch: 0), deprecated: nil),
                     .init(domainName: "macCatalyst", introduced: .init(major: 1, minor: 0, patch: 0), deprecated: nil),
-                ], declaration: [
-                    // FIXME: Some availability logic only happens when symbols have declarations (rdar://172280267)
-                    .init(kind: .keyword,    spelling: "class",     preciseIdentifier: nil),
-                    .init(kind: .text,       spelling: " ",         preciseIdentifier: nil),
-                    .init(kind: .identifier, spelling: "SomeClass", preciseIdentifier: nil),
                 ]),
             ]))
         }
@@ -1044,12 +1032,8 @@ struct AvailabilityTests {
         
         #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "watchOS"])
         
-        #expect(renderPlatforms.first(where: { $0.name == "iOS"    })?.introduced == nil)
         #expect(renderPlatforms.first(where: { $0.name == "iOS"    })?.deprecated == "13.0")
-        withKnownIssue("iPadOS availability should follow iOS availability (rdar://173704351)", {
-            #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.introduced == nil)
-            #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.deprecated == "13.0")
-        }, when: { fakeExtensionGraph == .iOS })
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS" })?.deprecated == "13.0")
         
         #expect(renderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.15")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "1.0")
@@ -2302,10 +2286,10 @@ struct AvailabilityTests {
         #expect(swiftRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
         #expect(swiftRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "10.7")
         
+        let objcRenderPlatforms = try #require(renderNode.metadata.platformsVariants.value(for: .objectiveC))
+        #expect(objcRenderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "12.1")
+
         withKnownIssue("Language specific availability isn't reflected on the rendered page (rdar://174818876)") {
-            #expect(!renderNode.metadata.platformsVariants.variants.isEmpty)
-            let objcRenderPlatforms = try #require(renderNode.metadata.platformsVariants.value(for: .objectiveC))
-            
             if defaultIntroducedVersion != nil {
                 #expect(objcRenderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
             } else {
@@ -2315,10 +2299,42 @@ struct AvailabilityTests {
             #expect(objcRenderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == defaultIntroducedVersion)
             #expect(objcRenderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == defaultIntroducedVersion)
             #expect(objcRenderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == defaultIntroducedVersion)
-            #expect(objcRenderPlatforms.first(where: { $0.name == "macOS"        })?.introduced == "12.1")
         }
     }
     
+    @Test
+    func combinesInSourceAvailabilityFromDifferentSpellingsOfTheSameLanguage() async throws {
+        var macOSSymbol = makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"], availability: [
+            .init(domainName: "macOS", introduced: .init(major: 12, minor: 1, patch: 0), deprecated: nil)
+        ])
+        macOSSymbol.identifier.interfaceLanguage = "objective-c"
+
+        var iOSSymbol = makeSymbol(id: "some-symbol-id", language: .objectiveC, kind: .class, pathComponents: ["SomeClass"], availability: [
+            .init(domainName: "iOS", introduced: .init(major: 15, minor: 0, patch: 0), deprecated: nil)
+        ])
+        iOSSymbol.identifier.interfaceLanguage = "occ"
+
+        let catalog = Folder(name: "unit-test.docc") {
+            Folder(name: "macos") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "macosx")), symbols: [macOSSymbol]))
+            }
+            Folder(name: "ios") {
+                JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [iOSSymbol]))
+            }
+        }
+
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"   })?.introduced == "15.0")
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.introduced == "12.1")
+    }
+
     // MARK: Mixed sources
     
     @Test(arguments: DirectiveLocation.allCases)
