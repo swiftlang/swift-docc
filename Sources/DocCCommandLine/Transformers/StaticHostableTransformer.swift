@@ -38,7 +38,7 @@ struct StaticHostableTransformer {
     private let outputURL: URL
     /// The index.html contents to write for each static hostable file.
     private let indexHTMLData: Data
-    /// The file manager used to create directories and files.
+    /// The file manager used to read files.
     private let fileManager: any FileManagerProtocol
     
     /// Initialize with a dataProvider to the source doccarchive.
@@ -95,7 +95,7 @@ extension StaticHostableTransformer {
     static func indexHTMLData(
         in htmlTemplateDirectory: URL,
         with hostingBasePath: String?,
-        fileManager: any FileManagerProtocol
+        fileManager: any ReadOnlyFileManagerProtocol
     ) throws -> Data {
         let customHostingBasePathProvided = !(hostingBasePath?.isEmpty ?? true)
         
