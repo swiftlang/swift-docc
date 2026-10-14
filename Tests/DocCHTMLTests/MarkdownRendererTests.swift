@@ -481,7 +481,7 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image.png">
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../images/com.test.example/some-image.png">
               </picture>
             </p>
             """

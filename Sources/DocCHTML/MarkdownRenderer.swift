@@ -402,7 +402,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         var content = [HTMLNode]()
         if asset.files.count == 1 {
             // When all image are either dark/light mode, add them directly on the "img" element
-            imgAttributes.append(contentsOf: srcAttributes(for: asset.files.first!.value))
+            let scaleVariants = asset.files.first!.value
+            if scaleVariants.count == 1 {
+                // Prefer a "src" attribute over a "srcSet" attribute for the "img" element itself.
+                imgAttributes.append(.src(path(to: scaleVariants.first!.value)))
+            } else {
+                imgAttributes.append(contentsOf: srcAttributes(for: scaleVariants))
+            }
         } else {
             // Define a "source" element for each dark/light style
             for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // order light images before dark images
