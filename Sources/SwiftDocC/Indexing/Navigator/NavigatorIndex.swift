@@ -505,7 +505,7 @@ extension NavigatorIndex {
         /// The output URL.
         public let outputURL: URL
         
-        /// The filesystem in which to work.
+        /// The file manager that the builder uses to write the JSON index file and to move the LMDB index file from its temporary `FileManager.default` location
         package let fileManager: any FileManagerProtocol
 
         /// The bundle name.
