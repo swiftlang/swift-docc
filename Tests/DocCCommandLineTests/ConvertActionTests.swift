@@ -321,21 +321,6 @@ class ConvertActionTests: XCTestCase {
         
         // We add only the source to the file system
         let testDataProvider = try TestFileSystem(folders: [source, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        
-        let action = try ConvertAction(
-            documentationBundleURL: source.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            outputFileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
-        )
-        
         let targetURL = target.absoluteURL.appendingPathComponent("output")
         
         XCTAssertNoThrow(try ConvertAction.moveOutput(from: source.absoluteURL, to: targetURL, fileManager: testDataProvider))
@@ -356,21 +341,6 @@ class ConvertActionTests: XCTestCase {
         
         // We add only the source to the file system
         let testDataProvider = try TestFileSystem(folders: [source, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        
-        let action = try ConvertAction(
-            documentationBundleURL: source.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            outputFileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
-        )
-        
         let targetURL = target.absoluteURL.appendingPathComponent("target").appendingPathComponent("output")
         
         XCTAssertThrowsError(try ConvertAction.moveOutput(from: source.absoluteURL, to: targetURL, fileManager: testDataProvider))
