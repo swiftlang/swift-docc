@@ -11,6 +11,7 @@
 import Foundation
 import SymbolKit
 import Markdown
+import DocCCommon
 
 /// The source-of-truth for the combined availability information for a given page.
 ///
@@ -105,7 +106,7 @@ struct Availability {
     /// (by comparing the _symbol's_ encountered platforms to the unified graph's encountered platforms).
     ///
     /// This is its own method because this computation only needs to be performed once per module.
-    /// Alternatively, if `addInSourceAvailability(from:languageFilter:)` was responsible for this task,
+    /// Alternatively, if `addInSourceAvailability(from:matchingLanguage:)` was responsible for this task,
     /// then the caller couldn't forget to perform this task but it would have to be performed once per symbol instead once per module.
     ///
     /// - Parameter unifiedGraph: The unified symbol graph that the container uses to mark the encountered platforms.
@@ -135,11 +136,11 @@ struct Availability {
     ///
     /// - Parameters:
     ///   - unifiedSymbol: The symbol to read the unified in-source availability annotations from.
-    ///   - languageFilter: The string identifier of a source language, that that container uses to only add in-source information that apply to that source language.
-    mutating func addInSourceAvailability(from unifiedSymbol: UnifiedSymbolGraph.Symbol, matchingLanguage languageFilter: String) {
+    ///   - language: The source language that the container uses to only add in-source information that applies to that language, regardless of how the symbol graph spells it.
+    mutating func addInSourceAvailability(from unifiedSymbol: UnifiedSymbolGraph.Symbol, matchingLanguage language: SourceLanguage) {
         // Mark the platforms that this specific symbol exist for in the unified symbol graph.
         // Any platform that's left as `havePlatformForInSymbolGraph` after this loop indicates a platform that the symbol was excluded from using conditional compilation.
-        for selector in unifiedSymbol.allSelectors where selector.interfaceLanguage == languageFilter {
+        for selector in unifiedSymbol.allSelectors where SourceLanguage(id: selector.interfaceLanguage) == language {
             guard let selectorPlatform = KnownPlatform(selector) else {
                 continue
             }
@@ -172,7 +173,7 @@ struct Availability {
         }
         
         // Add the information from all applicable in-source attributes.
-        for (selector, availabilities) in unifiedSymbol.availability where selector.interfaceLanguage == languageFilter {
+        for (selector, availabilities) in unifiedSymbol.availability where SourceLanguage(id: selector.interfaceLanguage) == language {
             let selectorPlatform = KnownPlatform(selector) // Don't `guard` this. It doesn't have to correspond to a known platform.
             
             for availability in availabilities {

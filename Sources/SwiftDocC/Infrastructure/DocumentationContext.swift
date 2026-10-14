@@ -1332,9 +1332,9 @@ public class DocumentationContext {
                         }
                         let directiveAvailability = documentationCache[reference]?.metadata?.availability
                         
-                        func makeAvailability(languageFilter: String) -> Availability {
+                        func makeAvailability(language: SourceLanguage) -> Availability {
                             var availability = symbolBaseAvailability
-                            availability.addInSourceAvailability(from: symbol, matchingLanguage: languageFilter)
+                            availability.addInSourceAvailability(from: symbol, matchingLanguage: language)
                             
                             if let directiveAvailability {
                                 availability.addDirectiveAvailability(directiveAvailability, preservingBugOfFirstResettingAvailabilityTo: symbolBaseAvailability)
@@ -1346,7 +1346,7 @@ public class DocumentationContext {
                         
                         (documentationCache[reference]?.semantic as! Symbol).consolidatedAvailability = .init(
                             values: .init(uniqueKeysWithValues: languages.map { trait in
-                                (key: trait, value: makeAvailability(languageFilter: trait.interfaceLanguage! /* all entries in `otherLanguages` have a language */))
+                                (key: trait, value: makeAvailability(language: trait.sourceLanguage! /* all entries in `otherLanguages` have a language */))
                             })
                         )
                     }
