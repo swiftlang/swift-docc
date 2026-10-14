@@ -133,6 +133,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -144,6 +145,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
   "kind" : "symbol",
   "role" : "collection",
@@ -155,6 +157,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -243,6 +246,7 @@
       }
     ]
   },
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -398,6 +402,7 @@
       }
     ]
   },
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

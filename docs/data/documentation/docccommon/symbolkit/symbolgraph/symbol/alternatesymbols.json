@@ -122,6 +122,7 @@
       "identifiers" : [
         "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastJSONDecodable",
         "doc:\/\/DocCCommon\/s8CopyableP",
+        "doc:\/\/DocCCommon\/s10DeinitableP",
         "doc:\/\/DocCCommon\/s9EscapableP"
       ],
       "kind" : "relationships",
@@ -173,6 +174,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
   "kind" : "symbol",
   "role" : "collection",
@@ -195,6 +197,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -226,6 +229,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit",
   "kind" : "symbol",
   "role" : "collection",
@@ -237,6 +241,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -269,6 +274,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -310,6 +316,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -360,6 +367,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -425,6 +433,11 @@
   "title" : "FastJSONDecodable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/docccommon\/symbolkit\/symbolgraph\/symbol\/alternatesymbols\/fastjsondecodable-implementations"
+},
+"doc://DocCCommon/s10DeinitableP": {
+  "identifier" : "doc:\/\/DocCCommon\/s10DeinitableP",
+  "title" : "Swift.Deinitable",
+  "type" : "unresolvable"
 },
 "doc://DocCCommon/s8CopyableP": {
   "identifier" : "doc:\/\/DocCCommon\/s8CopyableP",

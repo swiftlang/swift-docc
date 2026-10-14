@@ -133,6 +133,7 @@
         "doc:\/\/DocCCommon\/documentation\/DocCCommon\/FastJSONDecodable",
         "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/s9EscapableP"
@@ -273,6 +274,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -287,6 +289,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -321,6 +324,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -388,6 +392,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -430,6 +435,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -480,6 +486,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -817,6 +824,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -884,6 +892,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -942,6 +951,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1000,6 +1010,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1058,6 +1069,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1116,6 +1128,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1174,6 +1187,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1224,6 +1238,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1291,6 +1306,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1333,6 +1349,11 @@
   "title" : "usr",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/usr"
+},
+"doc://SwiftDocC/s10DeinitableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
+  "title" : "Swift.Deinitable",
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",

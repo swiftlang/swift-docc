@@ -112,6 +112,7 @@
         "doc:\/\/SwiftDocC\/SK",
         "doc:\/\/SwiftDocC\/Sl",
         "doc:\/\/SwiftDocC\/s8CopyableP",
+        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/Sk",
@@ -227,6 +228,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -241,6 +243,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -283,6 +286,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -325,6 +329,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -404,6 +409,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -461,6 +467,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -485,6 +492,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -526,6 +534,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -584,6 +593,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -677,6 +687,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -720,6 +731,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -763,6 +775,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -789,6 +802,11 @@
   "title" : "SemanticWalker",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticwalker"
+},
+"doc://SwiftDocC/s10DeinitableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
+  "title" : "Swift.Deinitable",
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",

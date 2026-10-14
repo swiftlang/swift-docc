@@ -324,6 +324,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
   "kind" : "symbol",
   "role" : "collection",
@@ -338,6 +339,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -372,6 +374,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -406,6 +409,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

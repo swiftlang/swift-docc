@@ -136,6 +136,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -187,6 +188,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -198,6 +200,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit",
   "kind" : "symbol",
   "role" : "collection",
@@ -209,6 +212,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph",
   "kind" : "symbol",
   "navigatorTitle" : [
@@ -226,6 +230,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol",
   "kind" : "symbol",
   "navigatorTitle" : [
@@ -243,6 +248,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -307,6 +313,11 @@
   "title" : "Equatable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol\/declarationfragments\/equatable-implementations"
+},
+"doc://SwiftDocC/s10DeinitableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
+  "title" : "Swift.Deinitable",
+  "type" : "unresolvable"
 }
 }
 }

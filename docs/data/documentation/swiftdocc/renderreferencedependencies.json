@@ -81,6 +81,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/s9EscapableP"
       ],
@@ -157,6 +158,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -168,6 +170,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -221,6 +224,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -259,6 +263,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -331,6 +336,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -369,6 +375,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -402,6 +409,11 @@
   "title" : "topicReferences",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreferencedependencies\/topicreferences"
+},
+"doc://SwiftDocC/s10DeinitableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
+  "title" : "Swift.Deinitable",
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",

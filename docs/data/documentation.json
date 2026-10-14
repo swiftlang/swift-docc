@@ -17,6 +17,7 @@
           "type" : "text"
         }
       ],
+      "deprecated" : true,
       "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
       "kind" : "symbol",
       "role" : "collection",
@@ -28,6 +29,7 @@
       "abstract" : [
 
       ],
+      "deprecated" : true,
       "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
       "kind" : "symbol",
       "role" : "collection",
@@ -39,6 +41,7 @@
       "abstract" : [
 
       ],
+      "deprecated" : true,
       "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
       "kind" : "symbol",
       "role" : "collection",
@@ -53,6 +56,7 @@
           "type" : "text"
         }
       ],
+      "deprecated" : true,
       "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
       "kind" : "symbol",
       "role" : "collection",

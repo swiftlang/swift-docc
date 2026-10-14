@@ -15,7 +15,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SymbolKit",
-    "externalID" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V13AccessControlV9SwiftDocCE5level33_C30548A266A6713E0481A780329E4000LLSiSgvp",
+    "externalID" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV9SwiftDocCE2eeoiySbAG_AGtFZ",
     "modules" : [
       {
         "name" : "SwiftDocC",
@@ -77,6 +77,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -88,6 +89,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit",
   "kind" : "symbol",
   "role" : "collection",
@@ -99,6 +101,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph",
   "kind" : "symbol",
   "navigatorTitle" : [
@@ -116,6 +119,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol",
   "kind" : "symbol",
   "navigatorTitle" : [
@@ -133,6 +137,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -191,6 +196,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -249,6 +255,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -307,6 +314,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

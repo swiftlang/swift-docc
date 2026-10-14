@@ -95,6 +95,7 @@
       "identifiers" : [
         "doc:\/\/DocCCommandLine\/14ArgumentParser013ExpressibleByA0P",
         "doc:\/\/DocCCommandLine\/s8CopyableP",
+        "doc:\/\/DocCCommandLine\/s10DeinitableP",
         "doc:\/\/DocCCommandLine\/SQ",
         "doc:\/\/DocCCommandLine\/s9EscapableP",
         "doc:\/\/DocCCommandLine\/SH",
@@ -173,6 +174,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
   "kind" : "symbol",
   "role" : "collection",
@@ -195,6 +197,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -229,6 +232,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -254,6 +258,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -295,6 +300,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -315,6 +321,11 @@
   "title" : "CatalogTemplateKind.tutorial",
   "type" : "topic",
   "url" : "\/documentation\/docccommandline\/catalogtemplatekind\/tutorial"
+},
+"doc://DocCCommandLine/s10DeinitableP": {
+  "identifier" : "doc:\/\/DocCCommandLine\/s10DeinitableP",
+  "title" : "Swift.Deinitable",
+  "type" : "unresolvable"
 },
 "doc://DocCCommandLine/s8CopyableP": {
   "identifier" : "doc:\/\/DocCCommandLine\/s8CopyableP",

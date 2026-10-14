@@ -115,6 +115,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
   "kind" : "symbol",
   "role" : "collection",
@@ -126,6 +127,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/Swift",
   "kind" : "symbol",
   "role" : "collection",
@@ -137,6 +139,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -172,6 +175,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

@@ -84,6 +84,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData",
         "doc:\/\/SwiftDocC\/s8CopyableP",
+        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/s9EscapableP"
       ],
       "kind" : "relationships",
@@ -130,6 +131,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -141,6 +143,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FoundationEssentials",
   "kind" : "symbol",
   "role" : "collection",
@@ -152,6 +155,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -198,6 +202,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -224,6 +229,11 @@
   "title" : "LMDBData",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/lmdbdata"
+},
+"doc://SwiftDocC/s10DeinitableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
+  "title" : "Swift.Deinitable",
+  "type" : "unresolvable"
 },
 "doc://SwiftDocC/s8CopyableP": {
   "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
