@@ -108,7 +108,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let convertedOverviewURL = outputURL
             .appendingPathComponent("data")
             .appendingPathComponent("tutorials")
-            .appendingPathComponent("Overview.json")
+            .appendingPathComponent("overview.json")
         
         // Start watching the source and get the initial (successful) state.
         do {
