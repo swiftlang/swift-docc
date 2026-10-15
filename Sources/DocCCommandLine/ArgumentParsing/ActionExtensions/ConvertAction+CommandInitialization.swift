@@ -63,7 +63,7 @@ extension ConvertAction {
             documentationBundleURL: documentationBundleURL,
             outOfProcessResolver: outOfProcessResolver,
             analyze: convert.diagnosticOptions.analyze,
-            targetDirectory: convert.outputURL,
+            outputLocation: convert.outputURL,
             htmlTemplateDirectory: convert.templateOption.templateURL ?? fallbackTemplateURL,
             emitDigest: convert.featureFlags.emitDigest,
             currentPlatforms: parsedPlatforms,
