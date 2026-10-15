@@ -65,7 +65,7 @@ let previewServerEnabledByDefault = false
 let package = Package(
     name: "SwiftDocC",
     platforms: [
-        .macOS(.v13),
+        .macOS(.v15),
         .iOS(.v16)
     ],
     products: [
@@ -92,6 +92,7 @@ let package = Package(
             dependencies: [
                 .target(name: "DocCCommon"),
                 .target(name: "DocCHTML"),
+                .target(name: "ZLib"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
@@ -225,6 +226,20 @@ let package = Package(
             ],
             swiftSettings: swiftSettings(.v5)
         ),
+
+        // Zlib (used for .zip file handling)
+        .systemLibrary(
+            name: "CZLib",
+            pkgConfig: "zlib"
+        ),
+        .target(
+            name: "ZLib",
+            dependencies: [
+                .target(name: "CZLib")
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v6)
+        )
     ]
 )
 

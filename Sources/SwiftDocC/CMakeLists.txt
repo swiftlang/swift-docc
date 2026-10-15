@@ -411,6 +411,7 @@ add_library(SwiftDocC
   Utility/Collection+ConcurrentPerform.swift
   Utility/CollectionChanges.swift
   Utility/CommonTypeExports.swift
+  Utility/Date+DosFileTime.swift
   Utility/DataStructures/BidirectionalMap.swift
   Utility/DataStructures/GroupedSequence.swift
   Utility/DispatchGroup+Async.swift
@@ -472,11 +473,16 @@ add_library(SwiftDocC
   Utility/SymbolGraphAvailability+Filter.swift
   Utility/Synchronization.swift
   Utility/ValidatedURL.swift
-  Utility/Version.swift)
+  Utility/Version.swift
+  Utility/ZipFileDataSource.swift
+  Utility/ZipFileError.swift
+  Utility/ZipFileReader+ReadOnlyFileManagerProtocol.swift
+  Utility/ZipFileReader.swift
+  Utility/ZipFileWriter.swift)
 target_link_libraries(SwiftDocC PRIVATE
-  DocCCommon)
-target_link_libraries(SwiftDocC PRIVATE
-  DocCHTML)
+  DocCCommon
+  DocCHTML
+  ZLib)
 target_link_libraries(SwiftDocC PUBLIC
   SwiftMarkdown::Markdown
   DocC::SymbolKit
