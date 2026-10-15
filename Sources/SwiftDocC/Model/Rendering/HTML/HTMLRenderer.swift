@@ -88,7 +88,7 @@ private struct ContextLinkProvider: LinkProvider {
     }
     
     func assetNamed(_ assetName: String) -> LinkedAsset? {
-        guard let asset = context.resolveAsset(named: assetName, in: reference),
+        guard let asset = context.resolveAsset(named: assetName, in: reference, withType: .image),
               let imagesBaseLocation = URL(string: "/images/\(context.inputs.id.rawValue)/")
             else {
             // The context doesn't have an asset with this name
