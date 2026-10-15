@@ -42,7 +42,7 @@ class StaticHostingBaseTests: XCTestCase {
                         guard let indexHTML else { continue }
 
                         let indexFileURL = createdFolder.appendingPathComponent("index.html")
-                        let testHTMLString = try String(contentsOf: indexFileURL)
+                        let testHTMLString = try String(contentsOf: indexFileURL, encoding: .utf8)
                         XCTAssertEqual(testHTMLString, indexHTML, "Unexpected content in index.html at \(indexFileURL)")
                     } catch {
                         XCTFail("Invalid contents during comparrison of \(input) and \(output) - \(error)")
