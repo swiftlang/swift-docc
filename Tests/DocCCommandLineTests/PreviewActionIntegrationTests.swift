@@ -88,7 +88,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default,
+                outputFileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
         }
         
@@ -218,7 +218,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default,
+                outputFileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
         }
         
@@ -281,7 +281,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default,
+                outputFileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
         }
         
@@ -348,7 +348,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default,
+                outputFileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
                 
             // Inject extra "work" to slow dow the documentation build so that the directory monitor has time to cancel it.
