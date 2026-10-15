@@ -377,6 +377,19 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// </picture>
     /// ```
     func visit(_ image: Image) -> HTMLNode {
+        var imgAttributes: [HTMLNode.Attribute] = [
+            .decoding(.async),
+            .loading(.lazy),
+        ]
+        if let altText = image.altText {
+            imgAttributes.insert(.alt(altText), at: 0)
+        }
+        
+        if let source = image.source, source.isAbsoluteWebURL {
+            imgAttributes.append(.src(source))
+            return picture(contents: [img(attributes: imgAttributes)])
+        }
+        
         guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.files.isEmpty else {
             return .text("") // ???: What do we return for images that won't display anything?
         }
@@ -384,19 +397,11 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         func srcAttributes(for images: [Int: URL]) -> [HTMLNode.Attribute] {
             switch images.count {
                 case 0: []
-                case 1: [.srcSet([path(to: images.first!.value)])] // No scale factor when there's only one source.
-                default: [.srcSet(images.sorted(by: { $0.key > $1.key }) // large scale factors first
+                case 1: [.srcSet([path(to: images.first!.value)])] // No need to specify a scale factor when there's only one source.
+                default: [.srcSet(images.sorted(by: { $0.key > $1.key }) // Order by large scale factors first
                     .map { scale, url in "\(path(to: url)) \(scale)x" }
                 )]
             }
-        }
-        
-        var imgAttributes: [HTMLNode.Attribute] = [
-            .decoding(.async),
-            .loading(.lazy),
-        ]
-        if let altText = image.altText {
-            imgAttributes.insert(.alt(altText), at: 0)
         }
         
         var content = [HTMLNode]()
@@ -411,7 +416,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             }
         } else {
             // Define a "source" element for each dark/light style
-            for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // order light images before dark images
+            for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // Order light images before dark images
                 var attributes = srcAttributes(for: images)
                 attributes.insert(.media("(prefers-color-scheme: \(style.rawValue))"), at: 0)
                 content.append(source(attributes: attributes))
@@ -860,5 +865,14 @@ extension MarkdownRenderer {
     /// Creates an `<a>` element with a relative link to the given element.
     func anchor(linkingTo element: LinkedElement, contents: [HTMLNode]) -> HTMLNode {
         a(attributes: [.href(path(to: element.path))], contents: contents)
+    }
+}
+
+private extension String {
+    var isAbsoluteWebURL: Bool {
+        let maybeScheme = prefix(8 /* "http://" + 1 character */).lowercased()
+        
+        return maybeScheme.hasPrefix("http://")
+            || maybeScheme.hasPrefix("https://")
     }
 }

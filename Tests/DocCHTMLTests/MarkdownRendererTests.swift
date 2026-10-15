@@ -470,7 +470,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingRelativeLinksToImages() throws {
+    func renderingRelativeLinksToLocalImages() throws {
         // Only a single image representation
         assert(
             rendering: "![Some alt text](some-image.png)",
@@ -545,6 +545,22 @@ struct MarkdownRendererTests {
                 <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
                 <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
                 <img alt="Some alt text" decoding="async" loading="lazy">
+              </picture>
+            </p>
+            """
+        )
+    }
+    
+    @Test(arguments: ["http", "https", "HTTP", "hTtPs"])
+    func renderingAbsoluteWebLinksToImages(scheme: String) throws {
+        // Absolute web URL
+        assert(
+            rendering: "![Some alt text](\(scheme)://example.com/path/to/some-image.png)",
+            prettyFormatted: true,
+            matches: """
+            <p>
+              <picture>
+                <img alt="Some alt text" decoding="async" loading="lazy" src="\(scheme)://example.com/path/to/some-image.png">
               </picture>
             </p>
             """
