@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTMLRenderer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLRenderer.swift#L119"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLRenderer.swift#L121"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
