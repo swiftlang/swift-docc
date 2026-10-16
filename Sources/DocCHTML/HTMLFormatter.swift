@@ -196,9 +196,10 @@ package struct HTMLFormatter {
             // Start tag
             _formatStartTag(tag, attributes: attributes)
             guard !contents.isEmpty else {
-                if !options.contains(.omitOptionalEndTags) || !tag.canOmitEndTag(whenFollowedBy: state.nextElementTag) {
-                    _formatEndTag(tag)
+                if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: state.nextElementTag) {
+                    return
                 }
+                _formatEndTag(tag)
                 return
             }
             
