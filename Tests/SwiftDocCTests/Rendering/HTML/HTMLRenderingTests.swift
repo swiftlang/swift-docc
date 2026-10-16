@@ -302,4 +302,71 @@ struct HTMLRenderingTests {
             """)
         }
     }
+    
+    @Test
+    func includesDefaultImplementationsSection() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "protocol-id",     kind: .protocol, pathComponents: ["SomeProtocol"]),
+                makeSymbol(id: "requirement-id",  kind: .method,   pathComponents: ["SomeProtocol", "doSomething()"]),
+                makeSymbol(id: "default-impl-id", kind: .method,   pathComponents: ["SomeProtocol", "doSomething()"]),
+            ], relationships: [
+                .init(source: "requirement-id",  target: "protocol-id",    kind: .requirementOf,           targetFallback: nil),
+                .init(source: "default-impl-id", target: "requirement-id", kind: .defaultImplementationOf, targetFallback: nil),
+            ]))
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "requirement-id"))
+        let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+        
+        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        let pageInfo = renderer.renderSymbol(symbol)
+        
+        let html = try #require(pageInfo.content)
+        let data = HTMLFormatter.format(html, options: .prettyPrint)
+        let formattedHTML = String(decoding: data, as: UTF8.self)
+        #expect(formattedHTML == """
+        <article>
+          <section>
+            <nav id="breadcrumbs">
+              <ul>
+                <li>
+                  <a href="../../index.html">ModuleName</a>
+                </li>
+                <li>
+                  <a href="../index.html">SomeProtocol</a>
+                </li>
+                <li>doSomething()</li>
+              </ul>
+            </nav>
+            <hgroup>
+              <p>Instance Method</p>
+              <h1>
+                do<wbr>Something()
+              </h1>
+            </hgroup>
+          </section>
+          <section id="Default-Implementations">
+            <h2>
+              <a href="#Default-Implementations">Default Implementations</a>
+            </h2>
+            <h3 id="SomeProtocol-Implementations">
+              <a href="#SomeProtocol-Implementations">SomeProtocol Implementations</a>
+            </h3>
+            <ul>
+              <li>
+                <a href="../dosomething()-88gib/index.html">
+                  <code>
+                    do<wbr>Something()
+                  </code>
+                </a>
+              </li>
+            </ul>
+          </section>
+        </article>
+        """)
+    }
 }

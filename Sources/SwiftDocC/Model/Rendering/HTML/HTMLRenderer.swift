@@ -414,6 +414,25 @@ package struct HTMLRenderer {
             )
         }
         
+        // Default Implementations
+        if let relationships = symbol.defaultImplementationsVariants
+            .values(goal: goal, by: { $0.groups.elementsEqual($1.groups, by: { $0 == $1 }) })
+            .valuesByLanguage()
+        {
+            articleElements.append(contentsOf:
+                renderer.groupedListSection(named: "Default Implementations", groups: relationships.mapValues { section in
+                    section.groups.map {
+                        .init(title: $0.heading, references: $0.references.compactMap { topic in
+                            switch topic {
+                                case .resolved(.success(let reference)): reference.url
+                                case .unresolved, .resolved(.failure):   nil
+                            }
+                        })
+                    }
+                })
+            )
+        }
+        
         // See Also
         if let seeAlso = symbol.seeAlso {
             articleElements.append(contentsOf: makeSeeAlsoSection(seeAlso))
@@ -563,5 +582,11 @@ private extension DocumentationDataVariants {
 private extension DocumentationDataVariants where Variant: Equatable {
     func values(goal: RenderGoal) -> VariantValues<Variant> {
         values(goal: goal, by: ==)
+    }
+}
+
+private extension ImplementationsGroup {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.heading == rhs.heading && lhs.references == rhs.references
     }
 }
