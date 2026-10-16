@@ -29,7 +29,7 @@ struct FastSymbolGraphJSONDecoderErrorTests {
     
     @Test
     func decodingIntWhenNumberIsTooLarge() throws {
-        try expectMatchingErrors(decoding: Int.self, fromJSON: String(repeating: "1", count: 30), expectedDebugDescription: "The given data was not valid JSON.")
+        try expectMatchingErrors(decoding: Int.self, fromJSON: String(repeating: "1", count: 30) + " ", expectedDebugDescription: "The given data was not valid JSON.")
     }
     
     @Test(arguments: [
