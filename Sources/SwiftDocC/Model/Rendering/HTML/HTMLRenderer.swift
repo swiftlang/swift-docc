@@ -402,7 +402,7 @@ package struct HTMLRenderer {
         {
             articleElements.append(contentsOf:
                 renderer.groupedListSection(named: "Relationships", groups: relationships.mapValues { section in
-                    section.groups.map {
+                    section.groups.sorted(by: \.sectionOrder).map {
                         .init(title: $0.sectionTitle, references: $0.destinations.compactMap { topic in
                             switch topic {
                                 case .resolved(.success(let reference)): reference.url

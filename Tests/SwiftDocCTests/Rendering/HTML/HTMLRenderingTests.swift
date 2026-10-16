@@ -304,6 +304,86 @@ struct HTMLRenderingTests {
     }
     
     @Test
+    func ordersRelationshipSubsections() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            // public protocol SomeProtocol {}
+            // public class BaseClass {}
+            // public class SubClass: BaseClass, SomeProtocol {}
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "protocol-id",   kind: .protocol, pathComponents: ["SomeProtocol"]),
+                makeSymbol(id: "base-class-id", kind: .class,    pathComponents: ["BaseClass"]),
+                makeSymbol(id: "sub-class-id",  kind: .class,    pathComponents: ["SubClass"]),
+            ], relationships: [
+                .init(source: "sub-class-id", target: "base-class-id",    kind: .inheritsFrom, targetFallback: nil),
+                .init(source: "sub-class-id", target: "protocol-id", kind: .conformsTo,   targetFallback: nil),
+            ]))
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "sub-class-id"))
+        let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+        
+        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        let pageInfo = renderer.renderSymbol(symbol)
+        
+        let html = try #require(pageInfo.content)
+        let data = HTMLFormatter.format(html, options: .prettyPrint)
+        let formattedHTML = String(decoding: data, as: UTF8.self)
+        #expect(formattedHTML == """
+        <article>
+          <section>
+            <nav id="breadcrumbs">
+              <ul>
+                <li>
+                  <a href="../index.html">ModuleName</a>
+                </li>
+                <li>SubClass</li>
+              </ul>
+            </nav>
+            <hgroup>
+              <p>Class</p>
+              <h1>
+                Sub<wbr>Class
+              </h1>
+            </hgroup>
+          </section>
+          <section id="Relationships">
+            <h2>
+              <a href="#Relationships">Relationships</a>
+            </h2>
+            <h3 id="Inherits-From">
+              <a href="#Inherits-From">Inherits From</a>
+            </h3>
+            <ul>
+              <li>
+                <a href="../baseclass/index.html">
+                  <code>
+                    Base<wbr>Class
+                  </code>
+                </a>
+              </li>
+            </ul>
+            <h3 id="Conforms-To">
+              <a href="#Conforms-To">Conforms To</a>
+            </h3>
+            <ul>
+              <li>
+                <a href="../someprotocol/index.html">
+                  <code>
+                    Some<wbr>Protocol
+                  </code>
+                </a>
+              </li>
+            </ul>
+          </section>
+        </article>
+        """)
+    }
+    
+    @Test
     func includesDefaultImplementationsSection() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
