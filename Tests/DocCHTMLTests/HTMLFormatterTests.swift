@@ -448,7 +448,7 @@ struct HTMLFormatterTests {
         [],
     ])
     func includesEndTagWhenContentIsEmpty(tag: HTMLNode._Tag, formattingOptions: HTMLFormatter.Options) {
-        #expect(htmlString(for: ._element(tag, contents: []), options: .prettyPrint) == """
+        #expect(htmlString(for: ._element(tag, contents: []), options: formattingOptions) == """
         <\(tag.rawValue)></\(tag.rawValue)>
         """)
     }
