@@ -481,9 +481,9 @@ add_library(SwiftDocC
   Utility/ZipFileWriter.swift)
 target_link_libraries(SwiftDocC PRIVATE
   DocCCommon
-  DocCHTML
-  ZLib)
+  DocCHTML)
 target_link_libraries(SwiftDocC PUBLIC
+  ZLib
   SwiftMarkdown::Markdown
   DocC::SymbolKit
   LMDB::CLMDB
