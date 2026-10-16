@@ -40,7 +40,7 @@ class DefaultAvailabilityTests: XCTestCase {
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
             
             let myKitDocExtensionFile = url.appendingPathComponent("documentation", isDirectory: true).appendingPathComponent("mykit.md")
-            var myKitDocExtension = try String(contentsOf: myKitDocExtensionFile)
+            var myKitDocExtension = try String(contentsOf: myKitDocExtensionFile, encoding: .utf8)
             
             // Customize the display name of the MyKit module to verify that the default availability uses the Info.plist
             // information that's specified using the module's symbol name.

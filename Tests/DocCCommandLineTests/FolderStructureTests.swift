@@ -22,7 +22,7 @@ class FolderStructureTests: XCTestCase {
         
         XCTAssertEqual(textFileURL.lastPathComponent, file.name)
         XCTAssert(FileManager.default.fileExists(atPath: textFileURL.path))
-        XCTAssertEqual(try String(contentsOf: textFileURL), file.utf8Content)
+        XCTAssertEqual(try String(contentsOf: textFileURL, encoding: .utf8), file.utf8Content)
     }
 
     func testWritingFolder() throws {
@@ -63,7 +63,7 @@ class FolderStructureTests: XCTestCase {
             .appendingPathComponent("test.txt")
         
         XCTAssert(FileManager.default.fileExists(atPath: textFileURL.path))
-        XCTAssertEqual(try String(contentsOf: textFileURL), "Lorem ipsum")
+        XCTAssertEqual(try String(contentsOf: textFileURL, encoding: .utf8), "Lorem ipsum")
     }
     
     func testVerifyingPartialFolderHierarchy() throws {
