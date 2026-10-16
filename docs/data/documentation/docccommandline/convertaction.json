@@ -118,7 +118,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
+        "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:outputLocation:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
         "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(fromConvertCommand:withFallbackTemplate:)"
       ],
       "title" : "Initializers"
@@ -274,7 +274,7 @@
   "type" : "topic",
   "url" : "\/documentation\/docccommandline\/convertaction\/transformforstatichostingoptions"
 },
-"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)": {
+"doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/init(documentationBundleURL:outOfProcessResolver:analyze:outputLocation:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)": {
   "abstract" : [
     {
       "text" : "Initializes the action with the given validated options.",
@@ -344,7 +344,7 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "targetDirectory"
+      "text" : "outputLocation"
     },
     {
       "kind" : "text",
@@ -867,12 +867,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
+  "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:outputLocation:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
+  "title" : "init(documentationBundleURL:outOfProcessResolver:analyze:outputLocation:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:inputFileManager:outputFileManager:temporaryDirectory:outputFormat:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:diagnosticFilePath:formatConsoleOutputForTools:inheritDocs:treatWarningsAsErrors:diagnosticIDsWithWarningSeverity:diagnosticIDsWithErrorSeverity:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:featureFlags:transformForStaticHostingOptions:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:dependencies:)",
   "type" : "topic",
-  "url" : "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:inputfilemanager:outputfilemanager:temporarydirectory:outputformat:documentationcoverageoptions:catalogdis-7w661"
+  "url" : "\/documentation\/docccommandline\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:outputlocation:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:inputfilemanager:outputfilemanager:temporarydirectory:outputformat:documentationcoverageoptions:catalogdisc-6zzyb"
 },
 "doc://DocCCommandLine/documentation/DocCCommandLine/ConvertAction/init(fromConvertCommand:withFallbackTemplate:)": {
   "abstract" : [
