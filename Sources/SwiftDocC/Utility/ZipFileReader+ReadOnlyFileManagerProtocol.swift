@@ -8,11 +8,12 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
+package import Foundation
+package import Zip
 
 extension ZipFileReader: ReadOnlyFileManagerProtocol {
 
-    public func contents(atPath path: String) -> Data? {
+    package func contents(atPath path: String) -> Data? {
         do {
             let data = try contents(of: URL(filePath: path))
             return data
@@ -21,7 +22,7 @@ extension ZipFileReader: ReadOnlyFileManagerProtocol {
         }
     }
 
-    public func contents(of url: URL) throws -> Data {
+    package func contents(of url: URL) throws -> Data {
         let file = try open(path: url.path)
         var data = Data()
         let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: 65536,
@@ -44,9 +45,9 @@ extension ZipFileReader: ReadOnlyFileManagerProtocol {
         return data
     }
 
-    public var currentDirectoryPath: String { "/" }
+    package var currentDirectoryPath: String { "/" }
 
-    public func contentsOfDirectory(atPath path: String) throws -> [String] {
+    package func contentsOfDirectory(atPath path: String) throws -> [String] {
         guard let item = item(at: path) else {
             throw ZipFileError.fileNotFound(path)
         }
@@ -59,7 +60,7 @@ extension ZipFileReader: ReadOnlyFileManagerProtocol {
         }
     }
 
-    public func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
+    package func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
         let path = url.path
         guard let item = item(at: path) else {
             throw ZipFileError.fileNotFound(path)
@@ -82,7 +83,7 @@ extension ZipFileReader: ReadOnlyFileManagerProtocol {
         }
     }
 
-    public func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL]) {
+    package func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL]) {
         let path = url.path
         guard let item = item(at: path) else {
             throw ZipFileError.fileNotFound(path)
@@ -110,7 +111,7 @@ extension ZipFileReader: ReadOnlyFileManagerProtocol {
         }
     }
 
-    public func sizeOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> Int64 {
+    package func sizeOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> Int64 {
         guard let item = item(at: url.path) else {
             throw ZipFileError.fileNotFound(url.path)
         }

@@ -33,25 +33,25 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
 
     var source: S
 
-    class Item: CustomStringConvertible {
+    public class Item: CustomStringConvertible {
         var headerOffset: Int?
 
-        var name: String
-        var date: Date
-        var comment: String?
+        internal(set) public var name: String
+        internal(set) public var date: Date
+        internal(set) public var comment: String?
 
-        var flags: UInt16
-        var compression: UInt16
-        var crc32: UInt32
-        var compressedSize: Int
-        var uncompressedSize: Int
+        internal(set) public var flags: UInt16
+        internal(set) public var compression: UInt16
+        internal(set) public var crc32: UInt32
+        internal(set) public var compressedSize: Int
+        internal(set) public var uncompressedSize: Int
 
-        enum Kind {
+        public enum Kind {
             case file
             case directory([String: Item])
         }
 
-        var kind: Kind
+        internal(set) public var kind: Kind
 
         init(
             headerOffset: Int?, name: String, date: Date, comment: String?,
@@ -71,7 +71,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
             self.kind = kind
         }
 
-        var description: String {
+        public var description: String {
             return description(indent: 0)
         }
 
@@ -87,14 +87,14 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
             return result
         }
 
-        var isDirectory: Bool {
+        public var isDirectory: Bool {
             switch kind {
             case .directory: return true
             case .file: return false
             }
         }
 
-        var isFile: Bool {
+        public var isFile: Bool {
             switch kind {
             case .directory: return false
             case .file: return true
@@ -102,7 +102,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         }
     }
 
-    var comment: String? = nil
+    internal(set) public var comment: String? = nil
     var root = Item(
         headerOffset: nil,
         name: "/",
@@ -501,7 +501,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         return normalized
     }
 
-    func item(at path: String) -> Item? {
+    public func item(at path: String) -> Item? {
         guard let normalizedPath = normalized(path: path) else {
             return nil
         }

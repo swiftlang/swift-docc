@@ -30,6 +30,9 @@ public protocol ZipFileSink {
     /// Write a UTF-8 string
     func write(_ s: String) throws
 
+    /// Write a UTF-8 substring
+    func write(_ s: Substring) throws
+
     /// Write bytes
     func write(_ bytes: RawSpan) throws
 
@@ -62,7 +65,7 @@ public class ZipFileWriter<S: ZipFileSink> {
     struct FileInfo {
         var headerOffset: Int
 
-        var name: String
+        var name: Substring
         var date: Date
         var comment: String?
 
@@ -103,6 +106,10 @@ public class ZipFileWriter<S: ZipFileSink> {
         comment: String? = nil,
         generate: ((RawSpan) throws -> Void) throws -> Void
     ) throws {
+        // A leading "/" just means "relative to the archive root", which
+        // is already true of every entry, so it's dropped rather than
+        // stored literally.
+        let name = name.dropFirst(name.hasPrefix("/") ? 1 : 0)
         let headerOffset = bytesWritten
 
         // max compression, UTF-8 name, length at end if not seekable
@@ -233,7 +240,7 @@ public class ZipFileWriter<S: ZipFileSink> {
             stream.total_out >= zip64SizeThreshold || stream.total_in >= zip64SizeThreshold
 
         if !allowZip64 && needsZip64Sizes {
-            throw ZipFileError.fileTooLarge(name)
+            throw ZipFileError.fileTooLarge(String(name))
         }
 
         // Now update the CRC, compressed and uncompressed sizes, *or*
@@ -462,6 +469,13 @@ public extension ZipFileSink {
     }
 
     func write(_ s: String) throws {
+        var sMutable = s
+        try sMutable.withUTF8 {
+            try self.write(UnsafeRawBufferPointer($0).bytes)
+        }
+    }
+
+    func write(_ s: Substring) throws {
         var sMutable = s
         try sMutable.withUTF8 {
             try self.write(UnsafeRawBufferPointer($0).bytes)

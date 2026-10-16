@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-enum ZipFileError: Error, CustomStringConvertible {
+public enum ZipFileError: Error, CustomStringConvertible {
     case noCentralDirectory
     case readOffEndOfSource
     case spannedArchivesNotSupported
@@ -24,7 +24,7 @@ enum ZipFileError: Error, CustomStringConvertible {
     case unsupportedVersion(UInt16)
     case fileTooLarge(String)
 
-    var description: String {
+    public var description: String {
         switch self {
             case .noCentralDirectory:
                 "Zip file central directory missing"

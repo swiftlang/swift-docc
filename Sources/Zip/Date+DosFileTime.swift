@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-internal import Foundation
+public import Foundation
 
 extension Date {
-    init(dosFileTime: UInt32) {
+    public init(dosFileTime: UInt32) {
         let year = 1980 + Int((dosFileTime >> 25) & 0x7f)
         let month = Int((dosFileTime >> 21) & 0xf)
         let day = Int((dosFileTime >> 16) & 0x1f)
@@ -32,7 +32,7 @@ extension Date {
         self = components.date!
     }
 
-    var dosFileTime: UInt32 {
+    public var dosFileTime: UInt32 {
         let dosMinTime: UInt32 = 0x0021_0000
         let dosMaxTime: UInt32 = 0xff9f_bf7d
         let calendar = Calendar(identifier: .gregorian)
