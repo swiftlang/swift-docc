@@ -1658,9 +1658,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
+        var relationshipsVariants = symbol.relationshipsVariants
+        relationshipsVariants[.fallback] = .init()
+        
         node.defaultImplementationsSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
             from: symbol.defaultImplementationsVariants,
-            symbol.relationshipsVariants
+            relationshipsVariants
         ) { _, defaultImplementations, relationships in
             guard !symbol.defaultImplementations.groups.isEmpty else {
                 return []

@@ -204,7 +204,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     var consolidatedAvailability: DocumentationDataVariants<Availability>
     
     /// The presentation-friendly relationships of this symbol to other symbols, in each language variant the symbol is available in.
-    public var relationshipsVariants = DocumentationDataVariants<RelationshipsSection>(defaultVariantValue: .init())
+    public var relationshipsVariants: DocumentationDataVariants<RelationshipsSection>
     
     /// An optional, abstract summary for the symbol, in each language variant the symbol is available in.
     public var abstractSectionVariants: DocumentationDataVariants<AbstractSection>
@@ -303,7 +303,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         alternateDeclarationVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]> = .init(defaultVariantValue: [:]),
         alternateSignatureVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.FunctionSignature]]> = .init(defaultVariantValue: [:]),
         defaultImplementationsVariants: DocumentationDataVariants<DefaultImplementationsSection> = .init(defaultVariantValue: .init()),
-        relationshipsVariants: DocumentationDataVariants<RelationshipsSection> = .init(),
+        relationshipsVariants: DocumentationDataVariants<RelationshipsSection> = .empty,
         abstractSectionVariants: DocumentationDataVariants<AbstractSection>,
         discussionVariants: DocumentationDataVariants<DiscussionSection>,
         topicsVariants: DocumentationDataVariants<TopicsSection>,
@@ -398,10 +398,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
 
         }
         
-        if relationshipsVariants.hasAnyValue {
-            self.relationshipsVariants = relationshipsVariants
-        }
-        
+        self.relationshipsVariants = relationshipsVariants
         self.defaultImplementationsVariants = defaultImplementationsVariants
         
         self.abstractSectionVariants = abstractSectionVariants
@@ -679,7 +676,7 @@ extension Symbol {
 
     /// The presentation-friendly relationships of the first variant of this symbol to other symbols.
     public var relationships: RelationshipsSection {
-        get { relationshipsVariants.firstValue! }
+        get { relationshipsVariants.firstValue ?? .init() }
         set { relationshipsVariants.firstValue = newValue }
     }
     

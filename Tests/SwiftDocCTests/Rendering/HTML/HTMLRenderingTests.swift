@@ -13,6 +13,7 @@ import Foundation
 import DocCHTML
 @testable import SwiftDocC
 import DocCTestUtilities
+import SymbolKit
 
 struct HTMLRenderingTests {
     @Test
@@ -71,5 +72,234 @@ struct HTMLRenderingTests {
         </article>
         """)
     }
-}
     
+    @Test
+    func includesConformsToAndConformingTypesRelationshipsSection() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            // public protocol SomeProtocol {}
+            // public struct SomeStruct: SomeProtocol {}
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "protocol-id", kind: .protocol, pathComponents: ["SomeProtocol"]),
+                makeSymbol(id: "struct-id",   kind: .struct,   pathComponents: ["SomeStruct"]),
+            ], relationships: [
+                .init(source: "struct-id", target: "protocol-id", kind: .conformsTo, targetFallback: nil)
+            ]))
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        do {
+            let reference = try #require(context.documentationCache.reference(symbolID: "struct-id"))
+            let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+            
+            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            let pageInfo = renderer.renderSymbol(symbol)
+            
+            let html = try #require(pageInfo.content)
+            let data = HTMLFormatter.format(html, options: .prettyPrint)
+            let formattedHTML = String(decoding: data, as: UTF8.self)
+            #expect(formattedHTML == """
+            <article>
+              <section>
+                <nav id="breadcrumbs">
+                  <ul>
+                    <li>
+                      <a href="../index.html">ModuleName</a>
+                    </li>
+                    <li>SomeStruct</li>
+                  </ul>
+                </nav>
+                <hgroup>
+                  <p>Structure</p>
+                  <h1>
+                    Some<wbr>Struct
+                  </h1>
+                </hgroup>
+              </section>
+              <section id="Relationships">
+                <h2>
+                  <a href="#Relationships">Relationships</a>
+                </h2>
+                <h3 id="Conforms-To">
+                  <a href="#Conforms-To">Conforms To</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../someprotocol/index.html">
+                      <code>
+                        Some<wbr>Protocol
+                      </code>
+                    </a>
+                  </li>
+                </ul>
+              </section>
+            </article>
+            """)
+        }
+        
+        do {
+            let reference = try #require(context.documentationCache.reference(symbolID: "protocol-id"))
+            let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+            
+            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            let pageInfo = renderer.renderSymbol(symbol)
+            
+            let html = try #require(pageInfo.content)
+            let data = HTMLFormatter.format(html, options: .prettyPrint)
+            let formattedHTML = String(decoding: data, as: UTF8.self)
+            #expect(formattedHTML == """
+            <article>
+              <section>
+                <nav id="breadcrumbs">
+                  <ul>
+                    <li>
+                      <a href="../index.html">ModuleName</a>
+                    </li>
+                    <li>SomeProtocol</li>
+                  </ul>
+                </nav>
+                <hgroup>
+                  <p>Protocol</p>
+                  <h1>
+                    Some<wbr>Protocol
+                  </h1>
+                </hgroup>
+              </section>
+              <section id="Relationships">
+                <h2>
+                  <a href="#Relationships">Relationships</a>
+                </h2>
+                <h3 id="Conforming-Types">
+                  <a href="#Conforming-Types">Conforming Types</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../somestruct/index.html">
+                      <code>
+                        Some<wbr>Struct
+                      </code>
+                    </a>
+                  </li>
+                </ul>
+              </section>
+            </article>
+            """)
+        }
+    }
+    
+    @Test
+    func includesInheritsFromAndInheritedByRelationshipsSection() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            // public class BaseClass {}
+            // public class SubClass: BaseClass {}
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "base-class-id", kind: .class, pathComponents: ["BaseClass"]),
+                makeSymbol(id: "sub-class-id",  kind: .class, pathComponents: ["SubClass"]),
+            ], relationships: [
+                .init(source: "sub-class-id", target: "base-class-id", kind: .inheritsFrom, targetFallback: nil)
+            ]))
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        do {
+            let reference = try #require(context.documentationCache.reference(symbolID: "sub-class-id"))
+            let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+            
+            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            let pageInfo = renderer.renderSymbol(symbol)
+            
+            let html = try #require(pageInfo.content)
+            let data = HTMLFormatter.format(html, options: .prettyPrint)
+            let formattedHTML = String(decoding: data, as: UTF8.self)
+            #expect(formattedHTML == """
+            <article>
+              <section>
+                <nav id="breadcrumbs">
+                  <ul>
+                    <li>
+                      <a href="../index.html">ModuleName</a>
+                    </li>
+                    <li>SubClass</li>
+                  </ul>
+                </nav>
+                <hgroup>
+                  <p>Class</p>
+                  <h1>
+                    Sub<wbr>Class
+                  </h1>
+                </hgroup>
+              </section>
+              <section id="Relationships">
+                <h2>
+                  <a href="#Relationships">Relationships</a>
+                </h2>
+                <h3 id="Inherits-From">
+                  <a href="#Inherits-From">Inherits From</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../baseclass/index.html">
+                      <code>
+                        Base<wbr>Class
+                      </code>
+                    </a>
+                  </li>
+                </ul>
+              </section>
+            </article>
+            """)
+        }
+        
+        do {
+            let reference = try #require(context.documentationCache.reference(symbolID: "base-class-id"))
+            let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+            
+            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            let pageInfo = renderer.renderSymbol(symbol)
+            
+            let html = try #require(pageInfo.content)
+            let data = HTMLFormatter.format(html, options: .prettyPrint)
+            let formattedHTML = String(decoding: data, as: UTF8.self)
+            #expect(formattedHTML == """
+            <article>
+              <section>
+                <nav id="breadcrumbs">
+                  <ul>
+                    <li>
+                      <a href="../index.html">ModuleName</a>
+                    </li>
+                    <li>BaseClass</li>
+                  </ul>
+                </nav>
+                <hgroup>
+                  <p>Class</p>
+                  <h1>
+                    Base<wbr>Class
+                  </h1>
+                </hgroup>
+              </section>
+              <section id="Relationships">
+                <h2>
+                  <a href="#Relationships">Relationships</a>
+                </h2>
+                <h3 id="Inherited-By">
+                  <a href="#Inherited-By">Inherited By</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../subclass/index.html">
+                      <code>
+                        Sub<wbr>Class
+                      </code>
+                    </a>
+                  </li>
+                </ul>
+              </section>
+            </article>
+            """)
+        }
+    }
+}
