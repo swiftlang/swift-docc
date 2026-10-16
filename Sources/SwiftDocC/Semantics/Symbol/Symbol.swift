@@ -675,6 +675,7 @@ extension Symbol {
     }
 
     /// The presentation-friendly relationships of the first variant of this symbol to other symbols.
+    @available(*, deprecated, message: "Use 'relationshipsVariants' instead. This deprecated API will be removed after 6.6 is released")
     public var relationships: RelationshipsSection {
         get { relationshipsVariants.firstValue ?? .init() }
         set { relationshipsVariants.firstValue = newValue }

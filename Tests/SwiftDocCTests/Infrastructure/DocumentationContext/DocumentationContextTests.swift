@@ -901,7 +901,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(Array(myClassSymbol.declaration.keys), [[PlatformName(operatingSystemName: "ios")]])
         XCTAssertEqual(myClassSymbol.declaration[[PlatformName(operatingSystemName: "ios")]]?.declarationFragments.map { $0.spelling }.joined(), "class MyClass")
         XCTAssertEqual(myClassSymbol.moduleReference.absoluteString, "doc://com.example.documentation/documentation/MyKit")
-        XCTAssertTrue(myClassSymbol.relationships.groups.contains { group -> Bool in
+        XCTAssertTrue((myClassSymbol.relationshipsVariants.firstValue ?? .init()).groups.contains { group -> Bool in
             return group.kind == .conformsTo && Array(group.destinations.map({ $0.url?.absoluteString })) == ["doc://com.example.documentation/documentation/MyKit/MyProtocol"]
         })
         XCTAssertEqual(myClassSymbol._platformNameVariants.firstValue, PlatformName(operatingSystemName: "ios"))
@@ -1312,7 +1312,7 @@ class DocumentationContextTests: XCTestCase {
         }
         
         // Test that the relationship has been resolved correctly
-        XCTAssertNotNil(sideClassSymbol.relationships.groups.first { (group) -> Bool in
+        XCTAssertNotNil((sideClassSymbol.relationshipsVariants.firstValue ?? .init()).groups.first { (group) -> Bool in
             return group.kind == .conformsTo && group.destinations.map({ $0.url?.absoluteString }) == ["doc://com.example.documentation/documentation/MyKit/MyProtocol"]
         })
     }
