@@ -9,6 +9,7 @@ See https://swift.org/LICENSE.txt for license information
 
 add_library(Zip
   Date+DosFileTime.swift
+  SpanShims.swift
   ZipFileDataSink.swift
   ZipFileDataSource.swift
   ZipFileError.swift

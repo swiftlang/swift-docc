@@ -65,7 +65,7 @@ let previewServerEnabledByDefault = false
 let package = Package(
     name: "SwiftDocC",
     platforms: [
-        .macOS(.v15),
+        .macOS(.v13),
         .iOS(.v16)
     ],
     products: [
