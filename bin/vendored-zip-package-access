@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# This source file is part of the Swift.org open source project
+#
+# Copyright (c) 2026 Apple Inc. and the Swift project authors
+# Licensed under Apache License v2.0 with Runtime Library Exception
+#
+# See https://swift.org/LICENSE.txt for license information
+# See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+
+# The Zip and ZLib sources are vendored from another repository, where their
+# API is `public`. In this repository that API shouldn't be visible outside
+# the package, so rewrite `public` to `package` (including `public import`).
+#
+# Re-run this script after updating the vendored sources.
+
+set -eu
+
+root="$(cd "$(dirname "$0")/.." && pwd)"
+
+fd --type f --extension swift . "$root/Sources/Zip" "$root/Sources/ZLib" \
+  --exec perl -pi -e 's/\bpublic\b/package/g'

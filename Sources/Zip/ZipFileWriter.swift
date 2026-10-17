@@ -8,14 +8,14 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
+package import Foundation
 internal import ZLib
 
-public struct ZLibError: Error {
+package struct ZLibError: Error {
     var message: String
 }
 
-public protocol ZipFileSink {
+package protocol ZipFileSink {
     var canSeek: Bool { get }
 
     /// Return the current position in the stream, or nil if not seekable
@@ -56,7 +56,7 @@ public protocol ZipFileSink {
 /// `allowZip64` is enabled -- an oversized individual file), regardless of
 /// the `allowZip64` setting: that setting only concerns whether an
 /// individual oversized file is accepted at all.
-public class ZipFileWriter<S: ZipFileSink> {
+package class ZipFileWriter<S: ZipFileSink> {
 
     var sink: S
     var comment: String?
@@ -78,7 +78,7 @@ public class ZipFileWriter<S: ZipFileSink> {
     var bytesWritten = 0
     private var buffer: UnsafeMutableRawBufferPointer
 
-    public init(sink: consuming S, comment: String? = nil, allowZip64: Bool = false) {
+    package init(sink: consuming S, comment: String? = nil, allowZip64: Bool = false) {
         self.sink = sink
         self.comment = comment
         self.allowZip64 = allowZip64
@@ -92,7 +92,7 @@ public class ZipFileWriter<S: ZipFileSink> {
         buffer.deallocate()
     }
 
-    public func addDirectory(
+    package func addDirectory(
         named name: String,
         date: Date = .now,
         comment: String? = nil
@@ -100,7 +100,7 @@ public class ZipFileWriter<S: ZipFileSink> {
         try withFile(named: name + "/", date: date, comment: comment) { _ in }
     }
 
-    public func withFile(
+    package func withFile(
         named name: String,
         date: Date = .now,
         comment: String? = nil,
@@ -311,7 +311,7 @@ public class ZipFileWriter<S: ZipFileSink> {
             ))
     }
 
-    public func close() throws {
+    package func close() throws {
         // max compression, UTF-8 name, length at end if not seekable
         let flags: UInt16 = sink.canSeek ? 0x802 : 0x80a
         let centralDirectoryOffset = bytesWritten
@@ -460,7 +460,7 @@ public class ZipFileWriter<S: ZipFileSink> {
 }
 
 // Provide default implementations of Sink methods
-public extension ZipFileSink {
+package extension ZipFileSink {
     func write<T: FixedWidthInteger>(_ x: T) throws {
         var maybeSwapped = x.littleEndian
         try withUnsafeBytes(of: &maybeSwapped) {

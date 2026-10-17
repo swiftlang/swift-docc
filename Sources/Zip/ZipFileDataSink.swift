@@ -8,36 +8,36 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
+package import Foundation
 
-public enum ZipFileDataSinkError: Error {
+package enum ZipFileDataSinkError: Error {
   case badOffset
 }
 
-public class ZipFileDataSink: ZipFileSink {
-  public var data: Data
+package class ZipFileDataSink: ZipFileSink {
+  package var data: Data
 
-  public var canSeek: Bool { true }
+  package var canSeek: Bool { true }
   
   private var pos: Int
 
-  public init() {
+  package init() {
     data = Data()
     pos = 0
   }
 
-  public func tell() throws -> Int? {
+  package func tell() throws -> Int? {
     return pos
   }
 
-  public func seek(_ pos: Int) throws {
+  package func seek(_ pos: Int) throws {
     if pos < 0 || pos > data.count {
       throw ZipFileDataSinkError.badOffset
     }
     self.pos = pos
   }
 
-  public func write(_ bytes: RawSpan) throws {
+  package func write(_ bytes: RawSpan) throws {
     let rangeToReplace = pos..<min(pos + bytes.byteCount, data.count)
     bytes.withUnsafeBytes { buffer in
       data.replaceSubrange(rangeToReplace, with: buffer)

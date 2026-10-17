@@ -8,22 +8,22 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
+package import Foundation
 
 enum ZipFileDataSourceError: Error {
   case outOfRange
 }
 
-public class ZipFileDataSource: ZipFileSource {
+package class ZipFileDataSource: ZipFileSource {
   let data: Data
 
-  public var length: Int { return data.count }
+  package var length: Int { return data.count }
 
-  public init(data: Data) {
+  package init(data: Data) {
     self.data = data
   }
 
-  public func read(from offset: Int, into span: inout OutputRawSpan) throws {
+  package func read(from offset: Int, into span: inout OutputRawSpan) throws {
     if offset < 0 || offset > data.count {
       throw ZipFileDataSourceError.outOfRange
     }
@@ -35,7 +35,7 @@ public class ZipFileDataSource: ZipFileSource {
     }
   }
 
-  public func close() throws {
+  package func close() throws {
     // Nothing to do
   }
 }

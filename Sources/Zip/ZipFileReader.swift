@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-public import Foundation
+package import Foundation
 internal import ZLib
 
-public protocol ZipFileSource {
+package protocol ZipFileSource {
     /// The length of the source
     var length: Int { get }
 
@@ -29,29 +29,29 @@ public protocol ZipFileSource {
 }
 
 /// A ZipFileReader can be used to read data from a .zip file.
-public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
+package class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
 
     var source: S
 
-    public class Item: CustomStringConvertible {
+    package class Item: CustomStringConvertible {
         var headerOffset: Int?
 
-        internal(set) public var name: String
-        internal(set) public var date: Date
-        internal(set) public var comment: String?
+        internal(set) package var name: String
+        internal(set) package var date: Date
+        internal(set) package var comment: String?
 
-        internal(set) public var flags: UInt16
-        internal(set) public var compression: UInt16
-        internal(set) public var crc32: UInt32
-        internal(set) public var compressedSize: Int
-        internal(set) public var uncompressedSize: Int
+        internal(set) package var flags: UInt16
+        internal(set) package var compression: UInt16
+        internal(set) package var crc32: UInt32
+        internal(set) package var compressedSize: Int
+        internal(set) package var uncompressedSize: Int
 
-        public enum Kind {
+        package enum Kind {
             case file
             case directory([String: Item])
         }
 
-        internal(set) public var kind: Kind
+        internal(set) package var kind: Kind
 
         init(
             headerOffset: Int?, name: String, date: Date, comment: String?,
@@ -71,7 +71,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
             self.kind = kind
         }
 
-        public var description: String {
+        package var description: String {
             return description(indent: 0)
         }
 
@@ -87,14 +87,14 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
             return result
         }
 
-        public var isDirectory: Bool {
+        package var isDirectory: Bool {
             switch kind {
             case .directory: return true
             case .file: return false
             }
         }
 
-        public var isFile: Bool {
+        package var isFile: Bool {
             switch kind {
             case .directory: return false
             case .file: return true
@@ -102,7 +102,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         }
     }
 
-    internal(set) public var comment: String? = nil
+    internal(set) package var comment: String? = nil
     var root = Item(
         headerOffset: nil,
         name: "/",
@@ -116,7 +116,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         kind: .directory([:])
     )
 
-    public init(source: S) throws {
+    package init(source: S) throws {
         self.source = source
         try readDirectory()
     }
@@ -501,7 +501,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         return normalized
     }
 
-    public func item(at path: String) -> Item? {
+    package func item(at path: String) -> Item? {
         guard let normalizedPath = normalized(path: path) else {
             return nil
         }
@@ -520,7 +520,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         return item
     }
 
-    public func fileExists(
+    package func fileExists(
         atPath path: String,
         isDirectory: UnsafeMutablePointer<ObjCBool>?
     ) -> Bool {
@@ -535,7 +535,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         return true
     }
 
-    public func directoryExists(atPath path: String) -> Bool {
+    package func directoryExists(atPath path: String) -> Bool {
         guard let item = item(at: path) else {
             return false
         }
@@ -543,7 +543,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         return item.isDirectory
     }
 
-    public func fileExists(atPath path: String) -> Bool {
+    package func fileExists(atPath path: String) -> Bool {
         guard let item = item(at: path) else {
             return false
         }
@@ -551,7 +551,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         return item.isFile
     }
 
-    public class File {
+    package class File {
         var reader: ZipFileReader
         var stream: z_stream
         var buffer: UnsafeMutableRawBufferPointer?
@@ -592,7 +592,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
             }
         }
 
-        public func read(into span: inout OutputRawSpan) throws {
+        package func read(into span: inout OutputRawSpan) throws {
             if isCompressed {
                 guard let buffer else {
                     fatalError("buffer is somehow unset")
@@ -647,7 +647,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         }
     }
 
-    public func open(path: String) throws -> File {
+    package func open(path: String) throws -> File {
         guard let item = item(at: path) else {
             throw ZipFileError.fileNotFound(path)
         }
@@ -705,7 +705,7 @@ public class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
 
 extension ZipFileSource {
     /// Read a fixed-width integer, in little-endian order
-    public func read<T: FixedWidthInteger>(from offset: Int, as: T.Type) throws -> T {
+    package func read<T: FixedWidthInteger>(from offset: Int, as: T.Type) throws -> T {
         return try withUnsafeTemporaryAllocation(
             byteCount: MemoryLayout<T>.size,
             alignment: MemoryLayout<T>.alignment
@@ -725,7 +725,7 @@ extension ZipFileSource {
     }
 
     /// Read a UTF-8 string
-    public func read(from offset: Int, asStringOfLength length: Int) throws -> String {
+    package func read(from offset: Int, asStringOfLength length: Int) throws -> String {
         return try withUnsafeTemporaryAllocation(byteCount: length, alignment: 1) {
             buffer in
 
