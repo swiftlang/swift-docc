@@ -389,7 +389,7 @@ struct HTMLRenderingTests {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
                 makeSymbol(id: "protocol-id",     kind: .protocol, pathComponents: ["SomeProtocol"]),
                 makeSymbol(id: "requirement-id",  kind: .method,   pathComponents: ["SomeProtocol", "doSomething()"]),
-                makeSymbol(id: "default-impl-id", kind: .method,   pathComponents: ["SomeProtocol", "doSomething()"]),
+                makeSymbol(id: "default-impl-id", kind: .method,   pathComponents: ["SomeProtocol", "doSomething()"], docComment: "Some documentation"),
             ], relationships: [
                 .init("requirement-id",  .requirementOf,           "protocol-id"),
                 .init("default-impl-id", .defaultImplementationOf, "requirement-id"),
@@ -440,9 +440,12 @@ struct HTMLRenderingTests {
               <li>
                 <a href="../dosomething()-88gib/index.html">
                   <code>
-                    do<wbr>Something()
+                    <span class="identifier">
+                      do<wbr>Something()
+                    </span>
                   </code>
                 </a>
+                <p>Some documentation</p>
               </li>
             </ul>
           </section>

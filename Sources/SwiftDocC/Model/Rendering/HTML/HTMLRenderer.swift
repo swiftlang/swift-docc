@@ -426,9 +426,9 @@ package struct HTMLRenderer {
             .valuesByLanguage()
         {
             articleElements.append(contentsOf:
-                renderer.groupedListSection(named: "Default Implementations", groups: relationships.mapValues { section in
+                renderer.groupedSection(named: "Default Implementations", groups: relationships.mapValues { section in
                     section.groups.map {
-                        .init(title: $0.heading, references: $0.references.compactMap { topic in
+                        .init(title: $0.heading, content: [], references: $0.references.compactMap { topic in
                             switch topic {
                                 case .resolved(.success(let reference)): reference.url
                                 case .unresolved, .resolved(.failure):   nil
