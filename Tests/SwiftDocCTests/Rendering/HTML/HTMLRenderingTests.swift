@@ -82,7 +82,7 @@ struct HTMLRenderingTests {
                 makeSymbol(id: "protocol-id", kind: .protocol, pathComponents: ["SomeProtocol"]),
                 makeSymbol(id: "struct-id",   kind: .struct,   pathComponents: ["SomeStruct"]),
             ], relationships: [
-                .init(source: "struct-id", target: "protocol-id", kind: .conformsTo, targetFallback: nil)
+                .init("struct-id", .conformsTo, "protocol-id")
             ]))
         }
         
@@ -197,7 +197,7 @@ struct HTMLRenderingTests {
                 makeSymbol(id: "base-class-id", kind: .class, pathComponents: ["BaseClass"]),
                 makeSymbol(id: "sub-class-id",  kind: .class, pathComponents: ["SubClass"]),
             ], relationships: [
-                .init(source: "sub-class-id", target: "base-class-id", kind: .inheritsFrom, targetFallback: nil)
+                .init("sub-class-id", .inheritsFrom, "base-class-id")
             ]))
         }
         
@@ -314,8 +314,8 @@ struct HTMLRenderingTests {
                 makeSymbol(id: "base-class-id", kind: .class,    pathComponents: ["BaseClass"]),
                 makeSymbol(id: "sub-class-id",  kind: .class,    pathComponents: ["SubClass"]),
             ], relationships: [
-                .init(source: "sub-class-id", target: "base-class-id",    kind: .inheritsFrom, targetFallback: nil),
-                .init(source: "sub-class-id", target: "protocol-id", kind: .conformsTo,   targetFallback: nil),
+                .init("sub-class-id", .inheritsFrom, "base-class-id"),
+                .init("sub-class-id", .conformsTo,   "protocol-id"),
             ]))
         }
         
@@ -391,8 +391,8 @@ struct HTMLRenderingTests {
                 makeSymbol(id: "requirement-id",  kind: .method,   pathComponents: ["SomeProtocol", "doSomething()"]),
                 makeSymbol(id: "default-impl-id", kind: .method,   pathComponents: ["SomeProtocol", "doSomething()"]),
             ], relationships: [
-                .init(source: "requirement-id",  target: "protocol-id",    kind: .requirementOf,           targetFallback: nil),
-                .init(source: "default-impl-id", target: "requirement-id", kind: .defaultImplementationOf, targetFallback: nil),
+                .init("requirement-id",  .requirementOf,           "protocol-id"),
+                .init("default-impl-id", .defaultImplementationOf, "requirement-id"),
             ]))
         }
         
