@@ -389,6 +389,12 @@ package struct HTMLRenderer {
                     .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
                 })
             }
+            // This poorly named variable doesn't hold the page's automatic curation but rather a curation of its default implementations.
+            if !symbol.automaticTaskGroups.isEmpty {
+                taskGroupInfo.append(contentsOf: symbol.automaticTaskGroups.map { group in
+                        .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
+                })
+            }
             
             if !taskGroupInfo.isEmpty {
                 articleElements.append(contentsOf: renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))

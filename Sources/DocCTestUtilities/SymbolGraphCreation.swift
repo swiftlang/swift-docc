@@ -222,7 +222,22 @@ package extension SymbolGraph.Symbol.Availability.AvailabilityItem {
         )
     }
 }
-    
+
+// MARK: Relationships
+
+package extension SymbolGraph.Relationship {
+    init(
+        _ source: String,
+        _ kind: SymbolGraph.Relationship.Kind,
+        _ target: String,
+        targetFallback: String? = nil,
+        mixins: [any Mixin] = []
+    ) {
+        self.init(source: source, target: target, kind: kind, targetFallback: target)
+        self.mixins = makeMixins(mixins)
+    }
+}
+
 // MARK: Constants
 
 private let defaultSymbolPosition = SymbolGraph.LineList.SourceRange.Position(line: 11, character: 17) // an arbitrary non-zero start position

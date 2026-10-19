@@ -449,4 +449,98 @@ struct HTMLRenderingTests {
         </article>
         """)
     }
+    
+    @Test
+    func includesDefaultImplementationsAutomaticTopicsSection() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            // public protocol SomeProtocol {}
+            // public extension SomeProtocol {
+            //     func doSomething() {}
+            // }
+            // public struct SomeStruct: SomeProtocol {}
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "protocol-id",     kind: .protocol, pathComponents: ["SomeProtocol"]),
+                makeSymbol(id: "default-impl-id", kind: .method,   pathComponents: ["SomeProtocol", "doSomething()"], otherMixins: [
+                    SymbolGraph.Symbol.Swift.Extension(extendedModule: "ModuleName", typeKind: .protocol, constraints: [])
+                ]),
+                makeSymbol(id: "struct-id",       kind: .struct,   pathComponents: ["SomeStruct"]),
+                makeSymbol(id: "synthesized-id",  kind: .method,   pathComponents: ["SomeStruct", "doSomething()"], otherMixins: [
+                    SymbolGraph.Symbol.Swift.Extension(extendedModule: "ModuleName", typeKind: .protocol, constraints: [])
+                ]),
+            ], relationships: [
+                .init("default-impl-id", .memberOf,   "protocol-id"),
+                .init("struct-id",       .conformsTo, "protocol-id"),
+                .init("synthesized-id",  .memberOf,   "struct-id", mixins: [
+                    SymbolGraph.Relationship.SourceOrigin(identifier: "default-impl-id", displayName: "SomeProtocol.doSomething()")
+                ])
+            ]))
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "struct-id"))
+        let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+        
+        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        let pageInfo = renderer.renderSymbol(symbol)
+        
+        let html = try #require(pageInfo.content)
+        let data = HTMLFormatter.format(html, options: .prettyPrint)
+        let formattedHTML = String(decoding: data, as: UTF8.self)
+        #expect(formattedHTML == """
+        <article>
+          <section>
+            <nav id="breadcrumbs">
+              <ul>
+                <li>
+                  <a href="../index.html">ModuleName</a>
+                </li>
+                <li>SomeStruct</li>
+              </ul>
+            </nav>
+            <hgroup>
+              <p>Structure</p>
+              <h1>
+                Some<wbr>Struct
+              </h1>
+            </hgroup>
+          </section>
+          <section id="Topics">
+            <h2>
+              <a href="#Topics">Topics</a>
+            </h2>
+            <h3 id="Default-Implementations">
+              <a href="#Default-Implementations">Default Implementations</a>
+            </h3>
+            <ul>
+              <li>
+                <a href="someprotocol-implementations/index.html">
+                  <p class="api-collection">
+                    SomeProtocol Implementations
+                  </p>
+                </a>
+              </li>
+            </ul>
+          </section>
+          <section id="Relationships">
+            <h2>
+              <a href="#Relationships">Relationships</a>
+            </h2>
+            <h3 id="Conforms-To">
+              <a href="#Conforms-To">Conforms To</a>
+            </h3>
+            <ul>
+              <li>
+                <a href="../someprotocol/index.html">
+                  <code>
+                    Some<wbr>Protocol
+                  </code>
+                </a>
+              </li>
+            </ul>
+          </section>
+        </article>
+        """)
+    }
 }
