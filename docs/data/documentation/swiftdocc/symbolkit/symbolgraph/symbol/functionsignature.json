@@ -136,7 +136,6 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -389,11 +388,6 @@
   "title" : "SymbolGraph.Symbol.FunctionSignature.FunctionParameter",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter"
-},
-"doc://SwiftDocC/s10DeinitableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
-  "title" : "Swift.Deinitable",
-  "type" : "unresolvable"
 }
 }
 }

@@ -207,7 +207,6 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/Se",
-        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ"
       ],
@@ -2469,11 +2468,6 @@
   "title" : "VariantPatchOperation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/variantpatchoperation"
-},
-"doc://SwiftDocC/s10DeinitableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
-  "title" : "Swift.Deinitable",
-  "type" : "unresolvable"
 }
 }
 }

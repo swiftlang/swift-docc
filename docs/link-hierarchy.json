@@ -1,143 +1,73 @@
 {
   "documentationID" : "DocCCommon",
   "nonSymbolPaths" : {
-    "101" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Availability\/AvailabilityItem\/FastJSONDecodable-Implementations",
-    "104" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Module\/FastJSONDecodable-Implementations",
-    "113" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/LineList\/SourceRange\/FastJSONDecodable-Implementations",
-    "118" : "\/documentation\/DocCCommon\/Swift\/Bool\/FastJSONDecodable-Implementations",
-    "122" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/FastJSONDecodable-Implementations",
-    "124" : "\/documentation\/DocCCommon\/FoundationEssentials\/URL\/FastJSONDecodable-Implementations",
-    "135" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/OverloadData\/FastJSONDecodable-Implementations",
-    "137" : "\/documentation\/DocCCommon\/Swift\/Dictionary\/FastJSONDecodable-Implementations",
-    "139" : "\/tutorials\/DocCCommon",
-    "14" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/Fragment\/Kind\/FastJSONDecodable-Implementations",
-    "140" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/AccessControl\/FastJSONDecodable-Implementations",
-    "141" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Platform\/FastJSONDecodable-Implementations",
-    "142" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/FastJSONDecodable-Implementations",
-    "143" : "\/documentation\/DocCCommon\/SourceLanguage\/Comparable-Implementations",
-    "145" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/AlternateSymbols\/FastJSONDecodable-Implementations",
-    "148" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FastJSONDecodable-Implementations",
-    "15" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/LineList\/Line\/FastJSONDecodable-Implementations",
-    "152" : "\/tutorials",
-    "153" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Relationship\/FastJSONDecodable-Implementations",
-    "154" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder#Decoding-individual-values",
-    "157" : "\/documentation\/DocCCommon\/Swift\/String\/FastJSONDecodable-Implementations",
-    "158" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Location\/FastJSONDecodable-Implementations",
-    "16" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/AnyScalar\/FastJSONDecodable-Implementations",
-    "160" : "\/documentation\/DocCCommon\/Swift\/Int\/FastJSONDecodable-Implementations",
-    "162" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericConstraint\/Kind\/FastJSONDecodable-Implementations",
-    "165" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder#Implementing-keyed-decoding",
-    "17" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/TypeDetail\/FastJSONDecodable-Implementations",
-    "175" : "\/documentation\/DocCCommon\/SourceLanguage\/CustomDebugStringConvertible-Implementations",
-    "185" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/AlternateSymbols\/AlternateSymbol\/FastJSONDecodable-Implementations",
-    "2" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/KindIdentifier\/FastJSONDecodable-Implementations",
-    "202" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/Extension\/FastJSONDecodable-Implementations",
-    "203" : "\/documentation\/DocCCommon\/SourceLanguage\/Encodable-Implementations",
-    "219" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Kind\/FastJSONDecodable-Implementations",
-    "223" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericParameter\/FastJSONDecodable-Implementations",
-    "23" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/LineList\/SourceRange\/Position\/FastJSONDecodable-Implementations",
-    "230" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericConstraint\/FastJSONDecodable-Implementations",
-    "232" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/FastJSONDecodable-Implementations",
-    "27" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder#Essentials",
-    "29" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Snippet\/FastJSONDecodable-Implementations",
-    "3" : "\/documentation\/DocCCommon\/Swift\/Optional\/FastJSONDecodable-Implementations",
-    "36" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/HTTP\/Endpoint\/FastJSONDecodable-Implementations",
-    "39" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/Fragment\/FastJSONDecodable-Implementations",
-    "4" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Metadata\/FastJSONDecodable-Implementations",
-    "41" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Relationship\/Kind\/FastJSONDecodable-Implementations",
-    "45" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/SemanticVersion\/FastJSONDecodable-Implementations",
-    "46" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/OperatingSystem\/FastJSONDecodable-Implementations",
-    "47" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/matchKey(_:byteOffset:)#Performance-considerations",
-    "5" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/AnyNumber\/FastJSONDecodable-Implementations",
-    "51" : "\/documentation\/DocCCommon\/Swift\/Range\/FastJSONDecodable-Implementations",
-    "6" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/LineList\/FastJSONDecodable-Implementations",
-    "60" : "\/documentation\/DocCCommon\/Swift\/Array\/FastJSONDecodable-Implementations",
-    "61" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder#Errors",
-    "66" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/Generics\/FastJSONDecodable-Implementations",
-    "67" : "\/documentation\/DocCCommon\/SourceLanguage\/Equatable-Implementations",
-    "70" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Relationship\/SourceOrigin\/FastJSONDecodable-Implementations",
-    "79" : "\/documentation\/DocCCommon\/SourceLanguage\/Decodable-Implementations",
-    "81" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/FastJSONDecodable-Implementations",
-    "84" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Identifier\/FastJSONDecodable-Implementations",
-    "87" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Names\/FastJSONDecodable-Implementations",
-    "89" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/PlistDetails\/FastJSONDecodable-Implementations"
+    "101" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FastJSONDecodable-Implementations",
+    "106" : "\/documentation\/DocCCommon\/FoundationEssentials\/URL\/FastJSONDecodable-Implementations",
+    "113" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/Generics\/FastJSONDecodable-Implementations",
+    "115" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/LineList\/SourceRange\/FastJSONDecodable-Implementations",
+    "118" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericConstraint\/FastJSONDecodable-Implementations",
+    "122" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/OverloadData\/FastJSONDecodable-Implementations",
+    "123" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Names\/FastJSONDecodable-Implementations",
+    "13" : "\/documentation\/DocCCommon\/Swift\/String\/FastJSONDecodable-Implementations",
+    "130" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/TypeDetail\/FastJSONDecodable-Implementations",
+    "131" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/OperatingSystem\/FastJSONDecodable-Implementations",
+    "139" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Relationship\/SourceOrigin\/FastJSONDecodable-Implementations",
+    "144" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Availability\/AvailabilityItem\/FastJSONDecodable-Implementations",
+    "146" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Kind\/FastJSONDecodable-Implementations",
+    "151" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericParameter\/FastJSONDecodable-Implementations",
+    "152" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder#Essentials",
+    "157" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/AccessControl\/FastJSONDecodable-Implementations",
+    "158" : "\/tutorials",
+    "16" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Metadata\/FastJSONDecodable-Implementations",
+    "163" : "\/documentation\/DocCCommon\/Swift\/Optional\/FastJSONDecodable-Implementations",
+    "171" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/PlistDetails\/FastJSONDecodable-Implementations",
+    "176" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder#Implementing-keyed-decoding",
+    "180" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/AnyNumber\/FastJSONDecodable-Implementations",
+    "186" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/LineList\/Line\/FastJSONDecodable-Implementations",
+    "187" : "\/documentation\/DocCCommon\/SourceLanguage\/Equatable-Implementations",
+    "191" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericConstraint\/Kind\/FastJSONDecodable-Implementations",
+    "198" : "\/documentation\/DocCCommon\/SourceLanguage\/CustomDebugStringConvertible-Implementations",
+    "2" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/FastJSONDecodable-Implementations",
+    "21" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/LineList\/FastJSONDecodable-Implementations",
+    "214" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder\/matchKey(_:byteOffset:)#Performance-considerations",
+    "217" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/AnyScalar\/FastJSONDecodable-Implementations",
+    "227" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Relationship\/FastJSONDecodable-Implementations",
+    "228" : "\/documentation\/DocCCommon\/Swift\/Bool\/FastJSONDecodable-Implementations",
+    "229" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/Fragment\/FastJSONDecodable-Implementations",
+    "230" : "\/documentation\/DocCCommon\/Swift\/Array\/FastJSONDecodable-Implementations",
+    "234" : "\/documentation\/DocCCommon\/Swift\/Dictionary\/FastJSONDecodable-Implementations",
+    "236" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder#Errors",
+    "25" : "\/documentation\/DocCCommon\/FastSymbolGraphJSONDecoder#Decoding-individual-values",
+    "3" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Snippet\/FastJSONDecodable-Implementations",
+    "30" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/AlternateSymbols\/FastJSONDecodable-Implementations",
+    "35" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Location\/FastJSONDecodable-Implementations",
+    "38" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/Extension\/FastJSONDecodable-Implementations",
+    "44" : "\/documentation\/DocCCommon\/SourceLanguage\/Decodable-Implementations",
+    "45" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Module\/FastJSONDecodable-Implementations",
+    "52" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/FastJSONDecodable-Implementations",
+    "68" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/HTTP\/Endpoint\/FastJSONDecodable-Implementations",
+    "69" : "\/documentation\/DocCCommon\/SourceLanguage\/Comparable-Implementations",
+    "70" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/FastJSONDecodable-Implementations",
+    "71" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/DeclarationFragments\/Fragment\/Kind\/FastJSONDecodable-Implementations",
+    "76" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Identifier\/FastJSONDecodable-Implementations",
+    "78" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/SemanticVersion\/FastJSONDecodable-Implementations",
+    "8" : "\/documentation\/DocCCommon\/Swift\/Range\/FastJSONDecodable-Implementations",
+    "86" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Relationship\/Kind\/FastJSONDecodable-Implementations",
+    "87" : "\/documentation\/DocCCommon\/Swift\/Int\/FastJSONDecodable-Implementations",
+    "89" : "\/documentation\/DocCCommon\/SourceLanguage\/Encodable-Implementations",
+    "9" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/LineList\/SourceRange\/Position\/FastJSONDecodable-Implementations",
+    "90" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/AlternateSymbols\/AlternateSymbol\/FastJSONDecodable-Implementations",
+    "92" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/KindIdentifier\/FastJSONDecodable-Implementations",
+    "93" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/FastJSONDecodable-Implementations",
+    "95" : "\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Platform\/FastJSONDecodable-Implementations",
+    "99" : "\/tutorials\/DocCCommon"
   },
   "pathHierarchy" : {
-    "articlesContainer" : 98,
+    "articlesContainer" : 1,
     "modules" : [
-      98
+      1
     ],
     "nodes" : [
-      {
-        "children" : [
-          {
-            "hash" : "4vu4i",
-            "kind" : "init",
-            "nodeID" : 121,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "URL",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:20FoundationEssentials3URLV10DocCCommonE5usingAcD26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "numberOfLeadingNonMatches",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon11ByteMatchesV018numberOfLeadingNonD0Sivp"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "init(arrayLiteral:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV12arrayLiteralAcA0dE0Vd_tcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V4KindV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "decode(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeySayxGAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF"
-        }
-      },
       {
         "name" : "init(using:)",
         "symbolID" : {
@@ -146,1256 +76,46 @@
         }
       },
       {
-        "name" : "name",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV4nameSSvp"
-        }
-      },
-      {
-        "name" : "decode(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyS2Sms13DecodingErrorOYKF"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
         "children" : [
           {
-            "hash" : "52kt9",
-            "kind" : "init",
-            "nodeID" : 164,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "56ash",
-            "kind" : "struct.extension",
-            "nodeID" : 34
-          }
-        ],
-        "name" : "SourceRange",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV8LineListV11SourceRangeV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "57144",
-            "kind" : "init",
-            "nodeID" : 78,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Endpoint",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V4HTTPO8EndpointV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V13AccessControlV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "98rpc",
-            "kind" : "struct.extension",
-            "nodeID" : 75
-          },
-          {
-            "hash" : "6zmz8",
-            "kind" : "unknown.extension",
-            "nodeID" : 211
-          },
-          {
-            "hash" : "8x499",
-            "kind" : "struct.extension",
-            "nodeID" : 131
-          },
-          {
-            "hash" : "2jm88",
-            "kind" : "unknown.extension",
-            "nodeID" : 94
-          },
-          {
-            "hash" : "4nudr",
-            "kind" : "struct.extension",
-            "nodeID" : 64
-          },
-          {
-            "hash" : "3pnec",
-            "kind" : "struct.extension",
-            "nodeID" : 30
-          },
-          {
-            "hash" : "6gs2n",
-            "kind" : "struct.extension",
-            "nodeID" : 134
-          },
-          {
-            "hash" : "79zc4",
-            "kind" : "struct.extension",
-            "nodeID" : 86
-          },
-          {
-            "hash" : "4ejnn",
-            "kind" : "struct.extension",
-            "nodeID" : 106
-          },
-          {
-            "hash" : "4m7gd",
-            "kind" : "struct.extension",
-            "nodeID" : 126
-          },
-          {
-            "hash" : "32wj1",
-            "kind" : "struct.extension",
-            "nodeID" : 96
-          },
-          {
-            "hash" : "2p210",
-            "kind" : "unknown.extension",
-            "nodeID" : 226
-          },
-          {
-            "hash" : "8ipd9",
-            "kind" : "init",
-            "nodeID" : 50,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "6ugvb",
-            "kind" : "struct.extension",
-            "nodeID" : 205
-          },
-          {
-            "hash" : "55ua7",
-            "kind" : "struct.extension",
-            "nodeID" : 201
-          },
-          {
-            "hash" : "6e9ed",
-            "kind" : "struct.extension",
-            "nodeID" : 25
-          },
-          {
-            "hash" : "36id0",
-            "kind" : "struct.extension",
-            "nodeID" : 35
-          }
-        ],
-        "name" : "Symbol",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "miy1",
-            "kind" : "init",
-            "nodeID" : 155,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "GenericParameter",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO16GenericParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "children" : [
-          {
-            "hash" : "6uvyl",
-            "kind" : "init",
-            "nodeID" : 11,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Kind",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV4KindV10DocCCommonE5usingAkL04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "95cqm",
-            "kind" : "init",
-            "nodeID" : 42,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "95kpb",
-            "kind" : "struct.extension",
-            "nodeID" : 128
-          }
-        ],
-        "name" : "AlternateSymbols",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V16AlternateSymbolsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V7SnippetV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "Essentials"
-      },
-      {
-        "name" : "init(name:id:idAliases:linkDisambiguationID:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV4name2id0F7Aliases20linkDisambiguationIDACSS_SSSaySSGSSSgtcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "children" : [
-          {
-            "hash" : "6u0m4",
-            "kind" : "init",
-            "nodeID" : 8,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Kind",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V4KindV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "4kumi",
-            "kind" : "struct.extension",
-            "nodeID" : 33
-          }
-        ],
-        "name" : "SymbolKit",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:m:s:e:s:9SymbolKit0A5GraphV10DocCCommonE5usingAcD04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:SS10DocCCommonE5usingSSAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "6kcg1",
-            "kind" : "init",
-            "nodeID" : 102,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "45m58",
-            "kind" : "struct.extension",
-            "nodeID" : 21
-          },
-          {
-            "hash" : "8zst3",
-            "kind" : "enum.extension",
-            "nodeID" : 210
-          },
-          {
-            "hash" : "3cq6a",
-            "kind" : "enum.extension",
-            "nodeID" : 133
-          },
-          {
-            "hash" : "7zdad",
-            "kind" : "struct.extension",
-            "nodeID" : 71
-          },
-          {
-            "hash" : "5n5nv",
-            "kind" : "struct.extension",
-            "nodeID" : 183
-          },
-          {
-            "hash" : "vdq8",
-            "kind" : "struct.extension",
-            "nodeID" : 196
-          },
-          {
-            "hash" : "r5gl",
-            "kind" : "struct.extension",
-            "nodeID" : 117
-          },
-          {
-            "hash" : "8tt30",
-            "kind" : "struct.extension",
-            "nodeID" : 150
-          },
-          {
-            "hash" : "1snqo",
-            "kind" : "struct.extension",
-            "nodeID" : 112
-          },
-          {
-            "hash" : "6zt5h",
-            "kind" : "struct.extension",
-            "nodeID" : 107
-          }
-        ],
-        "name" : "SymbolGraph",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV10DocCCommonE5usingAcD04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "4yc58",
-            "kind" : "init",
-            "nodeID" : 224,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Position",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV8LineListV11SourceRangeV8PositionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "9o4lb",
-            "kind" : "init",
-            "nodeID" : 168,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "OverloadData",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V12OverloadDataV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "decode(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyS2bms13DecodingErrorOYKF"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "47lyv",
-            "kind" : "init",
-            "nodeID" : 52,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Line",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV8LineListV0D0V10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "children" : [
-          {
-            "hash" : "493pq",
-            "kind" : "init",
-            "nodeID" : 136,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Generics",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO8GenericsV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V16AlternateSymbolsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV8LineListV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "remove(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV6removeyAA0dE0VSgAFF"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "Performance-considerations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "update(with:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV6update4withAA0dE0VSgAG_tF"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV8LineListV0D0V10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "endIndex",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV8endIndexAA013_FixedSizeBitF0V0H0Vys6UInt64V_Gvp"
-        }
-      },
-      {
-        "name" : "isEmpty",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV7isEmptySbvp"
-        }
-      },
-      {
-        "name" : "min()",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV3minAA0dE0VSgyF"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "3mt2a",
-            "kind" : "method",
-            "nodeID" : 37,
-            "parameterTypes" : [
-              "Bool.Type"
-            ],
-            "returnTypes" : [
-              "Bool"
-            ]
-          },
-          {
-            "hash" : "6sm8t",
-            "kind" : "method",
-            "nodeID" : 82,
-            "parameterTypes" : [
-              "Int.Type"
-            ],
-            "returnTypes" : [
-              "Int"
-            ]
-          },
-          {
-            "hash" : "3d0lz",
-            "kind" : "method",
-            "nodeID" : 13,
-            "parameterTypes" : [
-              "String.Type"
-            ],
-            "returnTypes" : [
-              "String"
-            ]
-          },
-          {
-            "hash" : "833bn",
-            "kind" : "method",
-            "nodeID" : 93,
-            "parameterTypes" : [
-              "Value.Type"
-            ],
-            "returnTypes" : [
-              "Value"
-            ]
-          },
-          {
-            "hash" : "51hfc",
-            "kind" : "method",
-            "nodeID" : 10,
-            "parameterTypes" : [
-              "[Value].Type"
-            ],
-            "returnTypes" : [
-              "[Value]"
-            ]
-          },
-          {
-            "hash" : "4ejhc",
-            "kind" : "method",
-            "nodeID" : 91,
-            "parameterTypes" : [
-              "Value?.Type"
-            ],
-            "returnTypes" : [
-              "Value?"
-            ]
-          },
-          {
-            "hash" : "5ypwv",
-            "kind" : "method",
-            "nodeID" : 125,
-            "parameterTypes" : [
-              "[String:Value].Type"
-            ],
-            "returnTypes" : [
-              "[String:Value]"
-            ]
-          },
-          {
-            "hash" : "3g65r",
-            "kind" : "method",
-            "nodeID" : 198,
-            "parameterTypes" : [
-
-            ],
-            "returnTypes" : [
-              "DecodingError"
-            ]
-          },
-          {
-            "hash" : "1upkw",
-            "kind" : "method",
-            "nodeID" : 130,
-            "parameterTypes" : [
-
-            ],
-            "returnTypes" : [
-
-            ]
-          },
-          {
-            "hash" : "9s52l",
-            "kind" : "method",
-            "nodeID" : 236,
-            "parameterTypes" : [
-
-            ],
-            "returnTypes" : [
-
-            ]
-          },
-          {
-            "hash" : "647fq",
-            "kind" : "method",
-            "nodeID" : 228,
-            "parameterTypes" : [
-
-            ],
-            "returnTypes" : [
-              "Bool"
-            ]
-          },
-          {
-            "hash" : "2qhx5",
-            "kind" : "type.method",
-            "nodeID" : 114,
-            "parameterTypes" : [
-              "Decodable.Type",
-              "Data"
-            ],
-            "returnTypes" : [
-              "Decodable"
-            ]
-          },
-          {
-            "hash" : "1s4v6",
-            "kind" : "method",
-            "nodeID" : 213,
-            "parameterTypes" : [
-              "Any.Type"
-            ],
-            "returnTypes" : [
-              "DecodingError"
-            ]
-          },
-          {
-            "hash" : "515q5",
-            "kind" : "method",
-            "nodeID" : 108,
-            "parameterTypes" : [
-              "String"
-            ],
-            "returnTypes" : [
-              "DecodingError"
-            ]
-          },
-          {
-            "hash" : "2wz4s",
-            "kind" : "method",
-            "nodeID" : 116,
-            "parameterTypes" : [
-              "String"
-            ],
-            "returnTypes" : [
-              "DecodingError"
-            ]
-          },
-          {
-            "hash" : "2trx8",
-            "kind" : "method",
-            "nodeID" : 156,
-            "parameterTypes" : [
-              "StaticString",
-              "Int"
-            ],
-            "returnTypes" : [
-              "Bool"
-            ]
-          }
-        ],
-        "name" : "FastSymbolGraphJSONDecoder",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "3ga98",
-            "kind" : "method",
-            "nodeID" : 161,
-            "parameterTypes" : [
-              "StaticString",
-              "Int"
-            ],
-            "returnTypes" : [
-              "Bool"
-            ]
-          }
-        ],
-        "name" : "UnsafeRawPointer",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:SV10DocCCommonE14hasASCIIPrefix_10byteOffsetSbs12StaticStringV_SitF"
-        }
-      },
-      {
-        "name" : "startIndex",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV10startIndexAA013_FixedSizeBitF0V0H0Vys6UInt64V_Gvp"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "84van",
-            "kind" : "init",
-            "nodeID" : 127,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "FastJSONDecodable",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon17FastJSONDecodableP"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "Errors"
-      },
-      {
-        "children" : [
-          {
-            "hash" : "8jr4b",
-            "kind" : "init",
-            "nodeID" : 220,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Kind",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV12RelationshipV4KindV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "4de0x",
-            "kind" : "init",
-            "nodeID" : 222,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Extension",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO9ExtensionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "15f05",
-            "kind" : "init",
-            "nodeID" : 200,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Names",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5NamesV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "96v3t",
-            "kind" : "init",
-            "nodeID" : 73,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Array",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:Sa10DocCCommonAA17FastJSONDecodableRzlE5usingSayxGAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "Equatable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V10TypeDetailV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V10IdentifierV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "children" : [
-          {
-            "hash" : "6x1hv",
-            "kind" : "struct.extension",
-            "nodeID" : 18
-          },
-          {
-            "hash" : "3qk28",
-            "kind" : "struct.extension",
-            "nodeID" : 38
-          },
-          {
-            "hash" : "7ls86",
-            "kind" : "init",
-            "nodeID" : 43,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "LineList",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV8LineListV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "javaScript",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV10javaScriptACvpZ"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:Sa10DocCCommonAA17FastJSONDecodableRzlE5usingSayxGAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "linkDisambiguationID",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV20linkDisambiguationIDSSvp"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "7j3q8",
-            "kind" : "init",
-            "nodeID" : 209,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "PlistDetails",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V12PlistDetailsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(name:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV4nameACSS_tcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "1a1cp",
-            "kind" : "init",
-            "nodeID" : 181,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "AvailabilityItem",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V12AvailabilityV0D4ItemV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V4HTTPO8EndpointV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "Decodable-Implementations"
-      },
-      {
-        "name" : "subscript(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetVyAA0dE0VAA013_FixedSizeBitF0V5IndexVys6UInt64V_Gcip"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "decode(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyS2ims13DecodingErrorOYKF"
-        }
-      },
-      {
-        "name" : "count",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV5countSivp"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV6ModuleV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "5cr5x",
-            "kind" : "init",
-            "nodeID" : 20,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "AccessControl",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V13AccessControlV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V16AlternateSymbolsV0dA0V10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "children" : [
-          {
-            "hash" : "80gut",
-            "kind" : "struct.extension",
-            "nodeID" : 149
-          },
-          {
-            "hash" : "5a4yj",
-            "kind" : "struct.extension",
-            "nodeID" : 57
-          },
-          {
-            "hash" : "359i",
-            "kind" : "struct.extension",
-            "nodeID" : 163
-          },
-          {
-            "hash" : "891my",
-            "kind" : "struct.extension",
-            "nodeID" : 65
-          },
-          {
-            "hash" : "7ara4",
-            "kind" : "enum.extension",
-            "nodeID" : 180
-          },
-          {
-            "hash" : "8pc61",
-            "kind" : "struct.extension",
-            "nodeID" : 234
-          },
-          {
-            "hash" : "4co6a",
-            "kind" : "struct.extension",
-            "nodeID" : 172
-          },
-          {
-            "hash" : "9bp2y",
-            "kind" : "struct.extension",
-            "nodeID" : 123
-          }
-        ],
-        "name" : "Swift",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:m:s:e:s:SD10DocCCommonSSRszAA17FastJSONDecodableR_rlE5usingSDySSq_GAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "decode(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyxSgAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "6ff4h",
-            "kind" : "enum.extension",
-            "nodeID" : 146
-          },
-          {
-            "hash" : "586tr",
-            "kind" : "init",
-            "nodeID" : 115,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "GenericConstraint",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "decode(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyxxms13DecodingErrorOYKAA0C13JSONDecodableRzlF"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "4ts7z",
-            "kind" : "struct.extension",
-            "nodeID" : 19
-          }
-        ],
-        "name" : "HTTP",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V4HTTPO8EndpointV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "Index",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV5Indexa"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "7cykr",
-            "kind" : "init",
-            "nodeID" : 69,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Identifier",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V10IdentifierV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV8MetadataV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "3ojg5",
+            "hash" : "4ocur",
             "kind" : "struct",
-            "nodeID" : 206
-          },
-          {
-            "hash" : "12l16",
-            "kind" : "module.extension",
-            "nodeID" : 90
-          },
-          {
-            "hash" : "1mo84",
-            "kind" : "struct",
-            "nodeID" : 221
-          },
-          {
-            "hash" : "7yzei",
-            "kind" : "struct",
-            "nodeID" : 235
+            "nodeID" : 209
           },
           {
             "hash" : "7smmu",
             "kind" : "protocol",
-            "nodeID" : 59
+            "nodeID" : 149
+          },
+          {
+            "hash" : "7yzei",
+            "kind" : "struct",
+            "nodeID" : 26
           },
           {
             "hash" : "25t5h",
             "kind" : "module.extension",
-            "nodeID" : 31
+            "nodeID" : 88
           },
           {
             "hash" : "2rk1v",
             "kind" : "module.extension",
-            "nodeID" : 171
+            "nodeID" : 121
           },
           {
-            "hash" : "4ocur",
+            "hash" : "1mo84",
             "kind" : "struct",
-            "nodeID" : 56
+            "nodeID" : 53
+          },
+          {
+            "hash" : "3ojg5",
+            "kind" : "struct",
+            "nodeID" : 219
+          },
+          {
+            "hash" : "12l16",
+            "kind" : "module.extension",
+            "nodeID" : 205
           }
         ],
         "name" : "DocCCommon",
@@ -1405,36 +125,7 @@
         }
       },
       {
-        "children" : [
-          {
-            "hash" : "94cbi",
-            "kind" : "struct.extension",
-            "nodeID" : 24
-          },
-          {
-            "hash" : "2tchw",
-            "kind" : "init",
-            "nodeID" : 167,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Fragment",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "sorted()",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV6sortedSayAA0dE0VGyF"
-        }
+        "name" : "FastJSONDecodable-Implementations"
       },
       {
         "name" : "FastJSONDecodable-Implementations"
@@ -1443,76 +134,7 @@
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV10DocCCommonE5usingAcD04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "metal",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV5metalACvpZ"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV8PlatformV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "3jcyq",
-            "kind" : "struct.extension",
-            "nodeID" : 182
-          },
-          {
-            "hash" : "5tbev",
-            "kind" : "init",
-            "nodeID" : 48,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "FunctionSignature",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "28siv",
-            "kind" : "init",
-            "nodeID" : 105,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Platform",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV8PlatformV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "makeDataCorruptedError(message:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV22makeDataCorruptedError7messages08DecodingJ0OSS_tF"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
@@ -1520,57 +142,6 @@
         "symbolID" : {
           "interfaceLanguage" : "swift",
           "precise" : "s:Sb10DocCCommonE5usingSbAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:Sq10DocCCommonAA17FastJSONDecodableRzlE5usingxSgAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(_:_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon11ByteMatchesVyACs6UInt64V_AEtcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "oscw",
-            "kind" : "init",
-            "nodeID" : 188,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "SemanticVersion",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV15SemanticVersionV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "decode(_:from:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decode_4fromxxm_20FoundationEssentials4DataVntKAA0C13JSONDecodableRzlFZ"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
@@ -1583,199 +154,9 @@
       {
         "children" : [
           {
-            "hash" : "9ym7e",
-            "kind" : "init",
-            "nodeID" : 192,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "OperatingSystem",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV15OperatingSystemV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV4KindO10DocCCommonE5usingAkL04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV9AnyScalarO10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:20FoundationEssentials3URLV10DocCCommonE5usingAcD26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "children" : [
-          {
-            "hash" : "7msjw",
-            "kind" : "init",
-            "nodeID" : 207,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Range",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:Sn10DocCCommonSiRszrlE5usingSnySiGAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "decode(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeySDySSxGAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "6mhph",
-            "kind" : "struct.extension",
-            "nodeID" : 99
-          },
-          {
-            "hash" : "2dbm",
-            "kind" : "init",
-            "nodeID" : 9,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "DeclarationFragments",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon17FastJSONDecodableP5usingxAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "ku8u",
-            "kind" : "init",
-            "nodeID" : 88,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "AlternateSymbol",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V16AlternateSymbolsV0dA0V10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(knownLanguageName:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV05knownD4NameACSgSS_tcfc"
-        }
-      },
-      {
-        "name" : "ignoreValue()",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV11ignoreValueyys13DecodingErrorOYKF"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "6w7h7",
-            "kind" : "init",
-            "nodeID" : 68,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "TypeDetail",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V10TypeDetailV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "colonSearchPattern",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon11ByteMatchesV18colonSearchPatterns6UInt64VvpZ"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "5yegi",
-            "kind" : "init",
-            "nodeID" : 120,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "AnyScalar",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV9AnyScalarO10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
             "hash" : "ztxf",
             "kind" : "init",
-            "nodeID" : 26,
+            "nodeID" : 110,
             "parameterTypes" : [
               "FastSymbolGraphJSONDecoder"
             ],
@@ -1794,53 +175,14 @@
         "name" : "FastJSONDecodable-Implementations"
       },
       {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO8GenericsV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V8LocationV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "DocCCommon"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "Comparable-Implementations"
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V14KindIdentifierV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
         "name" : "FastJSONDecodable-Implementations"
       },
       {
         "children" : [
           {
-            "hash" : "86hz2",
+            "hash" : "9ym7e",
             "kind" : "init",
-            "nodeID" : 119,
+            "nodeID" : 201,
             "parameterTypes" : [
               "FastSymbolGraphJSONDecoder"
             ],
@@ -1849,28 +191,115 @@
             ]
           }
         ],
-        "name" : "Kind",
+        "name" : "OperatingSystem",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV4KindO10DocCCommonE5usingAkL04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:e:s:9SymbolKit0A5GraphV15OperatingSystemV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
-        "name" : "union(_:)",
+        "name" : "decode(_:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV5unionyA2CF"
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyxxms13DecodingErrorOYKAA0C13JSONDecodableRzlF"
+        }
+      },
+      {
+        "name" : "contains(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV8containsySbAA0dE0VF"
         }
       },
       {
         "name" : "FastJSONDecodable-Implementations"
       },
       {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV8MetadataV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV12RelationshipV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV6ModuleV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "makeIterator()",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV12makeIteratorQryF"
+        }
+      },
+      {
         "children" : [
           {
-            "hash" : "4q2tr",
+            "hash" : "2dbm",
             "kind" : "init",
-            "nodeID" : 109,
+            "nodeID" : 42,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "6mhph",
+            "kind" : "struct.extension",
+            "nodeID" : 91
+          }
+        ],
+        "name" : "DeclarationFragments",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "decode(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyS2ims13DecodingErrorOYKF"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "encode(to:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV6encode2toys7Encoder_p_tKF"
+        }
+      },
+      {
+        "name" : "backslashSearchPattern",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon11ByteMatchesV22backslashSearchPatterns6UInt64VvpZ"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "6w7h7",
+            "kind" : "init",
+            "nodeID" : 117,
             "parameterTypes" : [
               "FastSymbolGraphJSONDecoder"
             ],
@@ -1879,185 +308,149 @@
             ]
           }
         ],
-        "name" : "Bool",
+        "name" : "TypeDetail",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:Sb10DocCCommonE5usingSbAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V10TypeDetailV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "1evrg",
-            "kind" : "init",
-            "nodeID" : 85,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Module",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV6ModuleV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "isBefore(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon11ByteMatchesV8isBeforeySbACF"
-        }
-      },
-      {
-        "name" : "tutorials"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
       },
       {
         "name" : "Decoding-individual-values"
       },
       {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO16GenericParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "matchKey(_:byteOffset:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV8matchKey_10byteOffsetSbs12StaticStringV_SitF"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "data",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV4dataACvpZ"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
-        "name" : "hasASCIIPrefix(_:byteOffset:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:SV10DocCCommonE14hasASCIIPrefix_10byteOffsetSbs12StaticStringV_SitF"
-        }
-      },
-      {
-        "name" : "FastJSONDecodable-Implementations"
-      },
-      {
         "children" : [
           {
-            "hash" : "3ov8e",
+            "hash" : "5lybu",
+            "kind" : "type.property",
+            "nodeID" : 169
+          },
+          {
+            "hash" : "8t2sm",
             "kind" : "init",
-            "nodeID" : 32,
+            "nodeID" : 100,
             "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
+              "UInt64",
+              "UInt64"
             ],
             "returnTypes" : [
               ""
             ]
-          }
-        ],
-        "name" : "String",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:SS10DocCCommonE5usingSSAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "Implementing-keyed-decoding"
-      },
-      {
-        "name" : "<(_:_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV1loiySbAC_ACtFZ"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V12OverloadDataV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "formUnion(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV9formUnionyyACF"
-        }
-      },
-      {
-        "name" : "Element",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV7Elementa"
-        }
-      },
-      {
-        "children" : [
+          },
           {
-            "hash" : "3ncjw",
-            "kind" : "struct.extension",
-            "nodeID" : 0
-          }
-        ],
-        "name" : "FoundationEssentials",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:m:s:e:s:20FoundationEssentials3URLV10DocCCommonE5usingAcD26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
+            "hash" : "8u4nu",
+            "kind" : "property",
+            "nodeID" : 108
+          },
           {
-            "hash" : "1mewb",
-            "kind" : "init",
-            "nodeID" : 191,
+            "hash" : "2dc0w",
+            "kind" : "property",
+            "nodeID" : 138
+          },
+          {
+            "hash" : "6q0bo",
+            "kind" : "type.property",
+            "nodeID" : 133
+          },
+          {
+            "hash" : "3xbel",
+            "kind" : "type.property",
+            "nodeID" : 23
+          },
+          {
+            "hash" : "4akr8",
+            "kind" : "method",
+            "nodeID" : 83,
             "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
+              "ByteMatches"
             ],
             "returnTypes" : [
-              ""
+              "Bool"
             ]
           }
         ],
-        "name" : "Dictionary",
+        "name" : "ByteMatches",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:SD10DocCCommonSSRszAA17FastJSONDecodableR_rlE5usingSDySSq_GAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:10DocCCommon11ByteMatchesV"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:20FoundationEssentials3URLV10DocCCommonE5usingAcD26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "==(_:_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV2eeoiySbAC_ACtFZ"
+        }
+      },
+      {
+        "name" : "init(knownLanguageName:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV05knownD4NameACSgSS_tcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "isEmpty",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV7isEmptySbvp"
+        }
+      },
+      {
+        "name" : "decode(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeySDySSxGAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:Sq10DocCCommonAA17FastJSONDecodableRzlE5usingxSgAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV15SemanticVersionV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(arrayLiteral:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV12arrayLiteralAcA0dE0Vd_tcfc"
+        }
+      },
+      {
+        "name" : "makeGenericDataCorruptedError()",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV29makeGenericDataCorruptedErrors08DecodingK0OyF"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "update(with:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV6update4withAA0dE0VSgAG_tF"
         }
       },
       {
@@ -2065,7 +458,7 @@
           {
             "hash" : "580p1",
             "kind" : "init",
-            "nodeID" : 212,
+            "nodeID" : 202,
             "parameterTypes" : [
               "FastSymbolGraphJSONDecoder"
             ],
@@ -2081,135 +474,65 @@
         }
       },
       {
-        "name" : "quoteSearchPattern",
+        "name" : "endIndex",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon11ByteMatchesV18quoteSearchPatterns6UInt64VvpZ"
-        }
-      },
-      {
-        "name" : "CustomDebugStringConvertible-Implementations"
-      },
-      {
-        "name" : "==(_:_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV2eeoiySbAC_ACtFZ"
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV8endIndexAA013_FixedSizeBitF0V0H0Vys6UInt64V_Gvp"
         }
       },
       {
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV9AnyNumberO10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
-        "name" : "backslashSearchPattern",
+        "name" : "id",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon11ByteMatchesV22backslashSearchPatterns6UInt64VvpZ"
+          "precise" : "s:10DocCCommon14SourceLanguageV2idSSvp"
         }
       },
       {
-        "name" : "makeIterator()",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV12makeIteratorQryF"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "3h0k5",
-            "kind" : "init",
-            "nodeID" : 110,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Optional",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:Sq10DocCCommonAA17FastJSONDecodableRzlE5usingxSgAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V12AvailabilityV0D4ItemV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "9pg12",
-            "kind" : "init",
-            "nodeID" : 225,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "FunctionParameter",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV0D9ParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "3ruao",
-            "kind" : "struct.extension",
-            "nodeID" : 173
-          },
-          {
-            "hash" : "ppf5",
-            "kind" : "struct.extension",
-            "nodeID" : 62
-          },
-          {
-            "hash" : "525w1",
-            "kind" : "init",
-            "nodeID" : 186,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "Relationship",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV12RelationshipV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "idAliases",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV9idAliasesSaySSGvp"
-        }
+        "name" : "Decodable-Implementations"
       },
       {
         "name" : "FastJSONDecodable-Implementations"
       },
       {
+        "name" : "intersection(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV12intersectionyA2CF"
+        }
+      },
+      {
+        "name" : "index(after:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV5index5afterAA013_FixedSizeBitF0V5IndexVys6UInt64V_GAL_tF"
+        }
+      },
+      {
+        "name" : "hasASCIIPrefix(_:byteOffset:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:SV10DocCCommonE14hasASCIIPrefix_10byteOffsetSbs12StaticStringV_SitF"
+        }
+      },
+      {
+        "name" : "<(_:_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV1loiySbAC_ACtFZ"
+        }
+      },
+      {
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV12RelationshipV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V8LocationV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
@@ -2220,10 +543,437 @@
         }
       },
       {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "425jc",
+            "kind" : "init",
+            "nodeID" : 73,
+            "parameterTypes" : [
+
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "4nh1d",
+            "kind" : "method",
+            "nodeID" : 12,
+            "parameterTypes" : [
+              "SourceLanguage"
+            ],
+            "returnTypes" : [
+              "Bool"
+            ]
+          },
+          {
+            "hash" : "2p77v",
+            "kind" : "property",
+            "nodeID" : 41
+          },
+          {
+            "hash" : "jwjm",
+            "kind" : "method",
+            "nodeID" : 18,
+            "parameterTypes" : [
+
+            ],
+            "returnTypes" : [
+              "IteratorProtocol<SourceLanguage>"
+            ]
+          },
+          {
+            "hash" : "7v6he",
+            "kind" : "property",
+            "nodeID" : 31
+          },
+          {
+            "hash" : "apmk",
+            "kind" : "property",
+            "nodeID" : 203
+          },
+          {
+            "hash" : "7x29t",
+            "kind" : "method",
+            "nodeID" : 212,
+            "parameterTypes" : [
+              "SourceLanguage"
+            ],
+            "returnTypes" : [
+              "SourceLanguage?"
+            ]
+          },
+          {
+            "hash" : "4lqx9",
+            "kind" : "property",
+            "nodeID" : 55
+          },
+          {
+            "hash" : "84j56",
+            "kind" : "method",
+            "nodeID" : 189,
+            "parameterTypes" : [
+
+            ],
+            "returnTypes" : [
+              "SourceLanguage?"
+            ]
+          },
+          {
+            "hash" : "2kz0q",
+            "kind" : "subscript",
+            "nodeID" : 174,
+            "parameterTypes" : [
+              "Index"
+            ],
+            "returnTypes" : [
+              "SourceLanguage"
+            ]
+          },
+          {
+            "hash" : "87a8l",
+            "kind" : "method",
+            "nodeID" : 62,
+            "parameterTypes" : [
+              "SmallSourceLanguageSet"
+            ],
+            "returnTypes" : [
+
+            ]
+          },
+          {
+            "hash" : "tbx2",
+            "kind" : "method",
+            "nodeID" : 153,
+            "parameterTypes" : [
+              "SmallSourceLanguageSet"
+            ],
+            "returnTypes" : [
+
+            ]
+          },
+          {
+            "hash" : "7zvdv",
+            "kind" : "method",
+            "nodeID" : 46,
+            "parameterTypes" : [
+              "SmallSourceLanguageSet"
+            ],
+            "returnTypes" : [
+              "SmallSourceLanguageSet"
+            ]
+          },
+          {
+            "hash" : "8zwnq",
+            "kind" : "method",
+            "nodeID" : 96,
+            "parameterTypes" : [
+              "SmallSourceLanguageSet"
+            ],
+            "returnTypes" : [
+              "SmallSourceLanguageSet"
+            ]
+          },
+          {
+            "hash" : "39hdy",
+            "kind" : "method",
+            "nodeID" : 231,
+            "parameterTypes" : [
+              "SourceLanguage"
+            ],
+            "returnTypes" : [
+              "Bool",
+              "SourceLanguage"
+            ]
+          },
+          {
+            "hash" : "7suim",
+            "kind" : "typealias",
+            "nodeID" : 135
+          },
+          {
+            "hash" : "74vvg",
+            "kind" : "method",
+            "nodeID" : 39,
+            "parameterTypes" : [
+              "SourceLanguage"
+            ],
+            "returnTypes" : [
+              "SourceLanguage?"
+            ]
+          },
+          {
+            "hash" : "9d5sf",
+            "kind" : "method",
+            "nodeID" : 65,
+            "parameterTypes" : [
+
+            ],
+            "returnTypes" : [
+              "[SourceLanguage]"
+            ]
+          },
+          {
+            "hash" : "2xzvm",
+            "kind" : "init",
+            "nodeID" : 36,
+            "parameterTypes" : [
+              "SourceLanguage..."
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "81nqk",
+            "kind" : "typealias",
+            "nodeID" : 81
+          },
+          {
+            "hash" : "1h033",
+            "kind" : "method",
+            "nodeID" : 47,
+            "parameterTypes" : [
+              "Index"
+            ],
+            "returnTypes" : [
+              "SmallSourceLanguageSet.Index"
+            ]
+          },
+          {
+            "hash" : "450d2",
+            "kind" : "method",
+            "nodeID" : 199,
+            "parameterTypes" : [
+              "SmallSourceLanguageSet"
+            ],
+            "returnTypes" : [
+
+            ]
+          },
+          {
+            "hash" : "224h4",
+            "kind" : "method",
+            "nodeID" : 206,
+            "parameterTypes" : [
+              "SmallSourceLanguageSet"
+            ],
+            "returnTypes" : [
+              "SmallSourceLanguageSet"
+            ]
+          }
+        ],
+        "name" : "SmallSourceLanguageSet",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "3ov8e",
+            "kind" : "init",
+            "nodeID" : 181,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "String",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:SS10DocCCommonE5usingSSAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "startIndex",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV10startIndexAA013_FixedSizeBitF0V0H0Vys6UInt64V_Gvp"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "9o4lb",
+            "kind" : "init",
+            "nodeID" : 145,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "OverloadData",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V12OverloadDataV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV15SemanticVersionV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V12PlistDetailsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "40h24",
+            "kind" : "struct.extension",
+            "nodeID" : 142
+          },
+          {
+            "hash" : "8v95l",
+            "kind" : "struct.extension",
+            "nodeID" : 196
+          },
+          {
+            "hash" : "4npey",
+            "kind" : "struct.extension",
+            "nodeID" : 218
+          },
+          {
+            "hash" : "76529",
+            "kind" : "struct.extension",
+            "nodeID" : 66
+          }
+        ],
+        "name" : "Swift",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO16GenericParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV8PositionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "3d713",
+            "kind" : "struct.extension",
+            "nodeID" : 183
+          }
+        ],
+        "name" : "Availability",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V12AvailabilityV0D4ItemV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "8x499",
+            "kind" : "struct.extension",
+            "nodeID" : 24
+          },
+          {
+            "hash" : "6e9ed",
+            "kind" : "struct.extension",
+            "nodeID" : 103
+          },
+          {
+            "hash" : "8g2qr",
+            "kind" : "unknown.extension",
+            "nodeID" : 58
+          },
+          {
+            "hash" : "2jm88",
+            "kind" : "unknown.extension",
+            "nodeID" : 192
+          },
+          {
+            "hash" : "6ugvb",
+            "kind" : "struct.extension",
+            "nodeID" : 98
+          },
+          {
+            "hash" : "32wj1",
+            "kind" : "struct.extension",
+            "nodeID" : 208
+          },
+          {
+            "hash" : "4nudr",
+            "kind" : "struct.extension",
+            "nodeID" : 223
+          },
+          {
+            "hash" : "6zmz8",
+            "kind" : "unknown.extension",
+            "nodeID" : 60
+          },
+          {
+            "hash" : "3pnec",
+            "kind" : "struct.extension",
+            "nodeID" : 162
+          },
+          {
+            "hash" : "55ua7",
+            "kind" : "struct.extension",
+            "nodeID" : 102
+          },
+          {
+            "hash" : "8ipd9",
+            "kind" : "init",
+            "nodeID" : 4,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "4m7gd",
+            "kind" : "struct.extension",
+            "nodeID" : 19
+          },
+          {
+            "hash" : "6gs2n",
+            "kind" : "struct.extension",
+            "nodeID" : 7
+          },
+          {
+            "hash" : "4ejnn",
+            "kind" : "struct.extension",
+            "nodeID" : 166
+          },
+          {
+            "hash" : "36id0",
+            "kind" : "struct.extension",
+            "nodeID" : 56
+          },
+          {
+            "hash" : "98rpc",
+            "kind" : "struct.extension",
+            "nodeID" : 79
+          },
+          {
+            "hash" : "79zc4",
+            "kind" : "struct.extension",
+            "nodeID" : 204
+          }
+        ],
+        "name" : "Symbol",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
@@ -2234,31 +984,83 @@
         }
       },
       {
-        "name" : "contains(_:)",
+        "children" : [
+          {
+            "hash" : "96v3t",
+            "kind" : "init",
+            "nodeID" : 134,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Array",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV8containsySbAA0dE0VF"
+          "precise" : "s:e:s:Sa10DocCCommonAA17FastJSONDecodableRzlE5usingSayxGAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:SD10DocCCommonSSRszAA17FastJSONDecodableR_rlE5usingSDySSq_GAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:10DocCCommon17FastJSONDecodableP5usingxAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
+      },
+      {
+        "name" : "sorted()",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV6sortedSayAA0dE0VGyF"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "493pq",
+            "kind" : "init",
+            "nodeID" : 109,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Generics",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO8GenericsV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "matchKey(_:byteOffset:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV8matchKey_10byteOffsetSbs12StaticStringV_SitF"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "Comparable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
       },
       {
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV15OperatingSystemV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(knownLanguageIdentifier:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV05knownD10IdentifierACSgSS_tcfc"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
@@ -2269,18 +1071,183 @@
         }
       },
       {
-        "name" : "encode(to:)",
+        "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV6encode2toys7Encoder_p_tKF"
+          "precise" : "s:SD10DocCCommonSSRszAA17FastJSONDecodableR_rlE5usingSDySSq_GAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "ku8u",
+            "kind" : "init",
+            "nodeID" : 140,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "AlternateSymbol",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V16AlternateSymbolsV0dA0V10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V4HTTPO8EndpointV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "7j3q8",
+            "kind" : "init",
+            "nodeID" : 57,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "PlistDetails",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V12PlistDetailsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "6uvyl",
+            "kind" : "init",
+            "nodeID" : 0,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Kind",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV4KindV10DocCCommonE5usingAkL04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "Index",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV5Indexa"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V5NamesV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "isBefore(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon11ByteMatchesV8isBeforeySbACF"
+        }
+      },
+      {
+        "name" : "init(from:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV4fromACs7Decoder_p_tKcfc"
+        }
+      },
+      {
+        "name" : "decode(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyxSgAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "4kumi",
+            "kind" : "struct.extension",
+            "nodeID" : 170
+          }
+        ],
+        "name" : "SymbolKit",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:m:s:e:s:9SymbolKit0A5GraphV10DocCCommonE5usingAcD04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "Encodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "94cbi",
+            "kind" : "struct.extension",
+            "nodeID" : 80
+          },
+          {
+            "hash" : "2tchw",
+            "kind" : "init",
+            "nodeID" : 160,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Fragment",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
       },
       {
         "children" : [
           {
             "hash" : "j8oo",
             "kind" : "init",
-            "nodeID" : 97,
+            "nodeID" : 14,
             "parameterTypes" : [
               "FastSymbolGraphJSONDecoder"
             ],
@@ -2296,64 +1263,20 @@
         }
       },
       {
-        "name" : "intersection(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV12intersectionyA2CF"
-        }
-      },
-      {
-        "name" : "makeGenericDataCorruptedError()",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV29makeGenericDataCorruptedErrors08DecodingK0OyF"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:Si10DocCCommonE5usingSiAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V5NamesV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
-        "children" : [
-          {
-            "hash" : "nneh",
-            "kind" : "init",
-            "nodeID" : 144,
-            "parameterTypes" : [
-              "FastSymbolGraphJSONDecoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          }
-        ],
-        "name" : "KindIdentifier",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V14KindIdentifierV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
-      },
-      {
         "name" : "FastJSONDecodable-Implementations"
       },
       {
-        "name" : "Encodable-Implementations"
-      },
-      {
-        "name" : "symmetricDifference(_:)",
+        "name" : "union(_:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV19symmetricDifferenceyA2CF"
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV5unionyA2CF"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV8PlatformV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
@@ -2361,7 +1284,7 @@
           {
             "hash" : "8tf1p",
             "kind" : "init",
-            "nodeID" : 138,
+            "nodeID" : 50,
             "parameterTypes" : [
               "FastSymbolGraphJSONDecoder"
             ],
@@ -2377,200 +1300,189 @@
         }
       },
       {
+        "name" : "DocCCommon"
+      },
+      {
+        "name" : "init(_:_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon11ByteMatchesVyACs6UInt64V_AEtcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
         "children" : [
           {
-            "hash" : "35lim",
+            "hash" : "nneh",
             "kind" : "init",
-            "nodeID" : 129,
+            "nodeID" : 226,
             "parameterTypes" : [
-              "String"
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "KindIdentifier",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V14KindIdentifierV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "95cqm",
+            "kind" : "init",
+            "nodeID" : 148,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
             ],
             "returnTypes" : [
               ""
             ]
           },
           {
-            "hash" : "7rjx9",
-            "kind" : "type.property",
-            "nodeID" : 159
+            "hash" : "95kpb",
+            "kind" : "struct.extension",
+            "nodeID" : 75
+          }
+        ],
+        "name" : "AlternateSymbols",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V16AlternateSymbolsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "decode(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeySayxGAEms13DecodingErrorOYKAA0C13JSONDecodableRzlF"
+        }
+      },
+      {
+        "name" : "init(id:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV2idACSS_tcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV4KindO10DocCCommonE5usingAkL04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "numberOfLeadingNonMatches",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon11ByteMatchesV018numberOfLeadingNonD0Sivp"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO8GenericsV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V7SnippetV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "56ash",
+            "kind" : "struct.extension",
+            "nodeID" : 124
           },
           {
-            "hash" : "6u4fy",
-            "kind" : "type.property",
-            "nodeID" : 208
-          },
+            "hash" : "52kt9",
+            "kind" : "init",
+            "nodeID" : 194,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "SourceRange",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV8LineListV11SourceRangeV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "javaScript",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV10javaScriptACvpZ"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV10DocCCommonE5usingAcD04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
           {
-            "hash" : "2893i",
-            "kind" : "type.property",
-            "nodeID" : 72
-          },
-          {
-            "hash" : "8t47b",
-            "kind" : "type.property",
-            "nodeID" : 103
-          },
-          {
-            "hash" : "59225",
-            "kind" : "property",
-            "nodeID" : 214
-          },
-          {
-            "hash" : "9vi8",
-            "kind" : "type.property",
-            "nodeID" : 231
-          },
-          {
-            "hash" : "779pz",
+            "hash" : "9pg12",
             "kind" : "init",
             "nodeID" : 193,
             "parameterTypes" : [
-              "String"
+              "FastSymbolGraphJSONDecoder"
             ],
             "returnTypes" : [
               ""
             ]
-          },
-          {
-            "hash" : "8xea3",
-            "kind" : "init",
-            "nodeID" : 229,
-            "parameterTypes" : [
-              "Decoder"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "4j5um",
-            "kind" : "func.op",
-            "nodeID" : 176,
-            "parameterTypes" : [
-              "SourceLanguage",
-              "SourceLanguage"
-            ],
-            "returnTypes" : [
-              "Bool"
-            ]
-          },
-          {
-            "hash" : "92ph6",
-            "kind" : "init",
-            "nodeID" : 76,
-            "parameterTypes" : [
-              "String"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "8itnu",
-            "kind" : "func.op",
-            "nodeID" : 166,
-            "parameterTypes" : [
-              "SourceLanguage",
-              "SourceLanguage"
-            ],
-            "returnTypes" : [
-              "Bool"
-            ]
-          },
-          {
-            "hash" : "2gjve",
-            "kind" : "method",
-            "nodeID" : 195,
-            "parameterTypes" : [
-              "Encoder"
-            ],
-            "returnTypes" : [
-
-            ]
-          },
-          {
-            "hash" : "1rz2",
-            "kind" : "property",
-            "nodeID" : 215
-          },
-          {
-            "hash" : "9h7ng",
-            "kind" : "init",
-            "nodeID" : 218,
-            "parameterTypes" : [
-              "String"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "9ncyn",
-            "kind" : "init",
-            "nodeID" : 28,
-            "parameterTypes" : [
-              "String",
-              "String",
-              "[String]",
-              "String?"
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "5wusb",
-            "kind" : "property",
-            "nodeID" : 12
-          },
-          {
-            "hash" : "6hui1",
-            "kind" : "property",
-            "nodeID" : 184
-          },
-          {
-            "hash" : "2np2d",
-            "kind" : "property",
-            "nodeID" : 74
-          },
-          {
-            "hash" : "365oy",
-            "kind" : "type.property",
-            "nodeID" : 187
           }
         ],
-        "name" : "SourceLanguage",
+        "name" : "FunctionParameter",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV"
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV0D9ParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:Sn10DocCCommonSiRszrlE5usingSnySiGAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V10TypeDetailV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
-        "name" : "objectiveC",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV10objectiveCACvpZ"
-        }
-      },
-      {
-        "name" : "init(using:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V12PlistDetailsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
-        }
+        "name" : "FastJSONDecodable-Implementations"
       },
       {
         "children" : [
           {
             "hash" : "7g873",
             "kind" : "init",
-            "nodeID" : 177,
+            "nodeID" : 125,
             "parameterTypes" : [
               "FastSymbolGraphJSONDecoder"
             ],
@@ -2588,29 +1500,186 @@
       {
         "children" : [
           {
-            "hash" : "3d713",
-            "kind" : "struct.extension",
-            "nodeID" : 77
+            "hash" : "oscw",
+            "kind" : "init",
+            "nodeID" : 34,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
           }
         ],
-        "name" : "Availability",
+        "name" : "SemanticVersion",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V12AvailabilityV0D4ItemV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:e:s:9SymbolKit0A5GraphV15SemanticVersionV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "3ncjw",
+            "kind" : "struct.extension",
+            "nodeID" : 155
+          }
+        ],
+        "name" : "FoundationEssentials",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:m:s:e:s:20FoundationEssentials3URLV10DocCCommonE5usingAcD26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "4yc58",
+            "kind" : "init",
+            "nodeID" : 59,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Position",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV8LineListV11SourceRangeV8PositionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV12RelationshipV12SourceOriginV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:9SymbolKit0A5GraphV9AnyNumberO10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
-        "name" : "makeTypeMismatchError(_:)",
+        "children" : [
+          {
+            "hash" : "3h0k5",
+            "kind" : "init",
+            "nodeID" : 33,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Optional",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV21makeTypeMismatchErrorys08DecodingJ0OypXpF"
+          "precise" : "s:e:s:Sq10DocCCommonAA17FastJSONDecodableRzlE5usingxSgAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "objectiveC",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV10objectiveCACvpZ"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "57144",
+            "kind" : "init",
+            "nodeID" : 77,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Endpoint",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V4HTTPO8EndpointV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V10IdentifierV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(knownLanguageIdentifier:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV05knownD10IdentifierACSgSS_tcfc"
+        }
+      },
+      {
+        "name" : "colonSearchPattern",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon11ByteMatchesV18colonSearchPatterns6UInt64VvpZ"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:Sa10DocCCommonAA17FastJSONDecodableRzlE5usingSayxGAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "Element",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV7Elementa"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "3ruao",
+            "kind" : "struct.extension",
+            "nodeID" : 40
+          },
+          {
+            "hash" : "ppf5",
+            "kind" : "struct.extension",
+            "nodeID" : 156
+          },
+          {
+            "hash" : "525w1",
+            "kind" : "init",
+            "nodeID" : 15,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Relationship",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV12RelationshipV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
@@ -2621,35 +1690,21 @@
         }
       },
       {
-        "name" : "id",
+        "name" : "hasMatches",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV2idSSvp"
-        }
-      },
-      {
-        "name" : "index(after:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV5index5afterAA013_FixedSizeBitF0V5IndexVys6UInt64V_GAL_tF"
-        }
-      },
-      {
-        "name" : "insert(_:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV6insertySb8inserted_AA0dE0V17memberAfterInserttAGF"
-        }
-      },
-      {
-        "name" : "init(id:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV2idACSS_tcfc"
+          "precise" : "s:10DocCCommon11ByteMatchesV03hasD0Sbvp"
         }
       },
       {
         "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V16AlternateSymbolsV0dA0V10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
       },
       {
         "name" : "init(using:)",
@@ -2661,235 +1716,28 @@
       {
         "children" : [
           {
-            "hash" : "224h4",
-            "kind" : "method",
-            "nodeID" : 204,
-            "parameterTypes" : [
-              "SmallSourceLanguageSet"
-            ],
-            "returnTypes" : [
-              "SmallSourceLanguageSet"
-            ]
-          },
-          {
-            "hash" : "87a8l",
-            "kind" : "method",
-            "nodeID" : 189,
-            "parameterTypes" : [
-              "SmallSourceLanguageSet"
-            ],
-            "returnTypes" : [
-
-            ]
-          },
-          {
-            "hash" : "7x29t",
-            "kind" : "method",
-            "nodeID" : 44,
-            "parameterTypes" : [
-              "SourceLanguage"
-            ],
-            "returnTypes" : [
-              "SourceLanguage?"
-            ]
-          },
-          {
-            "hash" : "425jc",
+            "hash" : "4de0x",
             "kind" : "init",
-            "nodeID" : 194,
+            "nodeID" : 210,
             "parameterTypes" : [
-
+              "FastSymbolGraphJSONDecoder"
             ],
             "returnTypes" : [
               ""
-            ]
-          },
-          {
-            "hash" : "tbx2",
-            "kind" : "method",
-            "nodeID" : 169,
-            "parameterTypes" : [
-              "SmallSourceLanguageSet"
-            ],
-            "returnTypes" : [
-
-            ]
-          },
-          {
-            "hash" : "8zwnq",
-            "kind" : "method",
-            "nodeID" : 147,
-            "parameterTypes" : [
-              "SmallSourceLanguageSet"
-            ],
-            "returnTypes" : [
-              "SmallSourceLanguageSet"
-            ]
-          },
-          {
-            "hash" : "450d2",
-            "kind" : "method",
-            "nodeID" : 233,
-            "parameterTypes" : [
-              "SmallSourceLanguageSet"
-            ],
-            "returnTypes" : [
-
-            ]
-          },
-          {
-            "hash" : "4nh1d",
-            "kind" : "method",
-            "nodeID" : 190,
-            "parameterTypes" : [
-              "SourceLanguage"
-            ],
-            "returnTypes" : [
-              "Bool"
-            ]
-          },
-          {
-            "hash" : "2xzvm",
-            "kind" : "init",
-            "nodeID" : 7,
-            "parameterTypes" : [
-              "SourceLanguage..."
-            ],
-            "returnTypes" : [
-              ""
-            ]
-          },
-          {
-            "hash" : "84j56",
-            "kind" : "method",
-            "nodeID" : 55,
-            "parameterTypes" : [
-
-            ],
-            "returnTypes" : [
-              "SourceLanguage?"
-            ]
-          },
-          {
-            "hash" : "9d5sf",
-            "kind" : "method",
-            "nodeID" : 100,
-            "parameterTypes" : [
-
-            ],
-            "returnTypes" : [
-              "[SourceLanguage]"
-            ]
-          },
-          {
-            "hash" : "4lqx9",
-            "kind" : "property",
-            "nodeID" : 58
-          },
-          {
-            "hash" : "7suim",
-            "kind" : "typealias",
-            "nodeID" : 170
-          },
-          {
-            "hash" : "2kz0q",
-            "kind" : "subscript",
-            "nodeID" : 80,
-            "parameterTypes" : [
-              "Index"
-            ],
-            "returnTypes" : [
-              "SourceLanguage"
-            ]
-          },
-          {
-            "hash" : "7v6he",
-            "kind" : "property",
-            "nodeID" : 54
-          },
-          {
-            "hash" : "apmk",
-            "kind" : "property",
-            "nodeID" : 83
-          },
-          {
-            "hash" : "74vvg",
-            "kind" : "method",
-            "nodeID" : 49,
-            "parameterTypes" : [
-              "SourceLanguage"
-            ],
-            "returnTypes" : [
-              "SourceLanguage?"
-            ]
-          },
-          {
-            "hash" : "81nqk",
-            "kind" : "typealias",
-            "nodeID" : 95
-          },
-          {
-            "hash" : "2p77v",
-            "kind" : "property",
-            "nodeID" : 53
-          },
-          {
-            "hash" : "jwjm",
-            "kind" : "method",
-            "nodeID" : 179,
-            "parameterTypes" : [
-
-            ],
-            "returnTypes" : [
-              "IteratorProtocol<SourceLanguage>"
-            ]
-          },
-          {
-            "hash" : "39hdy",
-            "kind" : "method",
-            "nodeID" : 217,
-            "parameterTypes" : [
-              "SourceLanguage"
-            ],
-            "returnTypes" : [
-              "Bool",
-              "SourceLanguage"
-            ]
-          },
-          {
-            "hash" : "1h033",
-            "kind" : "method",
-            "nodeID" : 216,
-            "parameterTypes" : [
-              "Index"
-            ],
-            "returnTypes" : [
-              "SmallSourceLanguageSet.Index"
-            ]
-          },
-          {
-            "hash" : "7zvdv",
-            "kind" : "method",
-            "nodeID" : 197,
-            "parameterTypes" : [
-              "SmallSourceLanguageSet"
-            ],
-            "returnTypes" : [
-              "SmallSourceLanguageSet"
             ]
           }
         ],
-        "name" : "SmallSourceLanguageSet",
+        "name" : "Extension",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV"
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO9ExtensionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
-        "name" : "init(using:)",
+        "name" : "init(name:id:idAliases:linkDisambiguationID:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO9ExtensionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:10DocCCommon14SourceLanguageV4name2id0F7Aliases20linkDisambiguationIDACSS_SSSaySSGSSSgtcfc"
         }
       },
       {
@@ -2899,84 +1747,364 @@
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV8PositionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V12OverloadDataV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO16GenericParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
         "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV0D9ParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V16AlternateSymbolsV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
         "children" : [
           {
-            "hash" : "76529",
-            "kind" : "struct.extension",
-            "nodeID" : 40
-          },
-          {
-            "hash" : "8v95l",
-            "kind" : "struct.extension",
-            "nodeID" : 22
-          },
-          {
-            "hash" : "40h24",
-            "kind" : "struct.extension",
-            "nodeID" : 63
-          },
-          {
-            "hash" : "4npey",
-            "kind" : "struct.extension",
-            "nodeID" : 92
+            "hash" : "84van",
+            "kind" : "init",
+            "nodeID" : 64,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
           }
         ],
-        "name" : "Swift",
+        "name" : "FastJSONDecodable",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO8GenericsV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+          "precise" : "s:10DocCCommon17FastJSONDecodableP"
         }
       },
       {
-        "name" : "hasMatches",
+        "name" : "name",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon11ByteMatchesV03hasD0Sbvp"
-        }
-      },
-      {
-        "name" : "advanceToNextKey()",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV16advanceToNextKeySbys13DecodingErrorOYKF"
-        }
-      },
-      {
-        "name" : "init(from:)",
-        "symbolID" : {
-          "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV4fromACs7Decoder_p_tKcfc"
+          "precise" : "s:10DocCCommon14SourceLanguageV4nameSSvp"
         }
       },
       {
         "name" : "FastJSONDecodable-Implementations"
       },
       {
-        "name" : "knownLanguages",
+        "name" : "Essentials"
+      },
+      {
+        "name" : "formUnion(_:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon14SourceLanguageV14knownLanguagesSayACGvpZ"
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV9formUnionyyACF"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV9AnyScalarO10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "4vu4i",
+            "kind" : "init",
+            "nodeID" : 27,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "URL",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:20FoundationEssentials3URLV10DocCCommonE5usingAcD26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "8jr4b",
+            "kind" : "init",
+            "nodeID" : 141,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Kind",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV12RelationshipV4KindV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
         "name" : "FastJSONDecodable-Implementations"
       },
       {
-        "name" : "formIntersection(_:)",
+        "name" : "tutorials"
+      },
+      {
+        "name" : "decode(_:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV16formIntersectionyyACF"
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyS2Sms13DecodingErrorOYKF"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "descendIntoObject()",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV17descendIntoObjectyys13DecodingErrorOYKF"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "6u0m4",
+            "kind" : "init",
+            "nodeID" : 197,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Kind",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V4KindV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "1evrg",
+            "kind" : "init",
+            "nodeID" : 17,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Module",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV6ModuleV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "6x1hv",
+            "kind" : "struct.extension",
+            "nodeID" : 111
+          },
+          {
+            "hash" : "3qk28",
+            "kind" : "struct.extension",
+            "nodeID" : 179
+          },
+          {
+            "hash" : "7ls86",
+            "kind" : "init",
+            "nodeID" : 213,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "LineList",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV8LineListV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "5tbev",
+            "kind" : "init",
+            "nodeID" : 72,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "3jcyq",
+            "kind" : "struct.extension",
+            "nodeID" : 116
+          }
+        ],
+        "name" : "FunctionSignature",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:Sn10DocCCommonSiRszrlE5usingSnySiGAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "3ga98",
+            "kind" : "method",
+            "nodeID" : 48,
+            "parameterTypes" : [
+              "StaticString",
+              "Int"
+            ],
+            "returnTypes" : [
+              "Bool"
+            ]
+          }
+        ],
+        "name" : "UnsafeRawPointer",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:SV10DocCCommonE14hasASCIIPrefix_10byteOffsetSbs12StaticStringV_SitF"
+        }
+      },
+      {
+        "name" : "quoteSearchPattern",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon11ByteMatchesV18quoteSearchPatterns6UInt64VvpZ"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "45m58",
+            "kind" : "struct.extension",
+            "nodeID" : 61
+          },
+          {
+            "hash" : "8tt30",
+            "kind" : "struct.extension",
+            "nodeID" : 164
+          },
+          {
+            "hash" : "vdq8",
+            "kind" : "struct.extension",
+            "nodeID" : 94
+          },
+          {
+            "hash" : "r5gl",
+            "kind" : "struct.extension",
+            "nodeID" : 10
+          },
+          {
+            "hash" : "1snqo",
+            "kind" : "struct.extension",
+            "nodeID" : 120
+          },
+          {
+            "hash" : "8zst3",
+            "kind" : "enum.extension",
+            "nodeID" : 119
+          },
+          {
+            "hash" : "6zt5h",
+            "kind" : "struct.extension",
+            "nodeID" : 190
+          },
+          {
+            "hash" : "6kcg1",
+            "kind" : "init",
+            "nodeID" : 114,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "5n5nv",
+            "kind" : "struct.extension",
+            "nodeID" : 136
+          },
+          {
+            "hash" : "7zdad",
+            "kind" : "struct.extension",
+            "nodeID" : 165
+          },
+          {
+            "hash" : "3cq6a",
+            "kind" : "enum.extension",
+            "nodeID" : 222
+          }
+        ],
+        "name" : "SymbolGraph",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV10DocCCommonE5usingAcD04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "7msjw",
+            "kind" : "init",
+            "nodeID" : 167,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Range",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:Sn10DocCCommonSiRszrlE5usingSnySiGAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
       },
       {
@@ -2984,7 +2112,7 @@
           {
             "hash" : "7uxi8",
             "kind" : "init",
-            "nodeID" : 199,
+            "nodeID" : 220,
             "parameterTypes" : [
               "FastSymbolGraphJSONDecoder"
             ],
@@ -3000,72 +2128,944 @@
         }
       },
       {
+        "name" : "subscript(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetVyAA0dE0VAA013_FixedSizeBitF0V5IndexVys6UInt64V_Gcip"
+        }
+      },
+      {
+        "name" : "makeTypeMismatchError(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV21makeTypeMismatchErrorys08DecodingJ0OypXpF"
+        }
+      },
+      {
+        "name" : "Implementing-keyed-decoding"
+      },
+      {
+        "name" : "knownLanguages",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV14knownLanguagesSayACGvpZ"
+        }
+      },
+      {
+        "name" : "makeDataCorruptedError(message:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV22makeDataCorruptedError7messages08DecodingJ0OSS_tF"
+        }
+      },
+      {
         "children" : [
           {
-            "hash" : "8t2sm",
+            "hash" : "47lyv",
             "kind" : "init",
-            "nodeID" : 111,
+            "nodeID" : 200,
             "parameterTypes" : [
-              "UInt64",
-              "UInt64"
+              "FastSymbolGraphJSONDecoder"
             ],
             "returnTypes" : [
               ""
             ]
+          }
+        ],
+        "name" : "Line",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV8LineListV0D0V10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:SS10DocCCommonE5usingSSAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(name:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV4nameACSS_tcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "1a1cp",
+            "kind" : "init",
+            "nodeID" : 233,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "AvailabilityItem",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V12AvailabilityV0D4ItemV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "metal",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV5metalACvpZ"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "86hz2",
+            "kind" : "init",
+            "nodeID" : 107,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Kind",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV4KindO10DocCCommonE5usingAkL04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "Equatable-Implementations"
+      },
+      {
+        "name" : "advanceToNextKey()",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV16advanceToNextKeySbys13DecodingErrorOYKF"
+        }
+      },
+      {
+        "name" : "min()",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV3minAA0dE0VSgyF"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "28siv",
+            "kind" : "init",
+            "nodeID" : 97,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Platform",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV8PlatformV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "4ts7z",
+            "kind" : "struct.extension",
+            "nodeID" : 128
+          }
+        ],
+        "name" : "HTTP",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V4HTTPO8EndpointV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV0D9ParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "data",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV4dataACvpZ"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "miy1",
+            "kind" : "init",
+            "nodeID" : 147,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "GenericParameter",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO16GenericParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V4KindV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "CustomDebugStringConvertible-Implementations"
+      },
+      {
+        "name" : "formIntersection(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV16formIntersectionyyACF"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV8LineListV0D0V10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV15OperatingSystemV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV12RelationshipV12SourceOriginV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "count",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV5countSivp"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "5cr5x",
+            "kind" : "init",
+            "nodeID" : 232,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "AccessControl",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V13AccessControlV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "4co6a",
+            "kind" : "struct.extension",
+            "nodeID" : 221
           },
           {
-            "hash" : "4akr8",
-            "kind" : "method",
-            "nodeID" : 151,
+            "hash" : "359i",
+            "kind" : "struct.extension",
+            "nodeID" : 54
+          },
+          {
+            "hash" : "80gut",
+            "kind" : "struct.extension",
+            "nodeID" : 224
+          },
+          {
+            "hash" : "7ara4",
+            "kind" : "enum.extension",
+            "nodeID" : 126
+          },
+          {
+            "hash" : "891my",
+            "kind" : "struct.extension",
+            "nodeID" : 63
+          },
+          {
+            "hash" : "9bp2y",
+            "kind" : "struct.extension",
+            "nodeID" : 172
+          },
+          {
+            "hash" : "8pc61",
+            "kind" : "struct.extension",
+            "nodeID" : 173
+          },
+          {
+            "hash" : "5a4yj",
+            "kind" : "struct.extension",
+            "nodeID" : 168
+          }
+        ],
+        "name" : "Swift",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:m:s:e:s:SD10DocCCommonSSRszAA17FastJSONDecodableR_rlE5usingSDySSq_GAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "symmetricDifference(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV19symmetricDifferenceyA2CF"
+        }
+      },
+      {
+        "name" : "linkDisambiguationID",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV20linkDisambiguationIDSSvp"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "7cykr",
+            "kind" : "init",
+            "nodeID" : 129,
             "parameterTypes" : [
-              "ByteMatches"
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Identifier",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V10IdentifierV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "2qhx5",
+            "kind" : "type.method",
+            "nodeID" : 211,
+            "parameterTypes" : [
+              "Decodable.Type",
+              "Data"
+            ],
+            "returnTypes" : [
+              "Decodable"
+            ]
+          },
+          {
+            "hash" : "515q5",
+            "kind" : "method",
+            "nodeID" : 178,
+            "parameterTypes" : [
+              "String"
+            ],
+            "returnTypes" : [
+              "DecodingError"
+            ]
+          },
+          {
+            "hash" : "1upkw",
+            "kind" : "method",
+            "nodeID" : 225,
+            "parameterTypes" : [
+
+            ],
+            "returnTypes" : [
+
+            ]
+          },
+          {
+            "hash" : "3mt2a",
+            "kind" : "method",
+            "nodeID" : 235,
+            "parameterTypes" : [
+              "Bool.Type"
             ],
             "returnTypes" : [
               "Bool"
             ]
           },
           {
-            "hash" : "6q0bo",
-            "kind" : "type.property",
-            "nodeID" : 132
+            "hash" : "6sm8t",
+            "kind" : "method",
+            "nodeID" : 20,
+            "parameterTypes" : [
+              "Int.Type"
+            ],
+            "returnTypes" : [
+              "Int"
+            ]
           },
           {
-            "hash" : "2dc0w",
-            "kind" : "property",
-            "nodeID" : 227
+            "hash" : "3d0lz",
+            "kind" : "method",
+            "nodeID" : 159,
+            "parameterTypes" : [
+              "String.Type"
+            ],
+            "returnTypes" : [
+              "String"
+            ]
           },
           {
-            "hash" : "5lybu",
-            "kind" : "type.property",
-            "nodeID" : 174
+            "hash" : "833bn",
+            "kind" : "method",
+            "nodeID" : 11,
+            "parameterTypes" : [
+              "Value.Type"
+            ],
+            "returnTypes" : [
+              "Value"
+            ]
           },
           {
-            "hash" : "3xbel",
-            "kind" : "type.property",
-            "nodeID" : 178
+            "hash" : "51hfc",
+            "kind" : "method",
+            "nodeID" : 104,
+            "parameterTypes" : [
+              "[Value].Type"
+            ],
+            "returnTypes" : [
+              "[Value]"
+            ]
           },
           {
-            "hash" : "8u4nu",
-            "kind" : "property",
-            "nodeID" : 1
+            "hash" : "4ejhc",
+            "kind" : "method",
+            "nodeID" : 85,
+            "parameterTypes" : [
+              "Value?.Type"
+            ],
+            "returnTypes" : [
+              "Value?"
+            ]
+          },
+          {
+            "hash" : "5ypwv",
+            "kind" : "method",
+            "nodeID" : 32,
+            "parameterTypes" : [
+              "[String:Value].Type"
+            ],
+            "returnTypes" : [
+              "[String:Value]"
+            ]
+          },
+          {
+            "hash" : "2trx8",
+            "kind" : "method",
+            "nodeID" : 67,
+            "parameterTypes" : [
+              "StaticString",
+              "Int"
+            ],
+            "returnTypes" : [
+              "Bool"
+            ]
+          },
+          {
+            "hash" : "9s52l",
+            "kind" : "method",
+            "nodeID" : 161,
+            "parameterTypes" : [
+
+            ],
+            "returnTypes" : [
+
+            ]
+          },
+          {
+            "hash" : "1s4v6",
+            "kind" : "method",
+            "nodeID" : 175,
+            "parameterTypes" : [
+              "Any.Type"
+            ],
+            "returnTypes" : [
+              "DecodingError"
+            ]
+          },
+          {
+            "hash" : "647fq",
+            "kind" : "method",
+            "nodeID" : 188,
+            "parameterTypes" : [
+
+            ],
+            "returnTypes" : [
+              "Bool"
+            ]
+          },
+          {
+            "hash" : "2wz4s",
+            "kind" : "method",
+            "nodeID" : 6,
+            "parameterTypes" : [
+              "String"
+            ],
+            "returnTypes" : [
+              "DecodingError"
+            ]
+          },
+          {
+            "hash" : "3g65r",
+            "kind" : "method",
+            "nodeID" : 37,
+            "parameterTypes" : [
+
+            ],
+            "returnTypes" : [
+              "DecodingError"
+            ]
           }
         ],
-        "name" : "ByteMatches",
+        "name" : "FastSymbolGraphJSONDecoder",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon11ByteMatchesV"
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV"
         }
       },
       {
-        "name" : "descendIntoObject()",
+        "name" : "init(using:)",
         "symbolID" : {
           "interfaceLanguage" : "swift",
-          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV17descendIntoObjectyys13DecodingErrorOYKF"
+          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO9ExtensionV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
         }
+      },
+      {
+        "name" : "decode(_:from:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decode_4fromxxm_20FoundationEssentials4DataVntKAA0C13JSONDecodableRzlFZ"
+        }
+      },
+      {
+        "name" : "remove(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV6removeyAA0dE0VSgAFF"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV8LineListV10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "Performance-considerations"
+      },
+      {
+        "name" : "idAliases",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV9idAliasesSaySSGvp"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "children" : [
+          {
+            "hash" : "6ff4h",
+            "kind" : "enum.extension",
+            "nodeID" : 185
+          },
+          {
+            "hash" : "586tr",
+            "kind" : "init",
+            "nodeID" : 216,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "GenericConstraint",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "9ncyn",
+            "kind" : "init",
+            "nodeID" : 143,
+            "parameterTypes" : [
+              "String",
+              "String",
+              "[String]",
+              "String?"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "9vi8",
+            "kind" : "type.property",
+            "nodeID" : 177
+          },
+          {
+            "hash" : "4j5um",
+            "kind" : "func.op",
+            "nodeID" : 28,
+            "parameterTypes" : [
+              "SourceLanguage",
+              "SourceLanguage"
+            ],
+            "returnTypes" : [
+              "Bool"
+            ]
+          },
+          {
+            "hash" : "8itnu",
+            "kind" : "func.op",
+            "nodeID" : 49,
+            "parameterTypes" : [
+              "SourceLanguage",
+              "SourceLanguage"
+            ],
+            "returnTypes" : [
+              "Bool"
+            ]
+          },
+          {
+            "hash" : "2gjve",
+            "kind" : "method",
+            "nodeID" : 22,
+            "parameterTypes" : [
+              "Encoder"
+            ],
+            "returnTypes" : [
+
+            ]
+          },
+          {
+            "hash" : "5wusb",
+            "kind" : "property",
+            "nodeID" : 150
+          },
+          {
+            "hash" : "2np2d",
+            "kind" : "property",
+            "nodeID" : 207
+          },
+          {
+            "hash" : "6u4fy",
+            "kind" : "type.property",
+            "nodeID" : 127
+          },
+          {
+            "hash" : "59225",
+            "kind" : "property",
+            "nodeID" : 137
+          },
+          {
+            "hash" : "9h7ng",
+            "kind" : "init",
+            "nodeID" : 105,
+            "parameterTypes" : [
+              "String"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "8t47b",
+            "kind" : "type.property",
+            "nodeID" : 184
+          },
+          {
+            "hash" : "8xea3",
+            "kind" : "init",
+            "nodeID" : 84,
+            "parameterTypes" : [
+              "Decoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "92ph6",
+            "kind" : "init",
+            "nodeID" : 182,
+            "parameterTypes" : [
+              "String"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "35lim",
+            "kind" : "init",
+            "nodeID" : 29,
+            "parameterTypes" : [
+              "String"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          },
+          {
+            "hash" : "2893i",
+            "kind" : "type.property",
+            "nodeID" : 112
+          },
+          {
+            "hash" : "7rjx9",
+            "kind" : "type.property",
+            "nodeID" : 195
+          },
+          {
+            "hash" : "6hui1",
+            "kind" : "property",
+            "nodeID" : 215
+          },
+          {
+            "hash" : "1rz2",
+            "kind" : "property",
+            "nodeID" : 43
+          },
+          {
+            "hash" : "365oy",
+            "kind" : "type.property",
+            "nodeID" : 51
+          },
+          {
+            "hash" : "779pz",
+            "kind" : "init",
+            "nodeID" : 132,
+            "parameterTypes" : [
+              "String"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "SourceLanguage",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon14SourceLanguageV"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:Si10DocCCommonE5usingSiAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "1mewb",
+            "kind" : "init",
+            "nodeID" : 74,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Dictionary",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:SD10DocCCommonSSRszAA17FastJSONDecodableR_rlE5usingSDySSq_GAA0C22SymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "5yegi",
+            "kind" : "init",
+            "nodeID" : 154,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "AnyScalar",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV9AnyScalarO10DocCCommonE5usingAeF04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "15f05",
+            "kind" : "init",
+            "nodeID" : 82,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Names",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:9SymbolKit0A5GraphV0A0V5NamesV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "children" : [
+          {
+            "hash" : "4q2tr",
+            "kind" : "init",
+            "nodeID" : 5,
+            "parameterTypes" : [
+              "FastSymbolGraphJSONDecoder"
+            ],
+            "returnTypes" : [
+              ""
+            ]
+          }
+        ],
+        "name" : "Bool",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:e:s:Sb10DocCCommonE5usingSbAA26FastSymbolGraphJSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "ignoreValue()",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV11ignoreValueyys13DecodingErrorOYKF"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V14KindIdentifierV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "insert(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon22SmallSourceLanguageSetV6insertySb8inserted_AA0dE0V17memberAfterInserttAGF"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V13AccessControlV10DocCCommonE5usingAgH04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "init(using:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:9SymbolKit0A5GraphV0A0V12AvailabilityV0D4ItemV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc"
+        }
+      },
+      {
+        "name" : "FastJSONDecodable-Implementations"
+      },
+      {
+        "name" : "decode(_:)",
+        "symbolID" : {
+          "interfaceLanguage" : "swift",
+          "precise" : "s:10DocCCommon26FastSymbolGraphJSONDecoderV6decodeyS2bms13DecodingErrorOYKF"
+        }
+      },
+      {
+        "name" : "Errors"
       }
     ],
-    "tutorialContainer" : 139,
-    "tutorialOverviewContainer" : 152
+    "tutorialContainer" : 99,
+    "tutorialOverviewContainer" : 158
   },
   "version" : {
     "major" : 0,

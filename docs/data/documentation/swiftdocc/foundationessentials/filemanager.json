@@ -114,10 +114,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataProvider",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
-        "doc:\/\/SwiftDocC\/s8CopyableP",
-        "doc:\/\/SwiftDocC\/s10DeinitableP",
-        "doc:\/\/SwiftDocC\/s9EscapableP"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -370,21 +367,6 @@
   "title" : "ReadOnlyFileManagerProtocol",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/readonlyfilemanagerprotocol"
-},
-"doc://SwiftDocC/s10DeinitableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
-  "title" : "Swift.Deinitable",
-  "type" : "unresolvable"
-},
-"doc://SwiftDocC/s8CopyableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
-  "title" : "Swift.Copyable",
-  "type" : "unresolvable"
-},
-"doc://SwiftDocC/s9EscapableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
-  "title" : "Swift.Escapable",
-  "type" : "unresolvable"
 }
 }
 }

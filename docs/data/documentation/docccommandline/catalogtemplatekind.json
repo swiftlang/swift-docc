@@ -94,10 +94,7 @@
     {
       "identifiers" : [
         "doc:\/\/DocCCommandLine\/14ArgumentParser013ExpressibleByA0P",
-        "doc:\/\/DocCCommandLine\/s8CopyableP",
-        "doc:\/\/DocCCommandLine\/s10DeinitableP",
         "doc:\/\/DocCCommandLine\/SQ",
-        "doc:\/\/DocCCommandLine\/s9EscapableP",
         "doc:\/\/DocCCommandLine\/SH",
         "doc:\/\/DocCCommandLine\/SY"
       ],
@@ -321,21 +318,6 @@
   "title" : "CatalogTemplateKind.tutorial",
   "type" : "topic",
   "url" : "\/documentation\/docccommandline\/catalogtemplatekind\/tutorial"
-},
-"doc://DocCCommandLine/s10DeinitableP": {
-  "identifier" : "doc:\/\/DocCCommandLine\/s10DeinitableP",
-  "title" : "Swift.Deinitable",
-  "type" : "unresolvable"
-},
-"doc://DocCCommandLine/s8CopyableP": {
-  "identifier" : "doc:\/\/DocCCommandLine\/s8CopyableP",
-  "title" : "Swift.Copyable",
-  "type" : "unresolvable"
-},
-"doc://DocCCommandLine/s9EscapableP": {
-  "identifier" : "doc:\/\/DocCCommandLine\/s9EscapableP",
-  "title" : "Swift.Escapable",
-  "type" : "unresolvable"
 }
 }
 }

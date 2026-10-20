@@ -127,7 +127,6 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -592,11 +591,6 @@
   "title" : "traits",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/variantcollection\/variant\/traits"
-},
-"doc://SwiftDocC/s10DeinitableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
-  "title" : "Swift.Deinitable",
-  "type" : "unresolvable"
 }
 }
 }

@@ -81,13 +81,10 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/SL",
-        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
         "doc:\/\/SwiftDocC\/Se",
-        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
-        "doc:\/\/SwiftDocC\/s9EscapableP",
         "doc:\/\/SwiftDocC\/SH"
       ],
       "kind" : "relationships",
@@ -523,24 +520,9 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct\/uint32"
 },
-"doc://SwiftDocC/s10DeinitableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
-  "title" : "Swift.Deinitable",
-  "type" : "unresolvable"
-},
 "doc://SwiftDocC/s23CustomStringConvertibleP": {
   "identifier" : "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
   "title" : "Swift.CustomStringConvertible",
-  "type" : "unresolvable"
-},
-"doc://SwiftDocC/s8CopyableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
-  "title" : "Swift.Copyable",
-  "type" : "unresolvable"
-},
-"doc://SwiftDocC/s9EscapableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s9EscapableP",
-  "title" : "Swift.Escapable",
   "type" : "unresolvable"
 }
 }

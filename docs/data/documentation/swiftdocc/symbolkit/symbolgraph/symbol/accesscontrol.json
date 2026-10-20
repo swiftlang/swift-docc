@@ -137,7 +137,6 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/SL",
-        "doc:\/\/SwiftDocC\/s10DeinitableP",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -319,11 +318,6 @@
   "title" : "Comparable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol\/accesscontrol\/comparable-implementations"
-},
-"doc://SwiftDocC/s10DeinitableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s10DeinitableP",
-  "title" : "Swift.Deinitable",
-  "type" : "unresolvable"
 }
 }
 }
