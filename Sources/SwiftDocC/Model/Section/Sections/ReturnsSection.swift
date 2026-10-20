@@ -12,6 +12,6 @@ public import Markdown
 
 /// A section that contains return value information for a function.
 public struct ReturnsSection: Section {
-    public static let title: String? = "Return Value"
+    public static let title: String? = "Return value"
     public var content: [any Markup]
 }

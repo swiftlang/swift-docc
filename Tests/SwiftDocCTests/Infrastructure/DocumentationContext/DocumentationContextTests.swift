@@ -1026,7 +1026,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.heading?.detachedFromParent.debugDescription(),
         """
         Heading level: 3
-        └─ Text "Related Documentation"
+        └─ Text "Related documentation"
         """)
         XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.links.count, 5)
         XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.links.first?.destination, "doc://com.example.documentation/documentation/MyKit/MyClass")
@@ -1474,7 +1474,7 @@ let expected = """
  doc://org.swift.docc.example/documentation/SideKit
  ├ doc://org.swift.docc.example/documentation/SideKit/SideClass
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element
- │ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations
+ │ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-implementations
  │ │   ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/Value(_:)
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/init()
@@ -4067,11 +4067,11 @@ let expected = """
             # ``SideKit/SideClass``
             Abstract.
             ## Discussion
-            This is a link to <doc:/documentation/SideKit/SideClass/Element#Protocol-Implementations>.
+            This is a link to <doc:/documentation/SideKit/SideClass/Element#Protocol-implementations>.
             ## Topics
             ### Basics
-             - <doc:documentation/SideKit/SideClass/Element#Protocol-Implementations>
-             - <doc:Element#Protocol-Implementations>
+             - <doc:documentation/SideKit/SideClass/Element#Protocol-implementations>
+             - <doc:Element#Protocol-implementations>
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 

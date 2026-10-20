@@ -159,7 +159,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
                 "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
                 
-                "MixedLanguageProtocol Implementations",
+                "MixedLanguageProtocol implementations",
                 "Article",
                 "Article curated in a single-language page",
                 "APICollection",
@@ -194,7 +194,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()",
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-implementations",
             ]
         )
     }
@@ -639,7 +639,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             protocolRenderNode.topicSections.flatMap(\.identifiers),
             [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-implementations",
             ]
         )
         
@@ -649,7 +649,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             objectiveCVariantNode.topicSections.flatMap(\.identifiers),
             [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-implementations",
             ]
         )
     }
@@ -682,7 +682,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             protocolRenderNode.topicSections.flatMap(\.identifiers),
             [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-implementations",
             ]
         )
         
@@ -804,9 +804,9 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssertEqual(
             symbol.relationshipSections.flatMap { [$0.title] + $0.identifiers },
             [
-                "Inherits From",
+                "Inherits from",
                 "doc://org.swift.MixedLanguageFramework/objc(cs)NSObject",
-                "Conforms To",
+                "Conforms to",
                 "doc://org.swift.MixedLanguageFramework/SH"
             ]
         )
@@ -816,7 +816,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssertEqual(
             objectiveCSymbol.relationshipSections.flatMap { [$0.title] + $0.identifiers },
             [
-                "Inherits From",
+                "Inherits from",
                 "doc://org.swift.MixedLanguageFramework/objc(cs)NSObject"
             ]
         )
@@ -832,7 +832,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssertEqual(
             symbol.defaultImplementationsSections.flatMap { [$0.title] + $0.identifiers },
             [
-                "SymbolWithLanguageSpecificRelationships Implementations",
+                "SymbolWithLanguageSpecificRelationships implementations",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SymbolWithLanguageSpecificRelationships/myMethodDefaultImplementation",
             ]
         )

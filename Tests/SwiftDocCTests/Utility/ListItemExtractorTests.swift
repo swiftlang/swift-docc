@@ -80,7 +80,7 @@ class ListItemExtractorTests: XCTestCase {
             findModelContent: { semantic in
                 semantic.returnsSection?.content
             },
-            renderContentSectionTitle: "Return Value"
+            renderContentSectionTitle: "Return value"
         )
 
         try await assertExtractsRichContentFor(

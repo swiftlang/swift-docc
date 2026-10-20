@@ -18,6 +18,6 @@ public struct SeeAlsoSection: GroupedSection {
 
     /// The list of groups for the section.
     public var taskGroups: [TaskGroup] {
-        return [TaskGroup(heading: Heading(level: 3, Text("Related Documentation")), content: Array(content))]
+        return [TaskGroup(heading: Heading(level: 3, Text("Related documentation")), content: Array(content))]
     }
 }

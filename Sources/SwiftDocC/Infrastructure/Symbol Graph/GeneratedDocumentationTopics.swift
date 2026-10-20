@@ -86,7 +86,7 @@ enum GeneratedDocumentationTopics {
             
             // Create a new default implementations provider, if needed.
             if !implementingTypes[reference]!.inheritedFromTypeName.keys.contains(fromType) {
-                implementingTypes[reference]!.inheritedFromTypeName[fromType] = Collections.APICollection(title: "\(typeSimpleName) Implementations")
+                implementingTypes[reference]!.inheritedFromTypeName[fromType] = Collections.APICollection(title: "\(typeSimpleName) implementations")
             }
             
             // Add the default implementation.
@@ -94,7 +94,7 @@ enum GeneratedDocumentationTopics {
         }
     }
     
-    private static let defaultImplementationGroupTitle = "Default Implementations"
+    private static let defaultImplementationGroupTitle = "Default implementations"
     
     private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext) throws {
         let automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
