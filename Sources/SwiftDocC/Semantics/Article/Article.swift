@@ -16,7 +16,7 @@ public import Markdown
 /// An article is written using markdown headers and paragraphs. There is an implicit meaning to the structure of an article that's parsed from its markup
 /// when the article is instantiated. For example, the leading level 1 heading is considered the article's title, the first paragraph of text is considered the
 /// article's abstract, and following paragraphs up to the next heading is considered the article's discussion.
-public final class Article: Semantic, Abstracted, Redirected, AutomaticTaskGroupsProviding {
+public final class Article: Semantic, Abstracted, Redirected {
     /// The markup that makes up this article's content.
     let markup: (any Markup)?
     /// An optional container for metadata that's unrelated to the article's content.
