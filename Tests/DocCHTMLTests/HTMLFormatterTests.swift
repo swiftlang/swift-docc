@@ -440,6 +440,18 @@ struct HTMLFormatterTests {
         </ul>
         """)
     }
+    
+    @Test(arguments: [HTMLNode._Tag.article, .code, .script, .picture], [
+        [HTMLFormatter.Options.prettyPrint],
+        [HTMLFormatter.Options.prettyPrint, .omitOptionalEndTags],
+        [HTMLFormatter.Options.omitOptionalEndTags],
+        [],
+    ])
+    func includesEndTagWhenContentIsEmpty(tag: HTMLNode._Tag, formattingOptions: HTMLFormatter.Options) {
+        #expect(htmlString(for: ._element(tag, contents: []), options: formattingOptions) == """
+        <\(tag.rawValue)></\(tag.rawValue)>
+        """)
+    }
 }
 
 private func htmlString(for element: HTMLNode, options: HTMLFormatter.Options = []) -> String {

@@ -84,11 +84,11 @@ class PreviewActionIntegrationTests: XCTestCase {
                 documentationBundleURL: sourceURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: outputURL,
+                outputLocation: outputURL,
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default,
+                outputFileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
         }
         
@@ -108,7 +108,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let convertedOverviewURL = outputURL
             .appendingPathComponent("data")
             .appendingPathComponent("tutorials")
-            .appendingPathComponent("Overview.json")
+            .appendingPathComponent("overview.json")
         
         // Start watching the source and get the initial (successful) state.
         do {
@@ -214,11 +214,11 @@ class PreviewActionIntegrationTests: XCTestCase {
                 documentationBundleURL: sourceURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: outputURL,
+                outputLocation: outputURL,
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default,
+                outputFileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
         }
         
@@ -277,11 +277,11 @@ class PreviewActionIntegrationTests: XCTestCase {
                 documentationBundleURL: sourceURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: outputURL,
+                outputLocation: outputURL,
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default,
+                outputFileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
         }
         
@@ -344,11 +344,11 @@ class PreviewActionIntegrationTests: XCTestCase {
                 documentationBundleURL: sourceURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: outputURL,
+                outputLocation: outputURL,
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default,
+                outputFileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
                 
             // Inject extra "work" to slow dow the documentation build so that the directory monitor has time to cancel it.

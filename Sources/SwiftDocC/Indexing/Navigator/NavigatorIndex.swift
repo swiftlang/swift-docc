@@ -75,9 +75,6 @@ public class NavigatorIndex {
     
     /// The url of the index.
     public let url: URL
-    
-    /// The filesystem to use.
-    package var fileManager: any FileManagerProtocol
 
     /// The LMDB environment.
     var environment: LMDB.Environment?
@@ -187,7 +184,6 @@ public class NavigatorIndex {
         
         return NavigatorIndex(
             url: url,
-            fileManager: FileManager.default,
             presentationIdentifier: presentationIdentifier,
             bundleIdentifier: bundleIdentifier,
             environment: environment,
@@ -202,7 +198,6 @@ public class NavigatorIndex {
     
     fileprivate init(
         url: URL,
-        fileManager: any FileManagerProtocol = FileManager.default,
         presentationIdentifier: String?,
         bundleIdentifier: String,
         environment: LMDB.Environment,
@@ -214,7 +209,6 @@ public class NavigatorIndex {
         navigatorTree: NavigatorTree
     ) {
         self.url = url
-        self.fileManager = fileManager
         self.presentationIdentifier = presentationIdentifier
         self.bundleIdentifier = bundleIdentifier
         self.environment = environment
@@ -234,9 +228,8 @@ public class NavigatorIndex {
      
      - Note: Don't expose this initializer as it's used **ONLY** for building an index.
      */
-    fileprivate init(withEmptyTree url: URL, fileManager: any FileManagerProtocol = FileManager.default, bundleIdentifier: String) throws {
+    fileprivate init(withEmptyTree url: URL, bundleIdentifier: String) throws {
         self.url = url
-        self.fileManager = fileManager
         self.bundleIdentifier = bundleIdentifier
         self.presentationIdentifier = nil
         self.navigatorTree = NavigatorTree(root: NavigatorTree.rootNode(bundleIdentifier: bundleIdentifier))
@@ -505,7 +498,7 @@ extension NavigatorIndex {
         /// The output URL.
         public let outputURL: URL
         
-        /// The filesystem in which to work.
+        /// The file manager that the builder uses to write the JSON index file and to move the LMDB index file from its temporary `FileManager.default` location
         package let fileManager: any FileManagerProtocol
 
         /// The bundle name.
@@ -646,7 +639,7 @@ extension NavigatorIndex {
                 }
                 try fileManager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
                 
-                navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, fileManager: fileManager, bundleIdentifier: bundleIdentifier)
+                navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, bundleIdentifier: bundleIdentifier)
             } catch {
                 // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                 diagnostics.append(error.makeDiagnostic(source: outputURL,
@@ -1098,7 +1091,6 @@ extension NavigatorIndex {
                         )
                     )
                 }
-                
             }
             
             guard emitLMDBRepresentation else {
@@ -1122,7 +1114,6 @@ extension NavigatorIndex {
                 )
 
                 return
-
             }
             let environment: LMDB.Environment
             if let alreadyDefinedEnvironment = navigatorIndex.environment {

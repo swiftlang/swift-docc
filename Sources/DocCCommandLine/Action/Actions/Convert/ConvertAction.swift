@@ -24,7 +24,7 @@ public struct ConvertAction: AsyncAction {
     private let signposter = ConvertActionConverter.signposter
     
     let rootURL: URL?
-    let targetDirectory: URL
+    let outputLocation: URL
     let htmlTemplateDirectory: URL?
     
     private let emitDigest: Bool
@@ -51,7 +51,7 @@ public struct ConvertAction: AsyncAction {
     
     let sourceRepository: SourceRepository?
     
-    private var fileManager: any ReadOnlyFileManagerProtocol
+    private var inputFileManager: any ReadOnlyFileManagerProtocol
     private var outputFileManager: any FileManagerProtocol
 
     private let temporaryDirectory: URL
@@ -64,16 +64,16 @@ public struct ConvertAction: AsyncAction {
     ///   - documentationBundleURL: The root of the documentation catalog to convert.
     ///   - outOfProcessResolver: An out-of-process resolver that
     ///   - analyze: `true` if the convert action should override the provided `diagnosticLevel` with `.information`, otherwise `false`.
-    ///   - targetDirectory: The location where the convert action will write the built documentation output.
+    ///   - outputLocation: The location where the convert action will write the built documentation output.
     ///   - htmlTemplateDirectory: The location of the HTML template to use as a base for the built documentation output.
     ///   - emitDigest: Whether the conversion should create metadata files, such as linkable entities information.
     ///   - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
     ///   - buildIndex: Whether or not the convert action should emit an LMDB representation of the navigator index.
     /// 
     ///     A JSON representation is built and emitted regardless of this value.
-    ///   - fileManager: The file manager that the convert action uses to read data from files.
-    ///   - outputFormat: The format that the convert action will output the documentation in when writing to the output location.
+    ///   - inputFileManager: The file manager that the convert action uses to read data from files.
     ///   - outputFileManager: The file manager that the convert action uses to create directories and write data to files.
+    ///   - outputFormat: The format that the convert action will output the documentation in when writing to the output location.
     ///   - documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
     ///   - catalogDiscoveryOptions: Options to configure how the converter discovers documentation catalogs.
     ///   - diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
@@ -97,15 +97,15 @@ public struct ConvertAction: AsyncAction {
         documentationBundleURL: URL?,
         outOfProcessResolver: OutOfProcessReferenceResolver?,
         analyze: Bool,
-        targetDirectory: URL,
+        outputLocation: URL,
         htmlTemplateDirectory: URL?,
         emitDigest: Bool,
         currentPlatforms: [String : PlatformVersion]?,
         buildIndex: Bool = false,
-        fileManager: (any ReadOnlyFileManagerProtocol)? = nil,
+        inputFileManager: (any ReadOnlyFileManagerProtocol)? = nil,
+        outputFileManager: any FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
         outputFormat: Docc.Convert.OutputFormat = .json,
-        outputFileManager: any FileManagerProtocol = FileManager.default,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
         catalogDiscoveryOptions: CatalogDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
@@ -126,12 +126,12 @@ public struct ConvertAction: AsyncAction {
         dependencies: [URL] = []
     ) throws {
         self.rootURL = documentationBundleURL
-        self.targetDirectory = targetDirectory
+        self.outputLocation = outputLocation
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.emitDigest = emitDigest
         self.outputFormat = outputFormat
         self.buildLMDBIndex = buildIndex
-        self.fileManager = fileManager ?? outputFileManager
+        self.inputFileManager = inputFileManager ?? outputFileManager
         self.outputFileManager = outputFileManager
         self.temporaryDirectory = temporaryDirectory
         self.documentationCoverageOptions = documentationCoverageOptions
@@ -194,8 +194,7 @@ public struct ConvertAction: AsyncAction {
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
-        let (inputs, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) {
-            [fileManager = self.fileManager] in
+        let (inputs, dataProvider) = try signposter.withIntervalSignpost("Discover inputs", id: signposter.makeSignpostID()) { [fileManager = self.inputFileManager] in
             try DocumentationContext.InputsProvider(fileManager: fileManager)
             .inputsAndDataProvider(
                 startingPoint: documentationBundleURL,
@@ -254,7 +253,7 @@ public struct ConvertAction: AsyncAction {
         switch outputFormat {
             case .json:
                 if let htmlTemplateDirectory {
-                    try fileManager.copyItem(
+                    try inputFileManager.copyItem(
                         at: htmlTemplateDirectory,
                         to: temporaryFolder,
                         writingUsing: outputFileManager
@@ -310,7 +309,7 @@ public struct ConvertAction: AsyncAction {
                 let data = try StaticHostableTransformer.indexHTMLData(
                     in: htmlTemplateDirectory,
                     with: hostingBasePath,
-                    fileManager: fileManager
+                    fileManager: inputFileManager
                 )
                 
                 // A hosting base path was provided which means we need to replace the standard
@@ -345,7 +344,7 @@ public struct ConvertAction: AsyncAction {
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
             catalogRootFolder: rootURL,
-            inputFileManager: fileManager,
+            inputFileManager: inputFileManager,
             outputFileManager: outputFileManager,
             context: context,
             indexer: indexer,
@@ -359,7 +358,7 @@ public struct ConvertAction: AsyncAction {
         if outputFormat == .experimentalHTML {
             htmlConsumer = try FullPageHTMLContentConsumer(
                 targetFolder: temporaryFolder,
-                fileManager: fileManager,
+                inputFileManager: inputFileManager,
                 outputFileManager: outputFileManager,
                 prettyPrint: shouldPrettyPrintOutputJSON, // Use the same configuration as the JSON output to make it convenient for the developer.
                 customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
@@ -368,7 +367,7 @@ public struct ConvertAction: AsyncAction {
         } else if transformForStaticHostingOptions == .withContent, let indexHTML {
             htmlConsumer = try FileWritingHTMLContentConsumer(
                 targetFolder: temporaryFolder,
-                fileManager: fileManager,
+                inputFileManager: inputFileManager,
                 outputFileManager: outputFileManager,
                 htmlTemplate: indexHTML,
                 customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
@@ -466,19 +465,19 @@ public struct ConvertAction: AsyncAction {
         // However, if the `emitDigest` flag is true, we should replace the current output with our digest of diagnostics.
         // FIXME: We no longer output a diagnostics file in the output. We can remove the `emitDigest` check below.
         if !didEncounterError || emitDigest {
-            try moveOutput(from: temporaryFolder, to: targetDirectory)
+            try moveOutput(from: temporaryFolder, to: outputLocation)
         }
 
         // Log the output size.
         benchmark(
             add: Benchmark.ArchiveOutputSize(
-                archiveDirectory: targetDirectory,
+                archiveDirectory: outputLocation,
                 fileManager: outputFileManager
             )
         )
         benchmark(
             add: Benchmark.DataDirectoryOutputSize(
-                dataDirectory: targetDirectory.appendingPathComponent(
+                dataDirectory: outputLocation.appendingPathComponent(
                     NodeURLGenerator.Path.dataFolderName,
                     isDirectory: true
                 ),
@@ -487,7 +486,7 @@ public struct ConvertAction: AsyncAction {
         )
         benchmark(
             add: Benchmark.IndexDirectoryOutputSize(
-                indexDirectory: targetDirectory.appendingPathComponent(
+                indexDirectory: outputLocation.appendingPathComponent(
                     NodeURLGenerator.Path.indexFolderName,
                     isDirectory: true
                 ),
@@ -498,9 +497,9 @@ public struct ConvertAction: AsyncAction {
         if Benchmark.main.isEnabled {
             // Write the benchmark files directly in the target directory.
             let outputConsumer = ConvertFileWritingConsumer(
-                targetFolder: targetDirectory,
+                targetFolder: outputLocation,
                 catalogRootFolder: rootURL,
-                inputFileManager: fileManager,
+                inputFileManager: inputFileManager,
                 outputFileManager: outputFileManager,
                 context: context,
                 indexer: nil,
@@ -511,7 +510,7 @@ public struct ConvertAction: AsyncAction {
             try outputConsumer.consume(benchmarks: Benchmark.main)
         }
 
-        return (ActionResult(didEncounterError: didEncounterError, outputs: [targetDirectory]), context)
+        return (ActionResult(didEncounterError: didEncounterError, outputs: [outputLocation]), context)
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
