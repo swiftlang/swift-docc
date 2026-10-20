@@ -1235,7 +1235,34 @@ struct AvailabilityTests {
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated == false)
     }
-    
+
+    @Test
+    func moduleWithoutAvailabilityInformationIsNotConsideredDeprecated() async throws {
+        // No Info.plist default availability, no in-source availability, and no `@Available` directive.
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+
+        let moduleReference = try #require(context.soleRootModuleReference)
+        let moduleNode = try #require(context.documentationCache[moduleReference])
+        _ = try #require(converter.renderNode(for: moduleNode))
+
+        let symbolNode = try #require(context.documentationCache["some-symbol-id"])
+        _ = try #require(converter.renderNode(for: symbolNode))
+
+        // The symbol is not deprecated and neither is the module that contains it.
+        let symbolReference = try #require(converter.renderContext.store.content(for: symbolNode.reference)?.renderReference as? TopicRenderReference)
+        #expect(symbolReference.isDeprecated == false)
+
+        let moduleRenderReference = try #require(converter.renderContext.store.content(for: moduleNode.reference)?.renderReference as? TopicRenderReference)
+        #expect(moduleRenderReference.isDeprecated == false, "A module without any availability information shouldn't be marked as deprecated")
+    }
+
     @Test(arguments: ["9.2", nil])
     func symbolAvailableOnOnePlatformIsNotConsideredDeprecatedWhenDefaultAvailable(defaultIntroducedVersion: String?) async throws {
         let catalog = Folder(name: "unit-test.docc") {
