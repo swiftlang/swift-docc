@@ -32,7 +32,8 @@ extension ConvertAction {
         /// Creates an indexer that asynchronously indexes nodes and creates the index file on disk.
         /// - Parameters:
         ///   - outputURL: The target directory to create the index file.
-        ///   - fileManager: The file manager the indexer uses to write the created index file.
+        ///   - fileManager: The file manager the indexer uses to write the created JSON index file.
+        ///     > Note: The indexer uses `FileManager.default` to write the LMDB index file.
         ///   - bundleID: The identifier of the catalog being indexed.
         init(outputURL: URL, fileManager: any FileManagerProtocol, bundleID: DocumentationContext.Inputs.Identifier) throws {
             let indexURL = outputURL.appendingPathComponent("index", isDirectory: true)

@@ -69,7 +69,6 @@ package protocol ReadOnlyFileManagerProtocol: AnyObject, DataProvider {
     ///   - url: The URL for the directory to compute the size of.
     /// - Returns: The total size, in bytes, of the specified directory and its contents.
     func sizeOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> Int64
-
 }
 
 /// A read-write file manager.
@@ -135,7 +134,6 @@ package protocol FileManagerProtocol: ReadOnlyFileManagerProtocol {
     ///
     /// - Throws: If the directory couldn't be created.
     func createDirectory(at: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey: Any]?) throws
-
 }
 
 extension ReadOnlyFileManagerProtocol {
@@ -180,7 +178,6 @@ extension ReadOnlyFileManagerProtocol {
             let data = try contents(of: source)
             try otherFileManager.createFile(at: destination, contents: data)
         }
-
     }
 
     package func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL]) {
@@ -194,16 +191,13 @@ extension ReadOnlyFileManagerProtocol {
             directories: Array( allContents[partitionIndex...] )
         )
     }
-
 }
 
 extension FileManagerProtocol {
-
     package func moveItem(at source: URL, to destination: URL, writingUsing otherFileManager: any FileManagerProtocol) throws {
         try self.copyItem(at: source, to: destination, writingUsing: otherFileManager)
         try self.removeItem(at: source)
     }
-
 }
 
 /// Add compliance to `FileManagerProtocol` to `FileManager`,
