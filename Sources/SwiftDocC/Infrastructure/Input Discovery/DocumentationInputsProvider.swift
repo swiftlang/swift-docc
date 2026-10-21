@@ -54,11 +54,11 @@ extension DocumentationContext {
     /// - ``InputsFromSymbolGraphError``
     package struct InputsProvider {
         /// The file manager that the provider uses to read file and directory contents from the file system.
-        private var fileManager: any FileManagerProtocol
+        private var fileManager: any ReadOnlyFileManagerProtocol
 
         /// Creates a new documentation inputs provider.
         /// - Parameter fileManager: The file manager that the provider uses to read file and directory contents from the file system.
-        package init(fileManager: any FileManagerProtocol) {
+        package init(fileManager: any ReadOnlyFileManagerProtocol) {
             self.fileManager = fileManager
         }
 
@@ -151,7 +151,7 @@ extension DocumentationContext.InputsProvider {
         let info = try DocumentationContext.Inputs.Info(
             from: infoPlistData,
             catalogDiscoveryOptions: options,
-            derivedDisplayName: url.deletingPathExtension().lastPathComponent
+            derivedDisplayName: url.standardizedFileURL.deletingPathExtension().lastPathComponent
         )
 
         let foundContents = try findContents(in: url)

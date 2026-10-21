@@ -123,7 +123,7 @@ package extension HTMLRenderer {
     static func prepareForFullPage(
         customHeader: URL?,
         customFooter: URL?,
-        fileManager: some FileManagerProtocol
+        fileManager: some ReadOnlyFileManagerProtocol
     ) throws -> (customHeader: HTMLNode?, customFooter: HTMLNode?) {
         func parse(contentsOf url: URL) throws -> HTMLNode? {
             let content = String(decoding: try fileManager.contents(of: url), as: UTF8.self)

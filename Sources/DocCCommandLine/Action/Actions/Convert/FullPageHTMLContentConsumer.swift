@@ -27,17 +27,18 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     
     init(
         targetFolder: URL,
-        fileManager: some FileManagerProtocol,
+        inputFileManager: some ReadOnlyFileManagerProtocol,
+        outputFileManager: some FileManagerProtocol,
         prettyPrint: Bool,
         customHeader: URL?,
         customFooter: URL?
     ) throws {
-        (self.customHeader, self.customFooter) = try HTMLRenderer.prepareForFullPage(customHeader: customHeader, customFooter: customFooter, fileManager: fileManager)
+        (self.customHeader, self.customFooter) = try HTMLRenderer.prepareForFullPage(customHeader: customHeader, customFooter: customFooter, fileManager: inputFileManager)
         self.prettyPrint = prettyPrint
         
         self.fileWriter = JSONEncodingRenderNodeWriter(
             targetFolder: targetFolder,
-            fileManager: fileManager,
+            fileManager: outputFileManager,
             transformForStaticHostingIndexHTML: nil
         )
     }

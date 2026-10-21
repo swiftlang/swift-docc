@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1725,10 +1725,8 @@ struct MarkdownOutputTests {
         let macAvailability = try #require(node.metadata.availability(for: "macOS"))
         #expect(macAvailability.introduced == .versioned("2.0.0"))
         #expect(macAvailability.deprecated == .versioned("4.0.0"))
-                
-        let visionAvailability = node.metadata.availability(for: "visionOS")
-        #expect(visionAvailability == nil)
-        
+                        
+        #expect(node.metadata.availability(for: "visionOS") == nil)
         // Note that the first non-nil deprecation message, from any platform, forms the summary
         #expect(node.metadata.deprecation == "Use something else instead")
     }

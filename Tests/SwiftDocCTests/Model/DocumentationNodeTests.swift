@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -32,7 +32,7 @@ class DocumentationNodeTests: XCTestCase {
         ###### Heading6
         """
         
-        let article = Article(markup: Document(parsing: articleSource, options: []), metadata: nil, redirects: nil, options: [:])
+        let article = Article(markup: Document(parsing: articleSource, options: []), metadata: nil, redirects: nil, options: [:], availability: .init(defaultAvailability: nil))
         let node = try DocumentationNode(
             reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift),
             article: article
@@ -82,7 +82,7 @@ class DocumentationNodeTests: XCTestCase {
     func testWithMultipleSourceLanguages() throws {
         let sourceLanguages: Set<SourceLanguage> = [.swift, .objectiveC]
         // Test if articles contain all available source languages
-        let article = Article(markup: Document(parsing: "# Title", options: []), metadata: nil, redirects: nil, options: [:])
+        let article = Article(markup: Document(parsing: "# Title", options: []), metadata: nil, redirects: nil, options: [:], availability: .init(defaultAvailability: nil))
         let articleNode = try DocumentationNode(
             reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguages: sourceLanguages),
             article: article

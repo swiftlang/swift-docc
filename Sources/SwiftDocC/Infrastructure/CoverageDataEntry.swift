@@ -198,7 +198,7 @@ extension CoverageDataEntry {
         let referencePath = renderNode.identifier.description
         let sourceLanguage = documentationNode.sourceLanguage
         let availableSourceLanguages = documentationNode.availableSourceLanguages
-        let availability = semanticSymbol?.availability
+        let availability = semanticSymbol?._availabilityVariants.firstValue
         let hasCodeListing = renderNode.hasCodeListing
 
         self = try CoverageDataEntry(

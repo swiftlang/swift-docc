@@ -67,7 +67,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             kind: .structure,
             language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516),
             relativePresentationURL: URL(string: "/path/so/something")!,
-            referenceURL: URL(string: "doc://com.test.bundle/something")!,
+            referenceIdentifier: "doc://com.test.bundle/something",
             title: "Resolved Title",
             abstract: [
                 .text("Resolved abstract with "),
@@ -333,7 +333,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
             kind: .article,
             language: .swift,
             relativePresentationURL: URL(string: "/path/to/something")!,
-            referenceURL: URL(string: "doc://\(externalBundleID)/path/to/something")!,
+            referenceIdentifier: .init("doc://\(externalBundleID)/path/to/something"),
             title: "Resolved title",
             abstract: [
                 .text("External abstract with an image "),
@@ -686,7 +686,7 @@ class OutOfProcessReferenceResolverV2Tests: XCTestCase {
                 kind: .class,
                 language: .swift,
                 relativePresentationURL: URL(string: "/documentation/ModuleName/Something")!,
-                referenceURL: URL(string: "/documentation/ModuleName/Something")!,
+                referenceIdentifier: "doc://com.example/documentation/ModuleName/Something",
                 title: "Something",
                 availableLanguages: [.swift, .objectiveC],
                 platforms: platforms,

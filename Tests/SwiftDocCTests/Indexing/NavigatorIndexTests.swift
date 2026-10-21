@@ -433,7 +433,7 @@ Root
     func testNavigatorIndexGenerationEmpty() throws {
         let targetURL = try createTemporaryDirectory()
         
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier)
         builder.setup()
         builder.finalize()
                
@@ -497,7 +497,7 @@ Root
 
         let targetURL = try createTemporaryDirectory()
 
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier)
         builder.setup()
         try builder.index(renderNode: renderNode)
         builder.finalize(emitJSONRepresentation: false, emitLMDBRepresentation: false)
@@ -514,7 +514,7 @@ Root
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -696,7 +696,7 @@ Root
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -742,8 +742,8 @@ Root
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
-        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
-        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         fromMemoryBuilder.setup()
         fromDecodedBuilder.setup()
         
@@ -822,7 +822,7 @@ Root
         let jsonData = try Data(contentsOf: jsonFile)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         
         let renderNode = try XCTUnwrap(RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: jsonData))
@@ -1045,7 +1045,7 @@ Root
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
 
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier)
         builder.setup()
 
         for identifier in context.knownPages {
@@ -1078,7 +1078,7 @@ Root
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, usePageTitle: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, usePageTitle: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -1121,7 +1121,7 @@ Root
         // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -1194,7 +1194,7 @@ Root
         // Create an index 10 times to ensure we have no non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -1254,7 +1254,7 @@ Root
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -1358,7 +1358,7 @@ Root
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -1384,7 +1384,7 @@ Root
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
         builder.setup()
         
         // Change the path hasher to the FNV-1 implementation and make sure paths and mappings are still working.
@@ -1840,7 +1840,7 @@ Root
         let converter = DocumentationNodeConverter(context: context)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: "org.swift.docc.test", sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: "org.swift.docc.test", sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -2167,7 +2167,7 @@ Root
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
         builder.setup()
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
@@ -2212,7 +2212,7 @@ Root
         
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true)
         builder.setup()
         for identifier in context.knownPages {
             let entity = try context.entity(with: identifier)
@@ -2264,7 +2264,7 @@ Root
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
 
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: bundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
 
         for identifier in context.knownPages {

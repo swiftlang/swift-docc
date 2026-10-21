@@ -156,6 +156,7 @@ add_library(SwiftDocC
   LinkTargets/LinkDestinationSummary.swift
   LinkTargets/LinkDestinationSummary+FastJSONDecodable.swift
   Model/AnchorSection.swift
+  Model/Availability.swift
   Model/AvailabilityParser.swift
   Model/BuildMetadata.swift
   Model/DocumentationMarkup.swift

@@ -74,6 +74,10 @@ def parse_args(args):
     parser.add_argument(
         "--cross-compile-hosts", dest="cross_compile_hosts",
         help="List of cross compile hosts targets.", default=[])
+    parser.add_argument(
+        '--extra-swiftpm-flag', action='append', default=[],
+        dest='extra_swiftpm_flags',
+        help='Additional flag to pass to SwiftPM invocations.')
     parser.add_argument('--install-only', action='store_true', default=False)
 
     parsed = parser.parse_args(args)
@@ -265,6 +269,8 @@ def get_swiftpm_options(action, args):
 
     if action == 'show-bin-path':
         swiftpm_args += ['--show-bin-path']
+
+    swiftpm_args += args.extra_swiftpm_flags
 
     return swiftpm_args
 

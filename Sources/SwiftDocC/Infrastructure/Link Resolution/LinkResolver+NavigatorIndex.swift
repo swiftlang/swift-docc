@@ -33,11 +33,13 @@ package struct ExternalRenderNode {
     
     /// The identifier of the external render node.
     package var identifier: ResolvedTopicReference {
-        ResolvedTopicReference(
+        let reference = entity.makeResolvedTopicReference()
+        // This modifies the external content's reference in order to misrepresent it as local content (see above).
+        return ResolvedTopicReference(
             bundleID: bundleIdentifier,
-            path: entity.referenceURL.path,
-            fragment: entity.referenceURL.fragment,
-            sourceLanguages: entity.availableLanguages
+            path: reference.path,
+            fragment: reference.fragment,
+            sourceLanguages: reference.sourceLanguages
         )
     }
 

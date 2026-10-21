@@ -36,7 +36,12 @@ public struct DocumentationNode {
     }
     
     /// The names of the platforms for which the node is available.
-    public var platformNames: Set<String>?
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.6 is released")
+    public var platformNames: Set<String>? {
+        get { _platformNames }
+        set { _platformNames = newValue }
+    }
+    private var _platformNames: Set<String>?
     
     /// The name of the node.
     public var name: Name
@@ -162,9 +167,38 @@ public struct DocumentationNode {
     ///   - name: The name of the node.
     ///   - markup: The markup that makes up the content for the node.
     ///   - semantic: The parsed documentation structure that's described by the documentation content.
-    ///   - platformNames: The names of the platforms for which the node is available.
     ///   - isVirtual: `true` if the node represents a virtual element that doesn't represent a rendered page of documentation, `false` otherwise.
+    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: any Markup, semantic: Semantic?, isVirtual: Bool = false) {
+        self.init(
+            reference: reference,
+            kind: kind,
+            sourceLanguage: sourceLanguage,
+            availableSourceLanguages: availableSourceLanguages,
+            name: name,
+            markup: markup,
+            semantic: semantic,
+            _platformNames: nil,
+            isVirtual: isVirtual
+        )
+    }
+    
+    @_disfavoredOverload
+    @available(*, deprecated, renamed: "init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)", message: "Use 'init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)' instead. This deprecated API will be removed after 6.6 is released")
     public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: any Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
+        self.init(
+            reference: reference,
+            kind: kind,
+            sourceLanguage: sourceLanguage,
+            availableSourceLanguages: availableSourceLanguages,
+            name: name,
+            markup: markup,
+            semantic: semantic,
+            _platformNames: platformNames,
+            isVirtual: isVirtual
+        )
+    }
+    
+    private init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>?, name: Name, markup: any Markup, semantic: Semantic?, _platformNames: Set<String>?, isVirtual: Bool) {
         self.reference = reference
         self.kind = kind
         self.sourceLanguage = sourceLanguage
@@ -173,7 +207,7 @@ public struct DocumentationNode {
         self.markup = markup
         self.semantic = semantic
         self.symbol = nil
-        self.platformNames = platformNames
+        self._platformNames = _platformNames
         self.docChunks = [DocumentationChunk(source: .sourceCode(location: nil, offset: nil), markup: markup)]
         self.isVirtual = isVirtual
         
@@ -247,7 +281,7 @@ public struct DocumentationNode {
             operatingSystemName.formUnion(otherDomains)
         }
         
-        self.platformNames = Set(
+        self._platformNames = Set(
             operatingSystemName.map { name in
                 PlatformName(operatingSystemName: name).rawValue
             }
@@ -296,6 +330,7 @@ public struct DocumentationNode {
                 keyPath: \.rawValue
             ),
             availabilityVariants: symbolAvailabilityVariants,
+            consolidatedAvailabilityVariants: .empty,
             deprecatedSummaryVariants: .empty,
             mixinsVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.mixins,
@@ -794,7 +829,7 @@ public struct DocumentationNode {
             languages.formUnion(sourceLanguages)
             operatingSystemName.formUnion(otherDomains)
         }
-        platformNames = Set(operatingSystemName.map { PlatformName(operatingSystemName: $0).rawValue })
+        _platformNames = Set(operatingSystemName.map { PlatformName(operatingSystemName: $0).rawValue })
         availableSourceLanguages = languages
         
         if let article {
@@ -821,6 +856,7 @@ public struct DocumentationNode {
             externalIDVariants: .init(swiftVariant: symbol.identifier.precise),
             accessLevelVariants: .init(swiftVariant: symbol.accessLevel.rawValue),
             availabilityVariants: .init(swiftVariant: symbolAvailability),
+            consolidatedAvailabilityVariants: .empty,
             deprecatedSummaryVariants: .init(swiftVariant: deprecated),
             mixinsVariants: .init(swiftVariant: symbol.mixins),
             relationshipsVariants: .init(swiftVariant: RelationshipsSection()),
@@ -898,7 +934,7 @@ public struct DocumentationNode {
     public var tags: Tags = (returns: [], throws: [], parameters: [])
     
     private func warnAboutDeprecationSummaryForAvailableSymbol(semantic: Symbol, engine: DiagnosticEngine) {
-        guard !semantic.isDeprecated else {
+        guard semantic._isDeprecatedVariants.firstValue == false else {
             return
         }
         

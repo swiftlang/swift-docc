@@ -89,8 +89,14 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// - Note: The absolute presentation URL (if one exists) and the relative presentation URL will always have the same path and fragment components.
     let absolutePresentationURL: URL?
     
-    /// The resolved topic reference URL to this element.
-    public var referenceURL: URL
+    /// The resolved reference identifier for this element.
+    public var referenceIdentifier: RenderReferenceIdentifier
+    
+    @available(*, deprecated, renamed: "referenceIdentifier", message: "Use 'referenceIdentifier' instead. This deprecated API will be removed after 6.6 is released.")
+    public var referenceURL: URL {
+        get { URL(string: referenceIdentifier.identifier) ?? URL(string: "doc://unknown")! }
+        set { referenceIdentifier.identifier = newValue.absoluteString }
+    }
     
     /// The title of the summarized element.
     public let title: String
@@ -253,7 +259,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - kind: The kind of the summarized element.
     ///   - language: The language of the summarized element.
     ///   - relativePresentationURL: The relative presentation URL for this element.
-    ///   - referenceURL: The resolved topic reference URL to this element.
+    ///   - referenceIdentifier: The resolved reference identifier for this element.
     ///   - title: The title of the summarized element.
     ///   - abstract: The abstract of the summarized element.
     ///   - availableLanguages: All the languages in which the summarized element is available.
@@ -270,7 +276,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
         kind: DocumentationNode.Kind,
         language: SourceLanguage,
         relativePresentationURL: URL,
-        referenceURL: URL, title: String,
+        referenceIdentifier: RenderReferenceIdentifier,
+        title: String,
         abstract: LinkDestinationSummary.Abstract? = nil,
         availableLanguages: Set<SourceLanguage>,
         platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
@@ -287,7 +294,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.language = language
         self.relativePresentationURL = relativePresentationURL
         self.absolutePresentationURL = nil
-        self.referenceURL = referenceURL
+        self.referenceIdentifier = referenceIdentifier
         self.title = title
         self.abstract = abstract
         self.availableLanguages = availableLanguages
@@ -300,6 +307,45 @@ public struct LinkDestinationSummary: Codable, Equatable {
         self.topicImages = topicImages
         self.references = references
         self.variants = variants
+    }
+    
+    @available(*, deprecated, renamed: "init(kind:language:relativePresentationURL:referenceIdentifier:title:abstract:availableLanguages:platforms:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)", message: "Use 'init(kind:language:relativePresentationURL:referenceIdentifier:title:abstract:availableLanguages:platforms:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)' instead. This deprecated API will be removed after 6.6 is released.")
+    public init(
+        kind: DocumentationNode.Kind,
+        language: SourceLanguage,
+        relativePresentationURL: URL,
+        referenceURL: URL,
+        title: String,
+        abstract: LinkDestinationSummary.Abstract? = nil,
+        availableLanguages: Set<SourceLanguage>,
+        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
+        usr: String? = nil,
+        plainTextDeclaration: String? = nil,
+        subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        redirects: [URL]? = nil,
+        topicImages: [TopicImage]? = nil,
+        references: [any RenderReference]? = nil,
+        variants: [LinkDestinationSummary.Variant]
+    ) {
+        self.init(
+            kind: kind,
+            language: language,
+            relativePresentationURL: relativePresentationURL,
+            referenceIdentifier: .init(referenceURL.absoluteString),
+            title: title,
+            abstract: abstract,
+            availableLanguages: availableLanguages,
+            platforms: platforms,
+            usr: usr,
+            plainTextDeclaration: plainTextDeclaration,
+            subheadingDeclarationFragments: subheadingDeclarationFragments,
+            navigatorDeclarationFragments: navigatorDeclarationFragments,
+            redirects: redirects,
+            topicImages: topicImages,
+            references: references,
+            variants: variants
+        )
     }
 }
 
@@ -374,7 +420,7 @@ extension LinkDestinationSummary {
         compiler: inout RenderContentCompiler
     ) {
         let redirects = (documentationNode.semantic as? (any Redirected))?.redirects?.map { $0.oldPath }
-        let referenceURL = documentationNode.reference.url
+        let referenceIdentifier = documentationNode.reference.absoluteString
         
         let topicImages = renderNode.metadata.images
         var referenceIdentifiers = Set(topicImages.map(\.identifier))
@@ -392,7 +438,7 @@ extension LinkDestinationSummary {
                 kind: documentationNode.kindForLinkDestinationSummary,
                 language: documentationNode.sourceLanguage,
                 relativePresentationURL: relativePresentationURL,
-                referenceURL: referenceURL,
+                referenceIdentifier: .init(referenceIdentifier),
                 title: ReferenceResolver.title(forNode: documentationNode),
                 abstract: (documentationNode.semantic as? (any Abstracted))?.renderedAbstract(using: &compiler),
                 availableLanguages: documentationNode.availableSourceLanguages,
@@ -477,7 +523,7 @@ extension LinkDestinationSummary {
             kind: kind,
             language: language,
             relativePresentationURL: relativePresentationURL,
-            referenceURL: referenceURL,
+            referenceIdentifier: .init(referenceIdentifier),
             title: title,
             abstract: abstract,
             availableLanguages: documentationNode.availableSourceLanguages,
@@ -527,7 +573,7 @@ extension LinkDestinationSummary {
             kind: .onPageLandmark,
             language: page.sourceLanguage,
             relativePresentationURL: relativePresentationURL,
-            referenceURL: page.reference.withFragment(anchor).url,
+            referenceIdentifier: .init(page.reference.withFragment(anchor).absoluteString),
             title: landmark.title,
             abstract: abstract,
             availableLanguages: page.availableSourceLanguages,
@@ -561,7 +607,7 @@ extension LinkDestinationSummary {
             try container.encode(kind, forKey: .kind)
         }
         try container.encode(absolutePresentationURL ?? relativePresentationURL, forKey: .relativePresentationURL)
-        try container.encode(referenceURL, forKey: .referenceURL)
+        try container.encode(referenceIdentifier, forKey: .referenceURL)
         try container.encode(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
         if SourceLanguage.knownLanguages.contains(language) {
@@ -606,7 +652,7 @@ extension LinkDestinationSummary {
         let decodedURL = try container.decode(URL.self, forKey: .relativePresentationURL)
         (relativePresentationURL, absolutePresentationURL) = Self._checkIfDecodedURLWasAbsolute(decodedURL)
         
-        referenceURL = try container.decode(URL.self, forKey: .referenceURL)
+        referenceIdentifier = try container.decode(RenderReferenceIdentifier.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
         // Language can either be an identifier of a known language or a full structure
@@ -769,7 +815,7 @@ extension LinkDestinationSummary {
     public static func == (lhs: LinkDestinationSummary, rhs: LinkDestinationSummary) -> Bool {
         // The reference URL and usr have identity-like qualities.
         // If those are different the other data-like properties would also be different.
-        guard lhs.referenceURL == rhs.referenceURL else { return false }
+        guard lhs.referenceIdentifier == rhs.referenceIdentifier else { return false }
         guard lhs.usr == rhs.usr else { return false }
         
         // Compare the data-like properties in the order that they are declared (above).
@@ -868,6 +914,40 @@ private extension DocumentationNode {
         }
 
         return baseKind
+    }
+}
+
+extension LinkDestinationSummary {
+    func makeResolvedTopicReference() -> ResolvedTopicReference {
+        let identifier = referenceIdentifier.identifier
+        assert(identifier.hasPrefix("doc://"), "Reference identifiers should always have a 'doc' scheme and should always specify a host.")
+        let sourceLanguages = SmallSourceLanguageSet(availableLanguages)
+        
+        let substring = identifier.dropFirst(6 /* doc:// */)
+        let utf8View  = substring.utf8
+        
+        // The path begins with the first slash (after the scheme and "//" authority prefix)
+        guard let pathSeparator = utf8View.firstIndex(of: .init(ascii: "/")) else {
+            assertionFailure("Reference identifier '\(identifier)' has no path component. At least '/documentation/ModuleName/' is expected.")
+            return .init(bundleID: .init(rawValue: String(substring)), path: "", sourceLanguages: sourceLanguages)
+        }
+        let hostName = DocumentationContext.Inputs.Identifier(rawValue: String(substring[..<pathSeparator]))
+        
+        // An optional fragment begins after the first "#"
+        if let anchorSeparator = utf8View[pathSeparator...].firstIndex(of: .init(ascii: "#")) {
+            return .init(
+                bundleID: hostName,
+                path: substring[pathSeparator..<anchorSeparator],
+                fragment: substring[anchorSeparator...].dropFirst(/* the "#" is not included in the fragment */),
+                sourceLanguages: sourceLanguages
+            )
+        } else {
+            return .init(
+                bundleID: hostName,
+                path: substring[pathSeparator...],
+                sourceLanguages: sourceLanguages
+            )
+        }
     }
 }
 

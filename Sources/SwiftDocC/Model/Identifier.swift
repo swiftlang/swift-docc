@@ -221,7 +221,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         self.init(bundleID: bundleID, path: path, fragment: fragment, sourceLanguages: .init(sourceLanguages))
     }
     
-    init(bundleID: DocumentationContext.Inputs.Identifier, path: String, fragment: String? = nil, sourceLanguages: SmallSourceLanguageSet) {
+    init<Str: StringProtocol>(bundleID: DocumentationContext.Inputs.Identifier, path: Str, fragment: Str? = nil, sourceLanguages: SmallSourceLanguageSet) {
         self.init(
             bundleID: bundleID,
             urlReadablePath: urlReadablePath(path),

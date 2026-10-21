@@ -371,26 +371,12 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// into XML nodes representing this HTML structure
     /// ```
     /// <picture>
-    ///   <source media="(prefers-color-scheme: light)" src="relative/path/to/some-image.png"/>
-    ///   <source media="(prefers-color-scheme: dark)" src="relative/path/some-image~dark.png"/>
+    ///   <source media="(prefers-color-scheme: light)" srcset="relative/path/to/some-image.png"/>
+    ///   <source media="(prefers-color-scheme: dark)" srcset="relative/path/some-image~dark.png"/>
     ///   <img alt="Some alt text" decoding="async" loading="lazy"/>
     /// </picture>
     /// ```
     func visit(_ image: Image) -> HTMLNode {
-        guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.files.isEmpty else {
-            return .text("") // ???: What do we return for images that won't display anything?
-        }
-        
-        func srcAttributes(for images: [Int: URL]) -> [HTMLNode.Attribute] {
-            switch images.count {
-                case 0: []
-                case 1: [.src(path(to: images.first!.value))]
-                default: [.srcSet(images.sorted(by: { $0.key > $1.key }) // large scale factors first
-                    .map { scale, url in "\(path(to: url)) \(scale)x" }
-                )]
-            }
-        }
-        
         var imgAttributes: [HTMLNode.Attribute] = [
             .decoding(.async),
             .loading(.lazy),
@@ -399,13 +385,38 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             imgAttributes.insert(.alt(altText), at: 0)
         }
         
+        if let source = image.source, source.isAbsoluteWebURL {
+            imgAttributes.append(.src(source))
+            return picture(contents: [img(attributes: imgAttributes)])
+        }
+        
+        guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.files.isEmpty else {
+            return .text("") // ???: What do we return for images that won't display anything?
+        }
+        
+        func srcAttributes(for images: [Int: URL]) -> [HTMLNode.Attribute] {
+            switch images.count {
+                case 0: []
+                case 1: [.srcSet([path(to: images.first!.value)])] // No need to specify a scale factor when there's only one source.
+                default: [.srcSet(images.sorted(by: { $0.key > $1.key }) // Order by large scale factors first
+                    .map { scale, url in "\(path(to: url)) \(scale)x" }
+                )]
+            }
+        }
+        
         var content = [HTMLNode]()
         if asset.files.count == 1 {
             // When all image are either dark/light mode, add them directly on the "img" element
-            imgAttributes.append(contentsOf: srcAttributes(for: asset.files.first!.value))
+            let scaleVariants = asset.files.first!.value
+            if scaleVariants.count == 1 {
+                // Prefer a "src" attribute over a "srcSet" attribute for the "img" element itself.
+                imgAttributes.append(.src(path(to: scaleVariants.first!.value)))
+            } else {
+                imgAttributes.append(contentsOf: srcAttributes(for: scaleVariants))
+            }
         } else {
             // Define a "source" element for each dark/light style
-            for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // order light images before dark images
+            for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // Order light images before dark images
                 var attributes = srcAttributes(for: images)
                 attributes.insert(.media("(prefers-color-scheme: \(style.rawValue))"), at: 0)
                 content.append(source(attributes: attributes))
@@ -854,5 +865,14 @@ extension MarkdownRenderer {
     /// Creates an `<a>` element with a relative link to the given element.
     func anchor(linkingTo element: LinkedElement, contents: [HTMLNode]) -> HTMLNode {
         a(attributes: [.href(path(to: element.path))], contents: contents)
+    }
+}
+
+private extension String {
+    var isAbsoluteWebURL: Bool {
+        let maybeScheme = prefix(8 /* "http://" + 1 character */).lowercased()
+        
+        return maybeScheme.hasPrefix("http://")
+            || maybeScheme.hasPrefix("https://")
     }
 }

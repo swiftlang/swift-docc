@@ -88,8 +88,10 @@ private struct ContextLinkProvider: LinkProvider {
     }
     
     func assetNamed(_ assetName: String) -> LinkedAsset? {
-        guard let asset = context.resolveAsset(named: assetName, in: reference) else {
-            // The context
+        guard let asset = context.resolveAsset(named: assetName, in: reference, withType: .image),
+              let imagesBaseLocation = URL(string: "/images/\(context.inputs.id.rawValue)/")
+            else {
+            // The context doesn't have an asset with this name
             return nil
         }
         
@@ -97,7 +99,7 @@ private struct ContextLinkProvider: LinkProvider {
         for (traits, url) in asset.variants {
             let scale = (traits.displayScale ?? .standard).scaleFactor
             
-            files[traits.userInterfaceStyle == .dark ? .dark : .light, default: [:]][scale] = url
+            files[traits.userInterfaceStyle == .dark ? .dark : .light, default: [:]][scale] = imagesBaseLocation.appending(path: url.lastPathComponent, directoryHint: .notDirectory)
         }
         
         return .init(files: files)
@@ -173,6 +175,21 @@ package struct HTMLRenderer {
         // Abstract
         if let abstract = article.abstract {
             heroElements.append(renderer.visit(abstract))
+        }
+        
+        // Availability
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
+            heroElements.append(
+                renderer.availability(platforms.map {
+                    .init(
+                        name: $0.name,
+                        introduced: $0.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        deprecated: $0.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        isUnconditionallyDeprecated: $0.isUnconditionallyDeprecated,
+                        isBeta: $0.isBeta
+                    )
+                })
+            )
         }
         
         // Deprecation message
@@ -266,17 +283,15 @@ package struct HTMLRenderer {
         }
         
         // Availability
-        if let availability = symbol.availability?.availability.filter({ $0.domain != nil }).sorted(by: \.domain!.rawValue),
-           !availability.isEmpty
-        {
+        if let availability = symbol.consolidatedAvailability.firstValue?.makePlatforms(context.currentBetaPlatforms) {
             heroElements.append(
                 renderer.availability(availability.map { item in
                     .init(
-                        name: item.domain!.rawValue, // Verified non-empty above
-                        introduced: item.introducedVersion.map { "\($0.major).\($0.minor)" },
-                        deprecated: item.deprecatedVersion.map { "\($0.major).\($0.minor)" },
+                        name: item.name,
+                        introduced: item.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        deprecated: item.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
                         isUnconditionallyDeprecated: item.isUnconditionallyDeprecated,
-                        isBeta: false // TODO: Derive and pass beta information
+                        isBeta: item.isBeta
                     )
                 })
             )

@@ -20,17 +20,17 @@ extension OutOfProcessReferenceResolver.ResponseV2: FastJSONDecodable {
         
         try decoder.descendIntoObject()
         while try decoder.advanceToNextKey() {
-            if decoder.matchKey("identifier") {
-                identifier = try decoder.decode(String.self)
-            }
-            else if decoder.matchKey("capabilities") {
-                capabilities = try decoder.decode(OutOfProcessReferenceResolver.Capabilities.self)
+            if decoder.matchKey("resolved") {
+                resolved = try decoder.decode(LinkDestinationSummary.self)
             }
             else if decoder.matchKey("failure\"") {
                 failure = try decoder.decode(DiagnosticInformation.self)
             }
-            else if decoder.matchKey("resolved") {
-                resolved = try decoder.decode(LinkDestinationSummary.self)
+            else if decoder.matchKey("identifier") {
+                identifier = try decoder.decode(String.self)
+            }
+            else if decoder.matchKey("capabilities") {
+                capabilities = try decoder.decode(OutOfProcessReferenceResolver.Capabilities.self)
             }
             // Do nothing for all unknown keys
             else {

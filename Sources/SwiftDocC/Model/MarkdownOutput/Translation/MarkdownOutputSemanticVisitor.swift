@@ -148,10 +148,8 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest = MarkdownOutputManifest(title: context.inputs.displayName, documents: [document])
         
-        if let metadataAvailability = article.metadata?.availability,
-           !metadataAvailability.isEmpty
-        {
-            metadata.availability = metadataAvailability.map { .init($0) }
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
+            metadata.availability = platforms.map { .init($0) }
         }
         metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         markdownWalker.visit(article.title)
@@ -227,57 +225,10 @@ extension MarkdownOutputSemanticVisitor {
         )
         manifest = MarkdownOutputManifest(title: inputs.displayName, documents: [document])
         
-        // Availability - defaults, overridden with symbol, overridden with metadata
-        
-        var availabilities: [String: MarkdownOutputNode.Metadata.Availability] = [:]
-        
-        let symbolAvailability = symbol.availability?.availability ?? []
-        // Framework defaults only apply if there are no specific availabilities at symbol level.
-        if !symbolAvailability.contains(where: { $0.domain != nil }), let primaryModule = metadata.symbol?.modules.first {
-            for availability in inputs.info.defaultAvailability?.modules[primaryModule] ?? [] {
-                if availability.versionInformation != .unavailable {
-                    let meta = MarkdownOutputNode.Metadata.Availability(availability)
-                    availabilities[meta.platform] = meta
-                }
-            }
+        // Availability
+        if let platforms = symbol.consolidatedAvailability.firstValue?.makePlatforms(context.currentBetaPlatforms) {
+            metadata.availability = platforms.map { .init($0) }
         }
-        
-        var universalDeprecation: MarkdownOutputNode.Metadata.Availability?
-        
-        for availability in symbolAvailability {
-            let meta = MarkdownOutputNode.Metadata.Availability(availability)
-            if availability.isUnconditionallyUnavailable || availability.obsoletedVersion != nil {
-                availabilities[meta.platform] = nil
-            } else {
-                if availability.domain == nil, meta.deprecated != nil {
-                    // This is a universal deprecation (e.g. availability(*, deprecated)
-                    // and should not exist as a separate row. Instead, it should overwrite the
-                    // deprecation value for any others, once they are processed.
-                    universalDeprecation = meta
-                } else {
-                    availabilities[meta.platform] = meta
-                }
-            }
-        }
-        
-        for availability in documentationNode.metadata?.availability ?? [] {
-            let meta = MarkdownOutputNode.Metadata.Availability(availability)
-            availabilities[meta.platform] = meta
-        }
-        
-        if let universalDeprecation {
-            if availabilities.isEmpty {
-                // This was the only availability
-                availabilities[universalDeprecation.platform] = universalDeprecation
-            } else {
-                // Update any platforms, overwriting if there is no deprecation already
-                availabilities = availabilities.mapValues { old in
-                        .init(platform: old.platform, introduced: old.introduced, deprecated: old.deprecated ?? universalDeprecation.deprecated)
-                }
-            }
-        }
-        
-        metadata.availability = availabilities.values.sorted(by: \.platform)
          
         if let deprecated = symbol.deprecatedSummaryVariants[.swift], deprecated.content.isEmpty == false {
             var deprecatedWalker = markdownWalker
@@ -444,28 +395,11 @@ private extension MarkdownOutputNode.Metadata.Symbol {
 }
 
 private extension MarkdownOutputNode.Metadata.Availability {
-    init(_ item: SymbolGraph.Symbol.Availability.AvailabilityItem) {
+    init(_ platform: Availability.Platform) {
         self.init(
-            platform: item.domain?.rawValue ?? "*",
-            introduced: .init(string: item.introducedVersion?.description),
-            deprecated: item.isUnconditionallyDeprecated ? .unversioned : item.deprecatedVersion.map { .init(string: $0.description)}
-        )
-    }
-    
-    // From the info.plist of the module
-    init(_ availability: DefaultAvailability.ModuleAvailability) {
-        self.init(
-            platform: availability.platformName.rawValue,
-            introduced: .init(string: availability.introducedVersion),
-            deprecated: nil
-        )
-    }
-    
-    init(_ availability: Metadata.Availability) {
-        self.init(
-            platform: availability.platform.rawValue,
-            introduced: .init(string: availability.introduced.description),
-            deprecated: availability.deprecated.map { .init(string: $0.description) }
+            platform: platform.name,
+            introduced: .init(string: platform.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor)),
+            deprecated: .init(string: platform.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor))
         )
     }
 }

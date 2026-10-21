@@ -178,7 +178,7 @@ class ExternalRenderNodeTests: XCTestCase {
             kind: .function,
             language: .swift,
             relativePresentationURL: URL(string: "/example/path/to/external/symbol")!,
-            referenceURL: reference.url,
+            referenceIdentifier: .init(reference.absoluteString),
             title: swiftTitle,
             availableLanguages: [.swift, .objectiveC],
             usr: "some-unique-symbol-id",
@@ -252,7 +252,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
             let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
@@ -355,7 +355,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
             let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
@@ -433,7 +433,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
             let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
@@ -477,7 +477,7 @@ class ExternalRenderNodeTests: XCTestCase {
             kind: .function,
             language: .swift,
             relativePresentationURL: URL(string: "/example/path/to/external/symbol")!,
-            referenceURL: reference.url,
+            referenceIdentifier: .init(reference.absoluteString),
             title: swiftTitle,
             availableLanguages: [.swift, .objectiveC],
             platforms: [.init(name: "Platform name", introduced: "1.2.3", isBeta: true)],
@@ -558,7 +558,7 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssert(context.diagnostics.isEmpty, "Unexpectedly found problems: \(context.diagnostics.map(\.summary))")
 
         let renderIndexFolder = try createTemporaryDirectory()
-        let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         indexBuilder.setup()
         let outputConsumer = TestExternalRenderNodeOutputConsumer(indexBuilder: indexBuilder)
 

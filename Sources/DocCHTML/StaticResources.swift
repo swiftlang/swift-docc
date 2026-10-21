@@ -297,6 +297,10 @@ a {
   color: var(--color-figure-blue);
 }
 
+picture > img {
+  width: 100%;
+}
+
 /* The "eyebrow" subheading */
 section:first-of-type > hgroup > p {
   font-size: 21px;

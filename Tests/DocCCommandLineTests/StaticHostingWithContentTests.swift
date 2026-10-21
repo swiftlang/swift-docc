@@ -62,23 +62,22 @@ struct StaticHostingWithContentTests {
         
         let basePath = "some/test/base-path"
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: URL(fileURLWithPath: "/path/to/\(catalog.name)"),
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: URL(fileURLWithPath: "/output-dir"),
+            outputLocation: URL(fileURLWithPath: "/output-dir"),
             htmlTemplateDirectory: URL(fileURLWithPath: "/template"),
             emitDigest: false,
             currentPlatforms: nil,
             buildIndex: false,
-            fileManager: fileSystem,
+            inputFileManager: fileSystem,
+            outputFileManager: fileSystem,
             temporaryDirectory: URL(fileURLWithPath: "/tmp"),
             experimentalEnableCustomTemplates: true,
             transformForStaticHostingOptions: includeHTMLContent ? .withContent : .withoutContent,
             hostingBasePath: basePath
         )
-        // The old `Indexer` type doesn't work with virtual file systems.
-        action._completelySkipBuildingIndex = true
         
         _ = try await action.perform(logHandle: .none)
         
@@ -96,6 +95,8 @@ struct StaticHostingWithContentTests {
         ├─ images/
         │  ╰─ Something/
         ├─ index.html
+        ├─ index/
+        │  ╰─ index.json
         ├─ link-hierarchy.json
         ├─ linkable-entities.json
         ├─ metadata.json

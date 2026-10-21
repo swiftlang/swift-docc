@@ -56,12 +56,13 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            outputFileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         
         let result = try await action.perform(logHandle: .none)
         // Verify that the following files and folder exist at the output location
@@ -104,12 +105,13 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            outputFileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         let result = try await action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -164,12 +166,13 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            outputFileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         let result = try await action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -197,12 +200,13 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            outputFileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         let result = try await action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -229,12 +233,13 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: input.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            outputFileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         let result = try await action.perform(logHandle: .none)
         XCTAssertEqual(result.diagnostics.count, 0)
     }
@@ -261,11 +266,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: nil,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: outputLocation.absoluteURL,
+            outputLocation: outputLocation.absoluteURL,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             catalogDiscoveryOptions: CatalogDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
@@ -316,23 +321,9 @@ class ConvertActionTests: XCTestCase {
         
         // We add only the source to the file system
         let testDataProvider = try TestFileSystem(folders: [source, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        
-        let action = try ConvertAction(
-            documentationBundleURL: source.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
-        
         let targetURL = target.absoluteURL.appendingPathComponent("output")
         
-        XCTAssertNoThrow(try action.moveOutput(from: source.absoluteURL, to: targetURL))
+        XCTAssertNoThrow(try ConvertAction.moveOutput(from: source.absoluteURL, to: targetURL, fileManager: testDataProvider))
         XCTAssertTrue(testDataProvider.fileExists(atPath: targetURL.path, isDirectory: nil))
         XCTAssertFalse(testDataProvider.fileExists(atPath: source.absoluteURL.path, isDirectory: nil))
     }
@@ -350,23 +341,9 @@ class ConvertActionTests: XCTestCase {
         
         // We add only the source to the file system
         let testDataProvider = try TestFileSystem(folders: [source, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        
-        let action = try ConvertAction(
-            documentationBundleURL: source.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
-        
         let targetURL = target.absoluteURL.appendingPathComponent("target").appendingPathComponent("output")
         
-        XCTAssertThrowsError(try action.moveOutput(from: source.absoluteURL, to: targetURL))
+        XCTAssertThrowsError(try ConvertAction.moveOutput(from: source.absoluteURL, to: targetURL, fileManager: testDataProvider))
     }
 
     func testConvertDoesNotLowercasesResourceFileNames() async throws {
@@ -385,12 +362,13 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            outputFileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         let result = try await action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -427,12 +405,13 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            outputFileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         
         let result = try await action.perform(logHandle: .none)
         // Construct the URLs for the produced render json:
@@ -496,12 +475,13 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+            outputFileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         let result = try await action.perform(logHandle: .none)
         
         // Construct the URLs for the produced render json:
@@ -593,12 +573,13 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: goodBundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
-                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+                outputFileManager: testDataProvider,
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+            )
             let result = try await action.perform(logHandle: .none)
             
             XCTAssertFalse(
@@ -704,11 +685,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticFilePath: diagnosticsOutputFile
         )
@@ -765,7 +746,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .module,
                         relativePresentationURL: URL(string: "/documentation/testbed")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "TestBed",
                         language: .swift,
                         abstract: "TestBed abstract.",
@@ -782,7 +763,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .structure,
                         relativePresentationURL: URL(string: "/documentation/testbed/a")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "A",
                         language: .swift,
                         abstract: "An abstract.",
@@ -799,7 +780,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .article,
                         relativePresentationURL: URL(string: "/documentation/testbundle/article")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "This is an article",
                         language: .swift,
                         abstract: "Article abstract.",
@@ -815,7 +796,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .sampleCode,
                         relativePresentationURL: URL(string: "/documentation/testbundle/samplearticle")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "Sample Article",
                         language: .swift,
                         abstract: "Sample abstract.",
@@ -906,11 +887,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             featureFlags: featureFlags
         )
@@ -1013,11 +994,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         let result = try await action.perform(logHandle: .none)
@@ -1113,11 +1094,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticFilePath: diagnosticsOutputFile
         )
@@ -1157,7 +1138,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .tutorialArticle,
                         relativePresentationURL: URL(string: "/tutorials/testbundle/article")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "Making an Augmented Reality App",
                         language: .swift,
                         abstract: "This is an abstract for the intro.",
@@ -1170,7 +1151,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .onPageLandmark,
                         relativePresentationURL: URL(string: "/tutorials/testbundle/article#Section-Name")!,
-                        referenceURL: reference.withFragment("Section-Name").url,
+                        referenceIdentifier: reference.withFragment("Section-Name").absoluteString,
                         title: "Section Name",
                         language: .swift,
                         abstract: nil,
@@ -1186,7 +1167,7 @@ class ConvertActionTests: XCTestCase {
                     LinkDestinationSummary(
                         kind: .tutorialTableOfContents,
                         relativePresentationURL: URL(string: "/tutorials/technologyx")!,
-                        referenceURL: reference.url,
+                        referenceIdentifier: reference.absoluteString,
                         title: "Technology X",
                         language: .swift,
                         abstract: "Learn about some stuff in Technology X.",
@@ -1272,11 +1253,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: true, // emit digest files
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
             let result = try await action.perform(logHandle: .none)
@@ -1296,11 +1277,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false, // don't emit digest files
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
             let result = try await action.perform(logHandle: .none)
@@ -1332,11 +1313,12 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: fileSystem,
+                inputFileManager: fileSystem,
+                outputFileManager: fileSystem,
                 temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
                 documentationCoverageOptions: coverageOptions
             )
@@ -1380,14 +1362,14 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: [
                 "platform1": PlatformVersion(.init(10, 11, 12), beta: false),
                 "platform2": PlatformVersion(.init(11, 12, 13), beta: false),
             ],
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         
@@ -1414,21 +1396,19 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: currentPlatforms,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
         }
         
-        // Test whether the missing platforms copy the availability information from the fallback platform.
+        // The current platforms forward the current platforms as-is without applying fallback logic.
         var action = try makeConvertAction(currentPlatforms: ["iOS": PlatformVersion(.init(10, 0, 0), beta: true)])
         XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
-            "Mac Catalyst" : PlatformVersion(.init(10, 0, 0), beta: true),
-            "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true),
         ])
         // Test whether the non-missing platforms don't copy the availability information from the fallback platform.
         action = try makeConvertAction(currentPlatforms: [
@@ -1438,13 +1418,11 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: false),
-            "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true)
         ])
         action = try makeConvertAction(currentPlatforms: [
             "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
             "iPadOS": PlatformVersion(.init(12, 0, 0), beta: false),
-            
         ])
         XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
@@ -1454,7 +1432,6 @@ class ConvertActionTests: XCTestCase {
         // Test whether the non-missing platforms don't copy the availability information from the non-fallback platform.
         action = try makeConvertAction(currentPlatforms: [
             "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
-            
         ])
         XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
@@ -1478,11 +1455,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: [:],
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         
@@ -1507,11 +1484,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: analyze, // Turn on/off the analyzer.
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine)
             let result = try await action.perform(logHandle: .none)
@@ -1558,11 +1535,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: targetURL,
+                outputLocation: targetURL,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: emitDigest,
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
             
@@ -1638,11 +1615,12 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: outputURL,
+                outputLocation: outputURL,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: testFileSystem,
+                inputFileManager: testFileSystem,
+                outputFileManager: testFileSystem,
                 temporaryDirectory: testFileSystem.uniqueTemporaryDirectory()
             )
             action.diagnosticEngine.consumers.sync { $0.removeAll() } 
@@ -1708,7 +1686,7 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetURL,
+            outputLocation: targetURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -1767,7 +1745,7 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: bundleDirectory,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: nil,
             emitDigest: false,
             currentPlatforms: nil,
@@ -1819,7 +1797,7 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: bundleDirectory,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: temporaryTestOutputDirectory,
+            outputLocation: temporaryTestOutputDirectory,
             htmlTemplateDirectory: nil,
             emitDigest: false,
             currentPlatforms: nil,
@@ -1969,11 +1947,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
             diagnosticEngine: engine
@@ -2005,11 +1983,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: true,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
             diagnosticEngine: engine
@@ -2042,11 +2020,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: true,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error"
         )
@@ -2081,11 +2059,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: true,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
             diagnosticFilePath: diagnosticOutputFile
@@ -2109,11 +2087,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 inheritDocs: flag
             )
@@ -2126,11 +2104,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         XCTAssertEqual(action.configuration.externalMetadata.inheritDocs, false)
@@ -2151,11 +2129,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: nil,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: FileManager.default,
+            outputFileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory()
         )
         
@@ -2184,11 +2162,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         let result = try await action.perform(logHandle: .none)
@@ -2304,11 +2282,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: htmlTemplateDirectory,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: FileManager.default,
+            outputFileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             transformForStaticHostingOptions: .withoutContent
         )
@@ -2355,11 +2333,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetURL,
+            outputLocation: targetURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: FileManager.default,
+            outputFileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
         )
@@ -2433,11 +2411,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetURL,
+            outputLocation: targetURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: FileManager.default,
+            outputFileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true,
             transformForStaticHostingOptions: .withoutContent
@@ -2500,11 +2478,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetURL,
+            outputLocation: targetURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: FileManager.default,
+            outputFileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
         )
@@ -2540,11 +2518,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: true,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine
             )
@@ -2561,11 +2539,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: true,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine
             )
@@ -2579,11 +2557,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: true,
-                targetDirectory: targetDirectory,
+                outputLocation: targetDirectory,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: nil,
                 treatWarningsAsErrors: true
@@ -2611,11 +2589,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: nil,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: outputLocation.absoluteURL,
+            outputLocation: outputLocation.absoluteURL,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             catalogDiscoveryOptions: CatalogDiscoveryOptions(
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
@@ -2652,11 +2630,12 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: nil,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: outputLocation.absoluteURL,
+                outputLocation: outputLocation.absoluteURL,
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: fileSystem,
+                inputFileManager: fileSystem,
+                outputFileManager: fileSystem,
                 temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
                 catalogDiscoveryOptions: CatalogDiscoveryOptions(
                     infoPlistFallbacks: ["CFBundleIdentifier": "com.example.test"],
@@ -2689,7 +2668,7 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: emptyCatalog,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: outputLocation.absoluteURL,
+            outputLocation: outputLocation.absoluteURL,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.write(inside: createTemporaryDirectory(named: "template")),
             emitDigest: false,
             currentPlatforms: nil,
@@ -2725,11 +2704,11 @@ class ConvertActionTests: XCTestCase {
                 documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
-                targetDirectory: URL(fileURLWithPath: "/output"),
+                outputLocation: URL(fileURLWithPath: "/output"),
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: testDataProvider,
+                outputFileManager: testDataProvider,
                 temporaryDirectory: URL(fileURLWithPath: "/tmp"),
                 diagnosticEngine: engine
             )
@@ -2822,11 +2801,11 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetDirectory,
+            outputLocation: targetDirectory,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: testDataProvider,
+            outputFileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticEngine: engine
         )
@@ -2871,11 +2850,12 @@ class ConvertActionTests: XCTestCase {
             documentationBundleURL: catalog.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetURL,
+            outputLocation: targetURL,
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            fileManager: fileSystem,
+            inputFileManager: fileSystem,
+            outputFileManager: fileSystem,
             temporaryDirectory: fileSystem.uniqueTemporaryDirectory()
         )
         
@@ -2895,6 +2875,8 @@ class ConvertActionTests: XCTestCase {
         │     ├─ image-name@2x.png
         │     ├─ image-name~dark.png
         │     ╰─ image-name~dark@2x.png
+        ├─ index/
+        │  ╰─ index.json
         ├─ link-hierarchy.json
         ├─ linkable-entities.json
         ├─ metadata.json
@@ -2928,7 +2910,7 @@ private extension LinkDestinationSummary {
     init(
         kind: DocumentationNode.Kind,
         relativePresentationURL: URL,
-        referenceURL: URL,
+        referenceIdentifier: String,
         title: String,
         language: SourceLanguage,
         abstract: String?,
@@ -2943,7 +2925,7 @@ private extension LinkDestinationSummary {
             kind: kind,
             language: language,
             relativePresentationURL: relativePresentationURL,
-            referenceURL: referenceURL,
+            referenceIdentifier: .init(referenceIdentifier),
             title: title,
             abstract: abstract.map { [.text($0)] },
             availableLanguages: availableLanguages,

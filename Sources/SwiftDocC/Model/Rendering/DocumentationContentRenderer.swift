@@ -212,41 +212,13 @@ public class DocumentationContentRenderer {
     ///
     /// Symbols are only considered "in beta" if they are in beta for all platforms that they are available for.
     func isBeta(_ node: DocumentationNode) -> Bool {
-        // We verify that this is a symbol with defined availability
-        // and that we're feeding in a current set of platforms to the context.
-        guard let symbol = node.semantic as? Symbol,
-              let currentPlatforms = context.configuration.externalMetadata.currentPlatforms,
-              !currentPlatforms.isEmpty,
-              let symbolAvailability = symbol.availability?.availability.filter({ !$0.isUnconditionallyUnavailable }), // symbol that's unconditionally unavailable in all the platforms can't be in beta.
-              !symbolAvailability.isEmpty // A symbol without availability items can't be in beta.
-        else { return false }
-
-        // Verify that if current platforms are in beta, they match the introduced version of the symbol
-        for availability in symbolAvailability {
-
-            // If the symbol doesn't have an introduced version for one of those platforms, we don't consider it "in beta".
-            guard let introduced = availability.introducedVersion else {
-                return false
-            }
-            
-            // If we don't have introduced and current versions for the current platform
-            // we can't tell if the symbol is beta.
-            guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
-                  // Use the display name of the platform when looking up the current platforms
-                  // as we expect that form on the command line.
-                  let current = context.configuration.externalMetadata.currentPlatforms?[name.displayName]
-            else {
-                return false
-            }
-
-            // Verify that the current platform is in beta and the version number matches the introduced platform version.
-            guard current.beta && SemanticVersion(introduced) >= SemanticVersion(versionTriplet: current.version) else {
-                return false
-            }
+        guard let symbol = node.semantic as? Symbol else {
+            // !!!: Preserve the bug that articles aren't considered "in-beta" even when all platforms they display availability for are in beta (rdar://189415274)
+            return false
         }
-
-        // If the code didn't return until now all requirements have been satisfied and it's a beta symbol.
-        return true
+        return symbol.consolidatedAvailability.allValues.contains(where: { _, availability in
+            availability.isBeta(context.currentBetaPlatforms)
+        })
     }
 
     static func renderKindAndRole(_ kind: DocumentationNode.Kind?, semantic: Semantic?) -> (RenderNode.Kind, String) {
@@ -444,8 +416,9 @@ public class DocumentationContentRenderer {
         renderReference.isBeta = node.map(isBeta) ?? false
         
         // If the topic is deprecated
-        if let symbol = node?.semantic as? Symbol,
-           (symbol.isDeprecated == true || symbol.deprecatedSummary != nil) {
+        if let node, let symbol = node.semantic as? Symbol,
+           symbol.deprecatedSummary != nil || symbol.consolidatedAvailability.allValues.contains(where: { $0.variant.isDeprecated })
+        {
             renderReference.isDeprecated = true
         }
         

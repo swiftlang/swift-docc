@@ -75,7 +75,7 @@ public class NavigatorIndex {
     
     /// The url of the index.
     public let url: URL
-    
+
     /// The LMDB environment.
     var environment: LMDB.Environment?
     
@@ -498,6 +498,9 @@ extension NavigatorIndex {
         /// The output URL.
         public let outputURL: URL
         
+        /// The file manager that the builder uses to write the JSON index file and to move the LMDB index file from its temporary `FileManager.default` location
+        package let fileManager: any FileManagerProtocol
+
         /// The bundle name.
         public let bundleIdentifier: String
         
@@ -584,21 +587,46 @@ extension NavigatorIndex {
         /// - Parameters:
         ///    - archiveURL: The location of the documentation archive that the builder builds an navigator index for.
         ///    - outputURL: The location where the builder will write the the built navigator index.
+        ///    - fileManager: The file manager we use to read and write data.
         ///    - bundleIdentifier: The bundle identifier of the documentation that the builder builds a navigator index for.
         ///    - sortRootChildrenByName: Configure the builder to sort root's children by name.
         ///    - groupByLanguage: Configure the builder to group the entries by language.
         ///    - writePathsOnDisk: Configure the builder to write each navigator item's path components to the location.
         ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
-        public init(archiveURL: URL? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
+        package init(archiveURL: URL? = nil, outputURL: URL, fileManager: any FileManagerProtocol, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.archiveURL = archiveURL
             self.outputURL = outputURL
+            self.fileManager = fileManager
             self.bundleIdentifier = bundleIdentifier
             self.sortRootChildrenByName = sortRootChildrenByName
             self.groupByLanguage = groupByLanguage
             self.writePathsOnDisk = writePathsOnDisk
             self.usePageTitle = usePageTitle
         }
-        
+
+        /// Create a new a builder with the given data provider and output URL.
+        /// - Parameters:
+        ///    - archiveURL: The location of the documentation archive that the builder builds an navigator index for.
+        ///    - outputURL: The location where the builder will write the the built navigator index.
+        ///    - bundleIdentifier: The bundle identifier of the documentation that the builder builds a navigator index for.
+        ///    - sortRootChildrenByName: Configure the builder to sort root's children by name.
+        ///    - groupByLanguage: Configure the builder to group the entries by language.
+        ///    - writePathsOnDisk: Configure the builder to write each navigator item's path components to the location.
+        ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
+        convenience
+        public init(archiveURL: URL? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
+            self.init(
+                archiveURL: archiveURL,
+                outputURL: outputURL,
+                fileManager: FileManager.default,
+                bundleIdentifier: bundleIdentifier,
+                sortRootChildrenByName: sortRootChildrenByName,
+                groupByLanguage: groupByLanguage,
+                writePathsOnDisk: writePathsOnDisk,
+                usePageTitle: usePageTitle
+            )
+        }
+
         /// Setup the builder to process render nodes.
         public func setup() {
             // If setup has been called already, skip.
@@ -606,10 +634,10 @@ extension NavigatorIndex {
             
             do {
                 // The folder in which the environment, if existing, will be overwritten.
-                if FileManager.default.fileExists(atPath: outputURL.path) {
-                    try FileManager.default.removeItem(at: outputURL)
+                if fileManager.fileExists(atPath: outputURL.path) {
+                    try fileManager.removeItem(at: outputURL)
                 }
-                try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
                 
                 navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, bundleIdentifier: bundleIdentifier)
             } catch {
@@ -1054,7 +1082,8 @@ extension NavigatorIndex {
                 let jsonNavigatorIndexURL = outputURL.appendingPathComponent("index.json")
                 do {
                     let renderIndexData = try jsonEncoder.encode(renderIndex)
-                    try renderIndexData.write(to: jsonNavigatorIndexURL)
+                    try fileManager.createFile(at: jsonNavigatorIndexURL,
+                                               contents: renderIndexData)
                 } catch {
                     // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
                     diagnostics.append(
@@ -1062,20 +1091,37 @@ extension NavigatorIndex {
                         )
                     )
                 }
-                
             }
             
             guard emitLMDBRepresentation else {
                 return
             }
             
+            // LMDB can only write directly to the actual filesystem, so to deal with that we create a temporary directory and write into that instead.
+            let temporaryDirectory = FileManager.default.temporaryDirectory
+            let lmdbTemporaryURL = temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString).appendingPathComponent("lmdb")
+
+            do {
+                if FileManager.default.fileExists(atPath: lmdbTemporaryURL.path) {
+                    try FileManager.default.removeItem(at: lmdbTemporaryURL)
+                }
+                try FileManager.default.createDirectory(at: lmdbTemporaryURL, withIntermediateDirectories: true, attributes: [:])
+            } catch {
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                diagnostics.append(
+                    error.makeDiagnostic(source: nil, severity: .error, summaryPrefix: "Failed to create temporary directory for LMDB generation"
+                    )
+                )
+
+                return
+            }
             let environment: LMDB.Environment
             if let alreadyDefinedEnvironment = navigatorIndex.environment {
                 environment = alreadyDefinedEnvironment
             } else {
                 do {
                     environment = try LMDB.Environment(
-                        path: navigatorIndex.url.path,
+                        path: lmdbTemporaryURL.path,
                         flags: [.noLock],
                         maxDBs: 4, mapSize: 100 * 1024 * 1024 // mapSize = 100MB
                     )
@@ -1237,7 +1283,22 @@ extension NavigatorIndex {
                                                         severity: .error,
                                                         summaryPrefix: "LMDB failed to store the content"))
             }
-                        
+
+            // Now move the LMDB database to the right place
+            do {
+                try FileManager.default.moveItem(
+                    at: lmdbTemporaryURL.appendingPathComponent("data.mdb"),
+                    to: navigatorIndex.url.appendingPathComponent("data.mdb"),
+                    writingUsing: fileManager
+                )
+                try? FileManager.default.removeItem(at: lmdbTemporaryURL)
+            } catch {
+                // FIXME: This isn't a user-actionable error. We should throw a Swift.Error instead.
+                diagnostics.append(error.makeDiagnostic(source: navigatorIndex.url,
+                                                        severity: .error,
+                                                        summaryPrefix: "Couldn't copy the LMDB index to its final location"))
+            }
+
             // FIXME: These aren't about issues with the developer's documentation. We should either remove these or find a different means to pass this information.
             diagnostics.append(Diagnostic(
                 source: outputURL,
@@ -1302,9 +1363,9 @@ extension NavigatorIndex {
             setup()
             
             let dataDirectory = archiveURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName, isDirectory: true)
-            for file in FileManager.default.recursiveFiles(startingPoint: dataDirectory) where file.pathExtension.lowercased() == "json" {
+            for file in fileManager.recursiveFiles(startingPoint: dataDirectory) where file.pathExtension.lowercased() == "json" {
                 do {
-                    let data = try Data(contentsOf: file)
+                    let data = try fileManager.contents(of: file)
                     let renderNode = try RenderNode.decode(fromJSON: data)
                     try index(renderNode: renderNode)
                 } catch {

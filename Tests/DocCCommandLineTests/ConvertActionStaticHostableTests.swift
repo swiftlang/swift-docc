@@ -36,7 +36,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            outputLocation: targetBundleURL,
             htmlTemplateDirectory: testTemplateURL,
             emitDigest: false,
             currentPlatforms: nil,

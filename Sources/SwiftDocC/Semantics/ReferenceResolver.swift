@@ -379,7 +379,8 @@ struct ReferenceResolver: SemanticVisitor {
             deprecationSummary: newDeprecationSummary,
             metadata: article.metadata,
             redirects: article.redirects,
-            automaticTaskGroups: article.automaticTaskGroups
+            automaticTaskGroups: article.automaticTaskGroups,
+            availability: article.availability
         )
     }
 
@@ -490,12 +491,13 @@ struct ReferenceResolver: SemanticVisitor {
             subHeadingVariants: symbol.subHeadingVariants,
             navigatorVariants: symbol.navigatorVariants,
             roleHeadingVariants: symbol.roleHeadingVariants,
-            platformNameVariants: symbol.platformNameVariants,
+            platformNameVariants: symbol._platformNameVariants,
             moduleReference: symbol.moduleReference,
             requiredVariants: symbol.isRequiredVariants,
             externalIDVariants: symbol.externalIDVariants,
             accessLevelVariants: symbol.accessLevelVariants,
-            availabilityVariants: symbol.availabilityVariants,
+            availabilityVariants: symbol._availabilityVariants,
+            consolidatedAvailabilityVariants: symbol.consolidatedAvailability,
             deprecatedSummaryVariants: newDeprecatedSummaryVariants,
             mixinsVariants: symbol.mixinsVariants,
             declarationVariants: symbol.declarationVariants,
