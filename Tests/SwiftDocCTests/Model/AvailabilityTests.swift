@@ -1238,9 +1238,8 @@ struct AvailabilityTests {
 
     @Test
     func moduleWithoutAvailabilityInformationIsNotConsideredDeprecated() async throws {
-        // No Info.plist default availability, no in-source availability, and no `@Available` directive.
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
             ]))
         }
@@ -1248,19 +1247,17 @@ struct AvailabilityTests {
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
 
-        let moduleReference = try #require(context.soleRootModuleReference)
-        let moduleNode = try #require(context.documentationCache[moduleReference])
-        _ = try #require(converter.renderNode(for: moduleNode))
+        func assertIsNotDeprecated(reference: ResolvedTopicReference, sourceLocation: SourceLocation = #_sourceLocation) throws {
+            let node = try #require(context.documentationCache[reference], sourceLocation: sourceLocation)
+            let renderNode = try #require(converter.renderNode(for: node), sourceLocation: sourceLocation)
+            #expect(renderNode.isDeprecated == false, sourceLocation: sourceLocation)
 
-        let symbolNode = try #require(context.documentationCache["some-symbol-id"])
-        _ = try #require(converter.renderNode(for: symbolNode))
+            let topicReference = try #require(converter.renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference, sourceLocation: sourceLocation)
+            #expect(topicReference.isDeprecated == false, sourceLocation: sourceLocation)
+        }
 
-        // The symbol is not deprecated and neither is the module that contains it.
-        let symbolReference = try #require(converter.renderContext.store.content(for: symbolNode.reference)?.renderReference as? TopicRenderReference)
-        #expect(symbolReference.isDeprecated == false)
-
-        let moduleRenderReference = try #require(converter.renderContext.store.content(for: moduleNode.reference)?.renderReference as? TopicRenderReference)
-        #expect(moduleRenderReference.isDeprecated == false, "A module without any availability information shouldn't be marked as deprecated")
+        try assertIsNotDeprecated(reference: #require(context.soleRootModuleReference))
+        try assertIsNotDeprecated(reference: #require(context.documentationCache.reference(symbolID: "some-symbol-id")))
     }
 
     @Test(arguments: ["9.2", nil])
