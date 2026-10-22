@@ -710,9 +710,9 @@ struct MarkdownRenderer_PageElementsTests {
                       </span>
                       (
                       <span class="identifier">with</span>
-                      :<wbr> Int, 
+                      : Int, 
                       <span class="identifier">and</span>
-                      :<wbr> String)
+                      : String)
                     </code>
                     <code class="occ-only">
                       - 
