@@ -431,12 +431,15 @@ public extension DocumentationNode {
         
         var compiler = RenderContentCompiler(context: context, identifier: reference)
 
-        let isBeta = semantic is Symbol
-            ? DocumentationContentRenderer(context: context).isBeta(self)
-            : renderNode.metadata.platforms?.isBeta ?? false
-        let isDeprecated: Bool = (semantic as? Symbol).map { symbol in
-            symbol.isDeprecated == true || symbol.deprecatedSummary != nil
-        } ?? renderNode.metadata.platforms?.isDeprecated ?? false
+        let isBeta, isDeprecated: Bool
+        if let symbol = semantic as? Symbol {
+            isBeta       = symbol.consolidatedAvailability.allValues.contains { $1.isBeta(context.currentBetaPlatforms) }
+            isDeprecated = symbol.deprecatedSummary != nil
+                        || renderNode.metadata.platforms.map { LinkDestinationSummary._computeLegacyFallbackIsDeprecated(for: $0) } ?? false
+        } else {
+            isBeta       = renderNode.metadata.platforms.map { LinkDestinationSummary._computeLegacyFallbackIsBeta(for: $0) }       ?? false
+            isDeprecated = renderNode.metadata.platforms.map { LinkDestinationSummary._computeLegacyFallbackIsDeprecated(for: $0) } ?? false
+        }
         
         let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).compactMap {
             LinkDestinationSummary(
