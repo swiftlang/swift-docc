@@ -295,6 +295,43 @@ struct LinkDestinationSummaryDecodingTests {
         try assertRoundTripCoding(asset)
     }
     
+    @Test
+    func bothImplementationsLegacyPlatforms() throws {
+        // We need to use raw JSON in this test because LinkDestinationSummary won't encode without "beta" and "deprecated" keys.
+        let legacyData = Data("""
+        {
+          "title" : "SomeClass",
+          "referenceURL" : "doc://com.example/documentation/ModuleName/SomeClass",
+          "path" : "/documentation/ModuleName/SomeClass",
+          "kind" : "org.swift.docc.kind.class",
+          "language" : "swift",
+          "availableLanguages" : [
+            "swift"
+          ],
+          "platforms" : [
+            {
+              "name" : "FirstPlatform",
+              "introducedAt" : "1.2.3",
+              "deprecatedAt" : "4.5.6",
+              "beta" : true
+            },
+            {
+              "name" : "SecondPlatform",
+              "introducedAt" : "2.3.5",
+              "deprecatedAt" : "5.6.7",
+              "beta" : true
+            }
+          ]
+        }
+        """.utf8)
+        
+        let decoded     = try JSONDecoder().decode(LinkDestinationSummary.self, from: legacyData)
+        let fastDecoded = try FastSymbolGraphJSONDecoder.decode(LinkDestinationSummary.self, from: legacyData)
+        
+        #expect(decoded == fastDecoded)
+    }
+    
+    
     // MARK: Variants
    
     @Test(arguments: Self.exampleSourceLanguages)

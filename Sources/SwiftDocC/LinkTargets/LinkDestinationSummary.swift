@@ -392,8 +392,8 @@ public struct LinkDestinationSummary: Codable, Equatable {
             title: title,
             abstract: abstract,
             availableLanguages: availableLanguages,
-            isDeprecated: platforms?.isDeprecated ?? false,
-            isBeta: platforms?.isBeta ?? false,
+            isDeprecated: platforms.map { Self._computeLegacyFallbackIsDeprecated(for: $0) } ?? false,
+            isBeta: platforms.map { Self._computeLegacyFallbackIsBeta(for: $0) } ?? false,
             usr: usr,
             plainTextDeclaration: plainTextDeclaration,
             subheadingDeclarationFragments: subheadingDeclarationFragments,
@@ -628,13 +628,13 @@ extension LinkDestinationSummary {
     }
 }
 
-private extension [AvailabilityRenderItem] {
-    var isBeta: Bool {
-        !isEmpty && allSatisfy { $0.beta == true }
+extension LinkDestinationSummary {
+    static func _computeLegacyFallbackIsBeta(for availability: [AvailabilityRenderItem]) -> Bool {
+        !availability.isEmpty && availability.allSatisfy { $0.beta == true }
     }
     
-    var isDeprecated: Bool {
-        contains(where: { $0.isUnconditionallyDeprecated == true || $0.deprecated != nil })
+    static func _computeLegacyFallbackIsDeprecated(for availability: [AvailabilityRenderItem]) -> Bool {
+        availability.contains(where: { $0.isUnconditionallyDeprecated == true || $0.deprecated != nil })
     }
 }
 
@@ -812,8 +812,8 @@ extension LinkDestinationSummary {
         var isDeprecated = try container.decodeIfPresent(Bool.self, forKey: .isDeprecated)
         // If neither value was present, check if the data contained the platforms field instead.
         if isBeta == nil, isDeprecated == nil, let platforms {
-            isBeta       = platforms.isBeta
-            isDeprecated = platforms.isDeprecated
+            isBeta       = Self._computeLegacyFallbackIsBeta(for: platforms)
+            isDeprecated = Self._computeLegacyFallbackIsDeprecated(for: platforms)
         }
         self.isBeta       = isBeta       ?? false
         self.isDeprecated = isDeprecated ?? false

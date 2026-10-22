@@ -26,8 +26,8 @@ extension LinkDestinationSummary: FastJSONDecodable {
         // 14 properties with default values
         var absolutePresentationURL:        URL? = nil
         var abstract:                       Abstract?               = nil
-        var isBeta:                         Bool                    = false
-        var isDeprecated:                   Bool                    = false
+        var isBeta:                         Bool?                   = nil // May compute a fallback from the platforms, otherwise `false`
+        var isDeprecated:                   Bool?                   = nil // May compute a fallback from the platforms, otherwise `false`
         var platforms:                      [PlatformAvailability]? = nil
         var usr:                            String?                 = nil
         var plainTextDeclaration:           String?                 = nil
@@ -138,8 +138,8 @@ extension LinkDestinationSummary: FastJSONDecodable {
         self.title                          = consume title
         self.abstract                       = consume abstract
         self.availableLanguages             = Set(consume availableLanguages)
-        self.isBeta                         = isBeta
-        self.isDeprecated                   = isDeprecated
+        self.isBeta                         = isBeta       ?? platforms.map { Self._computeLegacyFallbackIsBeta(for: $0) }       ?? false
+        self.isDeprecated                   = isDeprecated ?? platforms.map { Self._computeLegacyFallbackIsDeprecated(for: $0) } ?? false
         self.platforms                      = consume platforms
         self.usr                            = consume usr
         self.plainTextDeclaration           = consume plainTextDeclaration
