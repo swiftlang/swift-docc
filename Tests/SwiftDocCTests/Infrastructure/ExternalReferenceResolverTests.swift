@@ -58,7 +58,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             externalResolvers: ["com.external.testbundle" : TestExternalReferenceResolver()]
         ) { url in
             let myClassExtensionFile = url.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
-            try String(contentsOf: myClassExtensionFile)
+            try String(contentsOf: myClassExtensionFile, encoding: .utf8)
                 .replacingOccurrences(of: "MyClass abstract.", with: "MyClass uses a <doc://com.external.testbundle/article>.")
                 .write(to: myClassExtensionFile, atomically: true, encoding: .utf8)
         }
@@ -192,7 +192,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             
             let expectedReference = "doc://\(externalResolver.bundleID)\(externalResolver.expectedReferencePath)"
             XCTAssertTrue(
-                try String(contentsOf: fileURL).contains("<\(expectedReference)>"),
+                try String(contentsOf: fileURL, encoding: .utf8).contains("<\(expectedReference)>"),
                 "The test content should include a link for the external reference resolver to resolve"
             )
             
@@ -731,7 +731,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", externalResolvers: ["com.external.testbundle" : resolver], externalSymbolResolver: nil, configureBundle: { url in
             // Add external link with fragment
             let myClassMDURL = url.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
-            try String(contentsOf: myClassMDURL)
+            try String(contentsOf: myClassMDURL, encoding: .utf8)
                 .replacingOccurrences(of: "MyClass abstract.", with: "MyClass uses a <doc://com.external.testbundle/article#12345>.")
                 .write(to: myClassMDURL, atomically: true, encoding: .utf8)
         })
