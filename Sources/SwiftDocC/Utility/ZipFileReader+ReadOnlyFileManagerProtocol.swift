@@ -14,12 +14,7 @@ package import Zip
 extension ZipFileReader: ReadOnlyFileManagerProtocol {
 
     package func contents(atPath path: String) -> Data? {
-        do {
-            let data = try contents(of: URL(filePath: path))
-            return data
-        } catch {
-            return nil
-        }
+        try? contents(of: URL(filePath: path))
     }
 
     package func contents(of url: URL) throws -> Data {

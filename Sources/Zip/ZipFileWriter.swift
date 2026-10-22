@@ -316,6 +316,14 @@ package class ZipFileWriter<S: ZipFileSink> {
         let flags: UInt16 = sink.canSeek ? 0x802 : 0x80a
         let centralDirectoryOffset = bytesWritten
         let zip64SizeThreshold = Int(UInt32.max)
+        var deferredClose = true
+
+        // Make sure we close the sink at the end.
+        defer {
+            if deferredClose {
+                try? sink.close()
+            }
+        }
 
         // Write the central directory
         for file in files {
@@ -455,6 +463,7 @@ package class ZipFileWriter<S: ZipFileSink> {
             try sink.write(UInt16(0))
         }
 
+        deferredClose = false
         try sink.close()
     }
 }

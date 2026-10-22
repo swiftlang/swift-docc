@@ -36,22 +36,22 @@ package class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
     package class Item: CustomStringConvertible {
         var headerOffset: Int?
 
-        internal(set) package var name: String
-        internal(set) package var date: Date
-        internal(set) package var comment: String?
+        fileprivate(set) package var name: String
+        fileprivate(set) package var date: Date
+        fileprivate(set) package var comment: String?
 
-        internal(set) package var flags: UInt16
-        internal(set) package var compression: UInt16
-        internal(set) package var crc32: UInt32
-        internal(set) package var compressedSize: Int
-        internal(set) package var uncompressedSize: Int
+        fileprivate(set) package var flags: UInt16
+        fileprivate(set) package var compression: UInt16
+        fileprivate(set) package var crc32: UInt32
+        fileprivate(set) package var compressedSize: Int
+        fileprivate(set) package var uncompressedSize: Int
 
         package enum Kind {
             case file
             case directory([String: Item])
         }
 
-        internal(set) package var kind: Kind
+        fileprivate(set) package var kind: Kind
 
         init(
             headerOffset: Int?, name: String, date: Date, comment: String?,
@@ -102,7 +102,7 @@ package class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
         }
     }
 
-    internal(set) package var comment: String? = nil
+    private(set) package var comment: String? = nil
     var root = Item(
         headerOffset: nil,
         name: "/",
@@ -160,10 +160,8 @@ package class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
             let ch = span.bytes.unsafeLoad(fromByteOffset: pos, as: UInt8.self)
             switch ch {
             case 0x50:  // 'P'
-                if span.bytes.unsafeLoad(fromByteOffset: pos + 1, as: UInt8.self) == 0x4b
-                    && span.bytes.unsafeLoad(fromByteOffset: pos + 2, as: UInt8.self) == 0x05
-                    && span.bytes.unsafeLoad(fromByteOffset: pos + 3, as: UInt8.self) == 0x06
-                {
+                if span.bytes.unsafeLoad(fromByteOffset: pos + 1,
+                    as: (UInt8, UInt8, UInt8).self) == (0x4b, 0x05, 0x06) {
                     return source.length - toRead + pos
                 }
                 pos -= 4
@@ -281,6 +279,8 @@ package class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
             let localHeaderOffset32 = try source.read(from: pos + 42, as: UInt32.self)
             var timestamp: Date = Date(dosFileTime: dosFileTime)
 
+            pos += 46
+
             // Zip64: each of these fields can independently be sentineled to
             // 0xFFFFFFFF/0xFFFF, with the real 64-bit value recovered below
             // from a 0x0001 extra field. Disk start isn't otherwise used
@@ -299,8 +299,6 @@ package class ZipFileReader<S: ZipFileSource>: @unchecked Sendable {
             var foundZip64UncompressedSize = false
             var foundZip64CompressedSize = false
             var foundZip64HeaderOffset = false
-
-            pos += 46
 
             let name = try source.read(from: pos, asStringOfLength: nameLength)
 
