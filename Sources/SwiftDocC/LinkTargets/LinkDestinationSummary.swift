@@ -143,7 +143,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public let subheadingDeclarationFragments: DeclarationFragments?
 
     /// The simplified "navigator" declaration fragments for this symbol, or `nil` if the summarized element isn't a symbol.
-    @available(*, deprecated, renamed: "navigatorTitle", message: "Use 'navigatorTitle' instead. This deprecated API will be removed after 6.5 is released.")
+    @available(*, deprecated, renamed: "navigatorTitle", message: "Use 'navigatorTitle' instead. This deprecated API will be removed after 6.6 is released.")
     public var navigatorDeclarationFragments: DeclarationFragments? {
         navigatorTitle.map { [.init(text: $0, kind: .text)] }
     }
@@ -217,6 +217,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         public let subheadingDeclarationFragments: VariantValue<DeclarationFragments?>
 
         /// The simplified "navigator" declaration fragments for this symbol,  or `nil` if the navigator title is the same as the summarized element.
+        @available(*, deprecated, renamed: "navigatorTitle", message: "Use 'navigatorTitle' instead. This deprecated API will be removed after 6.6 is released.")
         public var navigatorDeclarationFragments: VariantValue<DeclarationFragments?> {
             navigatorTitle.map { declarationText in
                 declarationText.map { [.init(text: $0, kind: .text)] }
@@ -890,7 +891,7 @@ extension LinkDestinationSummary.Variant {
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(plainTextDeclaration, forKey: .plainTextDeclaration)
         try container.encodeIfPresent(subheadingDeclarationFragments, forKey: .declarationFragments)
-        try container.encodeIfPresent(navigatorDeclarationFragments, forKey: .navigatorDeclarationFragments)
+        try container.encodeIfPresent(navigatorTitle, forKey: .navigatorTitle)
     }
     
     public init(from decoder: any Decoder) throws {
