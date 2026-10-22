@@ -394,6 +394,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
             availableLanguages: availableLanguages,
             isDeprecated: platforms.map { Self._computeLegacyFallbackIsDeprecated(for: $0) } ?? false,
             isBeta: platforms.map { Self._computeLegacyFallbackIsBeta(for: $0) } ?? false,
+            platforms: platforms,
             usr: usr,
             plainTextDeclaration: plainTextDeclaration,
             subheadingDeclarationFragments: subheadingDeclarationFragments,
