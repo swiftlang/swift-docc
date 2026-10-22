@@ -172,41 +172,31 @@ extension RenderNode: Codable {
                             // The patch applies to the array of `CodableContentSection?` values
                             switch operation {
                             case .replace:
+
+                                // Determine the new values the patch is replacing the array with
+                                let values: [CodableContentSection?]
                                 if try patchContainer.decodeNil(forKey: .value) {
                                     // Replacing with nothing is the same as removing
-                                    primaryContentSectionsVariants = []
+                                    values = []
                                 } else {
-                                    let values = try patchContainer.decode([CodableContentSection?].self, forKey: .value)
-                                    
-                                    // Replace all the values
-                                    for (index, value) in values.enumerated() {
-                                        if primaryContentSectionsVariants.indices.contains(index) {
-                                            primaryContentSectionsVariants[index].addPatch(.replace(value: value), toVariantWithTraits: traits)
-                                        } else {
-                                            primaryContentSectionsVariants[index] = VariantCollection(
-                                                defaultValue: nil,
-                                                variants: [.init(traits: traits, patch: [.replace(value: value)])]
-                                            )
-                                        }
-                                    }
-                                    let countDifference = primaryContentSectionsVariants.count - values.count
-                                    if countDifference == 0 {
-                                        // All values are already replaced
-                                        continue
-                                    } else if countDifference < 0 {
-                                        // There are more variant values than default values. Those need to be added.
-                                        for value in values.dropFirst(primaryContentSections.count) {
-                                            primaryContentSectionsVariants.append(VariantCollection(
-                                                defaultValue: nil,
-                                                variants: [.init(traits: traits, patch: [.replace(value: value)])]
-                                            ))
-                                        }
+                                    values = try patchContainer.decode([CodableContentSection?].self, forKey: .value)
+                                }
+
+                                // Replace all the values
+                                for (index, value) in values.enumerated() {
+                                    if primaryContentSectionsVariants.indices.contains(index) {
+                                        primaryContentSectionsVariants[index].addPatch(.replace(value: value), toVariantWithTraits: traits)
                                     } else {
-                                        // There are fewer variant values than default values. Those extra default values need to be removed.
-                                        for index in countDifference ..< primaryContentSectionsVariants.count {
-                                            primaryContentSectionsVariants[index].addPatch(.remove, toVariantWithTraits: traits)
-                                        }
+                                        primaryContentSectionsVariants.append(VariantCollection(
+                                            defaultValue: nil,
+                                            variants: [.init(traits: traits, patch: [.replace(value: value)])]
+                                        ))
                                     }
+                                }
+
+                                // Remove any extra values
+                                for index in values.count ..< primaryContentSectionsVariants.count {
+                                    primaryContentSectionsVariants[index].addPatch(.remove, toVariantWithTraits: traits)
                                 }
                             case .add:
                                 if try patchContainer.decodeNil(forKey: .value) {
@@ -246,13 +236,15 @@ extension RenderNode: Codable {
                                 primaryContentSectionsVariants[index].addPatch(.replace(value: value), toVariantWithTraits: traits)
                             case .add:
                                 let value = try patchContainer.decode(CodableContentSection?.self, forKey: .value)
-                                if primaryContentSectionsVariants.indices.contains(index) {
-                                    primaryContentSectionsVariants[index].addPatch(.add(value: value), toVariantWithTraits: traits)
-                                } else {
-                                    primaryContentSectionsVariants.append(.init(defaultValue: nil, variants: [
-                                        .init(traits: traits, patch: [.replace(value: value)])
-                                    ]))
-                                }
+                                primaryContentSectionsVariants.insert(
+                                    .init(
+                                        defaultValue: nil,
+                                        variants: [
+                                            .init(traits: traits, patch: [.replace(value: value)])
+                                        ]
+                                    ),
+                                    at: index
+                                )
                             case .remove:
                                 primaryContentSectionsVariants[index].addPatch(.remove, toVariantWithTraits: traits)
                             }
