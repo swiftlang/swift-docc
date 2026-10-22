@@ -526,14 +526,12 @@ class DefaultAvailabilityTests: XCTestCase {
             
             XCTAssert(withoutInSourceAvailability.isEmpty)
             
-            // Verify that the module page displays only the default availability
+            // Like symbols, the module page doesn't display versionless platforms that are only found in a symbol graph.
             let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
             let node = try context.entity(with: moduleReference)
             var translator = RenderNodeTranslator(context: context, identifier: moduleReference)
             let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
-            XCTAssertEqual(renderNode.metadata.platforms?.count, 1) // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.name, "iOS")
-            XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, nil)
+            XCTAssertNil(renderNode.metadata.platforms) // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
         }
         
         do {
