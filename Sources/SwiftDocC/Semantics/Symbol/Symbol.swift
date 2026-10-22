@@ -89,7 +89,7 @@ public import SymbolKit
 ///
 /// - ``DocumentationDataVariants``
 /// - ``DocumentationDataVariantsTrait``
-public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroupsProviding {
+public final class Symbol: Semantic, Abstracted, Redirected {
     /// The title of the symbol in each language variant the symbol is available in.
     internal(set) public var titleVariants: DocumentationDataVariants<String>
     

@@ -2058,8 +2058,8 @@ public class DocumentationContext {
             for sourceLanguage in node.availableSourceLanguages {
                 symbol.automaticTaskGroupsVariants[.init(sourceLanguage: sourceLanguage)] = [automaticTaskGroup]
             }
-        } else if var taskGroupProviding = node.semantic as? (any AutomaticTaskGroupsProviding) {
-            taskGroupProviding.automaticTaskGroups = [automaticTaskGroup]
+        } else if let article = node.semantic as? Article {
+            article.automaticTaskGroups = [automaticTaskGroup]
         }
         
         return articleReferences
