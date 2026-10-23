@@ -15,12 +15,12 @@
   },
   "identifier" : {
     "interfaceLanguage" : "swift",
-    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:)"
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)"
   },
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC17DocumentationNodeV34externallyLinkableElementSummaries7context06renderD0SayAA22LinkDestinationSummaryVGAA0C7ContextC_AA06RenderD0VtF",
+    "externalID" : "s:9SwiftDocC17DocumentationNodeV34externallyLinkableElementSummaries7context06renderD041includePerPlatformAvailabilityInformationSayAA22LinkDestinationSummaryVGAA0C7ContextC_AA06RenderD0VSbtF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -70,6 +70,23 @@
       },
       {
         "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "includePerPlatformAvailabilityInformation"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sb",
+        "text" : "Bool"
+      },
+      {
+        "kind" : "text",
         "text" : ") -> ["
       },
       {
@@ -89,12 +106,12 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L361"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L421"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
     "symbolKind" : "method",
-    "title" : "externallyLinkableElementSummaries(context:renderNode:)"
+    "title" : "externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)"
   },
   "primaryContentSections" : [
     {
@@ -157,7 +174,24 @@
             },
             {
               "kind" : "text",
-              "text" : ") -> ["
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "includePerPlatformAvailabilityInformation"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sb",
+              "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : " = false) -> ["
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary",
@@ -204,6 +238,46 @@
             }
           ],
           "name" : "renderNode"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Whether or not the link summaries should include per-platform availability information.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Note that the summary’s beta and deprecation status is represented by ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/isBeta",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " and ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/isDeprecated",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : ".",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "includePerPlatformAvailabilityInformation"
         }
       ]
     },
@@ -239,7 +313,7 @@
   "variants" : [
     {
       "paths" : [
-        "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:)"
+        "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:includeperplatformavailabilityinformation:)"
       ],
       "traits" : [
         {
@@ -335,7 +409,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/externallyLinkableElementSummaries(context:renderNode:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)": {
   "abstract" : [
     {
       "text" : "Summarizes the node and all of its child elements that you can link to from outside the local documentation.",
@@ -392,6 +466,23 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includePerPlatformAvailabilityInformation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
       "text" : ") -> ["
     },
     {
@@ -404,12 +495,12 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "externallyLinkableElementSummaries(context:renderNode:)",
+  "title" : "externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:)"
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:includeperplatformavailabilityinformation:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [
@@ -445,6 +536,82 @@
   "title" : "LinkDestinationSummary",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/linkdestinationsummary"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/isBeta": {
+  "abstract" : [
+    {
+      "text" : "A value that indicates whether the summarized element is under development and likely to change.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isBeta"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/isBeta",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isBeta",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/isbeta"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/isDeprecated": {
+  "abstract" : [
+    {
+      "text" : "A value that indicates whether the the summarized element is deprecated.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isDeprecated"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/isDeprecated",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isDeprecated",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/isdeprecated"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode": {
   "abstract" : [

@@ -16,16 +16,12 @@
     <p>
       The simplified “navigator” declaration fragments for this symbol, or <code>nil</code> if the summarized element isn’t a symbol.
     </p>
-    <pre><code>let navigatorDeclarationFragments: DeclarationFragments?</code></pre>
+    <pre><code>var navigatorDeclarationFragments: DeclarationFragments? { get }</code></pre>
+    <aside class="deprecated">
+      <p class="label">
+        Deprecated
+      </p>
+      <p>Use 'navigatorTitle' instead. This deprecated API will be removed after 6.6 is released.</p>
+    </aside>
   </section>
-  <h2>Discussion</h2>
-  <p>These navigator fragments are suitable to use to refer to a symbol that’s linked to in a navigator.</p>
-  <aside class="note">
-    <p class="label">
-      Note
-    </p>
-    <p>
-      The navigator title does not represent the symbol’s full declaration. Different overloads may have indistinguishable navigator fragments.
-    </p>
-  </aside>
 </article></noscript><div id="app"></div></body></html>

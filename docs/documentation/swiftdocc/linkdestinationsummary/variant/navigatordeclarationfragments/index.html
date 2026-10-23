@@ -19,11 +19,12 @@
     <p>
       The simplified “navigator” declaration fragments for this symbol,  or <code>nil</code> if the navigator title is the same as the summarized element.
     </p>
-    <pre><code>let navigatorDeclarationFragments: VariantValue&lt;DeclarationFragments?></code></pre>
+    <pre><code>var navigatorDeclarationFragments: VariantValue&lt;DeclarationFragments?> { get }</code></pre>
+    <aside class="deprecated">
+      <p class="label">
+        Deprecated
+      </p>
+      <p>Use 'navigatorTitle' instead. This deprecated API will be removed after 6.6 is released.</p>
+    </aside>
   </section>
-  <h2>Discussion</h2>
-  <p>These navigator fragments are suitable to use to refer to a symbol that’s linked to in a navigator.</p>
-  <p>
-    If the summarized element has a navigator title but the variant doesn’t, this property will be <code>Optional.some(nil)</code>.
-  </p>
 </article></noscript><div id="app"></div></body></html>

@@ -7442,8 +7442,8 @@
                         "type" : "groupMarker"
                       },
                       {
-                        "path" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:)",
-                        "title" : "func externallyLinkableElementSummaries(context: DocumentationContext, renderNode: RenderNode) -> [LinkDestinationSummary]",
+                        "path" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:includeperplatformavailabilityinformation:)",
+                        "title" : "func externallyLinkableElementSummaries(context: DocumentationContext, renderNode: RenderNode, includePerPlatformAvailabilityInformation: Bool) -> [LinkDestinationSummary]",
                         "type" : "method"
                       },
                       {
@@ -18393,8 +18393,14 @@
                             "type" : "groupMarker"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/init(traits:kind:language:relativepresentationurl:title:abstract:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatordeclarationfragments:)",
                             "title" : "init(traits: [RenderNode.Variant.Trait], kind: VariantValue<DocumentationNode.Kind>, language: VariantValue<SourceLanguage>, relativePresentationURL: VariantValue<URL>, title: VariantValue<String>, abstract: VariantValue<LinkDestinationSummary.Abstract?>, usr: VariantValue<String?>, plainTextDeclaration: VariantValue<String?>, subheadingDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?>, navigatorDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?>)",
+                            "type" : "init"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/init(traits:kind:language:relativepresentationurl:title:abstract:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatortitle:)",
+                            "title" : "init(traits: [RenderNode.Variant.Trait], kind: VariantValue<DocumentationNode.Kind>, language: VariantValue<SourceLanguage>, relativePresentationURL: VariantValue<URL>, title: VariantValue<String>, abstract: VariantValue<LinkDestinationSummary.Abstract?>, usr: VariantValue<String?>, plainTextDeclaration: VariantValue<String?>, subheadingDeclarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?>, navigatorTitle: VariantValue<String?>)",
                             "type" : "init"
                           },
                           {
@@ -18417,8 +18423,14 @@
                             "type" : "property"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/navigatordeclarationfragments",
-                            "title" : "let navigatorDeclarationFragments: VariantValue<DeclarationFragments?>",
+                            "title" : "var navigatorDeclarationFragments: VariantValue<DeclarationFragments?>",
+                            "type" : "property"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/navigatortitle",
+                            "title" : "let navigatorTitle: VariantValue<String?>",
                             "type" : "property"
                           },
                           {
@@ -18522,8 +18534,8 @@
                         "type" : "groupMarker"
                       },
                       {
-                        "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/init(kind:language:relativepresentationurl:referenceidentifier:title:abstract:availablelanguages:platforms:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatordeclarationfragments:redirects:topicimages:references:variants:)",
-                        "title" : "init(kind: DocumentationNode.Kind, language: SourceLanguage, relativePresentationURL: URL, referenceIdentifier: RenderReferenceIdentifier, title: String, abstract: LinkDestinationSummary.Abstract?, availableLanguages: Set<SourceLanguage>, platforms: [LinkDestinationSummary.PlatformAvailability]?, usr: String?, plainTextDeclaration: String?, subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, redirects: [URL]?, topicImages: [TopicImage]?, references: [any RenderReference]?, variants: [LinkDestinationSummary.Variant])",
+                        "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/init(kind:language:relativepresentationurl:referenceidentifier:title:abstract:availablelanguages:isdeprecated:isbeta:platforms:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatortitle:redirects:topicimages:references:variants:-2a1n6",
+                        "title" : "init(kind: DocumentationNode.Kind, language: SourceLanguage, relativePresentationURL: URL, referenceIdentifier: RenderReferenceIdentifier, title: String, abstract: LinkDestinationSummary.Abstract?, availableLanguages: Set<SourceLanguage>, isDeprecated: Bool, isBeta: Bool, platforms: [LinkDestinationSummary.PlatformAvailability]?, usr: String?, plainTextDeclaration: String?, subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, navigatorTitle: String?, redirects: [URL]?, topicImages: [TopicImage]?, references: [any RenderReference]?, variants: [LinkDestinationSummary.Variant])",
                         "type" : "init"
                       },
                       {
@@ -18547,6 +18559,16 @@
                         "type" : "property"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/isbeta",
+                        "title" : "let isBeta: Bool",
+                        "type" : "property"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/isdeprecated",
+                        "title" : "let isDeprecated: Bool",
+                        "type" : "property"
+                      },
+                      {
                         "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/kind",
                         "title" : "let kind: DocumentationNode.Kind",
                         "type" : "property"
@@ -18557,8 +18579,14 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/navigatordeclarationfragments",
-                        "title" : "let navigatorDeclarationFragments: DeclarationFragments?",
+                        "title" : "var navigatorDeclarationFragments: DeclarationFragments?",
+                        "type" : "property"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/navigatortitle",
+                        "title" : "let navigatorTitle: String?",
                         "type" : "property"
                       },
                       {
@@ -18568,7 +18596,7 @@
                       },
                       {
                         "path" : "\/documentation\/swiftdocc\/linkdestinationsummary\/platforms",
-                        "title" : "let platforms: [PlatformAvailability]?",
+                        "title" : "var platforms: [PlatformAvailability]?",
                         "type" : "property"
                       },
                       {

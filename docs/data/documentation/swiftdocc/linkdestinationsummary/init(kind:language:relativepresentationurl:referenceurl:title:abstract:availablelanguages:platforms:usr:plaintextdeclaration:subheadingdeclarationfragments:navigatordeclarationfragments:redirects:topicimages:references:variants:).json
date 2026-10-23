@@ -3,7 +3,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'init(kind:language:relativePresentationURL:referenceIdentifier:title:abstract:availableLanguages:platforms:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorDeclarationFragments:redirects:topicImages:references:variants:)' instead. This deprecated API will be removed after 6.6 is released.",
+          "text" : "Use 'init(kind:language:relativePresentationURL:referenceIdentifier:title:abstract:availableLanguages:isDeprecated:isBeta:platforms:usr:plainTextDeclaration:subheadingDeclarationFragments:navigatorTitle:redirects:topicImages:references:variants:)' instead. This deprecated API will be removed after 6.6 is released.",
           "type" : "text"
         }
       ],
@@ -385,7 +385,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L313"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L369"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

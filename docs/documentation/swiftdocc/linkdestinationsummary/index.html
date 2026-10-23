@@ -68,8 +68,8 @@
   <h3>Initializers</h3>
   <ul>
     <li>
-      <a href="init(kind:language:relativepresentationurl:referenceidentifier:title:abstract:availablelanguages:platforms:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatordeclarationfragments:redirects:topicimages:references:variants:)/index.html">
-        <code>init(kind: DocumentationNode.Kind, language: SourceLanguage, relativePresentationURL: URL, referenceIdentifier: RenderReferenceIdentifier, title: String, abstract: LinkDestinationSummary.Abstract?, availableLanguages: Set&lt;SourceLanguage>, platforms: [LinkDestinationSummary.PlatformAvailability]?, usr: String?, plainTextDeclaration: String?, subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, navigatorDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, redirects: [URL]?, topicImages: [TopicImage]?, references: [any RenderReference]?, variants: [LinkDestinationSummary.Variant])</code>
+      <a href="init(kind:language:relativepresentationurl:referenceidentifier:title:abstract:availablelanguages:isdeprecated:isbeta:platforms:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatortitle:redirects:topicimages:references:variants:)/index.html">
+        <code>init(kind: DocumentationNode.Kind, language: SourceLanguage, relativePresentationURL: URL, referenceIdentifier: RenderReferenceIdentifier, title: String, abstract: LinkDestinationSummary.Abstract?, availableLanguages: Set&lt;SourceLanguage>, isDeprecated: Bool, isBeta: Bool, platforms: [LinkDestinationSummary.PlatformAvailability]?, usr: String?, plainTextDeclaration: String?, subheadingDeclarationFragments: LinkDestinationSummary.DeclarationFragments?, navigatorTitle: String?, redirects: [URL]?, topicImages: [TopicImage]?, references: [any RenderReference]?, variants: [LinkDestinationSummary.Variant])</code>
       </a>
       <p>Creates a new summary of an element that can be linked to from outside the local documentation.</p>
     </li>
@@ -94,6 +94,18 @@
       <p>All the languages in which the summarized element is available.</p>
     </li>
     <li>
+      <a href="isbeta/index.html">
+        <code>let isBeta: Bool</code>
+      </a>
+      <p>A value that indicates whether the summarized element is under development and likely to change.</p>
+    </li>
+    <li>
+      <a href="isdeprecated/index.html">
+        <code>let isDeprecated: Bool</code>
+      </a>
+      <p>A value that indicates whether the the summarized element is deprecated.</p>
+    </li>
+    <li>
       <a href="kind/index.html">
         <code>let kind: DocumentationNode.Kind</code>
       </a>
@@ -107,10 +119,18 @@
     </li>
     <li>
       <a href="navigatordeclarationfragments/index.html">
-        <code>let navigatorDeclarationFragments: DeclarationFragments?</code>
+        <code>var navigatorDeclarationFragments: DeclarationFragments?</code>
       </a>
       <p>
         The simplified “navigator” declaration fragments for this symbol, or <code>nil</code> if the summarized element isn’t a symbol.
+      </p>
+    </li>
+    <li>
+      <a href="navigatortitle/index.html">
+        <code>let navigatorTitle: String?</code>
+      </a>
+      <p>
+        The simplified “navigator” title of this symbol, derived from a simplification of its declaration fragments and joined together, or <code>nil</code> if the summarized element isn’t a symbol.
       </p>
     </li>
     <li>
@@ -123,7 +143,7 @@
     </li>
     <li>
       <a href="platforms/index.html">
-        <code>let platforms: [PlatformAvailability]?</code>
+        <code>var platforms: [PlatformAvailability]?</code>
       </a>
       <p>Information about the platforms for which the summarized element is available.</p>
     </li>

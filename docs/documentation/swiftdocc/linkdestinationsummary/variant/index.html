@@ -36,6 +36,11 @@
       <a href="init(traits:kind:language:relativepresentationurl:title:abstract:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatordeclarationfragments:)/index.html">
         <code>init(traits: [RenderNode.Variant.Trait], kind: VariantValue&lt;DocumentationNode.Kind>, language: VariantValue&lt;SourceLanguage>, relativePresentationURL: VariantValue&lt;URL>, title: VariantValue&lt;String>, abstract: VariantValue&lt;LinkDestinationSummary.Abstract?>, usr: VariantValue&lt;String?>, plainTextDeclaration: VariantValue&lt;String?>, subheadingDeclarationFragments: VariantValue&lt;LinkDestinationSummary.DeclarationFragments?>, navigatorDeclarationFragments: VariantValue&lt;LinkDestinationSummary.DeclarationFragments?>)</code>
       </a>
+    </li>
+    <li>
+      <a href="init(traits:kind:language:relativepresentationurl:title:abstract:usr:plaintextdeclaration:subheadingdeclarationfragments:navigatortitle:)/index.html">
+        <code>init(traits: [RenderNode.Variant.Trait], kind: VariantValue&lt;DocumentationNode.Kind>, language: VariantValue&lt;SourceLanguage>, relativePresentationURL: VariantValue&lt;URL>, title: VariantValue&lt;String>, abstract: VariantValue&lt;LinkDestinationSummary.Abstract?>, usr: VariantValue&lt;String?>, plainTextDeclaration: VariantValue&lt;String?>, subheadingDeclarationFragments: VariantValue&lt;LinkDestinationSummary.DeclarationFragments?>, navigatorTitle: VariantValue&lt;String?>)</code>
+      </a>
       <p>Creates a new summary variant with the values that are different from the main summarized values.</p>
     </li>
   </ul>
@@ -67,10 +72,18 @@
     </li>
     <li>
       <a href="navigatordeclarationfragments/index.html">
-        <code>let navigatorDeclarationFragments: VariantValue&lt;DeclarationFragments?></code>
+        <code>var navigatorDeclarationFragments: VariantValue&lt;DeclarationFragments?></code>
       </a>
       <p>
         The simplified “navigator” declaration fragments for this symbol,  or <code>nil</code> if the navigator title is the same as the summarized element.
+      </p>
+    </li>
+    <li>
+      <a href="navigatortitle/index.html">
+        <code>let navigatorTitle: VariantValue&lt;String?></code>
+      </a>
+      <p>
+        The simplified “navigator” title of this symbol, derived from a simplification of its declaration fragments and joined together, or <code>nil</code> if the navigator title is the same as the summarized element.
       </p>
     </li>
     <li>

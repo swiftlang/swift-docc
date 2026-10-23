@@ -89,7 +89,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary+FastJSONDecodable.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary+FastJSONDecodable.swift#L697"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary+FastJSONDecodable.swift#L715"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

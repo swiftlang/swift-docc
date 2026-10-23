@@ -201,7 +201,7 @@
       "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)"
       ],
       "title" : "Instance Methods"
     },
@@ -575,7 +575,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/availablevarianttraits"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/externallyLinkableElementSummaries(context:renderNode:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)": {
   "abstract" : [
     {
       "text" : "Summarizes the node and all of its child elements that you can link to from outside the local documentation.",
@@ -632,6 +632,23 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includePerPlatformAvailabilityInformation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
       "text" : ") -> ["
     },
     {
@@ -644,12 +661,12 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "externallyLinkableElementSummaries(context:renderNode:)",
+  "title" : "externallyLinkableElementSummaries(context:renderNode:includePerPlatformAvailabilityInformation:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:)"
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:includeperplatformavailabilityinformation:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:isVirtual:)": {
   "abstract" : [
