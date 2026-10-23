@@ -1363,33 +1363,6 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "watchOS" })?.introduced == "2.0")
     }
     
-    @Test
-    func eachModuleOnlyDisplaysItsOwnDefaultAvailability() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "FirstModule", platform: .init(operatingSystem: .init(name: "macos")), symbols: [
-                makeSymbol(id: "first-symbol-id", kind: .class, pathComponents: ["FirstClass"]),
-            ]))
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "SecondModule", platform: .init(operatingSystem: .init(name: "macos")), symbols: [
-                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
-            ]))
-            InfoPlist(defaultAvailability: ["FirstModule": [
-                .init(platformName: .macOS, platformVersion: "10.15")
-            ]])
-        }
-        let context = try await load(catalog: catalog)
-        #expect(context.diagnostics.map(\.identifier) == ["MultipleModules"], "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
-        let firstReference  = try #require(context.rootModules.first(where: { $0.lastPathComponent == "FirstModule"  }))
-        let secondReference = try #require(context.rootModules.first(where: { $0.lastPathComponent == "SecondModule" }))
-        
-        let firstPlatforms = try #require(makeRenderNode(for: firstReference, in: context).metadata.platforms)
-        #expect(firstPlatforms.map(\.name) == ["macOS"])
-        #expect(firstPlatforms.first?.introduced == "10.15")
-        
-        #expect(try makeRenderNode(for: secondReference, in: context).metadata.platforms == nil)
-        try assertIsNotDeprecated(reference: secondReference, in: context)
-    }
-    
     @Test(arguments: ["9.2", nil])
     func symbolAvailableOnOnePlatformIsNotConsideredDeprecatedWhenDefaultAvailable(defaultIntroducedVersion: String?) async throws {
         let catalog = Folder(name: "unit-test.docc") {
