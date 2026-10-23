@@ -8,7 +8,7 @@
     "paths": {},
     "components": {
         "schemas": {
-            "Scripts": {
+            "CustomScripts": {
                 "type": "array",
                 "description": "An array of custom scripts, which is the top-level container in a custom-scripts.json file.",
                 "items": {
@@ -29,9 +29,18 @@
                     "run": {
                         "type": "string",
                         "enum": ["on-load", "on-navigate", "on-load-and-navigate"],
+                        "default": "on-load",
                         "description": "Whether the custom script should be run only on the initial page load, each time the reader navigates after the initial page load, or both."
                     },
-                    "async": { "type": "boolean" }
+                    "async": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "The `async` attribute of the HTML script element. Scripts that aren't `async` run in the order in which they're listed."
+                    },
+                    "integrity": {
+                        "type": "string",
+                        "description": "The `integrity` attribute of the HTML script element: a hash that the browser uses to verify that the script hasn't been unexpectedly modified. External scripts with an integrity hash are loaded using CORS."
+                    }
                 }
             },
             "ExternalScript": {
@@ -41,8 +50,11 @@
                     {
                         "required": ["url"],
                         "properties": {
-                            "url": { "type": "string" },
-                            "integrity": { "type": "string" }
+                            "url": {
+                                "type": "string",
+                                "description": "The absolute URL of the external script.",
+                                "format": "uri"
+                            }
                         }
                     }
                 ]
@@ -57,15 +69,11 @@
                             "name": {
                                 "type": "string",
                                 "description": "The name of the local script file, optionally including the '.js' extension."
-                            },
+                            }
                         }
                     }
                 ]
             }
-        },
-        "requestBodies": {},
-        "securitySchemes": {},
-        "links": {},
-        "callbacks": {}
+        }
     }
 }
