@@ -1120,10 +1120,10 @@ struct LinkDestinationSummaryTests {
             ]))
             
             // Configure the "default availability" to not infer any fallbacks.
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(unavailablePlatformName: .iPadOS),
                 .init(unavailablePlatformName: .catalyst),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
