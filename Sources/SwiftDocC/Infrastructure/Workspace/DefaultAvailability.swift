@@ -10,36 +10,33 @@
 
 import Foundation
 
-/// A collection of modules and the default platform availability for symbols in that module.
+/// A collection of default platform availability.
 ///
 /// Default availability is used as a fallback value for symbols without explicit availability information.
 ///
-/// This information can be authored in the catalog's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
+/// This information can be authored in the catalog's Info.plist file, as an array of platform "name" and "version" pairs,
 /// or in the case where the platform in unconditionally unavailable, "name" and "unavailable" pairs:
 ///
 /// ```
 /// <key>CDAppleDefaultAvailability</key>
-/// <dict>
-///     <key>Module Name</key>
-///     <array>
-///         <dict>
-///             <key>name</key>
-///             <string>Platform Name</string>
-///             <key>version</key>
-///             <string>Version Number</string>
-///         </dict>
-///         <dict>
-///             <key>name</key>
-///             <string>Platform Name</string>
-///         </dict>
-///         <dict>
-///             <key>name</key>
-///             <string>Other Platform Name</string>
-///             <key>unavailable</key>
-///             <true/>
-///         </dict>
-///     </array>
-/// </dict>
+/// <array>
+///     <dict>
+///         <key>name</key>
+///         <string>Platform Name</string>
+///         <key>version</key>
+///         <string>Version Number</string>
+///     </dict>
+///     <dict>
+///         <key>name</key>
+///         <string>Platform Name</string>
+///     </dict>
+///     <dict>
+///         <key>name</key>
+///         <string>Other Platform Name</string>
+///         <key>unavailable</key>
+///         <true/>
+///     </dict>
+/// </array>
 /// ```
 public struct DefaultAvailability: Codable, Equatable {
 
@@ -122,10 +119,18 @@ public struct DefaultAvailability: Codable, Equatable {
         }
     }
 
-    /// A map of modules and the default platform availability for symbols in that module.
+    /// The internal storage of the default availability information.
     ///
-    /// For example: "ModuleName" -> ["macOS 10.15", "iOS 13.0"]
-    var modules: [String: [ModuleAvailability]]
+    /// We should remove this type, and only store the array, after 6.6 is released.
+    enum Info: Equatable {
+        case current([ModuleAvailability])
+        // It's not supported to mix different modules in one catalog. The default availability shouldn't support this either.
+        // We should remove this case, and the surrounding Info type, after 6.6 is released.
+        case deprecated([String: [ModuleAvailability]])
+    }
+    
+    /// The default platform availability for symbols.
+    var info: Info
     
     /// Fallback availability information for platforms we either don't emit SGFs for
     /// or have the same availability information as another platform.
@@ -134,20 +139,34 @@ public struct DefaultAvailability: Codable, Equatable {
         .iPadOS: .iOS,
     ]
 
-    /// Creates a default availability module.
-    /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
-    public init(with modules: [String: [ModuleAvailability]]) {
-        self.modules = modules
+    @available(*, deprecated, message: "Pass  'init(with:)' instead. This deprecated API will be removed after 6.6 is released.")
+    public init(with deprecatedAvailabilityByModuleName: [String: [ModuleAvailability]]) {
+        info = .deprecated(deprecatedAvailabilityByModuleName)
     }
     
+    /// Creates a default availability container..
+    /// - Parameter availability: The default platform availability.
+    public init(with availability: [ModuleAvailability]) {
+        info = .current(availability)
+    }
+
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let modules = try container.decode([String: [ModuleAvailability]].self)
-        self.init(with: modules)
+        do {
+            info = .current(try container.decode([ModuleAvailability].self))
+            return
+        } catch DecodingError.typeMismatch {
+            info = .deprecated(try container.decode([String: [ModuleAvailability]].self))
+        }
     }
     
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(modules)
+        switch info {
+            case.current(let modules):
+                try container.encode(modules)
+            case .deprecated(let modulesByName):
+                try container.encode(modulesByName)
+        }
     }
 }

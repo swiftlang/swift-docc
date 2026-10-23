@@ -9,40 +9,37 @@
 	<key>CFBundleVersion</key>
 	<string>0.1.0</string>
 	<key>CDAppleDefaultAvailability</key>
-	<dict>
-		<key>MyKit</key>
-		<array>
-			<dict>
-				<key>name</key>
-				<string>Mac Catalyst</string>
-				<key>version</key>
-				<string>13.0</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>iOS</string>
-				<key>version</key>
-				<string>13.0</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>tvOS</string>
-				<key>version</key>
-				<string>13.0</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>watchOS</string>
-				<key>version</key>
-				<string>6.0</string>
-			</dict>
-			<dict>
-				<key>name</key>
-				<string>macOS</string>
-				<key>version</key>
-				<string>10.15</string>
-			</dict>
-		</array>
-	</dict>
+    <array>
+        <dict>
+            <key>name</key>
+            <string>Mac Catalyst</string>
+            <key>version</key>
+            <string>13.0</string>
+        </dict>
+        <dict>
+            <key>name</key>
+            <string>iOS</string>
+            <key>version</key>
+            <string>13.0</string>
+        </dict>
+        <dict>
+            <key>name</key>
+            <string>tvOS</string>
+            <key>version</key>
+            <string>13.0</string>
+        </dict>
+        <dict>
+            <key>name</key>
+            <string>watchOS</string>
+            <key>version</key>
+            <string>6.0</string>
+        </dict>
+        <dict>
+            <key>name</key>
+            <string>macOS</string>
+            <key>version</key>
+            <string>10.15</string>
+        </dict>
+    </array>
 </dict>
 </plist>

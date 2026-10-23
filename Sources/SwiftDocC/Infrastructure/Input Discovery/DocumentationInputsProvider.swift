@@ -11,6 +11,8 @@
 package import Foundation
 private import SymbolKit
 
+private import Markdown // Only for the diagnostic. We can remove this after 6.6 is released.
+
 extension DocumentationContext {
 
     /// A type that provides inputs for a unit of documentation.
@@ -155,7 +157,7 @@ extension DocumentationContext.InputsProvider {
         )
 
         let foundContents = try findContents(in: url)
-        return DocumentationContext.Inputs(
+        var inputs = DocumentationContext.Inputs(
             info: info,
             symbolGraphURLs:  foundContents.symbolGraphs + options.additionalSymbolGraphFiles,
             markupURLs:       foundContents.markup,
@@ -165,6 +167,20 @@ extension DocumentationContext.InputsProvider {
             themeSettings: shallowContent.first(where: FileTypes.isThemeSettingsFile),
             customFavicon: shallowContent.first(where: FileTypes.isCustomFavicon)
         )
+        
+        // This is the only place that has access to the source location and raw data for the Info.plist to provide details for this diagnostic.
+        //
+        // When can remove this warning when we remove the support for the legacy default availability format after 6.6 is released.
+        if case .deprecated(let modulesByName) = info.defaultAvailability?.info, let infoPlistData {
+            _warnAboutDeprecatedDefaultAvailabilityFormat(
+                source: shallowContent.first(where: FileTypes.isInfoPlistFile),
+                infoPlistData: infoPlistData,
+                moduleNames: modulesByName.keys.sorted(),
+                inputs: &inputs
+            )
+        }
+        
+        return inputs
     }
 
     /// Finds all the markup files, resource files, and symbol graph files in the given directory.
@@ -356,4 +372,103 @@ extension DocumentationContext.InputsProvider {
             return message
         }
     }
+}
+
+private func _warnAboutDeprecatedDefaultAvailabilityFormat(source: URL?, infoPlistData: Data, moduleNames: [String], inputs: inout DocumentationContext.Inputs) {
+    let rangeAndSuggestion = _extractRangeAndSuggestion(from: infoPlistData, source: source)
+    let groupIdentifier = "ModuleSpecificDefaultAvailability"
+    
+    if moduleNames.count == 1 {
+        inputs._infoPlitsLegacyFormatDiagnostic = Diagnostic(
+            source: source,
+            severity: .warning,
+            range: rangeAndSuggestion?.range,
+            identifier: groupIdentifier,
+            summary: "Default availability is not module-specific",
+            explanation: """
+                A single DocC build covers a single module (for example a framework, library, or executable).
+                Because of this, specifying module-specific default availability provides no new information \
+                but introduces a risk that the specified module name doesn't match the documented module name.
+                Any support for specifying per-module default availability will be removed after Swift-DocC 6.6 is released. 
+                """,
+            solutions: rangeAndSuggestion.map {
+                [.init(summary: "Specify only the array of platforms without the '\(moduleNames.first!)' module name", replacements: [.init(range: $0.range, replacement: $0.suggestedReplacement)])]
+            } ?? []
+        )
+    } else {
+        inputs._infoPlitsLegacyFormatDiagnostic = Diagnostic(
+            source: source,
+            severity: .warning,
+            range: rangeAndSuggestion?.range,
+            identifier: "MultipleModuleDefaultAvailability",
+            groupIdentifier: groupIdentifier,
+            summary: "Default availability cannot specify more than one module; found information for \(moduleNames.map(\.singleQuoted).list(finalConjunction: .and))",
+            explanation: """
+                A single DocC build covers a single module (for example a framework, library, or executable).
+                To produce a documentation archive that covers \(moduleNames.map(\.singleQuoted).list(finalConjunction: .and)); \
+                first document each module separately---listing only the default availability for that module in each catalog---and then combine their individual archives into a single combined archive by running:
+                $ docc merge \(moduleNames.map { "/path/to/\($0).doccarchive" }.joined(separator: " "))
+                For more information, see the `docc merge --help` text.
+                Any support for specifying per-module default availability will be removed after Swift-DocC 6.6 is released.
+                """,
+            solutions: rangeAndSuggestion.map {
+                [.init(summary: "Specify only one array of platforms without any module names", replacements: [.init(range: $0.range, replacement: $0.suggestedReplacement)])]
+            } ?? []
+        )
+    }
+}
+
+private func _extractRangeAndSuggestion(from infoPlistData: Data, source: URL?) -> (range: SourceRange, suggestedReplacement: String)? {
+    let infoPlist = String(decoding: infoPlistData, as: UTF8.self)
+    
+    // The legacy format that we're looking for looks like this:
+    //
+    // <key>CDAppleDefaultAvailability</key>
+    // <dict>
+    //   <array>
+    //     <dict> ... </dict>
+    //     ...
+    //   </array>
+    //   ...
+    // </dict>
+    guard let keyRange = infoPlist.firstRange(of: "CDAppleDefaultAvailability") else {
+        return nil
+    }
+    var remaining = infoPlist[keyRange.upperBound...]
+    guard let startOfValue = remaining.firstRange(of: "<dict>")?.lowerBound else {
+        return nil
+    }
+    remaining = remaining[startOfValue...]
+    
+    // Find the range of the first value for the suggested replacement.
+    guard let startOfFirstValue = remaining.firstRange(of: "<array>")?.lowerBound else {
+        return nil
+    }
+    remaining = remaining[startOfFirstValue...]
+    
+    // The values inside each array element doesn't contain any inner arrays, so the end of it is the next array closing tag.
+    guard let endOfFirstValue = remaining.firstRange(of: "</array>")?.upperBound else {
+        return nil
+    }
+    remaining = remaining[startOfFirstValue...]
+    
+    // We've found the end of this value when the dictionary element ends immediately after an array element.
+    guard let endOfValue = remaining.firstMatch(of: #/</array>\s*</dict>/#)?.endIndex else {
+        return nil
+    }
+    
+    func sourceLocation(index: String.Index) -> SourceLocation {
+        let before = infoPlist.utf8[..<index] // SourceLocations are measured in number of bytes.
+        let line = before.count(where: { $0 == .init(ascii: "\n") }) + 1
+        
+        let lineStartIndex = before.lastIndex(of: .init(ascii: "\n")) ?? before.startIndex
+        let column = before.distance(from: lineStartIndex, to: index) + 1
+        
+        return SourceLocation(line: line, column: column, source: source)
+    }
+    
+    return (
+        sourceLocation(index: startOfValue) ..< sourceLocation(index: endOfValue),
+        String(infoPlist[startOfFirstValue ..< endOfFirstValue])
+    )
 }
