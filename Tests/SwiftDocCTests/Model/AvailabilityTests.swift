@@ -1239,25 +1239,21 @@ struct AvailabilityTests {
     // MARK: Module availability
     
     private func makeRenderNode(for reference: ResolvedTopicReference, in context: DocumentationContext, sourceLocation: SourceLocation = #_sourceLocation) throws -> RenderNode {
-        let node = try #require(context.documentationCache[reference], sourceLocation: sourceLocation)
-        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
-        return try #require(converter.renderNode(for: node), sourceLocation: sourceLocation)
+        try makeRenderNodeAndReference(for: reference, in: context, sourceLocation: sourceLocation).renderNode
     }
     
-    private func assertIsNotDeprecated(reference: ResolvedTopicReference, in context: DocumentationContext, sourceLocation: SourceLocation = #_sourceLocation) throws {
+    private func makeRenderNodeAndReference(for reference: ResolvedTopicReference, in context: DocumentationContext, sourceLocation: SourceLocation = #_sourceLocation) throws -> (renderNode: RenderNode, topicReference: TopicRenderReference) {
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let node = try #require(context.documentationCache[reference], sourceLocation: sourceLocation)
         let renderNode = try #require(converter.renderNode(for: node), sourceLocation: sourceLocation)
-        #expect(renderNode.isDeprecated == false, sourceLocation: sourceLocation)
-        
         let topicReference = try #require(converter.renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference, sourceLocation: sourceLocation)
-        #expect(topicReference.isDeprecated == false, sourceLocation: sourceLocation)
+        return (renderNode, topicReference)
     }
     
-    @Test(arguments: ["ios", "macos", "tvos"])
-    func moduleWithoutAvailabilityInformationIsNotConsideredDeprecated(operatingSystem: String) async throws {
+    @Test(arguments: Self.allMainPlatforms)
+    func moduleWithoutAvailabilityInformationIsNotConsideredDeprecated(_ platform: SymbolGraph.Platform) async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: operatingSystem)), symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
             ]))
         }
@@ -1266,11 +1262,12 @@ struct AvailabilityTests {
         
         let moduleReference = try #require(context.soleRootModuleReference)
         let symbolReference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
-        try assertIsNotDeprecated(reference: moduleReference, in: context)
-        try assertIsNotDeprecated(reference: symbolReference, in: context)
-        
-        #expect(try makeRenderNode(for: moduleReference, in: context).metadata.platforms == nil)
-        #expect(try makeRenderNode(for: symbolReference, in: context).metadata.platforms == nil)
+        for reference in [moduleReference, symbolReference] {
+            let (renderNode, topicReference) = try makeRenderNodeAndReference(for: reference, in: context)
+            #expect(renderNode.isDeprecated == false)
+            #expect(topicReference.isDeprecated == false)
+            #expect(renderNode.metadata.platforms == nil)
+        }
     }
     
     @Test
@@ -1300,7 +1297,7 @@ struct AvailabilityTests {
     }
     
     @Test
-    func moduleMatchesSymbolsForVersionlessDefaultAvailabilityWhenFoundInThatPlatformsSymbolGraph() async throws {
+    func moduleDisplaysVersionlessDefaultAvailabilityButItsSymbolsDoNot() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
@@ -1312,55 +1309,15 @@ struct AvailabilityTests {
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        // ???: Why do we not want versionless platforms to display when they're only found in a symbol graph? (rdar://171807245)
+        // Known inconsistency (rdar://190715484): when the Info.plist default availability has no version,
+        // the module displays that platform but the symbols in the module don't.
+        let moduleReference = try #require(context.soleRootModuleReference)
+        let moduleRenderNode = try makeRenderNode(for: moduleReference, in: context)
+        #expect(moduleRenderNode.metadata.platforms?.compactMap(\.name) == ["iOS"])
+        #expect(moduleRenderNode.isDeprecated == false)
+        
         let symbolReference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
         #expect(try makeRenderNode(for: symbolReference, in: context).metadata.platforms == nil)
-        #expect(try makeRenderNode(for: #require(context.soleRootModuleReference), in: context).metadata.platforms == nil)
-    }
-    
-    @Test
-    func moduleMatchesSymbolsForVersionlessDefaultAvailabilityWhenFoundInAnotherPlatformsSymbolGraph() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "tvos")), symbols: [
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
-            ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
-                .init(platformName: .iOS, platformVersion: nil)
-            ]])
-        }
-        let context = try await load(catalog: catalog)
-        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
-        let symbolReference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
-        for reference in [try #require(context.soleRootModuleReference), symbolReference] {
-            let renderPlatforms = try #require(makeRenderNode(for: reference, in: context).metadata.platforms)
-            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "tvOS"])
-            #expect(renderPlatforms.allSatisfy { $0.introduced == nil })
-        }
-    }
-    
-    @Test
-    func moduleInSourceAvailabilityOverridesDefaultAvailability() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
-                makeSymbol(id: "ModuleName", kind: .module, pathComponents: ["ModuleName"], availability: [
-                    .init(domainName: "iOS", introduced: .init(major: 10, minor: 0, patch: 0), deprecated: nil)
-                ]),
-                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
-            ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
-                .init(platformName: .iOS,     platformVersion: "8.0"),
-                .init(platformName: .watchOS, platformVersion: "2.0"),
-            ]])
-        }
-        let context = try await load(catalog: catalog)
-        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
-        
-        let moduleReference = try #require(context.soleRootModuleReference)
-        let renderPlatforms = try #require(makeRenderNode(for: moduleReference, in: context).metadata.platforms)
-        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "watchOS"])
-        #expect(renderPlatforms.first(where: { $0.name == "iOS"     })?.introduced == "10.0")
-        #expect(renderPlatforms.first(where: { $0.name == "watchOS" })?.introduced == "2.0")
     }
     
     @Test(arguments: ["9.2", nil])

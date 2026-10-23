@@ -77,7 +77,7 @@ class DefaultAvailabilityTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), ["Mac Catalyst 13.5", "iOS ", "iPadOS ", "macOS 10.15.1"])
+            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), expectedDefaultAvailability)
         }
         
         // Test if the default availability is used for symbols with no explicit availability
@@ -194,8 +194,6 @@ class DefaultAvailabilityTests: XCTestCase {
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.beta ? "(beta)" : "")" }).sorted(), [
                 "Mac Catalyst 13.5",
-                "iOS ",
-                "iPadOS ",
                 "macOS 10.15.1",
             ])
         }
@@ -526,12 +524,14 @@ class DefaultAvailabilityTests: XCTestCase {
             
             XCTAssert(withoutInSourceAvailability.isEmpty)
             
-            // Like symbols, the module page doesn't display versionless platforms that are only found in a symbol graph.
+            // Verify that the module page displays only the default availability
             let moduleReference = try XCTUnwrap(context.soleRootModuleReference)
             let node = try context.entity(with: moduleReference)
             var translator = RenderNodeTranslator(context: context, identifier: moduleReference)
             let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
-            XCTAssertNil(renderNode.metadata.platforms) // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+            XCTAssertEqual(renderNode.metadata.platforms?.count, 1) // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
+            XCTAssertEqual(renderNode.metadata.platforms?.first?.name, "iOS")
+            XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, nil)
         }
         
         do {

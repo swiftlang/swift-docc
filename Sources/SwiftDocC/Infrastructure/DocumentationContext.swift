@@ -1313,19 +1313,14 @@ public class DocumentationContext {
             signposter.withIntervalSignpost("Compute consolidated availability") {
                 for (moduleName, unifiedGraph) in symbolGraphLoader.unifiedGraphs {
                     var symbolBaseAvailability = Availability(defaultAvailability: inputs.info.defaultAvailability?.modules[moduleName])
-                    symbolBaseAvailability.markAllEncounteredPlatforms(in: unifiedGraph)
-
+                    
                     documentationCache.reference(symbolID: moduleName).map { moduleReference in
                         var moduleAvailability = symbolBaseAvailability
-                        if let moduleSymbol = documentationCache[moduleReference]?.unifiedSymbol {
-                            for language in moduleSymbol.sourceLanguages {
-                                moduleAvailability.addInSourceAvailability(from: moduleSymbol, matchingLanguage: language)
-                            }
-                        }
                         moduleAvailability.finalizePlatformFallbacks()
                         (documentationCache[moduleReference]?.semantic as! Symbol).consolidatedAvailability = .init(defaultVariantValue: moduleAvailability)
                     }
-
+                    symbolBaseAvailability.markAllEncounteredPlatforms(in: unifiedGraph)
+                    
                     for symbol in unifiedGraph.symbols.values {
                         guard let reference = documentationCache.reference(symbolID: symbol.uniqueIdentifier) else {
                             continue
