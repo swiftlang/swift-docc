@@ -389,6 +389,12 @@ package struct HTMLRenderer {
                     .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
                 })
             }
+            // This poorly named variable doesn't hold the page's automatic curation but rather a curation of its default implementations.
+            if !symbol.automaticTaskGroups.isEmpty {
+                taskGroupInfo.append(contentsOf: symbol.automaticTaskGroups.map { group in
+                        .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
+                })
+            }
             
             if !taskGroupInfo.isEmpty {
                 articleElements.append(contentsOf: renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
@@ -402,8 +408,27 @@ package struct HTMLRenderer {
         {
             articleElements.append(contentsOf:
                 renderer.groupedListSection(named: "Relationships", groups: relationships.mapValues { section in
-                    section.groups.map {
+                    section.groups.sorted(by: \.sectionOrder).map {
                         .init(title: $0.sectionTitle, references: $0.destinations.compactMap { topic in
+                            switch topic {
+                                case .resolved(.success(let reference)): reference.url
+                                case .unresolved, .resolved(.failure):   nil
+                            }
+                        })
+                    }
+                })
+            )
+        }
+        
+        // Default Implementations
+        if let relationships = symbol.defaultImplementationsVariants
+            .values(goal: goal, by: { $0.groups.elementsEqual($1.groups, by: { $0 == $1 }) })
+            .valuesByLanguage()
+        {
+            articleElements.append(contentsOf:
+                renderer.groupedSection(named: "Default Implementations", groups: relationships.mapValues { section in
+                    section.groups.map {
+                        .init(title: $0.heading, content: [], references: $0.references.compactMap { topic in
                             switch topic {
                                 case .resolved(.success(let reference)): reference.url
                                 case .unresolved, .resolved(.failure):   nil
@@ -563,5 +588,11 @@ private extension DocumentationDataVariants {
 private extension DocumentationDataVariants where Variant: Equatable {
     func values(goal: RenderGoal) -> VariantValues<Variant> {
         values(goal: goal, by: ==)
+    }
+}
+
+private extension ImplementationsGroup {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.heading == rhs.heading && lhs.references == rhs.references
     }
 }
