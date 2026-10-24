@@ -31,6 +31,7 @@ public struct ConvertAction: AsyncAction {
     private let outputFormat: Docc.Convert.OutputFormat
     let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
+    let enableCustomScripts: Bool
     private let experimentalModifyCatalogWithGeneratedCuration: Bool
     let buildLMDBIndex: Bool
     private let documentationCoverageOptions: DocumentationCoverageOptions
@@ -85,6 +86,7 @@ public struct ConvertAction: AsyncAction {
     ///   - diagnosticIDsWithWarningSeverity: A list of diagnostic identifiers that are explicitly lowered to a "warning" severity.
     ///   - diagnosticIDsWithErrorSeverity: A list of diagnostic identifiers that are explicitly raised to an "error" severity.
     ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
+    ///   - enableCustomScripts: `true` if the convert action should copy custom scripts (configured with a "custom-scripts.json" file) into the output's "custom-scripts" directory, otherwise `false`.
     ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
     ///   - featureFlags: A collection of feature flags that the convert action uses to enable or disable certain optional behaviors.
     ///   - transformForStaticHostingOptions: Options to configure how the convert action transforms the built documentation archive so that it supports a static hosting environment.
@@ -117,6 +119,7 @@ public struct ConvertAction: AsyncAction {
         diagnosticIDsWithWarningSeverity: Set<String> = [],
         diagnosticIDsWithErrorSeverity: Set<String> = [],
         experimentalEnableCustomTemplates: Bool = false,
+        enableCustomScripts: Bool = true,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         featureFlags: FeatureFlags = .init(),
         transformForStaticHostingOptions: TransformForStaticHostingOptions = .noTransform,
@@ -160,6 +163,7 @@ public struct ConvertAction: AsyncAction {
         self.treatWarningsAsErrors = treatWarningsAsErrors
 
         self.experimentalEnableCustomTemplates = experimentalEnableCustomTemplates
+        self.enableCustomScripts = enableCustomScripts
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
@@ -349,6 +353,7 @@ public struct ConvertAction: AsyncAction {
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
+            enableCustomScripts: enableCustomScripts,
             // Don't transform for static hosting if the `FileWritingHTMLContentConsumer` will create per-page index.html files
             transformForStaticHostingIndexHTML: transformForStaticHostingOptions == .withoutContent ? indexHTML : nil,
             inputsID: inputs.id

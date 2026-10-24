@@ -21,6 +21,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
     var renderNodeWriter: JSONEncodingRenderNodeWriter
     var indexer: ConvertAction.Indexer?
     let enableCustomTemplates: Bool
+    let enableCustomScripts: Bool
     var assetPrefixComponent: String?
 
     private enum CustomTemplateIdentifier: String {
@@ -36,6 +37,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
         context: DocumentationContext,
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
+        enableCustomScripts: Bool = true,
         transformForStaticHostingIndexHTML: URL?,
         inputsID: DocumentationContext.Inputs.Identifier?
     ) {
@@ -51,6 +53,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
         )
         self.indexer = indexer
         self.enableCustomTemplates = enableCustomTemplates
+        self.enableCustomScripts = enableCustomScripts
         self.assetPrefixComponent = inputsID?.rawValue.split(separator: "/").joined(separator: "-")
     }
     
@@ -136,19 +139,22 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
             try copyAsset(downloadAsset, to: downloadsDirectory)
         }
         
-        // Create custom-scripts directory in the archive if needed. Do not append
-        // the catalog identifier: when merging archives, only the first archive's
-        // custom-scripts.json and custom-scripts directory survive (mirroring the
-        // behavior of theme-settings.json and the favicon), so there is no need
-        // to namespace the custom-scripts directory with a catalog identifier.
-        let scriptsDirectory = targetFolder
-            .appendingPathComponent("custom-scripts", isDirectory: true)
-        if !outputFileManager.directoryExists(atPath: scriptsDirectory.path) {
-            try outputFileManager.createDirectory(at: scriptsDirectory, withIntermediateDirectories: true, attributes: nil)
-        }
+        // Copy custom scripts to the archive if this feature is enabled.
+        if enableCustomScripts {
+            // Create custom-scripts directory in the archive if needed. Do not append
+            // the catalog identifier: when merging archives, only the first archive's
+            // custom-scripts.json and custom-scripts directory survive (mirroring the
+            // behavior of theme-settings.json and the favicon), so there is no need
+            // to namespace the custom-scripts directory with a catalog identifier.
+            let scriptsDirectory = targetFolder
+                .appendingPathComponent("custom-scripts", isDirectory: true)
+            if !outputFileManager.directoryExists(atPath: scriptsDirectory.path) {
+                try outputFileManager.createDirectory(at: scriptsDirectory, withIntermediateDirectories: true, attributes: nil)
+            }
         
-        for customScript in context.registeredCustomScripts(for: inputsID) {
-            try copyAsset(customScript, to: scriptsDirectory)
+            for customScript in context.registeredCustomScripts(for: inputsID) {
+                try copyAsset(customScript, to: scriptsDirectory)
+            }
         }
 
         // If the bundle contains a `header.html` file, inject a <template> into
@@ -186,9 +192,9 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
             try inputFileManager.copyItem(at: customFavicon, to: targetFile, writingUsing: outputFileManager)
         }
         
-        // Copy the `custom-scripts.json` file into the output directory if one
-        // is provided.
-        if let customScripts = inputs.customScripts {
+        // Copy the `custom-scripts.json` file to the archive if one is provided
+        // and the feature is enabled.
+        if let customScripts = inputs.customScripts, enableCustomScripts {
             let targetFile = targetFolder.appendingPathComponent(customScripts.lastPathComponent, isDirectory: false)
             if outputFileManager.fileExists(atPath: targetFile.path) {
                 try outputFileManager.removeItem(at: targetFile)

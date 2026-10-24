@@ -2487,6 +2487,73 @@ class ConvertActionTests: XCTestCase {
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
     }
+
+    func testConvertWithCustomScripts() async throws {
+        let (outputURL, customScripts, localScript) = try await convertCatalogWithCustomScripts(named: "TestConvertWithCustomScripts", enableCustomScripts: true)
+
+        let expectedOutput = Folder(name: ".docc-build", content: [
+            customScripts,
+            Folder(name: "custom-scripts", content: [localScript]),
+        ])
+        expectedOutput.assertExist(at: outputURL, fileManager: FileManager.default)
+    }
+
+    func testConvertWithCustomScriptsDisabled() async throws {
+        let (outputURL, _, _) = try await convertCatalogWithCustomScripts(named: "TestConvertWithCustomScriptsDisabled", enableCustomScripts: false)
+
+        let fileManager = FileManager.default
+        XCTAssertFalse(fileManager.fileExists(atPath: outputURL.appendingPathComponent("custom-scripts.json").path))
+        XCTAssertFalse(fileManager.fileExists(atPath: outputURL.appendingPathComponent("custom-scripts").path))
+    }
+
+    private func convertCatalogWithCustomScripts(
+        named name: String,
+        enableCustomScripts: Bool
+    ) async throws -> (outputURL: URL, customScripts: TextFile, localScript: TextFile) {
+        let info = InfoPlist(displayName: name, identifier: "com.test.example")
+        let index = TextFile(name: "index.html", utf8Content: """
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title>Test</title>
+            </head>
+            <body data-color-scheme="auto"><p>hello</p></body>
+        </html>
+        """)
+        let customScripts = TextFile(name: "custom-scripts.json", utf8Content: """
+        [
+          { "name": "my-script" }
+        ]
+        """)
+        let localScript = TextFile(name: "my-script.js", utf8Content: "console.log('Hello, world!');")
+        let template = Folder(name: "template", content: [index])
+        let catalog = Folder(name: "\(name).docc", content: [
+            info,
+            customScripts,
+            Folder(name: "CustomScripts", content: [localScript]),
+        ])
+
+        let tempURL = try createTemporaryDirectory()
+        let targetURL = tempURL.appendingPathComponent("target", isDirectory: true)
+
+        let bundleURL = try catalog.write(inside: tempURL)
+        let templateURL = try template.write(inside: tempURL)
+
+        let action = try ConvertAction(
+            documentationBundleURL: bundleURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            outputLocation: targetURL,
+            htmlTemplateDirectory: templateURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            outputFileManager: FileManager.default,
+            temporaryDirectory: createTemporaryDirectory(),
+            enableCustomScripts: enableCustomScripts
+        )
+        let result = try await action.perform(logHandle: .none)
+        return (try XCTUnwrap(result.outputs.first), customScripts, localScript)
+    }
     
     func testTreatWarningsAsErrors() async throws {
         let catalog = Folder(name: "unit-test.docc", content: [
