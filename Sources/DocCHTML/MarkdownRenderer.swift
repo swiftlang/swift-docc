@@ -292,10 +292,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             }
             
             return anchor(linkingTo: linkedElement, contents: content)
-        } else if destination.hasPrefix("doc://") {
+        } else if destination.hasPrefix("doc:") {
             // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation
-            let path = destination.dropFirst(6) // "doc://"
-                .drop(while: { $0 != "/" })     // the known identifier (host component)
+            var path = destination.dropFirst(4) // "doc:"
+            if path.hasPrefix("//") {
+                // If this is an absolute link, drop the "authority" ("//" prefix and "host" component)
+                path = path.dropFirst(2).drop(while: { $0 != "/" })
+            }
             return .text(linkProvider.fallbackLinkText(linkString: String(path)))
         } else {
             // This could be a http link

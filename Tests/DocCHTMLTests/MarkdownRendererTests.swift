@@ -469,6 +469,28 @@ struct MarkdownRendererTests {
         )
     }
     
+    @Test(arguments: [
+        "<doc:SomeArticleName>",
+        "<doc://com.example/SomeArticleName>",
+        "<doc://com.example/documentation/ModuleName/SomeClass>",
+    ])
+    func renderingFallbackLinkTextForUnresolvedDocumentationLinks(_ markup: String) {
+        assert(
+            rendering: markup,
+            fallbackLinkTextToReturn: "FallbackLinkText",
+            matches: "<p>FallbackLinkText</p>"
+        )
+    }
+    
+    @Test
+    func renderingFallbackLinkTextForUnresolvedSymbolLinks() {
+        assert(
+            rendering: "``ModuleName/SomeClass``",
+            fallbackLinkTextToReturn: "FallbackLinkText",
+            matches: "<p><code>FallbackLinkText</code></p>"
+        )
+    }
+    
     @Test
     func renderingRelativeLinksToLocalImages() throws {
         // Only a single image representation
