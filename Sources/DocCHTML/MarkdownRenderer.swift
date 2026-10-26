@@ -349,8 +349,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     
     package func path(to other: String) -> String {
         let fromComponents = pathComponents
-        // To be able to compare the components of the two URLs they both need to be absolute and standardized.
-        let toComponents = other.components(separatedBy: "/")
+        let toComponents   = other.components(separatedBy: "/")
         
         guard fromComponents != toComponents else { return "." }
 
