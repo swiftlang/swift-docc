@@ -26442,6 +26442,7 @@
                         "type" : "property"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/symbol\/relationships",
                         "title" : "var relationships: RelationshipsSection",
                         "type" : "property"
