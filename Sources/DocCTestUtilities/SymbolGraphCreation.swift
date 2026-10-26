@@ -233,7 +233,7 @@ package extension SymbolGraph.Relationship {
         targetFallback: String? = nil,
         mixins: [any Mixin] = []
     ) {
-        self.init(source: source, target: target, kind: kind, targetFallback: target)
+        self.init(source: source, target: target, kind: kind, targetFallback: targetFallback)
         self.mixins = makeMixins(mixins)
     }
 }
