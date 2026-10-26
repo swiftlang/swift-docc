@@ -422,12 +422,13 @@ package struct HTMLRenderer {
         
         // Default Implementations
         if let relationships = symbol.defaultImplementationsVariants
-            .values(goal: goal, by: { $0.groups.elementsEqual($1.groups, by: { $0 == $1 }) })
+            .map(transform: \.groups)
+            .values(goal: goal, by: { $0.elementsEqual($1, by: ==) })
             .valuesByLanguage()
         {
             articleElements.append(contentsOf:
-                renderer.groupedSection(named: "Default Implementations", groups: relationships.mapValues { section in
-                    section.groups.map {
+                renderer.groupedSection(named: "Default Implementations", groups: relationships.mapValues { groups in
+                    groups.map {
                         .init(title: $0.heading, content: [], references: $0.references.compactMap { topic in
                             switch topic {
                                 case .resolved(.success(let reference)): reference.url
