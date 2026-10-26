@@ -375,21 +375,37 @@ package struct HTMLRenderer {
         
         // Topics
         do {
+            typealias TaskGroupInfo = MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo
+            
             // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
-            var taskGroupInfo: [MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo] = []
+            var taskGroupInfo = [TaskGroupInfo]()
             
             if let authored = symbol.topics?.taskGroups {
                 taskGroupInfo.append(contentsOf: authored.map { group in
-                    .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
-                        $0.destination
-                    })
+                    .init(title: group.heading?.title, content: group.content, references: group.links.compactMap(\.destination))
                 })
             }
+            
+            var atBottomGroups = [TaskGroupInfo]()
+            // This poorly named variable only hold either:
+            // - the articles, that appear before the automatic curation, on module pages.
+            // - the default implementations, that appear at the very bottom, for protocol requirement pages.
+            for group in symbol.automaticTaskGroups {
+                let info = TaskGroupInfo(title: group.title, content: [], references: group.references.compactMap(\.absoluteString))
+                if group.renderPositionPreference == .top {
+                    // Append the group without storing it in an intermediate
+                    taskGroupInfo.append(info)
+                } else {
+                    atBottomGroups.append(info)
+                }
+            }
+            
             if let automatic = try? AutomaticCuration.topics(for: node, withTraits: [.swift, .objectiveC], context: context) {
                 taskGroupInfo.append(contentsOf: automatic.map { group in
-                    .init(title: group.title, content: [], references: group.references.compactMap { $0.absoluteString })
+                    .init(title: group.title, content: [], references: group.references.compactMap(\.absoluteString))
                 })
             }
+            taskGroupInfo.append(contentsOf: consume atBottomGroups)
             
             if !taskGroupInfo.isEmpty {
                 articleElements.append(contentsOf: renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
@@ -403,8 +419,28 @@ package struct HTMLRenderer {
         {
             articleElements.append(contentsOf:
                 renderer.groupedListSection(named: "Relationships", groups: relationships.mapValues { section in
-                    section.groups.map {
+                    section.groups.sorted(by: \.sectionOrder).map {
                         .init(title: $0.sectionTitle, references: $0.destinations.compactMap { topic in
+                            switch topic {
+                                case .resolved(.success(let reference)): reference.absoluteString
+                                case .unresolved, .resolved(.failure):   nil
+                            }
+                        })
+                    }
+                })
+            )
+        }
+        
+        // Default Implementations
+        if let relationships = symbol.defaultImplementationsVariants
+            .map(transform: \.groups)
+            .values(goal: goal, by: { $0.elementsEqual($1, by: ==) })
+            .valuesByLanguage()
+        {
+            articleElements.append(contentsOf:
+                renderer.groupedSection(named: "Default Implementations", groups: relationships.mapValues { groups in
+                    groups.map {
+                        .init(title: $0.heading, content: [], references: $0.references.compactMap { topic in
                             switch topic {
                                 case .resolved(.success(let reference)): reference.absoluteString
                                 case .unresolved, .resolved(.failure):   nil
@@ -564,5 +600,11 @@ private extension DocumentationDataVariants {
 private extension DocumentationDataVariants where Variant: Equatable {
     func values(goal: RenderGoal) -> VariantValues<Variant> {
         values(goal: goal, by: ==)
+    }
+}
+
+private extension ImplementationsGroup {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.heading == rhs.heading && lhs.references == rhs.references
     }
 }

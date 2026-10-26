@@ -474,6 +474,12 @@ struct Availability {
     ///
     /// A page as a whole is considered to be deprecated if the API is deprecated on all the platforms that the API is available for.
     var isDeprecated: Bool {
+        // A page without any availability information (for example a module without default availability)
+        // isn't deprecated. Without this check, `allSatisfy` returns true, which reflects the content as deprecated.
+        let hasAnyAvailabilityInformation = (knownPlatforms + customPlatformsByName.values).contains { $0.source != .initialValue }
+        guard hasAnyAvailabilityInformation else {
+            return false
+        }
         return knownPlatforms.allSatisfy {
             switch $0.state {
                 case .available(_, .some, _):
