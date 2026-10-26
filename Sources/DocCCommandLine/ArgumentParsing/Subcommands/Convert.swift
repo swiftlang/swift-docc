@@ -587,7 +587,7 @@ extension Docc {
         }
 
         public mutating func validate() throws {
-            guard hostingOptions.transformForStaticHosting else {
+            guard hostingOptions.transformForStaticHosting, inputsAndOutputs.outputFormat == .json else {
                 return
             }
                 

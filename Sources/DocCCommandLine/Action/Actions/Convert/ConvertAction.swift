@@ -24,7 +24,7 @@ public struct ConvertAction: AsyncAction {
     private let signposter = ConvertActionConverter.signposter
     
     let rootURL: URL?
-    let targetDirectory: URL
+    let outputLocation: URL
     let htmlTemplateDirectory: URL?
     
     private let emitDigest: Bool
@@ -64,7 +64,7 @@ public struct ConvertAction: AsyncAction {
     ///   - documentationBundleURL: The root of the documentation catalog to convert.
     ///   - outOfProcessResolver: An out-of-process resolver that
     ///   - analyze: `true` if the convert action should override the provided `diagnosticLevel` with `.information`, otherwise `false`.
-    ///   - targetDirectory: The location where the convert action will write the built documentation output.
+    ///   - outputLocation: The location where the convert action will write the built documentation output.
     ///   - htmlTemplateDirectory: The location of the HTML template to use as a base for the built documentation output.
     ///   - emitDigest: Whether the conversion should create metadata files, such as linkable entities information.
     ///   - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
@@ -97,7 +97,7 @@ public struct ConvertAction: AsyncAction {
         documentationBundleURL: URL?,
         outOfProcessResolver: OutOfProcessReferenceResolver?,
         analyze: Bool,
-        targetDirectory: URL,
+        outputLocation: URL,
         htmlTemplateDirectory: URL?,
         emitDigest: Bool,
         currentPlatforms: [String : PlatformVersion]?,
@@ -126,7 +126,7 @@ public struct ConvertAction: AsyncAction {
         dependencies: [URL] = []
     ) throws {
         self.rootURL = documentationBundleURL
-        self.targetDirectory = targetDirectory
+        self.outputLocation = outputLocation
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.emitDigest = emitDigest
         self.outputFormat = outputFormat
@@ -465,19 +465,19 @@ public struct ConvertAction: AsyncAction {
         // However, if the `emitDigest` flag is true, we should replace the current output with our digest of diagnostics.
         // FIXME: We no longer output a diagnostics file in the output. We can remove the `emitDigest` check below.
         if !didEncounterError || emitDigest {
-            try moveOutput(from: temporaryFolder, to: targetDirectory)
+            try moveOutput(from: temporaryFolder, to: outputLocation)
         }
 
         // Log the output size.
         benchmark(
             add: Benchmark.ArchiveOutputSize(
-                archiveDirectory: targetDirectory,
+                archiveDirectory: outputLocation,
                 fileManager: outputFileManager
             )
         )
         benchmark(
             add: Benchmark.DataDirectoryOutputSize(
-                dataDirectory: targetDirectory.appendingPathComponent(
+                dataDirectory: outputLocation.appendingPathComponent(
                     NodeURLGenerator.Path.dataFolderName,
                     isDirectory: true
                 ),
@@ -486,7 +486,7 @@ public struct ConvertAction: AsyncAction {
         )
         benchmark(
             add: Benchmark.IndexDirectoryOutputSize(
-                indexDirectory: targetDirectory.appendingPathComponent(
+                indexDirectory: outputLocation.appendingPathComponent(
                     NodeURLGenerator.Path.indexFolderName,
                     isDirectory: true
                 ),
@@ -497,7 +497,7 @@ public struct ConvertAction: AsyncAction {
         if Benchmark.main.isEnabled {
             // Write the benchmark files directly in the target directory.
             let outputConsumer = ConvertFileWritingConsumer(
-                targetFolder: targetDirectory,
+                targetFolder: outputLocation,
                 catalogRootFolder: rootURL,
                 inputFileManager: inputFileManager,
                 outputFileManager: outputFileManager,
@@ -510,7 +510,7 @@ public struct ConvertAction: AsyncAction {
             try outputConsumer.consume(benchmarks: Benchmark.main)
         }
 
-        return (ActionResult(didEncounterError: didEncounterError, outputs: [targetDirectory]), context)
+        return (ActionResult(didEncounterError: didEncounterError, outputs: [outputLocation]), context)
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
