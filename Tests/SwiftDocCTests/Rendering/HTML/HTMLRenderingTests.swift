@@ -24,11 +24,11 @@ struct HTMLRenderingTests {
             
             A root page with an image.
             
-            ![Some alt text](image-name)
+            ![Some alt text](ImageName)
             """)
             
-            DataFile(name: "image-name@2x.png", data: Data())
-            DataFile(name: "image-name~dark@2x.png", data: Data())
+            DataFile(name: "ImageName@2x.png", data: Data())
+            DataFile(name: "ImageName~dark@2x.png", data: Data())
         }
         
         let context = try await load(catalog: catalog)
@@ -63,8 +63,8 @@ struct HTMLRenderingTests {
             </h2>
             <p>
               <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/image-name@2x.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/image-name~dark@2x.png">
+                <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
+                <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
                 <img alt="Some alt text" decoding="async" loading="lazy">
               </picture>
             </p>

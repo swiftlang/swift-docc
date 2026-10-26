@@ -12,10 +12,10 @@
 // TODO: Consider other HTML rendering options as a future improvement (rdar://165755530)
 // XML nodes are still used to parse raw HTML in the markup.
 private import FoundationXML
-package import FoundationEssentials
+private import FoundationEssentials
 internal import struct Foundation.CharacterSet
 #else
-package import Foundation
+private import Foundation
 #endif
 package import Markdown
 private import DocCCommon
@@ -34,15 +34,15 @@ package enum RenderGoal {
 ///
 /// Markdown elements that have different meaning depending on where they occur in the page structure (for example links in prose vs. links in topic sections) should be handled at a layer above this plain markdown renderer.
 package struct MarkdownRenderer<Provider: LinkProvider> {
-    /// The path within the output archive to the page that this renderer renders.
-    let path: URL
+    /// The path components within the output archive to the page that this renderer renders.
+    private let pathComponents: [String]
     /// The goal of the rendered HTML output.
     let goal: RenderGoal
     /// A type that provides information about other pages that the rendered page references.
     let linkProvider: Provider
     
-    package init(path: URL, goal: RenderGoal, linkProvider: Provider) {
-        self.path = path
+    package init(path: String, goal: RenderGoal, linkProvider: Provider) {
+        self.pathComponents = path.components(separatedBy: "/")
         self.goal = goal
         self.linkProvider = linkProvider
     }
@@ -257,7 +257,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr>` HTML elements in the symbol name.
     func visit(_ link: Link) -> HTMLNode {
-        guard let destination = link.destination.flatMap({ URL(string: $0) }) else {
+        guard let destination = link.destination else {
             return .text("")
         }
         
@@ -275,7 +275,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             
             return a(attributes: [
                 // Use relative links for DocC elements and the full link otherwise.
-                .href(linkedElement.flatMap { path(to: $0.path) } ?? destination.absoluteString)
+                .href(linkedElement.flatMap { path(to: $0.path) } ?? destination)
             ], contents: customTitle)
         }
         
@@ -292,15 +292,20 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             }
             
             return anchor(linkingTo: linkedElement, contents: content)
-        } else if destination.scheme != "doc" {
+        } else if destination.hasPrefix("doc:") {
+            // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation
+            var path = destination.dropFirst(4) // "doc:"
+            if path.hasPrefix("//") {
+                // If this is an absolute link, drop the "authority" ("//" prefix and "host" component)
+                path = path.dropFirst(2).drop(while: { $0 != "/" })
+            }
+            return .text(linkProvider.fallbackLinkText(linkString: String(path)))
+        } else {
             // This could be a http link
             return a(
-                attributes: [.href(destination.absoluteString)],
-                contents:   [.text(destination.absoluteString)]
+                attributes: [.href(destination)],
+                contents:   [.text(destination)]
             )
-        } else {
-            // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation
-            return .text(linkProvider.fallbackLinkText(linkString: destination.path))
         }
     }
     
@@ -322,7 +327,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr>` HTML elements in the symbol name.
     func visit(_ symbolLink: SymbolLink) -> HTMLNode {
-        guard let destination = symbolLink.destination.flatMap({ URL(string: $0) }),
+        guard let destination = symbolLink.destination,
               let linkedElement = linkProvider.element(for: destination)
         else {
             // If this is an unresolved symbol link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation.
@@ -342,15 +347,11 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         return anchor(linkingTo: linkedElement, contents: content)
     }
     
-    package func path(to other: URL) -> String {
-        let from = path
-        let to   = other
+    package func path(to other: String) -> String {
+        let fromComponents = pathComponents
+        let toComponents   = other.components(separatedBy: "/")
         
-        guard from != to else { return "." }
-
-        // To be able to compare the components of the two URLs they both need to be absolute and standardized.
-        let fromComponents = from.absoluteURL.standardizedFileURL.pathComponents
-        let toComponents   =   to.absoluteURL.standardizedFileURL.pathComponents
+        guard fromComponents != toComponents else { return "." }
 
         let commonPrefixLength = Array(zip(fromComponents, toComponents).prefix { lhs, rhs in lhs == rhs }).count
 
@@ -358,7 +359,6 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             + toComponents.dropFirst(commonPrefixLength)
        
         return relativeComponents.joined(separator: "/")
-            .lowercased() // Don't make assumptions about a case insensitive hosting environment.
     }
     
     /// Transforms a markdown image into a`<picture>` HTML element that wraps an `<img>` element and zero or more `<source>` elements.
@@ -394,12 +394,12 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return .text("") // ???: What do we return for images that won't display anything?
         }
         
-        func srcAttributes(for images: [Int: URL]) -> [HTMLNode.Attribute] {
+        func srcAttributes(for images: [Int: String]) -> [HTMLNode.Attribute] {
             switch images.count {
                 case 0: []
                 case 1: [.srcSet([path(to: images.first!.value)])] // No need to specify a scale factor when there's only one source.
                 default: [.srcSet(images.sorted(by: { $0.key > $1.key }) // Order by large scale factors first
-                    .map { scale, url in "\(path(to: url)) \(scale)x" }
+                    .map { scale, imagePath in "\(path(to: imagePath)) \(scale)x" }
                 )]
             }
         }
