@@ -52,7 +52,7 @@
       ]
     },
     "extendedModule" : "DocCHTML",
-    "externalID" : "s:8DocCHTML16MarkdownRendererV11breadcrumbs10references16currentPageNamesAA8HTMLNodeVSay20FoundationEssentials3URLVG_AA13LinkedElementV0I0OtF",
+    "externalID" : "s:8DocCHTML16MarkdownRendererV11breadcrumbs10references16currentPageNamesAA8HTMLNodeVSaySSG_AA13LinkedElementV0I0OtF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -80,8 +80,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-        "text" : "URL"
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
       },
       {
         "kind" : "text",
@@ -126,7 +126,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownRenderer+Breadcrumbs.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Breadcrumbs.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Breadcrumbs.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -170,8 +170,8 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-              "text" : "URL"
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
             },
             {
               "kind" : "text",
@@ -452,8 +452,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-      "text" : "URL"
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
     },
     {
       "kind" : "text",

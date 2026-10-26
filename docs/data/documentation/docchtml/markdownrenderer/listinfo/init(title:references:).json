@@ -14,7 +14,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:8DocCHTML16MarkdownRendererV8ListInfoV5title10referencesAEyx_GSSSg_Say20FoundationEssentials3URLVGtcfc",
+    "externalID" : "s:8DocCHTML16MarkdownRendererV8ListInfoV5title10referencesAEyx_GSSSg_SaySSGtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -51,8 +51,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-        "text" : "URL"
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
       },
       {
         "kind" : "text",
@@ -66,7 +66,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownRenderer+Relationships.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Relationships.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Relationships.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -119,8 +119,8 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-              "text" : "URL"
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
             },
             {
               "kind" : "text",
@@ -309,8 +309,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-      "text" : "URL"
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
     },
     {
       "kind" : "text",

@@ -40,7 +40,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkProvider.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/LinkProvider.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/LinkProvider.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -441,8 +441,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-      "text" : "URL"
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
     },
     {
       "kind" : "text",
@@ -572,8 +572,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-      "text" : "URL"
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
     }
   ],
   "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/LinkedElement\/path",

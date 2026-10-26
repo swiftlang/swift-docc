@@ -130,7 +130,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownRenderer+Relationships.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Relationships.swift#L35"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Relationships.swift#L33"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

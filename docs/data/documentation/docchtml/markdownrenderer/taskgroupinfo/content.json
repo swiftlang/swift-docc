@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownRenderer+Topics.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Topics.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Topics.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

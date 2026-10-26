@@ -1974,7 +1974,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/linkprovider\/element(for:)",
-                    "title" : "func element(for: URL) -> LinkedElement?",
+                    "title" : "func element(for: String) -> LinkedElement?",
                     "type" : "method"
                   },
                   {
@@ -1984,7 +1984,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/linkprovider\/pathforsymbolid(_:)",
-                    "title" : "func pathForSymbolID(String) -> URL?",
+                    "title" : "func pathForSymbolID(String) -> String?",
                     "type" : "method"
                   }
                 ],
@@ -4289,7 +4289,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/linkedasset\/init(files:)",
-                    "title" : "init(files: [ColorStyle : [Int : URL]])",
+                    "title" : "init(files: [ColorStyle : [Int : String]])",
                     "type" : "init"
                   },
                   {
@@ -4298,7 +4298,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/linkedasset\/files",
-                    "title" : "var files: [ColorStyle : [Int : URL]]",
+                    "title" : "var files: [ColorStyle : [Int : String]]",
                     "type" : "property"
                   },
                   {
@@ -4416,7 +4416,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/linkedelement\/init(path:names:subheadings:abstract:)",
-                    "title" : "init(path: URL, names: Names, subheadings: Subheadings, abstract: Paragraph?)",
+                    "title" : "init(path: String, names: Names, subheadings: Subheadings, abstract: Paragraph?)",
                     "type" : "init"
                   },
                   {
@@ -4435,7 +4435,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/linkedelement\/path",
-                    "title" : "var path: URL",
+                    "title" : "var path: String",
                     "type" : "property"
                   },
                   {
@@ -4595,7 +4595,7 @@
                       },
                       {
                         "path" : "\/documentation\/docchtml\/markdownrenderer\/listinfo\/init(title:references:)",
-                        "title" : "init(title: String?, references: [URL])",
+                        "title" : "init(title: String?, references: [String])",
                         "type" : "init"
                       },
                       {
@@ -4604,7 +4604,7 @@
                       },
                       {
                         "path" : "\/documentation\/docchtml\/markdownrenderer\/listinfo\/references",
-                        "title" : "var references: [URL]",
+                        "title" : "var references: [String]",
                         "type" : "property"
                       },
                       {
@@ -4655,7 +4655,7 @@
                       },
                       {
                         "path" : "\/documentation\/docchtml\/markdownrenderer\/taskgroupinfo\/init(title:content:references:)",
-                        "title" : "init(title: String?, content: [any Markup], references: [URL])",
+                        "title" : "init(title: String?, content: [any Markup], references: [String])",
                         "type" : "init"
                       },
                       {
@@ -4669,7 +4669,7 @@
                       },
                       {
                         "path" : "\/documentation\/docchtml\/markdownrenderer\/taskgroupinfo\/references",
-                        "title" : "var references: [URL]",
+                        "title" : "var references: [String]",
                         "type" : "property"
                       },
                       {
@@ -4688,7 +4688,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/markdownrenderer\/init(path:goal:linkprovider:)",
-                    "title" : "init(path: URL, goal: RenderGoal, linkProvider: Provider)",
+                    "title" : "init(path: String, goal: RenderGoal, linkProvider: Provider)",
                     "type" : "init"
                   },
                   {
@@ -4702,7 +4702,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/markdownrenderer\/breadcrumbs(references:currentpagenames:)",
-                    "title" : "func breadcrumbs(references: [URL], currentPageNames: LinkedElement.Names) -> HTMLNode",
+                    "title" : "func breadcrumbs(references: [String], currentPageNames: LinkedElement.Names) -> HTMLNode",
                     "type" : "method"
                   },
                   {
@@ -4732,7 +4732,7 @@
                   },
                   {
                     "path" : "\/documentation\/docchtml\/markdownrenderer\/path(to:)",
-                    "title" : "func path(to: URL) -> String",
+                    "title" : "func path(to: String) -> String",
                     "type" : "method"
                   },
                   {

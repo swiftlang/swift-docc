@@ -14,7 +14,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:8DocCHTML16MarkdownRendererV13TaskGroupInfoV5title7content10referencesAEyx_GSSSg_Say0C06Markup_pGSay20FoundationEssentials3URLVGtcfc",
+    "externalID" : "s:8DocCHTML16MarkdownRendererV13TaskGroupInfoV5title7content10referencesAEyx_GSSSg_Say0C06Markup_pGSaySSGtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -76,8 +76,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-        "text" : "URL"
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
       },
       {
         "kind" : "text",
@@ -91,7 +91,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownRenderer+Topics.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Topics.swift#L25"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer+Topics.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -169,8 +169,8 @@
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-              "text" : "URL"
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
             },
             {
               "kind" : "text",
@@ -384,8 +384,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
-      "text" : "URL"
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
     },
     {
       "kind" : "text",
