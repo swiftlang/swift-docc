@@ -1674,6 +1674,53 @@ struct AvailabilityTests {
         }
     }
     
+    @Test(arguments: [AvailabilitySource.directiveInDocComment])
+    func symbolIsConsideredDeprecatedWhenCustomPlatformIsDeprecated(_ source: AvailabilitySource) async throws {
+        let directiveAvailability = """
+        @Metadata {
+          @Available("CustomPlatform", introduced: "1.2.3", deprecated: "4.5.6")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(
+                    id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"],
+                    docComment: source == .directiveInDocComment ? directiveAvailability : "",
+                    availability: source == .inSourceAttribute ? [
+                        .init(domainName: "CustomPlatform", introduced: .init(major: 1, minor: 2, patch: 3), deprecated: .init(major: 4, minor: 5, patch: 6)),
+                    ] : []
+                )
+            ]))
+            
+            if source == .directiveInExtensionFile {
+                TextFile(name: "SomeClass.md", utf8Content: """
+                # ``SomeClass``
+                
+                \(directiveAvailability)
+                """)
+            }
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let reference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        
+        let (renderNode, topicReference) = try makeRenderNodeAndRenderReference(for: reference, in: context)
+        #expect(renderNode.isDeprecated)
+        
+        withKnownIssue("// Directives don't mark pages as deprecated (rdar://173761647)") {
+            // The page as a whole is considered deprecated
+            #expect(topicReference.isDeprecated)
+        } when: { source != .inSourceAttribute }
+
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.map(\.name) == ["CustomPlatform"], "Fail for \(source)")
+        let renderPlatform = try #require(renderPlatforms.first)
+        #expect(renderPlatform.introduced == "1.2.3", "Fail for \(source)")
+        #expect(renderPlatform.deprecated == "4.5.6", "Fail for \(source)")
+    }
+    
     @Test
     func symbolDisplaysInSourceDeprecationMessage() async throws {
         let catalog = Folder(name: "unit-test.docc") {

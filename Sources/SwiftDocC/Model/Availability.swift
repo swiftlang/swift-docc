@@ -483,19 +483,31 @@ struct Availability {
         
         var foundDeprecatedPlatforms = false
         
-        for platform in knownPlatforms {
+        func checkPlatform(_ platform: Information) -> Bool? {
             switch platform.state {
-            case .available(_, nil, false):
-                // If the page is available without being deprecated for one platform, it is not considered to be deprecated as a whole.
-                return false
-            case .available:
-                guard platform.source < .directiveOverride else {
-                    // !!!: Preserve the bug that directives don't mark pages as deprecated (rdar://173761647)
+                case .available(_, nil, false):
+                    // If the page is available without being deprecated for one platform, it is not considered to be deprecated as a whole.
                     return false
-                }
-                foundDeprecatedPlatforms = true
-            case .unavailable:
-                continue // Unavailable platforms don't count against a page's deprecated status
+                case .available:
+                    guard platform.source < .directiveOverride else {
+                        // !!!: Preserve the bug that directives don't mark pages as deprecated (rdar://173761647)
+                        return false
+                    }
+                    foundDeprecatedPlatforms = true
+                    return nil
+                case .unavailable:
+                    return nil // Unavailable platforms don't count against a page's deprecated status
+            }
+        }
+        
+        for platform in knownPlatforms {
+            if let earlyExitResult = checkPlatform(platform) {
+                return earlyExitResult
+            }
+        }
+        for platform in customPlatformsByName.values {
+            if let earlyExitResult = checkPlatform(platform) {
+                return earlyExitResult
             }
         }
         
