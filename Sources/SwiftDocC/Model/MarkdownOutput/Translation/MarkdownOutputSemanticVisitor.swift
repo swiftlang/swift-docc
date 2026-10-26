@@ -325,10 +325,11 @@ extension MarkdownOutputSemanticVisitor {
         
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)
         
-        if symbol.relationships.groups.isEmpty == false {
+        let relationships = symbol.relationshipsVariants.firstValue ?? .init()
+        if relationships.groups.isEmpty == false {
             markdownWalker.visit(Heading(level: 2, Text(RelationshipsSection.title)))
         }
-        for relationshipGroup in symbol.relationships.groups {
+        for relationshipGroup in relationships.groups {
             markdownWalker.visit(Heading(level: 3, Text(relationshipGroup.sectionTitle)))
             for destination in relationshipGroup.destinations {
                 switch context.resolve(destination, in: identifier) {
@@ -342,7 +343,7 @@ extension MarkdownOutputSemanticVisitor {
                     markdownWalker.defaultVisit(link)
                     
                 case .failure:
-                    if let fallback = symbol.relationships.targetFallbacks[destination] {
+                    if let fallback = relationships.targetFallbacks[destination] {
                         add(fallbackTarget: fallback, type: .relatedSymbol, subtype: relationshipGroup.kind)
                         markdownWalker.startNewParagraphIfRequired()
                         markdownWalker.defaultVisit(InlineCode(fallback))

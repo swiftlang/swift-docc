@@ -336,9 +336,7 @@ public struct DocumentationNode {
                 symbolData: unifiedSymbol.mixins,
                 platformName: platformName
             ),
-            relationshipsVariants: DocumentationDataVariants(
-                defaultVariantValue: RelationshipsSection()
-            ),
+            relationshipsVariants: .empty,
             abstractSectionVariants: .empty,
             discussionVariants: .empty,
             topicsVariants: .empty,
