@@ -1239,10 +1239,10 @@ struct AvailabilityTests {
     // MARK: Module availability
     
     private func makeRenderNode(for reference: ResolvedTopicReference, in context: DocumentationContext, sourceLocation: SourceLocation = #_sourceLocation) throws -> RenderNode {
-        try makeRenderNodeAndReference(for: reference, in: context, sourceLocation: sourceLocation).renderNode
+        try makeRenderNodeAndRenderReference(for: reference, in: context, sourceLocation: sourceLocation).renderNode
     }
     
-    private func makeRenderNodeAndReference(for reference: ResolvedTopicReference, in context: DocumentationContext, sourceLocation: SourceLocation = #_sourceLocation) throws -> (renderNode: RenderNode, topicReference: TopicRenderReference) {
+    private func makeRenderNodeAndRenderReference(for reference: ResolvedTopicReference, in context: DocumentationContext, sourceLocation: SourceLocation = #_sourceLocation) throws -> (renderNode: RenderNode, topicReference: TopicRenderReference) {
         let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
         let node = try #require(context.documentationCache[reference], sourceLocation: sourceLocation)
         let renderNode = try #require(converter.renderNode(for: node), sourceLocation: sourceLocation)
@@ -1263,7 +1263,7 @@ struct AvailabilityTests {
         let moduleReference = try #require(context.soleRootModuleReference)
         let symbolReference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
         for reference in [moduleReference, symbolReference] {
-            let (renderNode, topicReference) = try makeRenderNodeAndReference(for: reference, in: context)
+            let (renderNode, topicReference) = try makeRenderNodeAndRenderReference(for: reference, in: context)
             #expect(renderNode.isDeprecated == false)
             #expect(topicReference.isDeprecated == false)
             #expect(renderNode.metadata.platforms == nil)
@@ -1629,6 +1629,49 @@ struct AvailabilityTests {
         
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated)
+    }
+    
+    @Test(arguments: [false, true])
+    func symbolIsConsideredDeprecatedWhenWildcardIsUnconditionallyDeprecated(withDirectiveAvailability: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: nil,     introduced: nil,                                 deprecated: nil, isUnconditionallyDeprecated: true),
+                    .init(domainName: "macOS", introduced: .init(major: 1, minor: 2, patch: 3), deprecated: nil),
+                    .init(domainName: "iOS",   introduced: .init(major: 3, minor: 4, patch: 5), deprecated: nil),
+                ])
+            ]))
+            
+            if withDirectiveAvailability {
+                TextFile(name: "SomeClass.md", utf8Content: """
+                # ``SomeClass``
+                
+                @Metadata {
+                  @Available(macOS, introduced: "10.14")
+                }
+                """)
+            }
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let reference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        
+        let (renderNode, topicReference) = try makeRenderNodeAndRenderReference(for: reference, in: context)
+        // The page as a whole is considered deprecated ...
+        #expect(topicReference.isDeprecated)
+        #expect(renderNode.isDeprecated == false) // This matches the old implementation
+        
+        // ... but none of the per-platform information has any deprecation information
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        if withDirectiveAvailability {
+            #expect(renderPlatforms.map(\.name) == ["macOS"])
+        } else {
+            #expect(renderPlatforms.map(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        }
+        for platform in renderPlatforms {
+            #expect(platform.isUnconditionallyDeprecated == false)
+            #expect(platform.deprecated == nil)
+        }
     }
     
     @Test
