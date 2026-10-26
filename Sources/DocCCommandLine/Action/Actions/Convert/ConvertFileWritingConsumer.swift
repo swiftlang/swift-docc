@@ -147,7 +147,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
             // behavior of theme-settings.json and the favicon), so there is no need
             // to namespace the custom-scripts directory with a catalog identifier.
             let scriptsDirectory = targetFolder
-                .appendingPathComponent("custom-scripts", isDirectory: true)
+                .appendingPathComponent(NodeURLGenerator.Path.customScriptsFolderName, isDirectory: true)
             if !outputFileManager.directoryExists(atPath: scriptsDirectory.path) {
                 try outputFileManager.createDirectory(at: scriptsDirectory, withIntermediateDirectories: true, attributes: nil)
             }

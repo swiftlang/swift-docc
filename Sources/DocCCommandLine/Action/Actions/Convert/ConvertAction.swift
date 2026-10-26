@@ -367,7 +367,9 @@ public struct ConvertAction: AsyncAction {
                 outputFileManager: outputFileManager,
                 prettyPrint: shouldPrettyPrintOutputJSON, // Use the same configuration as the JSON output to make it convenient for the developer.
                 customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
-                customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil
+                customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil,
+                // Note: static HTML pages don't use the renderer, so they include the custom scripts themselves.
+                customScripts: enableCustomScripts ? inputs.customScripts : nil
             )
         } else if transformForStaticHostingOptions == .withContent, let indexHTML {
             htmlConsumer = try FileWritingHTMLContentConsumer(
