@@ -546,4 +546,102 @@ struct HTMLRenderingTests {
         </article>
         """)
     }
+    
+    @Test
+    func ordersArticlesBeforeSymbolsInAutomaticCuration() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "first-symbol-id",  kind: .class, pathComponents: ["FirstClass"]),
+                makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["SecondClass"]),
+            ]))
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Some article
+            
+            This article's automatic topic section should appear before the "classes" topic section on the module page.
+            """)
+            
+            TextFile(name: "Module.md", utf8Content: """
+            # ``ModuleName``
+            
+            Add some authored curation to verify that the automatic article topic section is after that.
+            
+            ## Topics
+            ### Curated
+            - ``SecondClass``
+            """)
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.soleRootModuleReference)
+        let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+        
+        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        let pageInfo = renderer.renderSymbol(symbol)
+        
+        let html = try #require(pageInfo.content)
+        let data = HTMLFormatter.format(html, options: .prettyPrint)
+        let formattedHTML = String(decoding: data, as: UTF8.self)
+        #expect(formattedHTML == """
+        <article>
+          <section id="hero" class="module">
+            <hgroup>
+              <p>Framework</p>
+              <h1>
+                Module<wbr>Name
+              </h1>
+            </hgroup>
+            <p>Add some authored curation to verify that the automatic article topic section is after that.</p>
+          </section>
+          <section id="Topics">
+            <h2>
+              <a href="#Topics">Topics</a>
+            </h2>
+            <h3 id="Curated">
+              <a href="#Curated">Curated</a>
+            </h3>
+            <ul>
+              <li>
+                <a href="secondclass/index.html">
+                  <code>
+                    <span class="identifier">
+                      Second<wbr>Class
+                    </span>
+                  </code>
+                </a>
+              </li>
+            </ul>
+            <h3 id="Articles">
+              <a href="#Articles">Articles</a>
+            </h3>
+            <ul>
+              <li>
+                <a href="../unit-test/article/index.html">
+                  <p class="api-collection">
+                    Some article
+                  </p>
+                </a>
+                <p>This article’s automatic topic section should appear before the “classes” topic section on the module page.</p>
+              </li>
+            </ul>
+            <h3 id="Classes">
+              <a href="#Classes">Classes</a>
+            </h3>
+            <ul>
+              <li>
+                <a href="firstclass/index.html">
+                  <code>
+                    <span class="identifier">
+                      First<wbr>Class
+                    </span>
+                  </code>
+                </a>
+              </li>
+            </ul>
+          </section>
+        </article>
+        """)
+    }
 }

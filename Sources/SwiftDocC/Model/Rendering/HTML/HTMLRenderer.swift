@@ -374,8 +374,10 @@ package struct HTMLRenderer {
         
         // Topics
         do {
+            typealias TaskGroupInfo = MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo
+            
             // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
-            var taskGroupInfo: [MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo] = []
+            var taskGroupInfo = [TaskGroupInfo]()
             
             if let authored = symbol.topics?.taskGroups {
                 taskGroupInfo.append(contentsOf: authored.map { group in
@@ -384,17 +386,27 @@ package struct HTMLRenderer {
                     })
                 })
             }
+            
+            var atBottomGroups = [TaskGroupInfo]()
+            // This poorly named variable only hold either:
+            // - the articles, that appear before the automatic curation, on module pages.
+            // - the default implementations, that appear at the very bottom, for protocol requirement pages.
+            for group in symbol.automaticTaskGroups {
+                let info = TaskGroupInfo(title: group.title, content: [], references: group.references.compactMap(\.url))
+                if group.renderPositionPreference == .top {
+                    // Append the group without storing it in an intermediate
+                    taskGroupInfo.append(info)
+                } else {
+                    atBottomGroups.append(info)
+                }
+            }
+            
             if let automatic = try? AutomaticCuration.topics(for: node, withTraits: [.swift, .objectiveC], context: context) {
                 taskGroupInfo.append(contentsOf: automatic.map { group in
                     .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
                 })
             }
-            // This poorly named variable doesn't hold the page's automatic curation but rather a curation of its default implementations.
-            if !symbol.automaticTaskGroups.isEmpty {
-                taskGroupInfo.append(contentsOf: symbol.automaticTaskGroups.map { group in
-                        .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
-                })
-            }
+            taskGroupInfo.append(contentsOf: consume atBottomGroups)
             
             if !taskGroupInfo.isEmpty {
                 articleElements.append(contentsOf: renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
