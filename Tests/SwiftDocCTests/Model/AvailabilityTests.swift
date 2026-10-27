@@ -1276,9 +1276,9 @@ struct AvailabilityTests {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: "8.0")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1302,9 +1302,9 @@ struct AvailabilityTests {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
