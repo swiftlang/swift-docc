@@ -204,7 +204,7 @@ public final class Symbol: Semantic, Abstracted, Redirected {
     var consolidatedAvailability: DocumentationDataVariants<Availability>
     
     /// The presentation-friendly relationships of this symbol to other symbols, in each language variant the symbol is available in.
-    public var relationshipsVariants = DocumentationDataVariants<RelationshipsSection>(defaultVariantValue: .init())
+    public var relationshipsVariants: DocumentationDataVariants<RelationshipsSection>
     
     /// An optional, abstract summary for the symbol, in each language variant the symbol is available in.
     public var abstractSectionVariants: DocumentationDataVariants<AbstractSection>
@@ -216,7 +216,7 @@ public final class Symbol: Semantic, Abstracted, Redirected {
     public var topicsVariants: DocumentationDataVariants<TopicsSection>
     
     /// Any default implementations of the symbol, if the symbol is a protocol requirement, in each language variant the symbol is available in.
-    public var defaultImplementationsVariants = DocumentationDataVariants<DefaultImplementationsSection>(defaultVariantValue: .init())
+    public var defaultImplementationsVariants: DocumentationDataVariants<DefaultImplementationsSection>
     
     /// Any See Also groups of the symbol, in each language variant the symbol is available in.
     public var seeAlsoVariants: DocumentationDataVariants<SeeAlsoSection>
@@ -302,8 +302,8 @@ public final class Symbol: Semantic, Abstracted, Redirected {
         declarationVariants: DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
         alternateDeclarationVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]> = .init(defaultVariantValue: [:]),
         alternateSignatureVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.FunctionSignature]]> = .init(defaultVariantValue: [:]),
-        defaultImplementationsVariants: DocumentationDataVariants<DefaultImplementationsSection> = .init(defaultVariantValue: .init()),
-        relationshipsVariants: DocumentationDataVariants<RelationshipsSection> = .init(),
+        defaultImplementationsVariants: DocumentationDataVariants<DefaultImplementationsSection> = .empty,
+        relationshipsVariants: DocumentationDataVariants<RelationshipsSection> = .empty,
         abstractSectionVariants: DocumentationDataVariants<AbstractSection>,
         discussionVariants: DocumentationDataVariants<DiscussionSection>,
         topicsVariants: DocumentationDataVariants<TopicsSection>,
@@ -398,10 +398,7 @@ public final class Symbol: Semantic, Abstracted, Redirected {
 
         }
         
-        if relationshipsVariants.hasAnyValue {
-            self.relationshipsVariants = relationshipsVariants
-        }
-        
+        self.relationshipsVariants = relationshipsVariants
         self.defaultImplementationsVariants = defaultImplementationsVariants
         
         self.abstractSectionVariants = abstractSectionVariants
@@ -678,8 +675,9 @@ extension Symbol {
     }
 
     /// The presentation-friendly relationships of the first variant of this symbol to other symbols.
+    @available(*, deprecated, message: "Use 'relationshipsVariants' instead. This deprecated API will be removed after 6.6 is released")
     public var relationships: RelationshipsSection {
-        get { relationshipsVariants.firstValue! }
+        get { relationshipsVariants.firstValue ?? .init() }
         set { relationshipsVariants.firstValue = newValue }
     }
     
@@ -709,7 +707,7 @@ extension Symbol {
     
     /// Any default implementations of the first variant of the symbol, if the symbol is a protocol requirement.
     public var defaultImplementations: DefaultImplementationsSection {
-        get { defaultImplementationsVariants.firstValue! }
+        get { defaultImplementationsVariants.firstValue ?? .init() }
         set { defaultImplementationsVariants.firstValue = newValue }
     }
     
