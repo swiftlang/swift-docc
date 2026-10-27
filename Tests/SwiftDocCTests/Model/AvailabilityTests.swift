@@ -1235,6 +1235,90 @@ struct AvailabilityTests {
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated == false)
     }
+
+    // MARK: Module availability
+    
+    private func makeRenderNode(for reference: ResolvedTopicReference, in context: DocumentationContext, sourceLocation: SourceLocation = #_sourceLocation) throws -> RenderNode {
+        try makeRenderNodeAndReference(for: reference, in: context, sourceLocation: sourceLocation).renderNode
+    }
+    
+    private func makeRenderNodeAndReference(for reference: ResolvedTopicReference, in context: DocumentationContext, sourceLocation: SourceLocation = #_sourceLocation) throws -> (renderNode: RenderNode, topicReference: TopicRenderReference) {
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let node = try #require(context.documentationCache[reference], sourceLocation: sourceLocation)
+        let renderNode = try #require(converter.renderNode(for: node), sourceLocation: sourceLocation)
+        let topicReference = try #require(converter.renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference, sourceLocation: sourceLocation)
+        return (renderNode, topicReference)
+    }
+    
+    @Test(arguments: Self.allMainPlatforms)
+    func moduleWithoutAvailabilityInformationIsNotConsideredDeprecated(_ platform: SymbolGraph.Platform) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let moduleReference = try #require(context.soleRootModuleReference)
+        let symbolReference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        for reference in [moduleReference, symbolReference] {
+            let (renderNode, topicReference) = try makeRenderNodeAndReference(for: reference, in: context)
+            #expect(renderNode.isDeprecated == false)
+            #expect(topicReference.isDeprecated == false)
+            #expect(renderNode.metadata.platforms == nil)
+        }
+    }
+    
+    @Test
+    func moduleFillsInFallbackAvailabilityFromVersionedDefaultAvailability() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .iOS, platformVersion: "8.0")
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let moduleReference = try #require(context.soleRootModuleReference)
+        let symbolReference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        for reference in [moduleReference, symbolReference] {
+            let renderNode = try makeRenderNode(for: reference, in: context)
+            let renderPlatforms = try #require(renderNode.metadata.platforms)
+            #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+            for platform in renderPlatforms {
+                #expect(platform.introduced == "8.0", "\(platform.name ?? "")")
+            }
+            #expect(renderNode.isDeprecated == false)
+        }
+    }
+    
+    @Test
+    func moduleDisplaysVersionlessDefaultAvailabilityButItsSymbolsDoNot() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(platformName: .iOS, platformVersion: nil)
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        // Known inconsistency (rdar://190715484): when the Info.plist default availability has no version,
+        // the module displays that platform but the symbols in the module don't.
+        let moduleReference = try #require(context.soleRootModuleReference)
+        let moduleRenderNode = try makeRenderNode(for: moduleReference, in: context)
+        #expect(moduleRenderNode.metadata.platforms?.compactMap(\.name) == ["iOS"])
+        #expect(moduleRenderNode.isDeprecated == false)
+        
+        let symbolReference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        #expect(try makeRenderNode(for: symbolReference, in: context).metadata.platforms == nil)
+    }
     
     @Test(arguments: ["9.2", nil])
     func symbolAvailableOnOnePlatformIsNotConsideredDeprecatedWhenDefaultAvailable(defaultIntroducedVersion: String?) async throws {
