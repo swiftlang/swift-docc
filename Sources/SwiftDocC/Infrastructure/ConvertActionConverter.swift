@@ -101,7 +101,13 @@ package enum ConvertActionConverter {
                         if let htmlContentConsumer {
                             // TODO: Design a better way to indicate a primary output format and which "render" steps does and doesn't need (rdar://177867282)
                             let isStaticHTMLOutput = htmlContentConsumer._isPrimaryOutputFormat
-                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: isStaticHTMLOutput ? .richness : .conciseness, featureFlags: featureFlags)
+                            var renderer = HTMLRenderer(
+                                reference: identifier,
+                                context: context,
+                                jsonRenderContext: renderContext,
+                                goal: isStaticHTMLOutput ? .richness : .conciseness,
+                                featureFlags: featureFlags
+                            )
                             
                             let pageInfo: HTMLRenderer.RenderedPageInfo
                             if let symbol = entity.semantic as? Symbol {

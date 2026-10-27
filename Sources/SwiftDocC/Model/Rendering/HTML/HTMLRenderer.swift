@@ -122,14 +122,16 @@ private struct ContextLinkProvider: LinkProvider {
 package struct HTMLRenderer {
     let reference: ResolvedTopicReference
     let context: DocumentationContext
+    let jsonRenderContext: RenderContext // FIXME: Don't use a (JSON) RenderContext for static HTML output. (rdar://177867282)
     let goal: RenderGoal
     let featureFlags: FeatureFlags
     
     private let renderer: MarkdownRenderer<ContextLinkProvider>
     
-    init(reference: ResolvedTopicReference, context: DocumentationContext, goal: RenderGoal, featureFlags: FeatureFlags) {
+    init(reference: ResolvedTopicReference, context: DocumentationContext, jsonRenderContext: RenderContext, goal: RenderGoal, featureFlags: FeatureFlags) {
         self.reference = reference
         self.context = context
+        self.jsonRenderContext = jsonRenderContext
         self.goal = goal
         self.featureFlags = featureFlags
         self.renderer = MarkdownRenderer(
@@ -227,10 +229,9 @@ package struct HTMLRenderer {
         // Articles don't have _automatic_ topic sections.
         
         // See Also
-        if let seeAlso = article.seeAlso {
-            articleElements.append(contentsOf: makeSeeAlsoSection(seeAlso))
+        if let seeAlsoSection = makeSeeAlsoSection(authored: article.seeAlso, node: node) {
+            articleElements.append(contentsOf: seeAlsoSection)
         }
-        // _Automatic_ See Also sections are very heavily tied into the RenderJSON model and require information from the JSON to determine.
         
         return RenderedPageInfo(
             content: DocCHTML.article(contents: consume articleElements),
@@ -452,8 +453,8 @@ package struct HTMLRenderer {
         }
         
         // See Also
-        if let seeAlso = symbol.seeAlso {
-            articleElements.append(contentsOf: makeSeeAlsoSection(seeAlso))
+        if let seeAlsoSection = makeSeeAlsoSection(authored: symbol.seeAlso, node: node) {
+            articleElements.append(contentsOf: seeAlsoSection)
         }
         
         return RenderedPageInfo(
@@ -477,14 +478,30 @@ package struct HTMLRenderer {
         return aside(attributes: [.class("deprecated")], contents: content)
     }
     
-    private func makeSeeAlsoSection(_ seeAlso: SeeAlsoSection) -> [HTMLNode] {
-        renderer.groupedSection(named: "See Also", groups: [
-            .swift: seeAlso.taskGroups.map { group in
+    private func makeSeeAlsoSection(authored authoredSeeAlso: SeeAlsoSection?, node: DocumentationNode) -> [HTMLNode]? {
+        var groups = [MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo]()
+        
+        if let authoredSeeAlso {
+            groups.append(contentsOf: authoredSeeAlso.taskGroups.map { group in
                 .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
                     $0.destination
                 })
-            }
-        ])
+            })
+        }
+        
+        // FIXME: Don't use a (JSON) RenderContext for static HTML output. (rdar://177867282)
+        // _Automatic_ See Also sections are very heavily tied into the RenderJSON model and require information from the JSON to determine.
+        let contentRenderer = DocumentationContentRenderer(context: context)
+        if let automaticSeeAlso = AutomaticCuration.seeAlso(for: node, withTraits: node.availableVariantTraits, context: context, renderContext: jsonRenderContext, renderer: contentRenderer),
+           !automaticSeeAlso.references.isEmpty
+        {
+            groups.append(.init(title: automaticSeeAlso.title, content: [], references: automaticSeeAlso.references.map(\.absoluteString)))
+        }
+        
+        guard !groups.isEmpty else {
+            return nil
+        }
+        return renderer.groupedSection(named: "See Also", groups: [.swift: groups])
     }
 }
 
