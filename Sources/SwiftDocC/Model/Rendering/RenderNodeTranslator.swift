@@ -1659,12 +1659,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
         node.defaultImplementationsSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: symbol.defaultImplementationsVariants,
-            symbol.relationshipsVariants
-        ) { _, defaultImplementations, relationships in
-            guard !symbol.defaultImplementations.groups.isEmpty else {
+            from: symbol.defaultImplementationsVariants
+        ) { trait, defaultImplementations in
+            guard !defaultImplementations.groups.isEmpty else {
                 return []
             }
+            
+            let relationships = symbol.relationshipsVariants[trait]
             
             for imp in defaultImplementations.implementations {
                 let resolved: ResolvedTopicReference
@@ -1675,7 +1676,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     // Try creating a render reference anyway
                     if let title = defaultImplementations.targetFallbacks[imp.reference],
                        let reference = collectUnresolvableSymbolReference(destination: unresolved, title: title),
-                       let constraints = relationships.constraints[imp.reference] {
+                       let constraints = relationships?.constraints[imp.reference]
+                    {
                         collectedConstraints[.unresolved(reference)] = constraints
                     }
                     continue
@@ -1683,7 +1685,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 
                 // Add implementation to render references
                 collectedTopicReferences.append(resolved)
-                if let constraints = relationships.constraints[imp.reference] {
+                if let constraints = relationships?.constraints[imp.reference] {
                     collectedConstraints[.successfullyResolved(resolved)] = constraints
                 }
             }

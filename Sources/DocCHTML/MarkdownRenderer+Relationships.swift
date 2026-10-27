@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-package import Foundation
-
 package import DocCCommon
 
 package extension MarkdownRenderer {
@@ -18,9 +16,9 @@ package extension MarkdownRenderer {
         /// The title of this group of API
         package var title: String?
         /// A list of already resolved references that the renderer should display, in order, for this group.
-        package var references: [URL]
+        package var references: [String]
         
-        package init(title: String?, references: [URL]) {
+        package init(title: String?, references: [String]) {
             self.title = title
             self.references = references
         }
