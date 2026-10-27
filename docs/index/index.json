@@ -13420,6 +13420,25 @@
                             "type" : "init"
                           },
                           {
+                            "title" : "Instance Properties",
+                            "type" : "groupMarker"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/conformancesection\/availabilityprefix",
+                            "title" : "var availabilityPrefix: [RenderInlineContent]",
+                            "type" : "property"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/conformancesection\/conformanceprefix",
+                            "title" : "var conformancePrefix: [RenderInlineContent]",
+                            "type" : "property"
+                          },
+                          {
+                            "path" : "\/documentation\/swiftdocc\/conformancesection\/constraints",
+                            "title" : "var constraints: [RenderInlineContent]",
+                            "type" : "property"
+                          },
+                          {
                             "title" : "Default Implementations",
                             "type" : "groupMarker"
                           },
