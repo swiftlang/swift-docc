@@ -37,7 +37,7 @@ struct HTMLRenderingTests {
         let reference = try #require(context.soleRootModuleReference)
         let article = try #require(context.documentationCache[reference]?.semantic as? Article)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderArticle(article)
         
         let html = try #require(pageInfo.content)
@@ -93,7 +93,7 @@ struct HTMLRenderingTests {
             let reference = try #require(context.documentationCache.reference(symbolID: "struct-id"))
             let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
             
-            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
             let html = try #require(pageInfo.content)
@@ -142,7 +142,7 @@ struct HTMLRenderingTests {
             let reference = try #require(context.documentationCache.reference(symbolID: "protocol-id"))
             let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
             
-            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
             let html = try #require(pageInfo.content)
@@ -208,7 +208,7 @@ struct HTMLRenderingTests {
             let reference = try #require(context.documentationCache.reference(symbolID: "sub-class-id"))
             let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
             
-            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
             let html = try #require(pageInfo.content)
@@ -257,7 +257,7 @@ struct HTMLRenderingTests {
             let reference = try #require(context.documentationCache.reference(symbolID: "base-class-id"))
             let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
             
-            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
             let html = try #require(pageInfo.content)
@@ -326,7 +326,7 @@ struct HTMLRenderingTests {
         let reference = try #require(context.documentationCache.reference(symbolID: "sub-class-id"))
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
         let html = try #require(pageInfo.content)
@@ -402,7 +402,7 @@ struct HTMLRenderingTests {
         let reference = try #require(context.documentationCache.reference(symbolID: "requirement-id"))
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
         let html = try #require(pageInfo.content)
@@ -485,7 +485,7 @@ struct HTMLRenderingTests {
         let reference = try #require(context.documentationCache.reference(symbolID: "struct-id"))
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
         let html = try #require(pageInfo.content)
@@ -578,7 +578,7 @@ struct HTMLRenderingTests {
         let reference = try #require(context.soleRootModuleReference)
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
         let html = try #require(pageInfo.content)
@@ -643,5 +643,170 @@ struct HTMLRenderingTests {
           </section>
         </article>
         """)
+    }
+    
+    @Test
+    func includesAutomaticSeeAlsoSectionsAfterAuthoredSeeAlsoSections() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "struct-id",   kind: .struct,   pathComponents: ["Something"], docComment: """
+                A structure that curates its first two members and an article
+                ## Topics
+                ### Manually curated
+                - ``first``
+                - ``second``
+                - <doc:Article>
+                """),
+                makeSymbol(id: "member-1-id", kind: .property, pathComponents: ["Something", "first"]),
+                makeSymbol(id: "member-2-id", kind: .property, pathComponents: ["Something", "second"]),
+                makeSymbol(id: "member-3-id", kind: .property, pathComponents: ["Something", "third"]),
+            ], relationships: [
+                .init("member-1-id", .memberOf, "struct-id"),
+                .init("member-2-id", .memberOf, "struct-id"),
+                .init("member-3-id", .memberOf, "struct-id"),
+            ]))
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Some article
+            An article with an explicit "See Also" section.
+            ## See Also
+            - ``Something/third``
+            """)
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        do {
+            let reference = try #require(context.documentationCache.reference(symbolID: "member-1-id"))
+            let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+            
+            var renderer = makeHTMLRenderer(for: reference, in: context)
+            let pageInfo = renderer.renderSymbol(symbol)
+            
+            let html = try #require(pageInfo.content)
+            let data = HTMLFormatter.format(html, options: .prettyPrint)
+            let formattedHTML = String(decoding: data, as: UTF8.self)
+            #expect(formattedHTML == """
+            <article>
+              <section>
+                <nav id="breadcrumbs">
+                  <ul>
+                    <li>
+                      <a href="../../index.html">ModuleName</a>
+                    </li>
+                    <li>
+                      <a href="../index.html">Something</a>
+                    </li>
+                    <li>first</li>
+                  </ul>
+                </nav>
+                <hgroup>
+                  <p>Instance Property</p>
+                  <h1>first</h1>
+                </hgroup>
+              </section>
+              <section id="See-Also">
+                <h2>
+                  <a href="#See-Also">See Also</a>
+                </h2>
+                <h3 id="Manually-curated">
+                  <a href="#Manually-curated">Manually curated</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../second/index.html">
+                      <code>
+                        <span class="identifier">second</span>
+                      </code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="../../../unit-test/article/index.html">
+                      <p class="api-collection">
+                        Some article
+                      </p>
+                    </a>
+                    <p>An article with an explicit “See Also” section.</p>
+                  </li>
+                </ul>
+              </section>
+            </article>
+            """)
+        }
+        
+        do {
+            let reference = try #require(context.documentationCache.allReferences.first(where: { $0.lastPathComponent == "Article" }))
+            let article = try #require(context.documentationCache[reference]?.semantic as? Article)
+            
+            var renderer = makeHTMLRenderer(for: reference, in: context)
+            let pageInfo = renderer.renderArticle(article)
+            
+            let html = try #require(pageInfo.content)
+            let data = HTMLFormatter.format(html, options: .prettyPrint)
+            let formattedHTML = String(decoding: data, as: UTF8.self)
+            #expect(formattedHTML == """
+            <article>
+              <section id="hero" class="article">
+                <nav id="breadcrumbs">
+                  <ul>
+                    <li>
+                      <a href="../../modulename/index.html">ModuleName</a>
+                    </li>
+                    <li>
+                      <a href="../../modulename/something/index.html">Something</a>
+                    </li>
+                    <li>Some article</li>
+                  </ul>
+                </nav>
+                <hgroup>
+                  <p>Article</p>
+                  <h1>Some article</h1>
+                </hgroup>
+                <p>An article with an explicit “See Also” section.</p>
+              </section>
+              <section id="See-Also">
+                <h2>
+                  <a href="#See-Also">See Also</a>
+                </h2>
+                <h3 id="Related-Documentation">
+                  <a href="#Related-Documentation">Related Documentation</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../../modulename/something/third/index.html">
+                      <code>
+                        <span class="identifier">third</span>
+                      </code>
+                    </a>
+                  </li>
+                </ul>
+                <h3 id="Manually-curated">
+                  <a href="#Manually-curated">Manually curated</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../../modulename/something/first/index.html">
+                      <code>
+                        <span class="identifier">first</span>
+                      </code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="../../modulename/something/second/index.html">
+                      <code>
+                        <span class="identifier">second</span>
+                      </code>
+                    </a>
+                  </li>
+                </ul>
+              </section>
+            </article>
+            """)
+        }
+    }
+    
+    private func makeHTMLRenderer(for reference: ResolvedTopicReference, in context: DocumentationContext) -> HTMLRenderer {
+        HTMLRenderer(reference: reference, context: context, jsonRenderContext: .init(documentationContext: context), goal: .richness, featureFlags: context.configuration.featureFlags)
     }
 }
