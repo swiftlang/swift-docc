@@ -76,6 +76,7 @@ extension ConvertAction {
             catalogDiscoveryOptions: catalogDiscoveryOptions,
             diagnosticLevel: convert.diagnosticOptions.diagnosticLevel,
             diagnosticFilePath: convert.diagnosticOptions.diagnosticsOutputPath,
+            useRelativePathsInDiagnosticFile: convert.diagnosticOptions.useRelativePathsInDiagnosticsFile,
             formatConsoleOutputForTools: convert.diagnosticOptions.formatConsoleOutputForTools,
             inheritDocs: convert.featureFlags.enableInheritedDocs,
             treatWarningsAsErrors: convert.diagnosticOptions.warningsAsErrors,

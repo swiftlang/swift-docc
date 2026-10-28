@@ -79,6 +79,7 @@ public struct ConvertAction: AsyncAction {
     ///   - diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
     ///   - diagnosticEngine: The engine that will collect and emit diagnostics during this action.
     ///   - diagnosticFilePath: The path to a file where the convert action should write diagnostic information.
+    ///   - useRelativePathsInDiagnosticFile: `true` if the convert action should write source paths in the diagnostic file relative to `documentationBundleURL`, or the current directory if `documentationBundleURL` is `nil`, otherwise `false`.
     ///   - formatConsoleOutputForTools: `true` if the convert action should write diagnostics to the console in a format suitable for parsing by an IDE or other tool, otherwise `false`.
     ///   - inheritDocs: `true` if the convert action should retain the original documentation content for inherited symbols, otherwise `false`.
     ///   - treatWarningsAsErrors: `true` if the convert action should treat warnings as errors, otherwise `false`.
@@ -111,6 +112,7 @@ public struct ConvertAction: AsyncAction {
         diagnosticLevel: String? = nil,
         diagnosticEngine: DiagnosticEngine? = nil,
         diagnosticFilePath: URL? = nil,
+        useRelativePathsInDiagnosticFile: Bool = false,
         formatConsoleOutputForTools: Bool = false,
         inheritDocs: Bool = false,
         treatWarningsAsErrors: Bool = false,
@@ -168,7 +170,11 @@ public struct ConvertAction: AsyncAction {
         engine.diagnosticIDsWithWarningSeverity = diagnosticIDsWithWarningSeverity
         engine.diagnosticIDsWithErrorSeverity   = diagnosticIDsWithErrorSeverity
         if let diagnosticFilePath {
-            engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath, fileManager: self.outputFileManager))
+            engine.add(DiagnosticFileWriter(
+                outputPath: diagnosticFilePath,
+                baseURL: useRelativePathsInDiagnosticFile ? diagnosticWriterOptions.baseURL : nil,
+                fileManager: self.outputFileManager
+            ))
         }
         
         self.diagnosticEngine = engine

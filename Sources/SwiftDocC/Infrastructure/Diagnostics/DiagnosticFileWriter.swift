@@ -19,17 +19,24 @@ public final class DiagnosticFileWriter: DiagnosticConsumer {
     var outputLocation: URL
     /// The file manager that consumer uses to write the diagnostics file to the specific output path.
     private var fileManager: any FileManagerProtocol
+    /// The base URL relative to which the diagnostic source paths are written.
+    /// If set to `nil`, the absolute source paths are written.
+    private var baseURL: URL?
     
     /// Creates a new diagnostic file writer with a specific output path.
-    /// - Parameter outputPath: The path where the diagnostic file writer should write the diagnostics file.
-    public init(outputPath: URL) {
+    /// - Parameters:
+    ///   - outputPath: The path where the diagnostic file writer should write the diagnostics file.
+    ///   - baseURL: The base URL relative to which the diagnostic source paths are written.
+    public init(outputPath: URL, baseURL: URL? = nil) {
         self.outputLocation = outputPath
         self.fileManager = FileManager.default
+        self.baseURL = baseURL
     }
     
-    package init(outputPath: URL, fileManager: some FileManagerProtocol) {
+    package init(outputPath: URL, baseURL: URL? = nil, fileManager: some FileManagerProtocol) {
         self.outputLocation = outputPath
         self.fileManager = fileManager
+        self.baseURL = baseURL
     }
     
     private var receivedDiagnostics: [Diagnostic] = []
@@ -39,7 +46,7 @@ public final class DiagnosticFileWriter: DiagnosticConsumer {
     }
     
     public func flush() throws {
-        let fileContent = DiagnosticFile(receivedDiagnostics)
+        let fileContent = DiagnosticFile(receivedDiagnostics, baseURL: baseURL)
         // Don't clear the received diagnostics, `flush()` is called more than once.
         let encoder = RenderJSONEncoder.makeEncoder(emitVariantOverrides: false)
         let data = try encoder.encode(fileContent)

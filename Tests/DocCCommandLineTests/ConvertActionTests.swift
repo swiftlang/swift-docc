@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Testing
 import XCTest
 import Foundation
 @testable @_spi(ExternalLinks) import SwiftDocC
@@ -2896,6 +2897,41 @@ class ConvertActionTests: XCTestCase {
     }
     
     #endif
+}
+
+struct ConvertActionTests_new {
+    @Test(arguments: [false, true])
+    func diagnosticFileSourcePaths(useRelativePaths: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Article.md", utf8Content: """
+            Bad title
+
+            This article has a malformed title.
+            """),
+        ])
+        let testFileSystem = try TestFileSystem(folders: [catalog, Folder.emptyHTMLTemplateDirectory])
+        let diagnosticFileURL = URL(fileURLWithPath: "/diagnostics.json")
+
+        let action = try ConvertAction(
+            documentationBundleURL: catalog.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            outputLocation: URL(fileURLWithPath: "/target"),
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            outputFileManager: testFileSystem,
+            temporaryDirectory: testFileSystem.uniqueTemporaryDirectory(),
+            diagnosticFilePath: diagnosticFileURL,
+            useRelativePathsInDiagnosticFile: useRelativePaths
+        )
+        _ = try await action.perform(logHandle: .none)
+
+        let diagnosticFile = try JSONDecoder().decode(DiagnosticFile.self, from: testFileSystem.contents(of: diagnosticFileURL))
+        let diagnostic = try #require(diagnosticFile.diagnostics.first)
+        let expectedSource = useRelativePaths ? "Article.md" : catalog.absoluteURL.appendingPathComponent("Article.md").absoluteString
+        #expect(diagnostic.source?.absoluteString == expectedSource)
+    }
 }
 
 private extension LinkDestinationSummary {

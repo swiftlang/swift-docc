@@ -553,6 +553,15 @@ class ConvertSubcommandFlagParsingTests {
     }
     
     @Test
+    func parsingRelativeDiagnosticsFilePathsFlag() throws {
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.diagnosticOptions.useRelativePathsInDiagnosticsFile == false)
+
+        let relativePathsConvert = try Docc.Convert.parse(["--relative-diagnostics-file-paths"])
+        #expect(relativePathsConvert.diagnosticOptions.useRelativePathsInDiagnosticsFile)
+    }
+
+    @Test
     func parsingParameterValidationFeatureFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])
@@ -654,6 +663,30 @@ class ConvertSubcommandFlagParsingTests {
         """)
     }
     
+    @Test
+    func warnsAboutRelativeDiagnosticsFilePathsWithoutDiagnosticsFile() throws {
+        let originalErrorLogHandle = Docc.Convert._errorLogHandle
+        let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
+        defer {
+            Docc.Convert._errorLogHandle = originalErrorLogHandle
+            Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
+        }
+        Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
+
+        let logStorage = LogHandle.LogStorage()
+        Docc.Convert._errorLogHandle = .memory(logStorage)
+        _ = try Docc.Convert.parse(["--relative-diagnostics-file-paths"])
+        #expect(logStorage.text == """
+        warning: Passing '--relative-diagnostics-file-paths' has no effect without '--diagnostics-file'.
+
+        """)
+
+        let logStorageWithDiagnosticsFile = LogHandle.LogStorage()
+        Docc.Convert._errorLogHandle = .memory(logStorageWithDiagnosticsFile)
+        _ = try Docc.Convert.parse(["--relative-diagnostics-file-paths", "--diagnostics-file", "/diagnostics.json"])
+        #expect(logStorageWithDiagnosticsFile.text.isEmpty)
+    }
+
     @Test
     func parsingExplicitDiagnosticSeverities() throws {
         // The feature is enabled when no flag is passed.

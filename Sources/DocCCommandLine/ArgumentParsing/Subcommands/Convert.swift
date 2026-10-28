@@ -221,6 +221,16 @@ extension Docc {
             )
             var diagnosticsOutputPath: URL?
             
+            /// A user-provided value that is true if the diagnostics file should use relative source paths.
+            @Flag(
+                name: .customLong("relative-diagnostics-file-paths"),
+                help: ArgumentHelp(
+                    "Write source paths in the diagnostics file relative to the documentation catalog path.",
+                    discussion: "If no documentation catalog path is provided, source paths are relative to the current directory."
+                )
+            )
+            var useRelativePathsInDiagnosticsFile = false
+
             /// The diagnostic severity level to filter.
             @Option(
                 name: [.customLong("diagnostic-filter"), .long],
@@ -273,6 +283,14 @@ extension Docc {
             var warningGroupsWithWarningSeverity: [String] = []
 
             mutating func validate() throws {
+                if useRelativePathsInDiagnosticsFile, diagnosticsOutputPath == nil {
+                    warnAboutDiagnostic(.init(
+                        severity: .warning,
+                        identifier: "org.swift.docc.IgnoredRelativeDiagnosticsFilePaths",
+                        summary: "Passing '--relative-diagnostics-file-paths' has no effect without '--diagnostics-file'."
+                    ))
+                }
+
                 if analyze && diagnosticLevel != nil {
                     warnAboutDiagnostic(.init(
                         severity: .information,
