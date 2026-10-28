@@ -154,6 +154,12 @@ extension DocumentationContext {
 
         /// Default path to resolve articles.
         public var articlesDocumentationRootReference: ResolvedTopicReference
+        
+        // The only place that has access to the source file and raw data doesn't have access to a diagnostics engine.
+        // Because of this, we carry this diagnostic on the inputs so that we can report it later.
+        //
+        // This warning is temporary and can be removed after 6.6 is released.
+        var _infoPlitsLegacyFormatDiagnostic: Diagnostic? = nil
     }
 }
 

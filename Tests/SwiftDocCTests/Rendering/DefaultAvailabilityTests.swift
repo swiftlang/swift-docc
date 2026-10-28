@@ -56,14 +56,17 @@ class DefaultAvailabilityTests: XCTestCase {
             try myKitDocExtension.write(to: myKitDocExtensionFile, atomically: true, encoding: .utf8)
         }
         
-        // Verify the catalog has loaded the default availability
-        XCTAssertEqual(
-            context.inputs.info.defaultAvailability?
-                .modules["MyKit"]?
-                .map({ "\($0.platformName.displayName) \($0.introducedVersion ?? "")" })
-                .sorted(),
-            expectedDefaultAvailability
-        )
+        if case .deprecated(let deprecatedDefaultAvailabilityByModule) = context.inputs.info.defaultAvailability?.info {
+            // Verify the catalog has loaded the default availability
+            XCTAssertEqual(
+                deprecatedDefaultAvailabilityByModule["MyKit"]?
+                    .map { "\($0.platformName.displayName) \($0.introducedVersion ?? "")" }
+                    .sorted(),
+                expectedDefaultAvailability
+            )
+        } else {
+            XCTFail("Unexpectedly decoded the current format from the deprecated legacy inputs")
+        }
         
         // Bail the rendering part of the test if the availability hasn't been loaded
         guard context.inputs.info.defaultAvailability != nil else {
@@ -249,82 +252,111 @@ class DefaultAvailabilityTests: XCTestCase {
     ///     aliases: []
     /// }
     /// ```
-    ///
-    /// - Bug: [rdar://71544773](rdar://71544773)
     func testInitializeWithCorrectAvailability() throws {
-        let plistEntries: [String: [[String: String]]] = [
-            "SwiftUI": [
-                [
-                    "name": "macOS",
-                    "version": "10.15",
-                ],
-                [
-                    "name": "iOS",
-                    "version": "13.0",
-                ],
-                [
-                    "name": "Mac Catalyst",
-                    "version": "13.0",
-                ],
-                [
-                    "name": "tvOS",
-                    "version": "13.0",
-                ],
-                [
-                    "name": "watchOS",
-                    "version": "6.0",
-                ],
+        let defaultAvailabilityEntries = [
+            [
+                "name": "macOS",
+                "version": "10.15",
+            ],
+            [
+                "name": "iOS",
+                "version": "13.0",
+            ],
+            [
+                "name": "Mac Catalyst",
+                "version": "13.0",
+            ],
+            [
+                "name": "tvOS",
+                "version": "13.0",
+            ],
+            [
+                "name": "watchOS",
+                "version": "6.0",
             ],
         ]
         
-        let plistData = try PropertyListEncoder().encode(plistEntries)
-        let defaultAvailability = try PropertyListDecoder().decode(
-            DefaultAvailability.self,
-            from: plistData
-        )
+        do {
+            let plistData = try PropertyListEncoder().encode(defaultAvailabilityEntries)
+            let defaultAvailability = try PropertyListDecoder().decode(DefaultAvailability.self, from: plistData)
+            
+            if case .current(let defaultAvailability) = defaultAvailability.info {
+                XCTAssertEqual(defaultAvailability.count, 5, "There are 5 values in the Info.plist file")
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.displayName == "iPadOS" }).count, 0)
+            } else {
+                XCTFail("Unexpectedly decoded the deprecated legacy format from the current inputs")
+            }
+        }
         
-        let module = try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
-        XCTAssertEqual(module.count, 5, "There are 5 values in the Info.plist file")
-        XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
-        XCTAssertEqual(module.filter({ $0.platformName.displayName == "iPadOS" }).count, 0)
+        do {
+            // Per-module default availability is deprecated---and shouldn't have been added in the first place---because catalogs document a single module.
+            let plistData = try PropertyListEncoder().encode(["ModuleName": defaultAvailabilityEntries])
+            let defaultAvailability = try PropertyListDecoder().decode(DefaultAvailability.self, from: plistData)
+            
+            if case .deprecated(let deprecatedDefaultAvailabilityByModule) = defaultAvailability.info {
+                let defaultAvailability = try XCTUnwrap(deprecatedDefaultAvailabilityByModule["ModuleName"])
+                XCTAssertEqual(defaultAvailability.count, 5, "There are 5 values in the Info.plist file")
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.displayName == "iPadOS" }).count, 0)
+            } else {
+                XCTFail("Unexpectedly decoded the current format from the deprecated legacy inputs")
+            }
+        }
     }
 
     func testInitializeWithCorrectAvailabilityWithRawValue() throws {
-        let plistEntries: [String: [[String: String]]] = [
-            "SwiftUI": [
-                [
-                    "name": "macOS",
-                    "version": "10.15",
-                ],
-                [
-                    "name": "iOS",
-                    "version": "13.0",
-                ],
-                [
-                    "name": "macCatalyst",
-                    "version": "13.0",
-                ],
-                [
-                    "name": "tvOS",
-                    "version": "13.0",
-                ],
-                [
-                    "name": "watchOS",
-                    "version": "6.0",
-                ],
+        let defaultAvailabilityEntries = [
+            [
+                "name": "macOS",
+                "version": "10.15",
+            ],
+            [
+                "name": "iOS",
+                "version": "13.0",
+            ],
+            [
+                "name": "macCatalyst",
+                "version": "13.0",
+            ],
+            [
+                "name": "tvOS",
+                "version": "13.0",
+            ],
+            [
+                "name": "watchOS",
+                "version": "6.0",
             ],
         ]
-        let plistData = try PropertyListEncoder().encode(plistEntries)
-        let defaultAvailability = try PropertyListDecoder().decode(
-            DefaultAvailability.self,
-            from: plistData
-        )
+        do {
+            let plistData = try PropertyListEncoder().encode(defaultAvailabilityEntries)
+            let defaultAvailability = try PropertyListDecoder().decode(DefaultAvailability.self, from: plistData)
+            
+            if case .current(let defaultAvailability) = defaultAvailability.info {
+                XCTAssertEqual(defaultAvailability.count, 5, "There are 5 values in the Info.plist file")
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.rawValue == "macCatalyst" }).count, 1)
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.displayName == "iPadOS" }).count, 0)
+            } else {
+                XCTFail("Unexpectedly decoded the deprecated legacy format from the current inputs")
+            }
+        }
         
-        let module = try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
-        XCTAssertEqual(module.count, 5, "There are 5 values in the Info.plist file")
-        XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
-        XCTAssertEqual(module.filter({ $0.platformName.rawValue == "macCatalyst" }).count, 1)
-        XCTAssertEqual(module.filter({ $0.platformName.displayName == "iPadOS" }).count, 0)
+        do {
+            // Per-module default availability is deprecated---and shouldn't have been added in the first place---because catalogs document a single module.
+            let plistData = try PropertyListEncoder().encode(["ModuleName": defaultAvailabilityEntries])
+            let defaultAvailability = try PropertyListDecoder().decode(DefaultAvailability.self, from: plistData)
+            
+            if case .deprecated(let deprecatedDefaultAvailabilityByModule) = defaultAvailability.info {
+                let defaultAvailability = try XCTUnwrap(deprecatedDefaultAvailabilityByModule["ModuleName"])
+                XCTAssertEqual(defaultAvailability.count, 5, "There are 5 values in the Info.plist file")
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.rawValue == "macCatalyst" }).count, 1)
+                XCTAssertEqual(defaultAvailability.filter({ $0.platformName.displayName == "iPadOS" }).count, 0)
+            } else {
+                XCTFail("Unexpectedly decoded the current format from the deprecated legacy inputs")
+            }
+        }
     }
     
     // Test that setting default availability doesn't prevent symbols with "universal" deprecation
@@ -369,73 +401,71 @@ class DefaultAvailabilityTests: XCTestCase {
                 <key>CFBundleIdentifier</key>
                 <string>com.apple.MyModule</string>
                 <key>CDAppleDefaultAvailability</key>
-                <dict>
-                    <key>MyModule</key>
-                    <array>
-                        <dict>
-                            <key>name</key>
-                            <string>visionOS</string>
-                            <key>unavailable</key>
-                            <true/>
-                        </dict>
-                        <dict>
-                            <key>name</key>
-                            <string>Catalyst</string>
-                            <key>unavailable</key>
-                            <true/>
-                        </dict>
-                        <dict>
-                            <key>unavailable</key>
-                            <true/>
-                            <key>name</key>
-                            <string>tvOS</string>
-                            <key>version</key>
-                            <string>1.0</string>
-                        </dict>
-                        <dict>
-                            <key>name</key>
-                            <string>watchOS</string>
-                            <key>version</key>
-                            <string>1.0</string>
-                        </dict>
-                        <dict>
-                            <key>name</key>
-                            <string>iOS</string>
-                            <key>version</key>
-                            <string>1.0</string>
-                        </dict>
-                    </array>
-                </dict>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>visionOS</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>Catalyst</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                    <dict>
+                        <key>unavailable</key>
+                        <true/>
+                        <key>name</key>
+                        <string>tvOS</string>
+                        <key>version</key>
+                        <string>1.0</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>watchOS</string>
+                        <key>version</key>
+                        <string>1.0</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>iOS</string>
+                        <key>version</key>
+                        <string>1.0</string>
+                    </dict>
+                </array>
             </dict>
             </plist>
             """
         
-        let decodedInfo = try DocumentationContext.Inputs.Info(from: Data(infoPlist.utf8))
-        let reEncodedInfo = try PropertyListEncoder().encode(decodedInfo.defaultAvailability)
-        let defaultAvailability = try PropertyListDecoder().decode(
-            DefaultAvailability.self,
-            from: reEncodedInfo
-        )
-        let module = try XCTUnwrap(defaultAvailability.modules["MyModule"])
-        XCTAssertEqual(module.count, 5, "There are 5 values in the Info.plist file")
+        let info = try DocumentationContext.Inputs.Info(from: Data(infoPlist.utf8))
+        let encodedInfo = try PropertyListEncoder().encode(info.defaultAvailability)
+        let decodedDefaultAvailability = try PropertyListDecoder().decode(DefaultAvailability.self, from: encodedInfo)
+        
+        guard case .current(let defaultAvailability) = decodedDefaultAvailability.info else {
+            XCTFail("Unexpectedly decoded the deprecated legacy format from the current inputs")
+            return
+        }
+        XCTAssertEqual(defaultAvailability.count, 5, "There are 5 values in the Info.plist file")
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "visionOS" }).first?.versionInformation,
+            defaultAvailability.filter({ $0.platformName.displayName == "visionOS" }).first?.versionInformation,
             .unavailable
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "Catalyst" }).first?.versionInformation,
+            defaultAvailability.filter({ $0.platformName.displayName == "Catalyst" }).first?.versionInformation,
             .unavailable
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "tvOS" }).first?.versionInformation,
+            defaultAvailability.filter({ $0.platformName.displayName == "tvOS" }).first?.versionInformation,
             .unavailable
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "watchOS" }).first?.versionInformation,
+            defaultAvailability.filter({ $0.platformName.displayName == "watchOS" }).first?.versionInformation,
             .available(version: "1.0")
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "iOS" }).first?.introducedVersion,
+            defaultAvailability.filter({ $0.platformName.displayName == "iOS" }).first?.introducedVersion,
             "1.0"
         )
     }
@@ -448,7 +478,12 @@ class DefaultAvailabilityTests: XCTestCase {
                 from: plistData
             )
             
-            return try XCTUnwrap(defaultAvailability.modules["ModuleName"])
+            switch defaultAvailability.info {
+                case .current(let modules):
+                    return modules
+                case .deprecated(let modulesByName):
+                    return try XCTUnwrap(modulesByName["ModuleName"])
+            }
         }
         // Only decodes macOS when that's the only platform in the Info.plist
         var module = try unwrapModuleDefaultAvailability([
@@ -506,7 +541,7 @@ class DefaultAvailabilityTests: XCTestCase {
                         .init(domainName: "iOS", introduced: .init(major: 10, minor: 0, patch: 0), deprecated: nil)
                     ]),
                 ]))
-                InfoPlist(defaultAvailability: ["ModuleName": defaultAvailability])
+                InfoPlist(defaultAvailability: defaultAvailability)
             }
             let (_, context) = try await loadBundle(catalog: catalog)
             return context

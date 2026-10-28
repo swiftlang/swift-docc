@@ -1580,7 +1580,7 @@ struct MarkdownOutputTests {
                 makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                .init(platformName: .iOS, platformVersion: "1.0.0")
             ])
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
@@ -1595,7 +1595,7 @@ struct MarkdownOutputTests {
                 makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output", availability: [.init(domainName: "iOS", introduced: .init(string: "2.0.0"), deprecated: nil)])
             ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                .init(platformName: .iOS, platformVersion: "1.0.0")
             ])
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
@@ -1610,7 +1610,7 @@ struct MarkdownOutputTests {
                 makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                .init(platformName: .iOS, platformVersion: "1.0.0")
             ]),
             TextFile(name: "MarkdownSymbol.md", utf8Content: """
                 # ``MarkdownSymbol``
@@ -1658,10 +1658,8 @@ struct MarkdownOutputTests {
                     symbols: []
                 )),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [
-                    .init(platformName: .iOS, platformVersion: "1.0.0"),
-                    .init(platformName: .macOS, platformVersion: "1.0.0"),
-                ]
+                .init(platformName: .iOS,   platformVersion: "1.0.0"),
+                .init(platformName: .macOS, platformVersion: "1.0.0"),
             ]),
         ])
         

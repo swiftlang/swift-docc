@@ -811,14 +811,25 @@ extension Availability {
     /// - Parameter info: Metadata information about the documentation inputs.
     /// - Returns: A new base availability value that article pages can customize with their page-specific information.
     static func makeNewArticleBaseAvailability(info: DocumentationContext.Inputs.Info) -> Availability {
-        // FIXME: It's not supported to mix different modules in one catalog. The default availability shouldn't support this either. (rdar://188797956)
-        let soleModuleName: String? = switch info.defaultAvailability?.modules.count {
-            case 1:  info.defaultAvailability!.modules.keys.first!
-            default: info.displayName
+        let defaultAvailability: [DefaultAvailability.ModuleAvailability]?
+        switch info.defaultAvailability?.info {
+            case .current(let modules):
+                defaultAvailability = modules
+            case .deprecated(let modulesByName):
+                // It's not supported to mix different modules in one catalog. The default availability shouldn't support this either.
+                // We should remove this fallback logic after 6.6 is released.
+                let soleModuleName: String? = switch modulesByName.count {
+                    case 1:  modulesByName.keys.first!
+                    default: info.displayName
+                }
+                defaultAvailability = soleModuleName.flatMap { modulesByName[$0] }
+            case nil:
+                defaultAvailability = nil
         }
+        
         // Even though articles don't _display_ "default" availability they need to be initialized with it to know if a platform has been marked as "unavailable";
         // meaning that it shouldn't inherit its "fallback" availability from another platform.
-        return Availability(defaultAvailability: soleModuleName.flatMap { info.defaultAvailability?.modules[$0] })
+        return Availability(defaultAvailability: defaultAvailability)
             // !!!: Preserve the bug that articles don't display default availability (rdar://173688303)
             .preservingBugThatArticlesDoNotDisplayDefaultAvailability()
     }

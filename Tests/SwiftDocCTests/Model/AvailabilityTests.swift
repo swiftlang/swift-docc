@@ -35,9 +35,9 @@ struct AvailabilityTests {
             # Some article
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: defaultIntroducedVersion)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -92,9 +92,9 @@ struct AvailabilityTests {
                     .init(domainName: "visionOS", introduced: nil, deprecated: .init(major: 1, minor: 0, patch: 0)),
                 ])
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: "1.2.3")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -212,11 +212,11 @@ struct AvailabilityTests {
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: "8.0"),
                 // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
                 .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -247,10 +247,10 @@ struct AvailabilityTests {
                 ])
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
                 .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -295,10 +295,10 @@ struct AvailabilityTests {
             \(directiveLocation == .extensionFile ? availableDirective : "")
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
                 .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -406,11 +406,11 @@ struct AvailabilityTests {
                 ]))
             }
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS,      platformVersion: "8.0"),
                 .init(platformName: .iPadOS,   platformVersion: "8.0"),
                 .init(platformName: .catalyst, platformVersion: "8.0"),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -439,11 +439,11 @@ struct AvailabilityTests {
                     ])
                 ]))
             }
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -471,11 +471,11 @@ struct AvailabilityTests {
                     ])
                 ]))
             }
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -503,11 +503,11 @@ struct AvailabilityTests {
                     ])
                 ]))
             }
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: "1.2.3")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -530,11 +530,11 @@ struct AvailabilityTests {
                     .init(domainName: "ios", introduced: SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0), deprecated: nil)
                 ])
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -558,11 +558,11 @@ struct AvailabilityTests {
                     .init(domainName: "ios", introduced: SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0), deprecated: nil)
                 ])
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -607,11 +607,11 @@ struct AvailabilityTests {
                 ])
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS,      platformVersion: "8.0"),
                 .init(platformName: .catalyst, platformVersion: "7.0"),
                 .init(platformName: .iPadOS,   platformVersion: "6.0"),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -643,11 +643,11 @@ struct AvailabilityTests {
                 ]))
             }
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(unavailablePlatformName: .iOS),      // This configuration doesn't remove the in-source "iOS" availability from above
                 .init(unavailablePlatformName: .iPadOS),
                 .init(unavailablePlatformName: .catalyst), // This configuration doesn't remove the in-source "macCatalyst" availability from above
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -675,10 +675,10 @@ struct AvailabilityTests {
                 makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]), // No in-source availability attributes.
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .tvOS, platformVersion: nil),
                 .init(platformName: .iOS,  platformVersion: nil),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -712,11 +712,11 @@ struct AvailabilityTests {
                 ))
             }
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .macOS,   platformVersion: "10.0"),
                 .init(platformName: .iOS,     platformVersion: "10.0"),
                 .init(platformName: .watchOS, platformVersion: "10.0"),
-            ]])
+            ])
         }
 
         let context = try await load(catalog: catalog)
@@ -736,9 +736,9 @@ struct AvailabilityTests {
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No explicit availability
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .macOS, platformVersion: "10.0")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -757,10 +757,10 @@ struct AvailabilityTests {
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS,      platformVersion: "2.3"),
                 .init(platformName: .catalyst, platformVersion: "4.5"),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -898,11 +898,11 @@ struct AvailabilityTests {
             ]))
             
             if withUnavailablePlatformsInInfoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(unavailablePlatformName: .iOS),
                     .init(unavailablePlatformName: .iPadOS),
                     .init(unavailablePlatformName: .catalyst),
-                ]])
+                ])
             }
         }
         let context = try await load(catalog: catalog)
@@ -951,9 +951,9 @@ struct AvailabilityTests {
                 ]),
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .catalyst, platformVersion: "1.0")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -978,9 +978,9 @@ struct AvailabilityTests {
                 ]),
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .catalyst, platformVersion: "5.5")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1276,9 +1276,9 @@ struct AvailabilityTests {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: "8.0")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1302,9 +1302,9 @@ struct AvailabilityTests {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1329,9 +1329,9 @@ struct AvailabilityTests {
                 ]),
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: defaultIntroducedVersion)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1603,9 +1603,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         let context = try await load(catalog: catalog)
@@ -1776,9 +1776,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         let context = try await load(catalog: catalog)
@@ -1928,9 +1928,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         
@@ -1979,9 +1979,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         
@@ -2040,9 +2040,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         
@@ -2088,9 +2088,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         
@@ -2151,10 +2151,10 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14"),
                     .init(platformName: .iOS,   platformVersion:  "9.2"),
-                ]])
+                ])
             }
         }
         
@@ -2201,10 +2201,10 @@ struct AvailabilityTests {
                     ])
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
-            ]])
+            ])
         }
         
         var configuration = DocumentationContext.Configuration()
@@ -2301,10 +2301,10 @@ struct AvailabilityTests {
             # Some article    
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
-            ]])
+            ])
         }
         
         var configuration = DocumentationContext.Configuration()
@@ -2347,10 +2347,10 @@ struct AvailabilityTests {
             }
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
-            ]])
+            ])
         }
         
         var configuration = DocumentationContext.Configuration()
@@ -2383,13 +2383,13 @@ struct AvailabilityTests {
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .init(rawValue: "CCC"), platformVersion: "1.2.3"),
                 .init(platformName: .init(rawValue: "AAA"), platformVersion: "1.2.3"),
                 .init(platformName: .init(rawValue: "BBB"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS,   platformVersion:  "9.2"),
                 .init(platformName: .macOS, platformVersion: "10.14"),
-            ]])
+            ])
             
             TextFile(name: "SomeArticle.md", utf8Content: "# Some article")
         }
@@ -2442,9 +2442,9 @@ struct AvailabilityTests {
                 ]))
             }
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: defaultIntroducedVersion),
-            ]])
+            ])
         }
         
         let context = try await load(catalog: catalog)
@@ -2542,9 +2542,9 @@ struct AvailabilityTests {
             \(directiveLocation == .extensionFile ? availableDirective : "")
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion:  "9.2"),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
