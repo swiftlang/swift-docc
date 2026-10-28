@@ -255,45 +255,54 @@ private enum DeclarationFormatter {
                 return fragments.map { renderer.render($0) }
             }
             
-            // To know where to insert line breaks and indentation, we need to count and balance the parenthesis.
-            var parenthesisDepth = 0
+            return _prettyPrintSwiftLikeFragments(fragments, from: index, using: renderer)
+        }
+    }
+    
+    private static func _prettyPrintSwiftLikeFragments<LinkProvider>(
+        _ fragments: UnsafeMutableBufferPointer<DeclarationFormatter.Fragment>,
+        from startIndex: Int,
+        using renderer: MarkdownRenderer<LinkProvider>
+    ) -> [HTMLNode] {
+        var index = startIndex
+        // To know where to insert line breaks and indentation, we need to count and balance the parenthesis.
+        var parenthesisDepth = 0
+        
+        lineBreakParameters: while index < fragments.count {
+            defer { index &+= 1 }
             
-            lineBreakParameters: while index < fragments.count {
-                defer { index &+= 1 }
-                
-                // We iterate over each fragment's UTF-8 code units to check where we need to insert a line break.
-                // Note that it can happen in the middle of a fragment, especially since multiple fragments may have already been joined together.
-                for utf8Index in fragments[index].text.utf8.indices {
-                    let byte = fragments[index].text.utf8[utf8Index]
-                    switch byte {
-                    case openParen:
-                        if parenthesisDepth == 0 {
-                            fragments[index].text.replaceSpacesWithNewlineAndIndentation(after: utf8Index)
-                        }
-                        parenthesisDepth &+= 1
-                        
-                    case comma where parenthesisDepth == 1:
+            // We iterate over each fragment's UTF-8 code units to check where we need to insert a line break.
+            // Note that it can happen in the middle of a fragment, especially since multiple fragments may have already been joined together.
+            for utf8Index in fragments[index].text.utf8.indices {
+                let byte = fragments[index].text.utf8[utf8Index]
+                switch byte {
+                case openParen:
+                    if parenthesisDepth == 0 {
                         fragments[index].text.replaceSpacesWithNewlineAndIndentation(after: utf8Index)
-                        
-                    case closeParen:
-                        parenthesisDepth &-= 1
-                        if parenthesisDepth == 0 {
-                            fragments[index].text.replaceSpacesWithNewline(before: utf8Index)
-                            
-                            // We've found the parenthesis that defines the end of the parameter list.
-                            // Because we don't do any pretty printing after this point, we break here to avoid looping unnecessarily.
-                            break lineBreakParameters
-                        }
-                        
-                    default:
-                        continue
                     }
+                    parenthesisDepth &+= 1
+                    
+                case comma where parenthesisDepth == 1:
+                    fragments[index].text.replaceSpacesWithNewlineAndIndentation(after: utf8Index)
+                    
+                case closeParen:
+                    parenthesisDepth &-= 1
+                    if parenthesisDepth == 0 {
+                        fragments[index].text.replaceSpacesWithNewline(before: utf8Index)
+                        
+                        // We've found the parenthesis that defines the end of the parameter list.
+                        // Because we don't do any pretty printing after this point, we break here to avoid looping unnecessarily.
+                        break lineBreakParameters
+                    }
+                    
+                default:
+                    continue
                 }
             }
-        
-            // Transform the updated fragments into HTML
-            return fragments.map { renderer.render($0) }
         }
+        
+        // Transform the updated fragments into HTML
+        return fragments.map { renderer.render($0) }
     }
     
     /// Pretty prints an Objective-C method declaration by placing each parameter on its own line.
@@ -346,6 +355,17 @@ private enum DeclarationFormatter {
                         return
                     }
                 }
+            }
+            
+            // Objective-C methods begin with either "-" or "+" to distinguish between instance methods and class methods.
+            var isObjectiveCMethod: Bool {
+                let firstCharacter = fragments.first!.text.drop(while: \.isWhitespace).first
+                return firstCharacter == "-" || firstCharacter == "+"
+            }
+            guard isObjectiveCMethod else {
+                // If this isn't an Objective-C method, it's probably a C function (or possibly a C++ function/method).
+                // Try to pretty print it same as Swift---with comma separated parameters within the outermost parenthesis on their own lines.
+                return _prettyPrintSwiftLikeFragments(fragments, from: 0, using: renderer)
             }
             
             // On the first line, count the distance to the first parameter's colon.

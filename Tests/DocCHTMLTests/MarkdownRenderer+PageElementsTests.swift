@@ -511,6 +511,94 @@ struct MarkdownRenderer_PageElementsTests {
     }
     
     @Test(arguments: RenderGoal.allCases)
+    func prettyPrintsCDeclarations(goal: RenderGoal) {
+        let symbolPaths = [
+            "first-parameter-symbol-id":  "documentation/ModuleName/FirstParameterValue/index.html".lowercased(),
+            "second-parameter-symbol-id": "documentation/ModuleName/SecondParameterValue/index.html".lowercased(),
+            "third-parameter-symbol-id":  "documentation/ModuleName/ThirdParameterValue/index.html".lowercased(),
+            "return-value-symbol-id":     "documentation/ModuleName/ReturnValue/index.html".lowercased(),
+        ]
+        
+        let singleParameterFunction = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .objectiveC: [
+                .init(kind: .keyword,           spelling: "extern",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",                   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue",         preciseIdentifier: "return-value-symbol-d"),
+                .init(kind: .text,              spelling: " ",                   preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "functionName",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",                   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue", preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " ",                   preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",               preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ");",                  preciseIdentifier: nil),
+            ]
+        ])
+        
+        switch goal {
+        case .richness:
+            #expect(singleParameterFunction.childCountForTesting == 1)
+            #expect(singleParameterFunction.childrenForTesting.first?.plainTextForTesting == """
+            extern ReturnValue functionName(FirstParameterValue first);
+            """)
+            singleParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre id="declaration"><code><span class="keyword">extern</span> <span class="typeIdentifier">ReturnValue</span> functionName(<a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a> <span class="internalParameter">first</span>);</code></pre>
+            """)
+            
+        case .conciseness:
+            singleParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre><code>extern ReturnValue functionName(FirstParameterValue first);</code></pre>
+            """)
+        }
+        
+        let multiParameterFunction = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .objectiveC: [
+                .init(kind: .keyword,           spelling: "extern",               preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue",          preciseIdentifier: "return-value-symbol-d"),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "functionName",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",                    preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue",  preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",                preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",                   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "second",               preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",                   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ThirdParameterValue",  preciseIdentifier: "third-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "third",                preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ");",                   preciseIdentifier: nil),
+            ]
+        ])
+        
+        switch goal {
+        case .richness:
+            #expect(multiParameterFunction.childCountForTesting == 1)
+            #expect(multiParameterFunction.childrenForTesting.first?.plainTextForTesting == """
+            extern ReturnValue functionName(
+                FirstParameterValue first,
+                SecondParameterValue second,
+                ThirdParameterValue third
+            );
+            """)
+            multiParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre id="declaration"><code><span class="keyword">extern</span> <span class="typeIdentifier">ReturnValue</span> functionName(
+                <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a> <span class="internalParameter">first</span>,
+                <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a> <span class="internalParameter">second</span>,
+                <a class="typeIdentifier" href="../../thirdparametervalue/index.html">ThirdParameterValue</a> <span class="internalParameter">third</span>
+            );</code></pre>
+            """)
+            
+        case .conciseness:
+            multiParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre><code>extern ReturnValue functionName(FirstParameterValue first, SecondParameterValue second, ThirdParameterValue third);</code></pre>
+            """)
+        }
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
     func renderingLanguageSpecificDeclarations(goal: RenderGoal) {
         let symbolPaths = [
             "first-parameter-symbol-id":  "documentation/ModuleName/FirstParameterValue/index.html".lowercased(),
