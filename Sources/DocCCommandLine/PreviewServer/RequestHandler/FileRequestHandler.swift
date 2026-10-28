@@ -71,6 +71,7 @@ struct FileRequestHandler: RequestHandlerFactory {
         AssetFileMetadata(folderPath: "/index/", mimetype: { _ in "application/json" }),
         AssetFileMetadata(folderPath: "/css/", mimetype: { _ in "text/css" }),
         AssetFileMetadata(folderPath: "/js/", mimetype: { _ in "text/javascript" }),
+        AssetFileMetadata(folderPath: "/custom-scripts/", mimetype: { _ in "text/javascript" }),
         AssetFileMetadata(folderPath: "/fonts/", mimetype: { name in
             switch name.fileExtension {
                 case "eot": return "application/vnd.ms-fontobject"
@@ -109,6 +110,7 @@ struct FileRequestHandler: RequestHandlerFactory {
         TopLevelAssetFileMetadata(filePath: "/favicon.ico", mimetype: "image/x-icon"),
         TopLevelAssetFileMetadata(filePath: "/theme-settings.js", mimetype: "text/javascript"),
         TopLevelAssetFileMetadata(filePath: "/theme-settings.json", mimetype: "application/json"),
+        TopLevelAssetFileMetadata(filePath: "/custom-scripts.json", mimetype: "application/json"),
     ]
     
     /// Returns a Boolean value that indicates whether the given path is located inside an asset folder.

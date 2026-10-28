@@ -606,6 +606,21 @@ class ConvertSubcommandFlagParsingTests {
     }
 
     @Test
+    func parsingCustomScriptsFlag() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.featureFlags.enableCustomScripts)
+
+        // It's allowed to pass the redundant "--enable-..." flag.
+        let enabledFlagConvert = try Docc.Convert.parse(["--enable-custom-scripts"])
+        #expect(enabledFlagConvert.featureFlags.enableCustomScripts)
+
+        // Passing the "--disable-..." flag turns off the feature.
+        let disabledFlagConvert = try Docc.Convert.parse(["--disable-custom-scripts"])
+        #expect(disabledFlagConvert.featureFlags.enableCustomScripts == false)
+    }
+
+    @Test
     func parsingStaticHostingWithContentFlag() throws {
         // The feature is enabled when no flag is passed.
         let noFlagConvert = try Docc.Convert.parse([])

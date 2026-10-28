@@ -13,49 +13,21 @@ import XCTest
 
 class DocumentationCatalogFileTypesTests: XCTestCase {
     func testIsCustomHeader() {
-        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "header.html")))
-        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "/header.html")))
-        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "header")))
-        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "/header.html/foo")))
-        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "footer.html")))
-        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "DocC.docc/header.html")))
+        assertThat(DocumentationCatalogFileTypes.isCustomHeader, matchesFilesNamed: "header", withExtension: "html")
     }
 
     func testIsCustomFooter() {
-        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "footer.html")))
-        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "/footer.html")))
-        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "footer")))
-        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "/footer.html/foo")))
-        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "header.html")))
-        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "DocC.docc/footer.html")))
+        assertThat(DocumentationCatalogFileTypes.isCustomFooter, matchesFilesNamed: "footer", withExtension: "html")
     }
 
     func testIsThemeSettingsFile() {
-        XCTAssertTrue(DocumentationCatalogFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "theme-settings.json")))
-        XCTAssertTrue(DocumentationCatalogFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "/a/b/theme-settings.json")))
-
-        XCTAssertFalse(DocumentationCatalogFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "theme-settings.txt")))
-        XCTAssertFalse(DocumentationCatalogFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "not-theme-settings.json")))
-        XCTAssertFalse(DocumentationCatalogFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "/a/theme-settings.json/bar")))
+        assertThat(DocumentationCatalogFileTypes.isThemeSettingsFile, matchesFilesNamed: "theme-settings", withExtension: "json")
     }
-
+    
+    func testIsCustomScriptsFile() {
+        assertThat(DocumentationCatalogFileTypes.isCustomScriptsFile, matchesFilesNamed: "custom-scripts", withExtension: "json")
+    }
+    
     func testIsCustomFavicon() {
         XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFavicon(
             URL(fileURLWithPath: "favicon.ico")))
@@ -67,5 +39,38 @@ class DocumentationCatalogFileTypesTests: XCTestCase {
             URL(fileURLWithPath: "favicon")))
         XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFavicon(
             URL(fileURLWithPath: "/favicon.ico/foo")))
+    }
+
+    private func assertThat(
+        _ predicate: (URL) -> Bool,
+        matchesFilesNamed fileName: String,
+        withExtension extension: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let fileNameWithExtension = "\(fileName).\(`extension`)"
+        
+        let pathsThatShouldMatch = [
+            fileNameWithExtension,
+            "/\(fileNameWithExtension)",
+            "DocC/docc/\(fileNameWithExtension)",
+            "/a/b/\(fileNameWithExtension)"
+        ].map { URL(fileURLWithPath: $0) }
+        
+        let pathsThatShouldNotMatch = [
+            fileName,
+            "/\(fileNameWithExtension)/foo",
+            "/a/\(fileNameWithExtension)/bar",
+            "\(fileName).wrongextension",
+            "wrongname.\(`extension`)"
+        ].map { URL(fileURLWithPath: $0) }
+        
+        for url in pathsThatShouldMatch {
+            XCTAssertTrue(predicate(url), file: file, line: line)
+        }
+        
+        for url in pathsThatShouldNotMatch {
+            XCTAssertFalse(predicate(url), file: file, line: line)
+        }
     }
 }

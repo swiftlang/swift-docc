@@ -41,9 +41,10 @@ struct DocumentationInputsProviderTests {
                         // This top-level Info.plist will be read for input's information
                         InfoPlist(displayName: "CustomDisplayName"),
 
-                        // These top-level files will be treated as a custom footer, custom theme, and custom favicon
+                        // These top-level files will be treated as a custom footer, custom theme, custom scripts, and custom favicon
                         TextFile(name: "footer.html", utf8Content: ""),
                         TextFile(name: "theme-settings.json", utf8Content: ""),
+                        TextFile(name: "custom-scripts.json", utf8Content: ""),
                         DataFile(name: "favicon.ico", data: Data()),
 
                         // Top-level content will be found
@@ -116,6 +117,7 @@ struct DocumentationInputsProviderTests {
             "Found.docc/Inner/Info.plist",
             "Found.docc/Inner/header.html",
             "Found.docc/Inner/second.png",
+            "Found.docc/custom-scripts.json",
             "Found.docc/favicon.ico",
             "Found.docc/first.png",
             "Found.docc/footer.html",
@@ -129,6 +131,7 @@ struct DocumentationInputsProviderTests {
         #expect(inputs.customFooter.map(relativePathString) == "Found.docc/footer.html")
         #expect(inputs.customHeader.map(relativePathString) == nil)
         #expect(inputs.themeSettings.map(relativePathString) == "Found.docc/theme-settings.json")
+        #expect(inputs.customScripts.map(relativePathString) == "Found.docc/custom-scripts.json")
         #expect(inputs.customFavicon.map(relativePathString) == "Found.docc/favicon.ico")
     }
 
