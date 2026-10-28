@@ -800,11 +800,11 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             XCTAssertEqual(renderNode.relationshipSections.count, 2)
             let inheritsFromSection = try XCTUnwrap(renderNode.relationshipSections.first)
-            XCTAssertEqual(inheritsFromSection.title, "Inherits From")
+            XCTAssertEqual(inheritsFromSection.title, "Inherits from")
             XCTAssertEqual(inheritsFromSection.identifiers, ["doc://com.example.dependency/documentation/Dependency/First"])
             
             let conformsToSection = try XCTUnwrap(renderNode.relationshipSections.last)
-            XCTAssertEqual(conformsToSection.title, "Conforms To")
+            XCTAssertEqual(conformsToSection.title, "Conforms to")
             XCTAssertEqual(conformsToSection.identifiers, ["doc://com.example.dependency/documentation/Dependency/Second"])
             
             let firstReference = try XCTUnwrap(renderNode.references["doc://com.example.dependency/documentation/Dependency/First"] as? TopicRenderReference)

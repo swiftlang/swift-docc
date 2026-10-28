@@ -40,6 +40,6 @@ package extension MarkdownRenderer {
             }
         }
         
-        return selfReferencingSection(named: "Return Value", content: items)
+        return selfReferencingSection(named: "Return value", content: items)
     }
 }

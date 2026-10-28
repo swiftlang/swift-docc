@@ -71,7 +71,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
         guard renderNode.seeAlsoSections.count == 1 else { return }
         
-        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
+        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
         XCTAssertFalse(renderNode.seeAlsoSections[0].generated)
     }
@@ -114,7 +114,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         XCTAssertEqual(renderNode.seeAlsoSections.count, 2)
         guard renderNode.seeAlsoSections.count == 2 else { return }
         
-        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
+        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
 
         XCTAssertEqual(renderNode.seeAlsoSections[1].title, "Basics")
@@ -181,7 +181,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
         guard renderNode.seeAlsoSections.count == 1 else { return }
         
-        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
+        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
 
         // Verify that article without options directive still gets automatic See Also sections
@@ -245,7 +245,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
         guard renderNode.seeAlsoSections.count == 1 else { return }
         
-        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
+        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
 
         // Verify that article without options directive still gets automatic See Also sections

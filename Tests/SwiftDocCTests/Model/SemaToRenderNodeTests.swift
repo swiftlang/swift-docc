@@ -1094,7 +1094,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
 
         // Test all identifiers have been resolved to the ``MyClass`` symbol
-        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
+        XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related documentation")
         XCTAssertEqual(renderNode.seeAlsoSections[0].abstract?.map{ RenderBlockContent.paragraph(.init(inlineContent: [$0])) }.paragraphText.joined(), "Further Reading abstract text.")
         XCTAssertNil(renderNode.seeAlsoSections[0].discussion)
         guard renderNode.seeAlsoSections[0].identifiers.count == 5 else {
@@ -2285,7 +2285,7 @@ Document
             
             // Verify the default implementation data was captured correctly
             XCTAssertEqual(renderNode.defaultImplementationsSections.first?.identifiers, ["doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn"])
-            XCTAssertEqual(renderNode.defaultImplementationsSections.first?.title, "SideProtocol Implementations")
+            XCTAssertEqual(renderNode.defaultImplementationsSections.first?.title, "SideProtocol implementations")
         }
     }
 
@@ -2452,7 +2452,7 @@ Document
                 !contentSection.content.isEmpty else { return false }
             switch contentSection.content[0] {
             case .heading(let h):
-                return h.level == 2 && h.text == "Return Value" && h.anchor == "return-value"
+                return h.level == 2 && h.text == "Return value" && h.anchor == "return-value"
             default: return false
             }
         })
@@ -3345,7 +3345,7 @@ Document
         // Verify that the inherited symbol is automatically curated with its correct
         // reference path under the inherited symbols API collection
         
-        let equatableImplementationsReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Minimal_docs/A/B-swift.struct/Equatable-Implementations", sourceLanguage: .swift)
+        let equatableImplementationsReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/Minimal_docs/A/B-swift.struct/Equatable-implementations", sourceLanguage: .swift)
         let equatableImplementationsNode = try context.entity(with: equatableImplementationsReference)
         let equatableImplementationsArticle = try XCTUnwrap(equatableImplementationsNode.semantic as? Article)
         let group = try XCTUnwrap(equatableImplementationsArticle.automaticTaskGroups.first)
@@ -3722,17 +3722,17 @@ Document
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(string:)",
                 
-                "Instance Properties",
+                "Instance properties",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/debugDescription",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isEmpty",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isNull",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/radius",
                 
-                "Instance Methods", 
+                "Instance methods",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)",
                 
-                "Type Properties", 
+                "Type properties", 
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/defaultRadius",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/null",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero"
@@ -3740,7 +3740,7 @@ Document
             
             let objcTopicSections = renderNode.topicSectionsVariants.value(for: .objectiveC)
             XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
-                "Instance Properties",
+                "Instance properties",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/radius",
             ])

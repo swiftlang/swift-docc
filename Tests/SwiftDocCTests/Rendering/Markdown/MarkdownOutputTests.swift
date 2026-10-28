@@ -1314,11 +1314,11 @@ struct MarkdownOutputTests {
 
         // The conforming type links to the generated collection under a "Default Implementations" group.
         let (conformerNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer")
-        #expect(conformerNode.markdown.contains("### Default Implementations"))
-        #expect(conformerNode.markdown.contains("/documentation/MarkdownOutput/Conformer/SomeProtocol-Implementations"))
+        #expect(conformerNode.markdown.contains("### Default implementations"))
+        #expect(conformerNode.markdown.contains("/documentation/MarkdownOutput/Conformer/SomeProtocol-implementations"))
 
         // The generated collection page lists the inherited member.
-        let (collectionNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer/SomeProtocol-Implementations")
+        let (collectionNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer/SomeProtocol-implementations")
         #expect(collectionNode.markdown.contains("## Topics"))
         #expect(collectionNode.markdown.contains("### \(AutomaticCuration.groupTitle(for: .method))"))
         #expect(collectionNode.markdown.contains("/documentation/MarkdownOutput/Conformer/someMethod()"))
@@ -1346,7 +1346,7 @@ struct MarkdownOutputTests {
         let expected = MarkdownOutputManifest.Relationship(
             sourceIdentifier: "/documentation/MarkdownOutput/SomeClass/someMethod()",
             relationshipType: .belongsToTopic,
-            targetIdentifier: "/documentation/MarkdownOutput/SomeClass#Instance-Methods"
+            targetIdentifier: "/documentation/MarkdownOutput/SomeClass#Instance-methods"
         )
         #expect(manifest.relationships.contains(expected))
     }

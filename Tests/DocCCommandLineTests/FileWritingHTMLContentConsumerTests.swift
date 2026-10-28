@@ -282,14 +282,14 @@ struct FileWritingHTMLContentConsumerTests {
             <p>Some in-source description of this class.</p>
             <pre><code>class SomeClass</code></pre>
           </section>
-          <h2>Mentioned In</h2>
+          <h2>Mentioned in</h2>
           <ul>
             <li>
               <a href="../somearticle/index.html">Some article</a>
             </li>
           </ul>
           <h2>Topics</h2>
-          <h3>Instance Methods</h3>
+          <h3>Instance methods</h3>
           <ul>
             <li>
               <a href="somemethod(with:and:)/index.html">
@@ -299,7 +299,7 @@ struct FileWritingHTMLContentConsumerTests {
             </li>
           </ul>
           <h2>Relationships</h2>
-          <h3>Conforms To</h3>
+          <h3>Conforms to</h3>
           <ul>
             <li>
               <a href="../someprotocol/index.html">
@@ -363,13 +363,13 @@ struct FileWritingHTMLContentConsumerTests {
               </p>
             </dd>
           </dl>
-          <h2>Return Value</h2>
+          <h2>Return value</h2>
           <p>Description of the return value.</p>
           <h2>Discussion</h2>
           <p>Further description of this method and how to use it.</p>
           
-          <h2>See Also</h2>
-          <h3>Related Documentation</h3>
+          <h2>See also</h2>
+          <h3>Related documentation</h3>
           <ul>
             <li>
               <a href="../../somearticle/index.html">
@@ -429,8 +429,8 @@ struct FileWritingHTMLContentConsumerTests {
           </p>
           <h3>Details</h3>
           <p>This subsection describes something more detailed.</p>
-          <h2>See Also</h2>
-          <h3>Related Documentation</h3>
+          <h2>See also</h2>
+          <h3>Related documentation</h3>
           <ul>
             <li>
               <a href="../someclass/index.html">
@@ -470,7 +470,7 @@ struct FileWritingHTMLContentConsumerTests {
             <pre><code>protocol SomeProtocol</code></pre>
           </section>
           <h2>Relationships</h2>
-          <h3>Conforming Types</h3>
+          <h3>Conforming types</h3>
           <ul>
             <li>
               <a href="../someclass/index.html">

@@ -391,11 +391,11 @@ class RenderNodeTranslatorTests: XCTestCase {
             // 2. Automatic task groups for uncurated symbols
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
                 "Basics",
-                "Enumeration Cases",
+                "Enumeration cases",
                 "Initializers",
-                "Instance Properties",
-                "Instance Methods",
-                "Type Aliases",
+                "Instance properties",
+                "Instance methods",
+                "Type aliases",
             ])
         }
 
@@ -425,11 +425,11 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
                 "Basics",
                 "Articles",
-                "Enumeration Cases",
+                "Enumeration cases",
                 "Initializers",
-                "Instance Properties",
-                "Instance Methods",
-                "Type Aliases",
+                "Instance properties",
+                "Instance methods",
+                "Type aliases",
             ])
         }
 
@@ -450,7 +450,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     renderPositionPreference: .top
                 ),
                 AutomaticTaskGroupSection(
-                    title: "Default Implementations",
+                    title: "Default implementations",
                     references: [
                         ResolvedTopicReference(
                             bundleID: context.inputs.id,
@@ -481,12 +481,12 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
                 "Basics",
                 "Articles",
-                "Enumeration Cases",
+                "Enumeration cases",
                 "Initializers",
-                "Instance Properties",
-                "Instance Methods",
-                "Type Aliases",
-                "Default Implementations",
+                "Instance properties",
+                "Instance methods",
+                "Type aliases",
+                "Default implementations",
                 "Another Task Group",
             ])
         }
@@ -563,7 +563,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                     renderPositionPreference: .top
                 ),
                 AutomaticTaskGroupSection(
-                    title: "Default Implementations",
+                    title: "Default implementations",
                     references: [
                         ResolvedTopicReference(
                             bundleID: context.inputs.id,
@@ -593,7 +593,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
                 "Basics",
                 "Articles",
-                "Default Implementations",
+                "Default implementations",
                 "Another Task Group",
             ])
         }
@@ -616,17 +616,17 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify that implementing type gets a "Default implementations"
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Default Implementations",
+                "Default implementations",
             ])
             XCTAssertEqual(renderNode.topicSections.map(\.identifiers), [
-                ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations"],
+                ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-implementations"],
             ])
             
         }
         
         // Verify automatically generated api collection
         do {
-            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/Protocol-Implementations", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SideKit/SideClass/Element/Protocol-implementations", sourceLanguage: .swift)
             var translator = RenderNodeTranslator(context: context, identifier: reference)
             let node = try XCTUnwrap(try? context.entity(with: reference))
             
@@ -635,7 +635,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify that implementing type gets a "Default implementations"
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Instance Methods",
+                "Instance methods",
             ])
             XCTAssertEqual(renderNode.topicSections.map(\.identifiers), [
                 ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()"],
@@ -661,17 +661,17 @@ class RenderNodeTranslatorTests: XCTestCase {
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
 
-        let defaultImplementationSection = try XCTUnwrap(renderNode.topicSections.first(where: { $0.title == "Default Implementations" }))
+        let defaultImplementationSection = try XCTUnwrap(renderNode.topicSections.first(where: { $0.title == "Default implementations" }))
         XCTAssertEqual(defaultImplementationSection.identifiers, [
-            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Comparable-Implementations",
-            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Equatable-Implementations",
-            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/FancyProtocol-Implementations",
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Comparable-implementations",
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Equatable-implementations",
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/FancyProtocol-implementations",
         ])
         let implReferences = defaultImplementationSection.identifiers.compactMap({ renderNode.references[$0] as? TopicRenderReference })
         XCTAssertEqual(implReferences.map({ $0.title }), [
-            "Comparable Implementations",
-            "Equatable Implementations",
-            "FancyProtocol Implementations",
+            "Comparable implementations",
+            "Equatable implementations",
+            "FancyProtocol implementations",
         ])
 
     }
@@ -691,21 +691,21 @@ class RenderNodeTranslatorTests: XCTestCase {
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/FancyProtocolConformer", catalog: catalog),
             [
-                "FancyProtocol Implementations",
+                "FancyProtocol implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/OtherFancyProtocolConformer", catalog: catalog),
             [
-                "OtherFancyProtocol Implementations",
+                "OtherFancyProtocol implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/SecondTarget/FooConformer", catalog: catalog),
             [
-                "Foo Implementations",
+                "Foo implementations",
             ]
         )
     }
@@ -731,25 +731,25 @@ class RenderNodeTranslatorTests: XCTestCase {
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", catalog: catalog),
             [
-                "Foo Implementations",
+                "Foo implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", catalog: catalog),
             [
-                "Comparable Implementations",
-                "Equatable Implementations",
+                "Comparable implementations",
+                "Equatable implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", catalog: catalog),
             [
-                "Comparable Implementations",
-                "Equatable Implementations",
-                "FancyProtocol Implementations",
-                "OtherFancyProtocol Implementations",
+                "Comparable implementations",
+                "Equatable implementations",
+                "FancyProtocol implementations",
+                "OtherFancyProtocol implementations",
             ]
         )
     }
@@ -793,25 +793,25 @@ class RenderNodeTranslatorTests: XCTestCase {
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", catalog: catalog),
             [
-                "Foo Implementations",
+                "Foo implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", catalog: catalog),
             [
-                "Comparable Implementations",
-                "Equatable Implementations",
+                "Comparable implementations",
+                "Equatable implementations",
             ]
         )
         
         try await assertDefaultImplementationCollectionTitles(
             in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", catalog: catalog),
             [
-                "Comparable Implementations",
-                "Equatable Implementations",
-                "FancyProtocol Implementations",
-                "OtherFancyProtocol Implementations",
+                "Comparable implementations",
+                "Equatable implementations",
+                "FancyProtocol implementations",
+                "OtherFancyProtocol implementations",
             ]
         )
     }
@@ -823,7 +823,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         line: UInt = #line
     ) throws {
         let defaultImplementationSection = try XCTUnwrap(
-            renderNode.topicSections.first(where: { $0.title == "Default Implementations" }),
+            renderNode.topicSections.first(where: { $0.title == "Default implementations" }),
             "Expected to find default implementations topic section.",
             file: file,
             line: line
@@ -856,11 +856,11 @@ class RenderNodeTranslatorTests: XCTestCase {
         for _ in 0..<100 {
             var translator = RenderNodeTranslator(context: context, identifier: structReference)
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-            let section = renderNode.topicSections.first(where: { $0.title == "Default Implementations" })
+            let section = renderNode.topicSections.first(where: { $0.title == "Default implementations" })
             XCTAssertEqual(section?.identifiers, [
-                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/A-Implementations",
-                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/B-Implementations",
-                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/C-Implementations",
+                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/A-implementations",
+                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/B-implementations",
+                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/C-implementations",
             ])
         }
     }
@@ -873,12 +873,12 @@ class RenderNodeTranslatorTests: XCTestCase {
             # ``SideKit/SideClass``
             Abstract.
             ## Discussion
-            This is a link to <doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations>.
+            This is a link to <doc:/documentation/SideKit/SideClass/Element/Protocol-implementations>.
             ## Topics
             ### Basics
-             - <doc:documentation/SideKit/SideClass/Element/Protocol-Implementations>
-             - ``SideKit/SideClass/Element/Protocol-Implementations``
-             - ``Element/Protocol-Implementations``
+             - <doc:documentation/SideKit/SideClass/Element/Protocol-implementations>
+             - ``SideKit/SideClass/Element/Protocol-implementations``
+             - ``Element/Protocol-implementations``
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 
@@ -899,7 +899,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         
         XCTAssertEqual(p.inlineContent, [
             .text("This is a link to "),
-            .text("doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations"),
+            .text("doc:/documentation/SideKit/SideClass/Element/Protocol-implementations"),
             .text("."),
         ])
     }
@@ -1675,7 +1675,7 @@ struct RenderNodeTranslatorTests_new {
         let renderNode = translator.visit(symbol) as! RenderNode
 
         let relationshipSection = try #require(renderNode.relationshipSections.first)
-        #expect(relationshipSection.title == "Conforms To")
+        #expect(relationshipSection.title == "Conforms to")
         #expect(relationshipSection.identifiers == conformances.map { "doc://org.swift.docc.example\($0.path)" })
     }
 }

@@ -168,7 +168,7 @@ package struct HTMLRenderer {
             ),
             // Eyebrow and title
             hgroup(contents: [
-                p(contents: [.text(article.topics == nil ? "Article": "API Collection")]),
+                p(contents: [.text(article.topics == nil ? "Article": "API collection")]),
                 h1(contents: [.text(node.name.plainText)]),
             ]),
         ]
@@ -360,7 +360,7 @@ package struct HTMLRenderer {
         // Mentioned In
         if featureFlags.isMentionedInEnabled {
             articleElements.append(contentsOf:
-                renderer.groupedListSection(named: "Mentioned In", groups: [
+                renderer.groupedListSection(named: "Mentioned in", groups: [
                     .swift: [.init(title: nil, references: context.articleSymbolMentions.articlesMentioning(reference).map(\.absoluteString))]
                 ])
             )
@@ -438,7 +438,7 @@ package struct HTMLRenderer {
             .valuesByLanguage()
         {
             articleElements.append(contentsOf:
-                renderer.groupedSection(named: "Default Implementations", groups: relationships.mapValues { groups in
+                renderer.groupedSection(named: "Default implementations", groups: relationships.mapValues { groups in
                     groups.map {
                         .init(title: $0.heading, content: [], references: $0.references.compactMap { topic in
                             switch topic {
@@ -478,7 +478,7 @@ package struct HTMLRenderer {
     }
     
     private func makeSeeAlsoSection(_ seeAlso: SeeAlsoSection) -> [HTMLNode] {
-        renderer.groupedSection(named: "See Also", groups: [
+        renderer.groupedSection(named: "See also", groups: [
             .swift: seeAlso.taskGroups.map { group in
                 .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
                     $0.destination
