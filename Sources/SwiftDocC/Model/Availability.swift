@@ -475,6 +475,8 @@ struct Availability {
     /// Determines whether or not a page as a whole is considered to be deprecated.
     ///
     /// A page as a whole is considered to be deprecated if the API is deprecated on all the platforms that the API is available for.
+    /// This can also take the form of an unconditional wildcard deprecation (for example `@available(*, deprecated)` in Swift).
+    /// In this case it's possible that the page is considered to be deprecated even though _none_ of the individual platforms have any deprecation information.
     var isDeprecated: Bool {
         if case .available(_, _, true) = knownPlatforms[.wildcard].state {
             // A symbol with wildcard unconditional availability is considered deprecated
