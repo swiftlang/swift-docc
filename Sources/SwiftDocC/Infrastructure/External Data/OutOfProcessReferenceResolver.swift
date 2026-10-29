@@ -422,11 +422,10 @@ extension OutOfProcessReferenceResolver {
                 return .success( cachedSummary.makeResolvedTopicReference() )
             }
             
-            let linkString = String(
-                unresolvedReferenceString.dropFirst(6) // "doc://"
-                    .drop(while: { $0 != "/" })        // the known identifier (host component)
-            )
-            let response: ResponseV2 = try longRunningProcess.sendAndWait(request: RequestV2.link(linkString))
+            guard let linkString = PathParser.split(documentationLink: unresolvedReferenceString)?.link else {
+                fatalError("The `UnresolvedTopicReference` string value '\(unresolvedReferenceString)' doesn't have the required 'doc://' prefix")
+            }
+            let response: ResponseV2 = try longRunningProcess.sendAndWait(request: RequestV2.link(String(linkString)))
             
             switch response {
                 case .identifierAndCapabilities:
