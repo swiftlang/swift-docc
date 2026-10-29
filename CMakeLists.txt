@@ -38,6 +38,7 @@ find_package(SwiftMarkdown)
 find_package(LMDB)
 find_package(SymbolKit)
 find_package(cmark-gfm)
+find_package(ZLIB)
 
 add_compile_options("$<$<COMPILE_LANGUAGE:Swift>:-package-name;SwiftDocC>")
 

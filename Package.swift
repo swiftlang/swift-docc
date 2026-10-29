@@ -92,6 +92,7 @@ let package = Package(
             dependencies: [
                 .target(name: "DocCCommon"),
                 .target(name: "DocCHTML"),
+                .target(name: "Zip"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
@@ -225,6 +226,36 @@ let package = Package(
             ],
             swiftSettings: swiftSettings(.v5)
         ),
+
+        // Zip file handling
+        .target(
+            name: "Zip",
+            dependencies: [
+                .target(name: "ZLib")
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v6)
+        ),
+        .testTarget(
+            name: "ZipTests",
+            dependencies: [
+                .target(name: "Zip")
+            ],
+            swiftSettings: swiftSettings(.v6)
+        ),
+
+        .systemLibrary(
+            name: "CZLib",
+            pkgConfig: "zlib"
+        ),
+        .target(
+            name: "ZLib",
+            dependencies: [
+                .target(name: "CZLib")
+            ],
+            exclude: ["CMakeLists.txt"],
+            swiftSettings: swiftSettings(.v6)
+        )
     ]
 )
 
