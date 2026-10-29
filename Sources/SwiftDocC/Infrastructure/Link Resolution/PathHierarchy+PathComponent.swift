@@ -55,6 +55,7 @@ extension PathHierarchy {
     }
 }
 
+
 extension PathHierarchy.PathParser {
     /// Parses a documentation link path (and optional fragment) string into structured path component values.
     ///
