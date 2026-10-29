@@ -292,9 +292,9 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             }
             
             return anchor(linkingTo: linkedElement, contents: content)
-        } else if let path = PathParser.split(documentationLink: destination)?.link {
+        } else if destination.hasPrefix("doc:") {
             // If this is an unresolved documentation link, try to display only the name of the linked symbol; without the rest of its path and without its disambiguation
-            return .text(linkProvider.fallbackLinkText(linkString: String(path)))
+            return .text(linkProvider.fallbackLinkText(linkString: destination))
         } else {
             // This could be a http link
             return a(

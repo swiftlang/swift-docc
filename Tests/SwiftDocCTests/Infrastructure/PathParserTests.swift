@@ -9,12 +9,14 @@
 */
 
 import Testing
-import DocCCommon
+@testable import SwiftDocC
+
+private typealias Parser = PathHierarchy.PathParser
 
 struct PathParserTests {
     @Test
     func splitsDocumentationLinksFromArchiveIDs() async throws {
-        let split = PathParser.split(documentationLink:)
+        let split = Parser.split(documentationLink:)
         
         #expect(split("")     == nil)
         #expect(split("doc:") == nil)
@@ -31,7 +33,7 @@ struct PathParserTests {
     }
 }
 
-private func == (lhs: PathParser.LinkAndArchiveID?, rhs: (link: String, archiveID: String?)) -> Bool {
+private func == (lhs: Parser.LinkAndArchiveID?, rhs: (link: String, archiveID: String?)) -> Bool {
     guard let lhs else { return false }
     
     return lhs.link      == rhs.link
