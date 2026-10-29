@@ -79,16 +79,17 @@ extension PathHierarchy.PathParser {
     ///
     /// - Parameters:
     ///   - documentationLink: The documentation link string with a "doc:" prefix.
-    /// - Returns: The split archive ID and link substrings; or `nil` if the documentation link string doesn't have a "doc:" prefix.
-    static func split(documentationLink: String) -> LinkAndArchiveID? {
+    /// - Returns: The split archive ID and link substrings
+    /// - Precondition: The documentation link string has a `"doc:"` prefix.
+    static func split(documentationLink: String) -> LinkAndArchiveID {
         // Check if the string already has contiguous UTF8 storage and run a faster, more low-level implementation.
-        let fastPath: LinkAndArchiveID?? = documentationLink.utf8.withContiguousStorageIfAvailable {
+        let fastPath: LinkAndArchiveID? = documentationLink.utf8.withContiguousStorageIfAvailable {
             let buffer = UnsafeRawBufferPointer($0)
             let count = buffer.count
             
             guard count > 4 /* "doc:" */, let pointer = buffer.baseAddress, pointer.hasASCIIPrefix("doc:") else {
                 // If the string doesn't start with "doc:" it isn't a documentation link.
-                return nil
+                preconditionFailure("'\(documentationLink)' doesn't have the required 'doc:' prefix. It's the callers responsibility to check this before calling passing a string to this function")
             }
             var offset = 4
             
@@ -105,8 +106,7 @@ extension PathHierarchy.PathParser {
             //          ╰───┬───╯╰──┬╌╌╌
             //         archiveID   link
             let archiveIDStartIndex = documentationLink.utf8.index(documentationLink.startIndex, offsetBy: offset)
-            
-            // To try to find the next "/" character---that separates the "archive ID" from the "link"---as fast as possible, we check 8 bytes at a time as long as we can.
+                        // To try to find the next "/" character---that separates the "archive ID" from the "link"---as fast as possible, we check 8 bytes at a time as long as we can.
             let slashSearchPattern: UInt64 = 0x01_01_01_01_01_01_01_01 &* UInt64( UInt8(ascii: "/") )
             while count &- 8 >= offset {
                 let bytes = pointer.loadUnaligned(fromByteOffset: offset, as: UInt64.self)
@@ -148,7 +148,7 @@ extension PathHierarchy.PathParser {
         
         guard documentationLink.hasPrefix("doc:") else {
             // If the string doesn't start with "doc:" it isn't a documentation link
-            return nil
+            preconditionFailure("'\(documentationLink)' doesn't have the required 'doc:' prefix. It's the callers responsibility to check this before calling passing a string to this function")
         }
         
         var remaining = documentationLink.dropFirst(4 /* "doc:" */)

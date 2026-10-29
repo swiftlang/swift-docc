@@ -18,24 +18,14 @@ struct PathParserTests {
     func splitsDocumentationLinksFromArchiveIDs() async throws {
         let split = Parser.split(documentationLink:)
         
-        #expect(split("")     == nil)
-        #expect(split("doc:") == nil)
-        #expect(split("http://example.com") == nil)
-        
         #expect(split("doc:Something")  == (link:  "Something", archiveID: nil))
         #expect(split("doc:/Something") == (link: "/Something", archiveID: nil))
         
         #expect(split("doc://com.example")           == (link: "",           archiveID: "com.example"))
         #expect(split("doc://com.example/Something") == (link: "/Something", archiveID: "com.example"))
         
-        
+        // Check short strings to verify that both the 8-byte at-a-time and the 1-byte at-a-time logic is executed
+        #expect(split("doc:b")     == (link:  "b", archiveID: nil))
         #expect(split("doc://a/b") == (link: "/b", archiveID: "a"))
     }
-}
-
-private func == (lhs: Parser.LinkAndArchiveID?, rhs: (link: String, archiveID: String?)) -> Bool {
-    guard let lhs else { return false }
-    
-    return lhs.link      == rhs.link
-        && lhs.archiveID == rhs.archiveID?[...]
 }
