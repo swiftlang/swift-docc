@@ -323,8 +323,8 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
     }
     
     private func allPermutations(of symbols: [SymbolGraph.Symbol], and relationships: [SymbolGraph.Relationship]) -> [(symbols: [SymbolGraph.Symbol], relationships: [SymbolGraph.Relationship])] {
-        let symbolPermutations = allPermutations(of: symbols)
-        let relationshipPermutations = allPermutations(of: relationships)
+        let symbolPermutations = Self.allPermutations(of: symbols)
+        let relationshipPermutations = Self.allPermutations(of: relationships)
         
         var permutations: [([SymbolGraph.Symbol], [SymbolGraph.Relationship])] = []
         
@@ -337,7 +337,7 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
         return permutations
     }
     
-    private func allPermutations<C: Collection>(of a: C) -> [[C.Element]] {
+    static func allPermutations<C: Collection>(of a: C) -> [[C.Element]] {
         var a = Array(a)
         var p: [[C.Element]] = []
         p.reserveCapacity(Int(pow(Double(2), Double(a.count))))
@@ -346,7 +346,7 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
     }
 
     // https://en.wikipedia.org/wiki/Heap's_algorithm
-    private func permutations<C: MutableCollection>(_ n:Int, _ a: inout C, calling report: (C) -> Void) where C.Index == Int {
+    private static func permutations<C: MutableCollection>(_ n:Int, _ a: inout C, calling report: (C) -> Void) where C.Index == Int {
         if n == 1 {
             report(a)
             return
