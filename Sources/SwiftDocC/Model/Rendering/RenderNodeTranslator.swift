@@ -189,7 +189,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let requirement = tutorial.requirements.first {
             let identifier = RenderReferenceIdentifier(requirement.title)
             let requirementReference = XcodeRequirementReference(identifier: identifier, title: requirement.title, url: requirement.destination)
-            requirementReferences[identifier.identifier] = requirementReference 
+            requirementReferences[identifier.identifier] = requirementReference
             intro.xcodeRequirement = identifier
         }
         
@@ -443,7 +443,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     private mutating func createTopicRenderReferences() -> [String: any RenderReference] {
         var renderReferences: [String: any RenderReference] = [:]
-        let renderer = DocumentationContentRenderer(context: context)
+        let renderer = contentRenderer
         
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
@@ -653,6 +653,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let documentationNode = try! context.entity(with: identifier)
         
+        let availableVariantTraits = documentationNode.availableVariantTraits
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
         let hierarchyVariants = hierarchyTranslator.visitArticle(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
@@ -685,10 +686,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            let allowedTraits = availableVariantTraits.traitsCompatible(with: trait)
             
             var sections = [TaskGroupRenderSection]()
             
@@ -699,7 +700,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         topics,
                         allowExternalLinks: false,
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -712,7 +713,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -754,7 +755,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -813,10 +814,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.customMetadata = metadataCustomDictionary
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            let allowedTraits = availableVariantTraits.traitsCompatible(with: trait)
             
             var seeAlsoSections = [TaskGroupRenderSection]()
             
@@ -827,7 +828,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         seeAlso,
                         allowExternalLinks: true,
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &topicSectionContentCompiler
                     )
                 )
@@ -870,39 +871,17 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
-        if let availabilities = article.metadata?.availability, !availabilities.isEmpty {
-            // FIXME: Move this logic out of the rendering code (rdar://172280267)
-            let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
-            // These are the same for all platforms, so we only need to compute them once.
-            var directiveAvailabilityByPlatform = documentationNode.metadata.map {
-                renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
-            } ?? .init()
-            
-            if let iOSAvailability = directiveAvailabilityByPlatform[PlatformName.iOS.displayName] {
-                var unavailableDefaultPlatformNames = Set<String>()
-                if let defaultAvailability = context.inputs.info.defaultAvailability {
-                    for availabilities in defaultAvailability.modules.values {
-                        for availability in availabilities where availability.versionInformation == .unavailable {
-                            unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
-                        }
-                    }
-                }
-                
-                func addFallbackIfNeeded(named name: String) {
-                    guard directiveAvailabilityByPlatform[name] == nil, !unavailableDefaultPlatformNames.contains(name) else {
-                        return
-                    }
-                    var copy = iOSAvailability
-                    copy.name = name
-                    directiveAvailabilityByPlatform[name] = copy
-                }
-                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
-                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
-            }
-            
-            if !directiveAvailabilityByPlatform.isEmpty {
-                node.metadata.platformsVariants = .init(defaultValue: directiveAvailabilityByPlatform.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder))
-            }
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
+            node.metadata.platformsVariants = .init(
+                defaultValue: platforms.map {
+                    .init(
+                        name: $0.name,
+                        introduced: $0.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        deprecated: $0.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        unconditionallyDeprecated: $0.isUnconditionallyDeprecated,
+                        isBeta: $0.isBeta
+                    )
+            })
         }
         
         if let pageKind = article.metadata?.pageKind {
@@ -1042,7 +1021,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // language of the page or reference, since non-symbol kinds are not tied to a language.
         // This is a workaround for https://github.com/swiftlang/swift-docc/issues/240.
         // FIXME: This should ideally be solved by making the article language-agnostic rather
-        // than accomodating the "Swift" language and special-casing for non-symbol nodes.
+        // than accommodating the "Swift" language and special-casing for non-symbol nodes.
         if !context.isSymbol(reference: reference) && context.isExternal(reference: reference) {
             return true
         }
@@ -1261,6 +1240,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
     }
     
+    /// A comparator that orders relationship destinations by their display title.
+    /// If the titles are identical, the reference URL is used as the tiebreaker.
+    static func relationshipDestinationsAreInIncreasingOrder(
+        _ lhs: TopicReference,
+        _ rhs: TopicReference,
+        titles: [TopicReference: String]
+    ) -> Bool {
+        let lhsTitle = titles[lhs] ?? ""
+        let rhsTitle = titles[rhs] ?? ""
+        if lhsTitle != rhsTitle {
+            return lhsTitle < rhsTitle
+        }
+        return (lhs.url?.absoluteString ?? "") < (rhs.url?.absoluteString ?? "")
+    }
+
     @discardableResult
     private mutating func collectUnresolvableSymbolReference(destination: UnresolvedTopicReference, title: String) -> UnresolvedTopicReference? {
         guard let url = ValidatedURL(destination.topicURL.url) else {
@@ -1312,6 +1306,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let identifier = identifier.addingSourceLanguages(documentationNode.availableSourceLanguages)
         
+        let availableVariantTraits = documentationNode.availableVariantTraits
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, identifier: identifier)
         
@@ -1342,114 +1337,24 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
-        let currentPlatforms = context.configuration.externalMetadata.currentPlatforms
-        // These are the same for all platforms, so we only need to compute them once.
-        let baseAvailabilityByPlatform = defaultAvailability(moduleName: moduleName.symbolName, currentPlatforms: currentPlatforms) ?? .init()
-        let directiveAvailabilityByPlatform = documentationNode.metadata.map {
-            renderAvailabilities(from: $0.availability, currentPlatforms: currentPlatforms)
-        } ?? .init()
-        
-        // FIXME: Move this logic out of the rendering code (rdar://172280267)
-        let catalystSGFExists = context.registeredPlatformsPerModule[moduleName.symbolName]?.contains(.catalyst) ?? false
-        let symbolExistsInCatalystSymbolGraph = documentationNode.unifiedSymbol?.allSelectors.contains(where: { $0.platform?.lowercased() == PlatformName.catalyst.rawValue.lowercased() }) ?? false
-        
-        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, inSourceAvailability in
-            // Different sources of availability information are added in-order to compute the complete availability information.
-
-            // The default availability is merged with the in-source availability when loading a symbol graph (see ``SymbolGraphLoader.addDefaultAvailability(to:moduleName:)``).
-            // If no in-source availability is present, we fall back to the default availability for the module (in Info.plist).
-            // FIXME: Move this logic out of the rendering code (rdar://172280267)
-            var information = inSourceAvailability.availability.isEmpty ? baseAvailabilityByPlatform : [String: AvailabilityRenderItem]()
-            
-            var unavailablePlatformNamesToRemove = [String]()
-            
-            // The symbol's individual in-source attributes is more specific information that reflects the source-availability of the API.
-            for availability in inSourceAvailability.availability {
-                guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue).displayName }) else {
-                    // Don't include wildcard information
-                    continue
-                }
-                guard availability.obsoletedVersion == nil && !availability.isUnconditionallyUnavailable /* Don't include obsoleted or unavailable API */ else {
-                    unavailablePlatformNamesToRemove.append(name)
-                    continue
-                }
-                
-                let renderItem = AvailabilityRenderItem(availability, current: currentPlatforms?[name])
-                information[name] = renderItem
-            }
-            
-            // FIXME: Combine the in-source attributes with the Available directives as a per-platform override (rdar://171807245)
-            
-            // After we've gathered all the information, see if we need to fill in inferred information for iPadOS and Mac Catalyst.
-            if let iOSAvailability = information[PlatformName.iOS.displayName],
-               iOSAvailability.introduced != nil // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
-            {
-                var unavailableDefaultPlatformNames = Set<String>()
-                if let defaultAvailability = context.inputs.info.defaultAvailability?.modules[moduleName.symbolName] {
-                    for availability in defaultAvailability where availability.versionInformation == .unavailable {
-                        unavailableDefaultPlatformNames.insert(availability.platformName.displayName)
-                    }
-                }
-                
-                func addFallbackIfNeeded(named name: String) {
-                    guard information[name]?.introduced == nil, !unavailableDefaultPlatformNames.contains(name) else {
-                        return
-                    }
-                    var copy = iOSAvailability
-                    copy.name = name
-                    information[name] = copy
-                }
-                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
-                
-                
-                // Catalyst only inherits iOS availability if the symbol don't specify in-source
-                // availability or if there's no Mac Catalyst symbol graph.
-                // If the symbol is not present in the Catalyst SGF then is not available for this
-                // platform.
-                if (catalystSGFExists && symbolExistsInCatalystSymbolGraph) || !catalystSGFExists  {
-                    addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
-                }
-            }
-            
-            // Lastly, remove any inferred or default information for platforms that were marked explicitly unavailable.
-            for name in unavailablePlatformNamesToRemove {
-                information[name] = nil
-            }
-            
-            guard !information.isEmpty else {
+        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.consolidatedAvailability) { _, availability in
+            guard let platforms = availability.makePlatforms(context.currentBetaPlatforms) else {
                 return nil
             }
             
-            return information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
+            return platforms.map { platform in
+                .init(
+                    name: platform.name,
+                    introduced: platform.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                    deprecated: platform.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                    unconditionallyDeprecated: platform.isUnconditionallyDeprecated,
+                    isBeta: platform.isBeta
+                )
+            }
         } ?? .init(defaultValue: {
             assertionFailure("This default value is never used")
             return nil
         }())
-
-        // FIXME: Adding even a single Available directive discards all the in-source information (rdar://171807245)
-        if !directiveAvailabilityByPlatform.isEmpty {
-            var information = baseAvailabilityByPlatform
-                .merging(directiveAvailabilityByPlatform, uniquingKeysWith: { _, new in new }) // override any value with the directive information
-            
-            if let iOSAvailability = information[PlatformName.iOS.displayName],
-               iOSAvailability.introduced != nil // ???: Why do we not want fallback platforms in when there's no introduced version? (rdar://171807245)
-            {
-                func addFallbackIfNeeded(named name: String) {
-                    guard information[name] == nil,
-                          context.inputs.info.defaultAvailability?.modules[moduleName.symbolName]?.contains(where: { $0.platformName.displayName == name && $0.versionInformation == .unavailable }) != true
-                    else {
-                        return
-                    }
-                    var copy = iOSAvailability
-                    copy.name = name
-                    information[name] = copy
-                }
-                addFallbackIfNeeded(named: PlatformName.iPadOS.displayName)
-                addFallbackIfNeeded(named: PlatformName.catalyst.displayName)
-            }
-            
-            node.metadata.platforms = information.values.sorted(by: AvailabilityRenderItem.isInPlatformOrder)
-        }
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
         node.metadata.role = DocumentationContentRenderer.role(for: documentationNode.kind).rawValue
@@ -1497,7 +1402,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         collectedTopicReferences.append(identifier)
         
-        let contentRenderer = DocumentationContentRenderer(context: context)
         node.metadata.tags = contentRenderer.tags(for: identifier)
 
         var hierarchyTranslator = RenderHierarchyTranslator(context: context)
@@ -1603,7 +1507,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.relationshipSectionsVariants = VariantCollection<[RelationshipsRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
             guard let relationships = symbol.relationshipsVariants[trait], !relationships.groups.isEmpty else {
@@ -1662,7 +1566,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Links section
                 var orderedDestinations = Array(destinationsMap.keys)
                 orderedDestinations.sort { destination1, destination2 -> Bool in
-                    return destinationsMap[destination1]! <= destinationsMap[destination2]!
+                    Self.relationshipDestinationsAreInIncreasingOrder(
+                        destination1, destination2,
+                        titles: destinationsMap
+                    )
                 }
                 let groupSection = RelationshipsRenderSection(type: group.kind.rawValue, title: group.heading.plainText, identifiers: orderedDestinations.map({ $0.url!.absoluteString }))
                 groupSections.append(groupSection)
@@ -1678,10 +1585,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // topics section or automatic task groups, because it's important
         // for automatic curation to consider _all_ variants this node is available in.
         node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            let allowedTraits = availableVariantTraits.traitsCompatible(with: trait)
             
             let automaticTaskGroups = symbol.automaticTaskGroupsVariants[trait] ?? []
             let topics = symbol.topicsVariants[trait]
@@ -1694,7 +1601,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         topics,
                         allowExternalLinks: false,
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1707,7 +1614,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderAutomaticTaskGroupsSection(
                         automaticTaskGroups.filter({ $0.renderPositionPreference == .top }),
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1740,7 +1647,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderAutomaticTaskGroupsSection(
                         automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }),
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1752,12 +1659,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
         node.defaultImplementationsSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: symbol.defaultImplementationsVariants,
-            symbol.relationshipsVariants
-        ) { _, defaultImplementations, relationships in
-            guard !symbol.defaultImplementations.groups.isEmpty else {
+            from: symbol.defaultImplementationsVariants
+        ) { trait, defaultImplementations in
+            guard !defaultImplementations.groups.isEmpty else {
                 return []
             }
+            
+            let relationships = symbol.relationshipsVariants[trait]
             
             for imp in defaultImplementations.implementations {
                 let resolved: ResolvedTopicReference
@@ -1768,7 +1676,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     // Try creating a render reference anyway
                     if let title = defaultImplementations.targetFallbacks[imp.reference],
                        let reference = collectUnresolvableSymbolReference(destination: unresolved, title: title),
-                       let constraints = relationships.constraints[imp.reference] {
+                       let constraints = relationships?.constraints[imp.reference]
+                    {
                         collectedConstraints[.unresolved(reference)] = constraints
                     }
                     continue
@@ -1776,7 +1685,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 
                 // Add implementation to render references
                 collectedTopicReferences.append(resolved)
-                if let constraints = relationships.constraints[imp.reference] {
+                if let constraints = relationships?.constraints[imp.reference] {
                     collectedConstraints[.successfullyResolved(resolved)] = constraints
                 }
             }
@@ -1793,10 +1702,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: [])
 
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
-            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            let allowedTraits = availableVariantTraits.traitsCompatible(with: trait)
             
             // If the symbol contains an authored See Also section from the documentation extension,
             // add it as the first section under See Also.
@@ -1808,7 +1717,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         seeAlso,
                         allowExternalLinks: true,
                         allowedTraits: allowedTraits,
-                        availableTraits: documentationNode.availableVariantTraits,
+                        availableTraits: availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1832,18 +1741,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: [])
         
         /// The set of traits in which the symbol is deprecated in at least one platform.
-        let traitsInWhichSymbolsIsDeprecated = documentationNode.availableVariantTraits.filter { trait in
-            guard let platforms = symbol.availabilityVariants[trait]?.availability else {
-                return false
-            }
-            
-            return platforms.contains(where: { platform in
-                platform.deprecatedVersion != nil || platform.isUnconditionallyDeprecated
-            })
+        let traitsInWhichSymbolsIsDeprecated = availableVariantTraits.filter { trait in
+            symbol.consolidatedAvailability[trait]?.isDeprecated == true
         }
         
         node.deprecationSummaryVariants = VariantCollection(
-            from: documentationNode.availableVariantTraits,
+            from: availableVariantTraits,
             fallbackDefaultValue: nil,
             transform: { trait in
                 if traitsInWhichSymbolsIsDeprecated.contains(trait) || traitsInWhichSymbolsIsDeprecated.isEmpty {
@@ -1974,36 +1877,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Consider the module beta if its version is greater than or equal to the target platform
         return moduleVersionTriplet >= targetPlatformVersion.version
-    }
-    
-    /// The default availability for modules in a given inputs and module.
-    private mutating func defaultAvailability(moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [String: AvailabilityRenderItem]? {
-        // FIXME: Move this logic out of the rendering code (rdar://172280267)
-        if let cached = defaultAvailabilityCacheByModuleName[moduleName] {
-            return cached
-        }
-        
-        guard let defaultAvailabilityForModule = context.inputs.info.defaultAvailability?.modules[moduleName] else {
-            // Don't repeatedly look up the default availability in the Info.plist for every symbol
-            defaultAvailabilityCacheByModuleName[moduleName] = nil
-            return nil
-        }
-        
-        var result = [String: AvailabilityRenderItem]()
-        for availability in defaultAvailabilityForModule where availability.versionInformation != .unavailable {
-            let name = availability.platformName.displayName
-            let renderItem = AvailabilityRenderItem(
-                name: name,
-                introduced: availability.introducedVersion,
-                isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
-            )
-            
-            // Override any previous value if the same platform is specified multiple times
-            result[name] = renderItem
-        }
-        
-        defaultAvailabilityCacheByModuleName[moduleName] = result
-        return result
     }
    
     mutating func createRenderSections(

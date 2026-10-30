@@ -32,12 +32,12 @@ extension Constraint.Kind {
 /// "Available when `Element` conforms to `Equatable` and `S` conforms to `StringLiteral`."
 public struct ConformanceSection: Codable, Equatable {
     /// A prefix with which to prepend availability constraints.
-    var availabilityPrefix: [RenderInlineContent] = [.text("Available when")]
+    public var availabilityPrefix: [RenderInlineContent] = [.text("Available when")]
     /// A prefix with which to prepend conformance constraints.
-    var conformancePrefix: [RenderInlineContent] = [.text("Conforms when")]
+    public var conformancePrefix: [RenderInlineContent] = [.text("Conforms when")]
     
     /// The section constraints rendered as inline content.
-    let constraints: [RenderInlineContent]
+    public var constraints: [RenderInlineContent]
     
     /// Additional parameters to consider when rendering conformance constraints.
     struct ConstraintRenderOptions {
@@ -49,6 +49,16 @@ public struct ConformanceSection: Codable, Equatable {
         
         /// The symbol name of `Self`.
         let selfName: String
+    }
+    
+    init(
+        constraints: [RenderInlineContent],
+        availabilityPrefix: [RenderInlineContent],
+        conformancePrefix: [RenderInlineContent]
+    ) {
+        self.constraints = constraints
+        self.availabilityPrefix = availabilityPrefix
+        self.conformancePrefix = conformancePrefix
     }
     
     /// Creates a new conformance section.

@@ -888,20 +888,23 @@ class DocumentationContextTests: XCTestCase {
 
         // The two types are equatable but XCTAssertEqual doesn't catch that.
         XCTAssertTrue(myClassSymbol.kind.identifier == SymbolGraph.Symbol.KindIdentifier.class)
-        XCTAssertNotNil(myClassSymbol.availability?.availability.first(where: { (availability) -> Bool in
-            if let domain = availability.domain, let introduced = availability.introducedVersion, domain.rawValue == "macOS", introduced.major == 10, introduced.minor == 15 {
-                return true
-            }
-            return false
-        }))
+        do {
+            let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: myClass))
+            XCTAssertNotNil(
+                renderNode.metadata.platforms?.first(where: { availability in
+                    availability.name == "macOS" && availability.introduced == "10.15"
+                })
+            )
+        }
         
         XCTAssertEqual(Array(myClassSymbol.declaration.keys), [[PlatformName(operatingSystemName: "ios")]])
         XCTAssertEqual(myClassSymbol.declaration[[PlatformName(operatingSystemName: "ios")]]?.declarationFragments.map { $0.spelling }.joined(), "class MyClass")
         XCTAssertEqual(myClassSymbol.moduleReference.absoluteString, "doc://com.example.documentation/documentation/MyKit")
-        XCTAssertTrue(myClassSymbol.relationships.groups.contains { group -> Bool in
+        XCTAssertTrue((myClassSymbol.relationshipsVariants.firstValue ?? .init()).groups.contains { group -> Bool in
             return group.kind == .conformsTo && Array(group.destinations.map({ $0.url?.absoluteString })) == ["doc://com.example.documentation/documentation/MyKit/MyProtocol"]
         })
-        XCTAssertEqual(myClassSymbol.platformName, PlatformName(operatingSystemName: "ios"))
+        XCTAssertEqual(myClassSymbol._platformNameVariants.firstValue, PlatformName(operatingSystemName: "ios"))
         XCTAssertEqual(myClassSymbol.roleHeading, "Class")
         XCTAssertEqual(myClassSymbol.title, "MyClass")
         
@@ -1196,7 +1199,7 @@ class DocumentationContextTests: XCTestCase {
     func testMergesMultipleSymbolDeclarations() async throws {
         let graphContentiOS = try String(contentsOf: Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-            .appendingPathComponent("mykit-iOS.symbols.json"))
+            .appendingPathComponent("mykit-iOS.symbols.json"), encoding: .utf8)
 
         let graphContentmacOS = graphContentiOS
             .replacingOccurrences(of: "\"name\" : \"ios\"", with: "\"name\" : \"macosx\"")
@@ -1234,7 +1237,7 @@ class DocumentationContextTests: XCTestCase {
         let iOSGraphURL = Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
-        let graphContentiOS = try String(contentsOf: iOSGraphURL)
+        let graphContentiOS = try String(contentsOf: iOSGraphURL, encoding: .utf8)
 
         var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: iOSGraphURL))
         // Remove the original MyClass symbol
@@ -1309,7 +1312,7 @@ class DocumentationContextTests: XCTestCase {
         }
         
         // Test that the relationship has been resolved correctly
-        XCTAssertNotNil(sideClassSymbol.relationships.groups.first { (group) -> Bool in
+        XCTAssertNotNil((sideClassSymbol.relationshipsVariants.firstValue ?? .init()).groups.first { (group) -> Bool in
             return group.kind == .conformsTo && group.destinations.map({ $0.url?.absoluteString }) == ["doc://com.example.documentation/documentation/MyKit/MyProtocol"]
         })
     }
@@ -1317,7 +1320,7 @@ class DocumentationContextTests: XCTestCase {
     func testLoadsDeclarationWithNoOS() async throws {
         var graphContentiOS = try String(contentsOf: Bundle.module.url(
             forResource: "LegacyBundle_DoNotUseInNewTests", withExtension: "docc", subdirectory: "Test Bundles")!
-            .appendingPathComponent("mykit-iOS.symbols.json"))
+            .appendingPathComponent("mykit-iOS.symbols.json"), encoding: .utf8)
         
         // "remove" the operating system information
         graphContentiOS = graphContentiOS.replacingOccurrences(of: "\"operatingSystem\"", with: "\"ignored\"")
@@ -1620,7 +1623,7 @@ let expected = """
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
-            let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
+            let text = try String(contentsOf: myKitURL, encoding: .utf8).replacingOccurrences(of: "## Topics", with: """
             ## Topics
 
             ### Tutorials
@@ -1647,7 +1650,7 @@ let expected = """
         // Add some symbol collisions to graph
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
-            let text = try String(contentsOf: sideKitURL).replacingOccurrences(of: "\"symbols\" : [", with: """
+            let text = try String(contentsOf: sideKitURL, encoding: .utf8).replacingOccurrences(of: "\"symbols\" : [", with: """
             "symbols" : [
             {
               "accessLevel" : "public",
@@ -1713,7 +1716,7 @@ let expected = """
         // Add some symbol collisions to graph
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
-            let text = try String(contentsOf: sideKitURL).replacingOccurrences(of: "\"symbols\" : [", with: """
+            let text = try String(contentsOf: sideKitURL, encoding: .utf8).replacingOccurrences(of: "\"symbols\" : [", with: """
             "symbols" : [
             {
               "accessLevel" : "public",
@@ -2302,7 +2305,7 @@ let expected = """
         // Add some symbol collisions to graph
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
-            var text = try String(contentsOf: sideKitURL)
+            var text = try String(contentsOf: sideKitURL, encoding: .utf8)
             
             text = text.replacingOccurrences(of: "\"relationships\" : [", with: """
             "relationships" : [
@@ -2823,7 +2826,7 @@ let expected = """
         
         let (_, _, _) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests", excludingPaths: [], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
-            try! String(contentsOf: infoPlistURL)
+            try! String(contentsOf: infoPlistURL, encoding: .utf8)
                 .replacingOccurrences(of: "org.swift.docc.example", with: bundleID.rawValue)
                 .write(to: infoPlistURL, atomically: true, encoding: .utf8)
         })
@@ -2885,11 +2888,11 @@ let expected = """
         Article Abstract.
         """
         // Assert we can create a documentation node from markup
-        let markupArticle = Article(markup: Document(parsing: source), metadata: nil, redirects: nil, options: [:])
+        let markupArticle = Article(markup: Document(parsing: source), metadata: nil, redirects: nil, options: [:], availability: .init(defaultAvailability: nil))
         XCTAssertNoThrow(try DocumentationNode(reference: reference, article: markupArticle))
         
         // Assert we cannot create new nodes from semantic article data
-        let semanticArticle = Article(title: Heading(level: 1, [Text("New Article")]), abstractSection: nil, discussion: nil, topics: nil, seeAlso: nil, deprecationSummary: nil, metadata: nil, redirects: nil)
+        let semanticArticle = Article(title: Heading(level: 1, [Text("New Article")]), abstractSection: nil, discussion: nil, topics: nil, seeAlso: nil, deprecationSummary: nil, metadata: nil, redirects: nil, availability: .init(defaultAvailability: nil))
         XCTAssertThrowsError(try DocumentationNode(reference: reference, article: semanticArticle))
     }
     
@@ -4040,7 +4043,7 @@ let expected = """
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { url in
             try "# Article1".write(to: url.appendingPathComponent("resolvable-article.md"), atomically: true, encoding: .utf8)
             let myKitURL = url.appendingPathComponent("documentation").appendingPathComponent("mykit.md")
-            try String(contentsOf: myKitURL)
+            try String(contentsOf: myKitURL, encoding: .utf8)
                 .replacingOccurrences(of: " - <doc:article>", with: " - <doc:resolvable-article>")
                 .write(to: myKitURL, atomically: true, encoding: .utf8)
         }

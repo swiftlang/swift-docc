@@ -8,17 +8,16 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-package import Foundation
 package import Markdown
 package import DocCCommon
 
 /// A type that provides information about other pages, and on-page elements, that the rendered page references.
 package protocol LinkProvider {
     /// Provide information about another page or on-page element, or `nil` if the other page can't be found.
-    func element(for path: URL) -> LinkedElement?
+    func element(for path: String) -> LinkedElement?
     
     /// Provide the path for a symbol based on its unique identifier, or `nil` if the other symbol with that identifier can't be found.
-    func pathForSymbolID(_ usr: String) -> URL?
+    func pathForSymbolID(_ usr: String) -> String?
     
     /// Provide information about an asset (for example an image or video), or `nil` if the asset can't be found.
     func assetNamed(_ assetName: String) -> LinkedAsset?
@@ -29,21 +28,22 @@ package protocol LinkProvider {
 
 package struct LinkedElement {
     /// The path within the output archive to the linked element.
-    package var path: URL
+    package var path: String
     /// The names of the linked element, for display when the element is referenced in inline content.
     ///
-    /// Articles, headings, tutorials, and similar pages have a ``Names/single/conceptual(_:)`` name.
-    /// Symbols can either have a ``Names/single/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol``).
+    /// Articles, headings, tutorials, and similar pages have a ``Names/single(_:)`` ``Name/conceptual(_:)`` name.
+    /// Symbols can either have a ``Names/single(_:)`` ``Name/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol(_:)``).
     package var names: Names
     /// The subheadings of the linked element, for display when the element is referenced in either a Topics section, See Also section, or in a `@Links` directive.
     ///
-    /// Articles, headings, tutorials, and similar pages have a ``Names/single/conceptual(_:)`` name.
-    /// Symbols can either have a ``Names/single/symbol(_:)`` name or have different names for each language representation (``Names/languageSpecificSymbol``).
+    /// Articles, headings, tutorials, and similar pages have a ``Subheadings/single(_:)`` ``Subheading/conceptual(_:)`` name.
+    /// Symbols can either have a ``Subheadings/single(_:)`` ``Subheading/symbol(_:)`` name or have different names for each language representation (``Subheadings/languageSpecificSymbol(_:)``).
     package var subheadings: Subheadings
     /// The abstract of the page—to be displayed in either a Topics section, See Also section, or in a `@Links` directive—or `nil` if the linked element doesn't have an abstract.
     package var abstract: Paragraph?
 
-    package init(path: URL, names: Names, subheadings: Subheadings, abstract: Paragraph?) {
+    package init(path: String, names: Names, subheadings: Subheadings, abstract: Paragraph?) {
+        assert(path.first != "/")
         self.path = path
         self.names = names
         self.subheadings = subheadings
@@ -104,9 +104,9 @@ package struct LinkedElement {
 /// Information about a referenced image, video, or download asset that may be represented by more than one file for different color styles and display scales.
 package struct LinkedAsset {
     /// The path within the output archive to each file for this asset, grouped by their light/dark style and display scale.
-    package var files: [ColorStyle: [Int /* display scale*/: URL]]
+    package var files: [ColorStyle: [Int /* display scale*/: String]]
     
-    package init(files: [ColorStyle : [Int /* display scale*/: URL]]) {
+    package init(files: [ColorStyle : [Int /* display scale*/: String]]) {
         self.files = files
     }
     

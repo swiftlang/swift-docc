@@ -70,7 +70,7 @@ package struct HTMLFormatter {
     /// Formats a HTML node into serialized HTML 5 data.
     ///
     /// - Parameters:
-    ///   - document: The HTML node that the formatter should format.
+    ///   - node: The HTML node that the formatter should format.
     ///   - options: Options for how the formatter should format the serialized data.
     /// - Returns: The serialized HTML 5 data.
     package static func format(_ node: HTMLNode, options: Options = []) -> Data {
@@ -122,12 +122,7 @@ package struct HTMLFormatter {
             
         case .element(let tag, let attributes, let contents):
             // Start tag
-            let shouldSelfClose = contents.isEmpty
-            _formatStartTag(tag, attributes: attributes, selfClosing: shouldSelfClose)
-            guard !shouldSelfClose else {
-                // Don't create an end tag if the start tag was already self-closing.
-                return
-            }
+            _formatStartTag(tag, attributes: attributes)
             
             // Contents
             for index in contents.indices {
@@ -199,10 +194,12 @@ package struct HTMLFormatter {
             
         case .element(let tag, let attributes, let contents):
             // Start tag
-            let shouldSelfClose = contents.isEmpty
-            _formatStartTag(tag, attributes: attributes, selfClosing: shouldSelfClose)
-            guard !shouldSelfClose else {
-                // Don't create an end tag if the start tag was already self-closing.
+            _formatStartTag(tag, attributes: attributes)
+            guard !contents.isEmpty else {
+                if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: state.nextElementTag) {
+                    return
+                }
+                _formatEndTag(tag)
                 return
             }
             
@@ -359,16 +356,11 @@ package struct HTMLFormatter {
     }
     
     /// Formats a start tag and its attributes---for example `<nav id="breadcrumbs">`---and appends it to the formatter's buffer.
-    private mutating func _formatStartTag(_ tag: HTMLNode._Tag, attributes: [HTMLNode.Attribute], selfClosing: Bool) {
+    private mutating func _formatStartTag(_ tag: HTMLNode._Tag, attributes: [HTMLNode.Attribute]) {
         buffer.append(.init(ascii: "<"))
         _append(tag)
         _format(attributes: attributes)
-        
-        if selfClosing {
-            _append("/>")
-        } else {
-            buffer.append(.init(ascii: ">"))
-        }
+        buffer.append(.init(ascii: ">"))
     }
     
     /// Formats an end tag---for example `</p>`---and appends it to the formatter's buffer.

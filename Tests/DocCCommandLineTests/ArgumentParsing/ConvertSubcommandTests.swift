@@ -27,9 +27,9 @@ class ConvertSubcommandTests: XCTestCase {
         // by the machine environment.
         let priorWorkingDirectory = FileManager.default.currentDirectoryPath
         let temporaryDirectory = try createTemporaryDirectory()
-        FileManager.default.changeCurrentDirectoryPath(temporaryDirectory.path)
+        _ = FileManager.default.changeCurrentDirectoryPath(temporaryDirectory.path)
         addTeardownBlock {
-            FileManager.default.changeCurrentDirectoryPath(priorWorkingDirectory)
+            _ = FileManager.default.changeCurrentDirectoryPath(priorWorkingDirectory)
         }
 
         // By default, send all warnings to `.none` instead of filling the
@@ -585,7 +585,26 @@ class ConvertSubcommandFlagParsingTests {
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-mentioned-in"])
         #expect(disabledFlagConvert.featureFlags.enableMentionedIn == false)
     }
-    
+
+    @Test
+    func parsingCodeBlockAnnotationsFlag() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        #expect(noFlagConvert.featureFlags.enableCodeBlockAnnotations)
+
+        // It's allowed to pass the previous "--enable-experimental-..." flag.
+        let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-code-block-annotations"])
+        #expect(oldFlagConvert.featureFlags.enableCodeBlockAnnotations)
+
+        // It's allowed to pass the redundant "--enable-..." flag.
+        let enabledFlagConvert = try Docc.Convert.parse(["--enable-code-block-annotations"])
+        #expect(enabledFlagConvert.featureFlags.enableCodeBlockAnnotations)
+
+        // Passing the "--disable-..." flag turns of the feature.
+        let disabledFlagConvert = try Docc.Convert.parse(["--disable-code-block-annotations"])
+        #expect(disabledFlagConvert.featureFlags.enableCodeBlockAnnotations == false)
+    }
+
     @Test
     func parsingStaticHostingWithContentFlag() throws {
         // The feature is enabled when no flag is passed.

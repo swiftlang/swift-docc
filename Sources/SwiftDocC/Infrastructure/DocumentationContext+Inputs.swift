@@ -35,7 +35,7 @@ extension DocumentationContext {
     ///
     /// - ``info``
     /// - ``displayName``
-    /// - ``identifier``
+    /// - ``id``
     public struct Inputs {
         public enum PropertyListError: DescribedError {
             case invalidVersionString(String)
@@ -70,7 +70,7 @@ extension DocumentationContext {
         ///
         /// ## See Also
         ///
-        /// - ``DocumentationBundleFileTypes/isSymbolGraphFile(_:)``
+        /// - ``DocumentationCatalogFileTypes/isSymbolGraphFile(_:)``
         public let symbolGraphURLs: [URL]
         
         /// Documentation markup input files for this unit of documentation.
@@ -79,7 +79,7 @@ extension DocumentationContext {
         ///
         /// ## See Also
         ///
-        /// - ``DocumentationBundleFileTypes/isMarkupFile(_:)``
+        /// - ``DocumentationCatalogFileTypes/isMarkupFile(_:)``
         public let markupURLs: [URL]
         
         /// Miscellaneous resources (for example images, videos, or downloadable assets) for this unit of documentation.

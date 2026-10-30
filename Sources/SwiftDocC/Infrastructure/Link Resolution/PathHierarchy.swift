@@ -348,29 +348,34 @@ struct PathHierarchy {
                 acc[uniqueID] = Node(symbol: symbol, name: symbol.pathComponents.last!)
             }
 
-            for relationship in unifiedGraph.relationshipsByLanguage.flatMap(\.value) where relationship.kind == .overloadOf {
-                guard let groupNode = overloadGroupNodes[relationship.target], let overloadedSymbolNodes = allNodes[relationship.source] else {
-                    continue
+            guard !overloadGroupNodes.isEmpty else {
+                continue
+            }
+            for relationships in unifiedGraph.relationshipsByLanguage.values {
+                for relationship in relationships where relationship.kind == .overloadOf {
+                    guard let groupNode = overloadGroupNodes[relationship.target], let overloadedSymbolNodes = allNodes[relationship.source] else {
+                        continue
+                    }
+
+                    // The overload group symbol is cloned from a real symbol and has the same type signature as the clone. This prevents either symbol from using
+                    // parameter type or return type disambiguation. Exclude the overload group from this, so that the real symbol can use it.
+                    groupNode.specialBehaviors.insert(.excludeFromAdvancedLinkDisambiguation)
+
+                    for overloadedSymbolNode in overloadedSymbolNodes {
+                        // We want to disfavor the individual overload symbols in favor of resolving links to their overload group symbol.
+                        overloadedSymbolNode.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
+
+                        guard let parent = overloadedSymbolNode.parent else { continue }
+
+                        assert(groupNode.parent == nil || groupNode.parent === parent, """
+                               Unexpectedly grouped symbols with different locations in the symbol hierarchy:
+                               Group ID: \(groupNode.symbol!.identifier.precise)
+                               Locations: \(Set(overloadedSymbolNodes.map { $0.symbol!.pathComponents.joined(separator: "/") }.sorted()))
+                               """)
+                        parent.add(symbolChild: groupNode)
+                    }
+                    assert(groupNode.parent != nil, "Unexpectedly found no location in the hierarchy for overload group \(relationship.source)")
                 }
-                
-                // The overload group symbol is cloned from a real symbol and has the same type signature as the clone. This prevents either symbol from using
-                // parameter type or return type disambiguation. Exclude the overload group from this, so that the real symbol can use it.
-                groupNode.specialBehaviors.insert(.excludeFromAdvancedLinkDisambiguation)
-
-                for overloadedSymbolNode in overloadedSymbolNodes {
-                    // We want to disfavor the individual overload symbols in favor of resolving links to their overload group symbol.
-                    overloadedSymbolNode.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
-
-                    guard let parent = overloadedSymbolNode.parent else { continue }
-
-                    assert(groupNode.parent == nil || groupNode.parent === parent, """
-                    Unexpectedly grouped symbols with different locations in the symbol hierarchy:
-                    Group ID: \(groupNode.symbol!.identifier.precise)
-                    Locations: \(Set(overloadedSymbolNodes.map { $0.symbol!.pathComponents.joined(separator: "/") }.sorted()))
-                    """)
-                    parent.add(symbolChild: groupNode)
-                }
-                assert(groupNode.parent != nil, "Unexpectedly found no location in the hierarchy for overload group \(relationship.source)")
             }
         }
 

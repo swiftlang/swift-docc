@@ -20,8 +20,9 @@ private struct ContextLinkProvider: LinkProvider {
     let context: DocumentationContext
     let goal: RenderGoal
     
-    func element(for url: URL) -> LinkedElement? {
-        guard url.scheme == "doc",
+    func element(for reference: String) -> LinkedElement? {
+        guard let url = URL(string: reference),
+              url.scheme == "doc",
               let rawBundleID = url.host,
               // TODO: Support returning information about external pages (rdar://165912415)
               let node = context.documentationCache[ResolvedTopicReference(bundleID: .init(rawValue: rawBundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift /* The reference's language doesn't matter */)]
@@ -81,23 +82,24 @@ private struct ContextLinkProvider: LinkProvider {
         )
     }
     
-    func pathForSymbolID(_ usr: String) -> URL? {
+    func pathForSymbolID(_ usr: String) -> String? {
         context.localOrExternalReference(symbolID: usr).map {
             Self.filePath(for: $0)
         }
     }
     
     func assetNamed(_ assetName: String) -> LinkedAsset? {
-        guard let asset = context.resolveAsset(named: assetName, in: reference) else {
-            // The context
+        guard let asset = context.resolveAsset(named: assetName, in: reference, withType: .image) else {
+            // The context doesn't have an asset with this name
             return nil
         }
+        let imagesBaseLocation = "images/\(context.inputs.id.rawValue)/"
         
-        var files = [LinkedAsset.ColorStyle: [Int: URL]]()
+        var files = [LinkedAsset.ColorStyle: [Int: String]]()
         for (traits, url) in asset.variants {
             let scale = (traits.displayScale ?? .standard).scaleFactor
             
-            files[traits.userInterfaceStyle == .dark ? .dark : .light, default: [:]][scale] = url
+            files[traits.userInterfaceStyle == .dark ? .dark : .light, default: [:]][scale] = imagesBaseLocation.appending(url.lastPathComponent)
         }
         
         return .init(files: files)
@@ -108,8 +110,9 @@ private struct ContextLinkProvider: LinkProvider {
         PathHierarchy.PathParser.parse(path: linkString).components.last.map { String($0.name) } ?? linkString
     }
     
-    static func filePath(for reference: ResolvedTopicReference) -> URL {
-        reference.url.withoutHostAndPortAndScheme().appendingPathComponent("index.html")
+    static func filePath(for reference: ResolvedTopicReference) -> String {
+        NodeURLGenerator.fileSafeReferencePath(reference, lowercased: true)
+            .appending("/index.html") // Including the "index.html" file makes links work locally without a web server
     }
 }
 
@@ -160,7 +163,7 @@ package struct HTMLRenderer {
         var heroElements = [
             // Breadcrumbs
             renderer.breadcrumbs(
-                references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.url },
+                references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.absoluteString },
                 currentPageNames: .single(.conceptual(node.name.plainText))
             ),
             // Eyebrow and title
@@ -173,6 +176,21 @@ package struct HTMLRenderer {
         // Abstract
         if let abstract = article.abstract {
             heroElements.append(renderer.visit(abstract))
+        }
+        
+        // Availability
+        if let platforms = article.availability.makePlatforms(context.currentBetaPlatforms) {
+            heroElements.append(
+                renderer.availability(platforms.map {
+                    .init(
+                        name: $0.name,
+                        introduced: $0.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        deprecated: $0.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        isUnconditionallyDeprecated: $0.isUnconditionallyDeprecated,
+                        isBeta: $0.isBeta
+                    )
+                })
+            )
         }
         
         // Deprecation message
@@ -200,7 +218,7 @@ package struct HTMLRenderer {
                 renderer.groupedSection(named: "Topics", groups: [
                     .swift: topics.taskGroups.map { group in
                         .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
-                            $0.destination.flatMap { URL(string: $0) }
+                            $0.destination
                         })
                     }
                 ])
@@ -232,7 +250,7 @@ package struct HTMLRenderer {
         if !isModule {
             // Breadcrumbs
             heroElements.append(renderer.breadcrumbs(
-                references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.url },
+                references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.absoluteString },
                 currentPageNames: node.makeNames(goal: goal)
             ))
         }
@@ -266,16 +284,15 @@ package struct HTMLRenderer {
         }
         
         // Availability
-        if let availability = symbol.availability?.availability.filter({ $0.domain != nil }).sorted(by: \.domain!.rawValue),
-           !availability.isEmpty
-        {
+        if let availability = symbol.consolidatedAvailability.firstValue?.makePlatforms(context.currentBetaPlatforms) {
             heroElements.append(
                 renderer.availability(availability.map { item in
                     .init(
-                        name: item.domain!.rawValue, // Verified non-empty above
-                        introduced: item.introducedVersion.map { "\($0.major).\($0.minor)" },
-                        deprecated: item.deprecatedVersion.map { "\($0.major).\($0.minor)" },
-                        isBeta: false // TODO: Derive and pass beta information
+                        name: item.name,
+                        introduced: item.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        deprecated: item.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor),
+                        isUnconditionallyDeprecated: item.isUnconditionallyDeprecated,
+                        isBeta: item.isBeta
                     )
                 })
             )
@@ -344,7 +361,7 @@ package struct HTMLRenderer {
         if featureFlags.isMentionedInEnabled {
             articleElements.append(contentsOf:
                 renderer.groupedListSection(named: "Mentioned In", groups: [
-                    .swift: [.init(title: nil, references: context.articleSymbolMentions.articlesMentioning(reference).map(\.url))]
+                    .swift: [.init(title: nil, references: context.articleSymbolMentions.articlesMentioning(reference).map(\.absoluteString))]
                 ])
             )
         }
@@ -358,21 +375,37 @@ package struct HTMLRenderer {
         
         // Topics
         do {
+            typealias TaskGroupInfo = MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo
+            
             // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
-            var taskGroupInfo: [MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo] = []
+            var taskGroupInfo = [TaskGroupInfo]()
             
             if let authored = symbol.topics?.taskGroups {
                 taskGroupInfo.append(contentsOf: authored.map { group in
-                    .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
-                        $0.destination.flatMap { URL(string: $0) }
-                    })
+                    .init(title: group.heading?.title, content: group.content, references: group.links.compactMap(\.destination))
                 })
             }
+            
+            var atBottomGroups = [TaskGroupInfo]()
+            // This poorly named variable only hold either:
+            // - the articles, that appear before the automatic curation, on module pages.
+            // - the default implementations, that appear at the very bottom, for protocol requirement pages.
+            for group in symbol.automaticTaskGroups {
+                let info = TaskGroupInfo(title: group.title, content: [], references: group.references.compactMap(\.absoluteString))
+                if group.renderPositionPreference == .top {
+                    // Append the group without storing it in an intermediate
+                    taskGroupInfo.append(info)
+                } else {
+                    atBottomGroups.append(info)
+                }
+            }
+            
             if let automatic = try? AutomaticCuration.topics(for: node, withTraits: [.swift, .objectiveC], context: context) {
                 taskGroupInfo.append(contentsOf: automatic.map { group in
-                    .init(title: group.title, content: [], references: group.references.compactMap { $0.url })
+                    .init(title: group.title, content: [], references: group.references.compactMap(\.absoluteString))
                 })
             }
+            taskGroupInfo.append(contentsOf: consume atBottomGroups)
             
             if !taskGroupInfo.isEmpty {
                 articleElements.append(contentsOf: renderer.groupedSection(named: "Topics", groups: [.swift: taskGroupInfo]))
@@ -386,10 +419,30 @@ package struct HTMLRenderer {
         {
             articleElements.append(contentsOf:
                 renderer.groupedListSection(named: "Relationships", groups: relationships.mapValues { section in
-                    section.groups.map {
+                    section.groups.sorted(by: \.sectionOrder).map {
                         .init(title: $0.sectionTitle, references: $0.destinations.compactMap { topic in
                             switch topic {
-                                case .resolved(.success(let reference)): reference.url
+                                case .resolved(.success(let reference)): reference.absoluteString
+                                case .unresolved, .resolved(.failure):   nil
+                            }
+                        })
+                    }
+                })
+            )
+        }
+        
+        // Default Implementations
+        if let relationships = symbol.defaultImplementationsVariants
+            .map(transform: \.groups)
+            .values(goal: goal, by: { $0.elementsEqual($1, by: ==) })
+            .valuesByLanguage()
+        {
+            articleElements.append(contentsOf:
+                renderer.groupedSection(named: "Default Implementations", groups: relationships.mapValues { groups in
+                    groups.map {
+                        .init(title: $0.heading, content: [], references: $0.references.compactMap { topic in
+                            switch topic {
+                                case .resolved(.success(let reference)): reference.absoluteString
                                 case .unresolved, .resolved(.failure):   nil
                             }
                         })
@@ -428,7 +481,7 @@ package struct HTMLRenderer {
         renderer.groupedSection(named: "See Also", groups: [
             .swift: seeAlso.taskGroups.map { group in
                 .init(title: group.heading?.title, content: group.content, references: group.links.compactMap {
-                    $0.destination.flatMap { URL(string: $0) }
+                    $0.destination
                 })
             }
         ])
@@ -547,5 +600,11 @@ private extension DocumentationDataVariants {
 private extension DocumentationDataVariants where Variant: Equatable {
     func values(goal: RenderGoal) -> VariantValues<Variant> {
         values(goal: goal, by: ==)
+    }
+}
+
+private extension ImplementationsGroup {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.heading == rhs.heading && lhs.references == rhs.references
     }
 }

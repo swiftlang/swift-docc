@@ -15,7 +15,7 @@
 ///  * Create entities for the references it was able to resolve.
 ///
 /// When the documentation context encounters a reference that can't be resolved locally, it checks whether an external documentation source is registered in
-/// ``DocumentationContext/externalDocumentationSources`` for the source identifier of the unresolved reference. If there is, that source is asked to attempt to resolve the reference.
+/// ``DocumentationContext/Configuration/ExternalDocumentationConfiguration/sources`` for the source identifier of the unresolved reference. If there is, that source is asked to attempt to resolve the reference.
 ///
 /// If the referenced documentation exists in the external source, the source returns a resolved reference to the context. Later, the context uses this resolved reference to ask the source
 /// for the external entity with the documentation content for that reference. Because this content isn't part of the compiled inputs, it won't have its own page in the build output.
@@ -23,7 +23,7 @@
 /// If the reference doesn't exist in the external source of documentation or if an error occurs while attempting to resolve the reference, the external source returns information about the error.
 ///
 /// ## See Also
-/// - ``DocumentationContext/externalDocumentationSources``
+/// - ``DocumentationContext/Configuration/ExternalDocumentationConfiguration/sources``
 /// - ``GlobalExternalSymbolResolver``
 /// - ``TopicReferenceResolutionResult``
 public protocol ExternalDocumentationSource {

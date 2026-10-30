@@ -25,7 +25,7 @@ class ExternalRenderNodeTests: XCTestCase {
                 title: "SwiftArticle",
                 kind: .article,
                 language: .swift,
-                platforms: [.init(name: "iOS", introduced: nil, isBeta: false)]
+                isBeta: false
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/objCArticle"] = .success(
@@ -34,7 +34,7 @@ class ExternalRenderNodeTests: XCTestCase {
                 title: "ObjCArticle",
                 kind: .article,
                 language: .objectiveC,
-                platforms: [.init(name: "macOS", introduced: nil, isBeta: true)]
+                isBeta: true
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/swiftSymbol"] = .success(
@@ -48,7 +48,7 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: " ", preciseIdentifier: nil),
                     .init(kind: .identifier, spelling: "SwiftSymbol", preciseIdentifier: nil)
                 ]),
-                platforms: [.init(name: "iOS", introduced: nil, isBeta: true)]
+                isBeta: true
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/objCSymbol"] = .success(
@@ -64,7 +64,7 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
                     .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil)
                 ]),
-                platforms: [.init(name: "macOS", introduced: nil, isBeta: false)]
+                isBeta: false
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/navigatorTitleSwiftSymbol"] = .success(
@@ -78,10 +78,8 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: " ", preciseIdentifier: nil),
                     .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol", preciseIdentifier: nil)
                 ]),
-                navigatorTitle: .init(declarationFragments: [
-                    .init(kind: .identifier, spelling: "NavigatorTitleSwiftSymbol (navigator title)", preciseIdentifier: nil)
-                ]),
-                platforms: [.init(name: "iOS", introduced: nil, isBeta: true)]
+                navigatorTitle: "NavigatorTitleSwiftSymbol (navigator title)",
+                isBeta: true
             )
         )
         externalResolver.entitiesToReturn["/path/to/external/navigatorTitleObjCSymbol"] = .success(
@@ -97,10 +95,8 @@ class ExternalRenderNodeTests: XCTestCase {
                     .init(kind: .text, spelling: ") ", preciseIdentifier: nil),
                     .init(kind: .identifier, spelling: "ObjCSymbol", preciseIdentifier: nil)
                 ]),
-                navigatorTitle: .init(declarationFragments: [
-                    .init(kind: .identifier, spelling: "NavigatorTitleObjCSymbol (navigator title)", preciseIdentifier: nil)
-                ]),
-                platforms: [.init(name: "macOS", introduced: nil, isBeta: false)]
+                navigatorTitle: "NavigatorTitleObjCSymbol (navigator title)",
+                isBeta: false
             )
         )
         return externalResolver
@@ -178,7 +174,7 @@ class ExternalRenderNodeTests: XCTestCase {
             kind: .function,
             language: .swift,
             relativePresentationURL: URL(string: "/example/path/to/external/symbol")!,
-            referenceURL: reference.url,
+            referenceIdentifier: .init(reference.absoluteString),
             title: swiftTitle,
             availableLanguages: [.swift, .objectiveC],
             usr: "some-unique-symbol-id",
@@ -252,7 +248,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
             let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
@@ -355,7 +351,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
             let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
@@ -433,7 +429,7 @@ class ExternalRenderNodeTests: XCTestCase {
         let renderContext = RenderContext(documentationContext: context)
         let converter = DocumentationContextConverter(context: context, renderContext: renderContext)
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         for externalLink in context.externalCache {
             let externalRenderNode = ExternalRenderNode(externalEntity: externalLink.value, bundleIdentifier: context.inputs.id)
@@ -477,10 +473,10 @@ class ExternalRenderNodeTests: XCTestCase {
             kind: .function,
             language: .swift,
             relativePresentationURL: URL(string: "/example/path/to/external/symbol")!,
-            referenceURL: reference.url,
+            referenceIdentifier: .init(reference.absoluteString),
             title: swiftTitle,
             availableLanguages: [.swift, .objectiveC],
-            platforms: [.init(name: "Platform name", introduced: "1.2.3", isBeta: true)],
+            isBeta: true,
             usr: "some-unique-symbol-id",
             subheadingDeclarationFragments: swiftFragments,
             variants: [
@@ -558,7 +554,7 @@ class ExternalRenderNodeTests: XCTestCase {
         XCTAssert(context.diagnostics.isEmpty, "Unexpectedly found problems: \(context.diagnostics.map(\.summary))")
 
         let renderIndexFolder = try createTemporaryDirectory()
-        let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let indexBuilder = NavigatorIndex.Builder(outputURL: renderIndexFolder, fileManager: FileManager.default, bundleIdentifier: context.inputs.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         indexBuilder.setup()
         let outputConsumer = TestExternalRenderNodeOutputConsumer(indexBuilder: indexBuilder)
 

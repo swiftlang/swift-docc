@@ -192,6 +192,40 @@ DocC applies that language to any code listing that doesn't specify one, includi
 <string>swift</string>
 ```
 
+### Annotate Code Listings
+
+Add options after the language identifier, separated by commas, to annotate a code listing.
+
+    ```swift, showLineNumbers, highlight=[2]
+    struct Sightseeing: Activity {
+        func perform(with sloth: inout Sloth) -> Speed {
+            sloth.energyLevel -= 10
+            return .slow
+        }
+    }
+    ```
+
+DocC adds a copy-to-clipboard button to every code listing by default. 
+Add the option `nocopy` to remove the button from a specific code listing.
+
+Use these options to further annotate a code listing:
+
+| Option              | Effect                                                                  |
+| ------------------- | ------------------------------------------------------------------------ |
+| `nocopy`             | Removes the copy-to-clipboard button.                                   |
+| `showLineNumbers`    | Adds line numbers to the listing. Also accepts `showlinenumbers`.       |
+| `wrap=<width>`       | Wraps lines at the given column width instead of scrolling.             |
+| `highlight=<lines>`  | Highlights the given line or lines.                                     |
+| `strikeout=<lines>`  | Displays the given line or lines with strikethrough styling.            |
+
+For `highlight` and `strikeout`, specify a single line number or a comma-separated list of line numbers in square brackets. Line numbers are 1-based and count from the first line of code in the listing.
+
+    ```swift, highlight=3
+    ```swift, highlight=[1, 3, 5]
+    ```swift, strikeout=[2, 4]
+
+The language identifier, if present, must be the first option on the line. DocC warns you if it detects an unrecognized option, an option that looks like a misspelling of a known option, or a `highlight` or `strikeout` line number that's outside the range of lines in the listing.
+
 ### Add Bulleted, Numbered, and Term Lists
 
 DocC supports the following list types:
@@ -238,4 +272,4 @@ A list item's text, including terms and their definitions, can use the same
 style attributes as other text, and include links to other content, including
 symbols.
 
-<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2026 Apple Inc and the Swift Project authors. All Rights Reserved. -->

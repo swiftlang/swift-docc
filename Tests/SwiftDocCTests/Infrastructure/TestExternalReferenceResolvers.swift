@@ -29,9 +29,10 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
         var kind = DocumentationNode.Kind.article
         var language = SourceLanguage.swift
         var declarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
-        var navigatorTitle: SymbolGraph.Symbol.DeclarationFragments? = nil
+        var navigatorTitle: String? = nil
         var topicImages: [(TopicImage, alt: String)]? = nil
-        var platforms: [AvailabilityRenderItem]? = nil
+        var isDeprecated: Bool = false
+        var isBeta: Bool = false
     }
     
     // When more tests use this we may find that there's a better way to describe this (for example by separating
@@ -90,12 +91,13 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             kind: entityInfo.kind,
             language: entityInfo.language,
             relativePresentationURL: reference.url.withoutHostAndPortAndScheme(),
-            referenceURL: reference.url,
+            referenceIdentifier: .init(reference.absoluteString),
             title: entityInfo.title,
             availableLanguages: [entityInfo.language],
-            platforms: entityInfo.platforms,
+            isDeprecated: entityInfo.isDeprecated,
+            isBeta: entityInfo.isBeta,
             subheadingDeclarationFragments: entityInfo.declarationFragments?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
-            navigatorDeclarationFragments: entityInfo.navigatorTitle?.declarationFragments.map { .init(fragment: $0, identifier: nil) },
+            navigatorTitle: entityInfo.navigatorTitle,
             topicImages: entityInfo.topicImages?.map(\.0),
             references: entityInfo.topicImages?.map { topicImage, altText in
                 ImageReference(identifier: topicImage.identifier, altText: altText, imageAsset: assetsToReturn[topicImage.identifier.identifier] ?? .init())

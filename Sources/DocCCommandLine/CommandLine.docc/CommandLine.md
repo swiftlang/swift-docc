@@ -36,9 +36,8 @@ Adding a new sub-command automatically adds routing and execution of its code, a
 - ``InitAction``
 
 ### Actions Design
-- ``Action``
+- ``AsyncAction``
 - ``ActionResult``
-- ``RecreatingContext``
 
 ### Execution Workflow
 - ``Throttle``

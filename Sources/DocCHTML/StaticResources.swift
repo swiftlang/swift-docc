@@ -148,6 +148,10 @@ section {
 article > section:not(#hero) + #Topics,
 /* Draw a separator between the See Also section and any non-"hero" section (with a background) before it */
 article > section:not(#hero) + #See-Also,
+/* Draw a separator between the Relationships section and any non-"hero" section (with a background) before it */
+article > section:not(#hero) + #Relationships,
+/* Draw a separator between the Default Implementations section and any non-"hero" section (with a background) before it */
+article > section:not(#hero) + #Default-Implementations,
 /* Draw a separator between a symbol's first and second sections */
 article > section:first-of-type:not(#hero) + section
 {
@@ -295,6 +299,10 @@ h6 {
 
 a {
   color: var(--color-figure-blue);
+}
+
+picture > img {
+  width: 100%;
 }
 
 /* The "eyebrow" subheading */
@@ -559,7 +567,7 @@ dl {
   }
 }
 
-#Topics, #See-Also {
+#Topics, #See-Also, #Relationships, #Default-Implementations {
   &> ul {
     padding: 0;
     &> li {
@@ -625,6 +633,23 @@ dl {
   }
   &> p {
     margin-top: 15px;
+  }
+}
+
+#Relationships > ul {
+  &> li {
+    margin-top: 0;
+    &> a {
+      padding: 0;
+      &> code {
+        line-height: 25px;
+        color: var(--color-figure-blue);
+      }
+    }
+  }
+  
+  &> li:first-child {
+      margin-top: 15px;
   }
 }
 
@@ -887,7 +912,6 @@ body > footer {
     }
   }
 }
-    
 """.utf8))
     
     // MARK: Icons

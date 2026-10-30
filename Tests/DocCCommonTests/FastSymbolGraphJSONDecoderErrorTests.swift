@@ -29,7 +29,8 @@ struct FastSymbolGraphJSONDecoderErrorTests {
     
     @Test
     func decodingIntWhenNumberIsTooLarge() throws {
-        try expectMatchingErrors(decoding: Int.self, fromJSON: String(repeating: "1", count: 30), expectedDebugDescription: "The given data was not valid JSON.")
+        // The decoder reads past the last digit to find the end of the number. Pad the JSON with a space so that ASan doesn't complain.
+        try expectMatchingErrors(decoding: Int.self, fromJSON: String(repeating: "1", count: 30) + " ", expectedDebugDescription: "The given data was not valid JSON.")
     }
     
     @Test(arguments: [
@@ -39,7 +40,8 @@ struct FastSymbolGraphJSONDecoderErrorTests {
         "\"\"": "a string",
     ])
     func decodingIntWhenDataIsOtherType(json: String, expectedTypeDescription: String) throws {
-        try expectMatchingErrors(decoding: Int.self, fromJSON: json, expectedDebugDescription: "Expected to decode Int but found \(expectedTypeDescription) instead.")
+        // The decoder reads 4 bytes to compare against `null`. Pad the JSON with enough spaces for it to be at least 4 bytes long so that ASan doesn't complain.
+        try expectMatchingErrors(decoding: Int.self, fromJSON: json + "  ", expectedDebugDescription: "Expected to decode Int but found \(expectedTypeDescription) instead.")
     }
     
     @Test(arguments: [
@@ -49,7 +51,8 @@ struct FastSymbolGraphJSONDecoderErrorTests {
         "\"\"": "a string",
     ])
     func decodingBoolWhenDataIsOtherType(json: String, expectedTypeDescription: String) throws {
-        try expectMatchingErrors(decoding: Bool.self, fromJSON: json, expectedDebugDescription: "Expected to decode Bool but found \(expectedTypeDescription) instead.")
+        // The decoder reads 4 bytes to compare against `true`/`fals`. Pad the JSON with enough spaces for it to be at least 4 bytes long so that ASan doesn't complain.
+        try expectMatchingErrors(decoding: Bool.self, fromJSON: json + "  ", expectedDebugDescription: "Expected to decode Bool but found \(expectedTypeDescription) instead.")
     }
     
     @Test(arguments: [
@@ -59,7 +62,8 @@ struct FastSymbolGraphJSONDecoderErrorTests {
         "false": "bool",
     ])
     func decodingStringWhenDataIsOtherType(json: String, expectedTypeDescription: String) throws {
-        try expectMatchingErrors(decoding: String.self, fromJSON: json, expectedDebugDescription: "Expected to decode String but found \(expectedTypeDescription) instead.")
+        // The decoder reads 4 bytes to compare against `null`. Pad the JSON with enough spaces for it to be at least 4 bytes long so that ASan doesn't complain.
+        try expectMatchingErrors(decoding: String.self, fromJSON: json + "  ", expectedDebugDescription: "Expected to decode String but found \(expectedTypeDescription) instead.")
     }
     
     @Test
@@ -157,7 +161,7 @@ struct FastSymbolGraphJSONDecoderErrorTests {
 private struct Outer: FastJSONDecodable, Decodable {
     var inner: [Inner]
     
-    init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         var inner: [Inner] = []
         
         try decoder.descendIntoObject()
@@ -177,7 +181,7 @@ private struct Outer: FastJSONDecodable, Decodable {
         var name: String?
         var condition: Bool = false
         
-        init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+        init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
             var id: Int? // needs to be unwrapped
             
             var name: String?
@@ -209,7 +213,7 @@ private struct Outer: FastJSONDecodable, Decodable {
 private struct Recursive: FastJSONDecodable, Decodable {
     var nested: [Recursive]
     
-    init(using decoder: inout DocCCommon.FastSymbolGraphJSONDecoder) throws(DecodingError) {
+    init(using decoder: inout FastSymbolGraphJSONDecoder) throws(DecodingError) {
         var nested: [Recursive] = []
         
         try decoder.descendIntoObject()

@@ -40,12 +40,13 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "Circle")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle")
             #expect(summary.language == .swift)
             #expect(summary.kind     == .structure)
             #expect(summary.abstract == [.text("A circle.")])
             #expect(summary.availableLanguages == [.swift, .objectiveC])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "c:@SA@TLACircle")
             #expect(summary.plainTextDeclaration == "struct Circle")
             #expect(summary.subheadingDeclarationFragments == [
@@ -53,9 +54,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: " ",      kind: .text),
                 .init(text: "Circle", kind: .identifier),
             ])
-            #expect(summary.navigatorDeclarationFragments == [
-                .init(text: "Circle", kind: .identifier),
-            ])
+            #expect(summary.navigatorTitle == "Circle")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -77,9 +76,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: "TLACircle", kind: .identifier),
                 .init(text: ";",         kind: .text),
             ])
-            #expect(variant.navigatorDeclarationFragments == [
-                .init(text: "TLACircle", kind: .identifier),
-            ])
+            #expect(variant.navigatorTitle == "TLACircle")
             
             try assertRoundTripCoding(summary)
         }
@@ -93,12 +90,13 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "zero")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/zero")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero")
             #expect(summary.language == .swift)
             #expect(summary.kind     == .typeProperty)
             #expect(summary.abstract == [.text("The empty circle.")])
             #expect(summary.availableLanguages == [.swift, .objectiveC])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "c:@TLACircleZero")
             #expect(summary.plainTextDeclaration == "static let zero: Circle")
             #expect(summary.subheadingDeclarationFragments == [
@@ -110,7 +108,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: ": ",     kind: .text),
                 .init(text: "Circle", kind: .typeIdentifier, preciseIdentifier: "c:@SA@TLACircle"),
             ])
-            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.navigatorTitle == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -127,9 +125,7 @@ struct LinkDestinationSummaryTests {
             #expect(variant.subheadingDeclarationFragments == [
                 .init(text: "TLACircleZero", kind: .identifier),
             ])
-            #expect(variant.navigatorDeclarationFragments == [
-                .init(text: "TLACircleZero", kind: .identifier),
-            ])
+            #expect(variant.navigatorTitle == "TLACircleZero")
             
             try assertRoundTripCoding(summary)
         }
@@ -143,12 +139,13 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "intersects(_:)")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/intersects(_:)")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)")
             #expect(summary.language == .swift)
             #expect(summary.kind     == .instanceMethod)
             #expect(summary.abstract == [.text("Returns whether two circles intersect.")])
             #expect(summary.availableLanguages == [.swift, .objectiveC])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "c:@F@TLACircleIntersects")
             #expect(summary.plainTextDeclaration == "func intersects(_ otherCircle: Circle) -> Bool")
             #expect(summary.subheadingDeclarationFragments == [
@@ -160,7 +157,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: ") -> ",      kind: .text),
                 .init(text: "Bool",       kind: .typeIdentifier, preciseIdentifier: "s:Sb"),
             ])
-            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.navigatorTitle == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -177,9 +174,7 @@ struct LinkDestinationSummaryTests {
             #expect(variant.subheadingDeclarationFragments == [
                 .init(text: "TLACircleIntersects", kind: .identifier),
             ])
-            #expect(variant.navigatorDeclarationFragments == [
-                .init(text: "TLACircleIntersects", kind: .identifier),
-            ])
+            #expect(variant.navigatorTitle == "TLACircleIntersects")
             
             try assertRoundTripCoding(summary)
         }
@@ -193,20 +188,19 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "TLACircleMake")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/tlacirclemake")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake")
             #expect(summary.language == .objectiveC)
             #expect(summary.kind     == .function)
             #expect(summary.abstract == [.text("Creates a circle with the specified center location and radius.")])
             #expect(summary.availableLanguages == [.objectiveC])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "c:@F@TLACircleMake")
             #expect(summary.plainTextDeclaration == "TLACircle TLACircleMake(CGPoint center, CGFloat radius);")
             #expect(summary.subheadingDeclarationFragments == [
                 .init(text: "TLACircleMake", kind: .identifier),
             ])
-            #expect(summary.navigatorDeclarationFragments == [
-                .init(text: "TLACircleMake", kind: .identifier),
-            ])
+            #expect(summary.navigatorTitle == "TLACircleMake")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -223,12 +217,13 @@ struct LinkDestinationSummaryTests {
             
             #expect(summary.title == "init(center:radius:)")
             #expect(summary.relativePresentationURL.absoluteString == "/documentation/geometricalshapes/circle/init(center:radius:)")
-            #expect(summary.referenceURL.absoluteString == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)")
+            #expect(summary.referenceIdentifier == "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)")
             #expect(summary.language == .swift)
             #expect(summary.kind     == .initializer)
             #expect(summary.abstract == nil, "This symbol doesn't have a documentation comment")
             #expect(summary.availableLanguages == [.swift])
-            #expect(summary.platforms == nil)
+            #expect(summary.isDeprecated == false)
+            #expect(summary.isBeta       == false)
             #expect(summary.usr       == "s:So9TLACirclea6center6radiusABSo7CGPointV_14CoreFoundation7CGFloatVtcfc")
             #expect(summary.plainTextDeclaration == "init(center: CGPoint, radius: CGFloat)")
             #expect(summary.subheadingDeclarationFragments == [
@@ -243,7 +238,7 @@ struct LinkDestinationSummaryTests {
                 .init(text: "CGFloat", kind: .typeIdentifier, preciseIdentifier: "s:14CoreFoundation7CGFloatV"),
                 .init(text: ")",       kind: .text),
             ])
-            #expect(summary.navigatorDeclarationFragments == nil, "This symbol doesn't have a dedicated navigator name")
+            #expect(summary.navigatorTitle == nil, "This symbol doesn't have a dedicated navigator name")
             #expect(summary.topicImages == nil)
             #expect(summary.references  == nil)
             
@@ -286,16 +281,17 @@ struct LinkDestinationSummaryTests {
         
         #expect(summary.title == "Some article")
         #expect(summary.relativePresentationURL.absoluteString == "/documentation/something/first")
-        #expect(summary.referenceURL.absoluteString == "doc://Something/documentation/Something/First")
+        #expect(summary.referenceIdentifier == "doc://Something/documentation/Something/First")
         #expect(summary.language == .swift)
         #expect(summary.kind     == .article)
         #expect(summary.abstract == [.text("This article has two page images.")])
         #expect(summary.availableLanguages == [.swift])
-        #expect(summary.platforms == nil)
+        #expect(summary.isDeprecated == false)
+        #expect(summary.isBeta       == false)
         #expect(summary.usr                            == nil, "Only symbols have USRs.")
         #expect(summary.plainTextDeclaration           == nil, "Only symbols have USRs.")
         #expect(summary.subheadingDeclarationFragments == nil, "Only symbols have USRs.")
-        #expect(summary.navigatorDeclarationFragments  == nil, "Only symbols have USRs.")
+        #expect(summary.navigatorTitle                 == nil, "Only symbols have USRs.")
         
         #expect(summary.topicImages == [
             TopicImage(type: .card, identifier: RenderReferenceIdentifier("card.png")),
@@ -471,10 +467,9 @@ struct LinkDestinationSummaryTests {
         
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
         
-        #expect(decoded.referenceURL == ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
-        #expect(decoded.platforms?.count == 1)
-        #expect(decoded.platforms?.first?.name == "PlatformName")
-        #expect(decoded.platforms?.first?.introduced == "1.0")
+        #expect(decoded.referenceIdentifier.identifier == ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).absoluteString)
+        #expect(decoded.isDeprecated == false)
+        #expect(decoded.isBeta == false)
         #expect(decoded.kind  == .class)
         #expect(decoded.title == "ClassName")
         #expect(decoded.abstract?.plainText == "A brief explanation of my class.")
@@ -488,6 +483,99 @@ struct LinkDestinationSummaryTests {
         #expect(decoded.references  == nil)
         
         #expect(decoded.variants.isEmpty)
+    }
+    
+    @Test
+    func decodingLegacyPlatformsData() throws {
+        let legacyData = """
+        {
+          "title": "ClassName",
+          "referenceURL": "doc://org.swift.docc.example/documentation/MyKit/ClassName",
+          "language": "swift",
+          "path": "documentation/MyKit/ClassName",
+          "availableLanguages": [
+            "swift"
+          ],
+          "kind": "org.swift.docc.kind.class",
+          "platforms": [
+            {
+              "name": "FirstPlatformName",
+              "introducedAt": "1.0",
+              "beta": true
+            },
+            {
+              "name": "SecondPlatformName",
+              "introducedAt": "2.0",
+              "beta": true,
+              "deprecatedAt": "3.0",
+            }
+          ]
+        }
+        """
+        
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
+        
+        #expect(decoded.isDeprecated == true) // One platform has a deprecated version
+        #expect(decoded.isBeta       == true) // Both platforms are "beta"
+    }
+    
+    @Test
+    func decodingLegacyNavigatorFragmentsData() throws {
+        let legacyData = """
+        {
+          "title": "ClassName",
+          "referenceURL": "doc://org.swift.docc.example/documentation/MyKit/ClassName",
+          "language": "swift",
+          "path": "documentation/MyKit/ClassName",
+          "availableLanguages": [
+            "swift",
+            "occ"
+          ],
+          "kind": "org.swift.docc.kind.class",
+          "navigatorFragments": [
+            {
+              "kind": "keyword",
+              "text": "class"
+            },
+            {
+              "kind": "text",
+              "text": " "
+            },
+            {
+              "kind": "identifier",
+               "text": "ClassName" 
+            }
+          ],
+          "variants": [
+            {
+              "traits": [
+                {
+                  "interfaceLanguage": "occ"
+                }
+              ],
+              "navigatorFragments": [
+                {
+                  "kind": "keyword",
+                  "text": "struct"
+                },
+                {
+                  "kind": "text",
+                  "text": " "
+                },
+                {
+                  "kind": "identifier",
+                   "text": "VariantClassName" 
+                }
+              ]
+            }
+          ]
+        }
+        """
+        
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: Data(legacyData.utf8))
+        
+        #expect(decoded.navigatorTitle == "class ClassName")
+        #expect(decoded.variants.first?.navigatorTitle == "struct VariantClassName")
     }
     
     @Test
@@ -617,20 +705,20 @@ struct LinkDestinationSummaryTests {
         // Because of all the optional properties in a AvailabilityRenderItem, it's harder spot differences in the full-item-comparisons below.
         #expect(platforms.map(\.name) == ["iOS", "Mac Catalyst", "macOS"])
         
-        let expectedUnconditionalInfo = availabilitySource == .inSourceAttributes ? false : nil
         // From the in-source attribute
-        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, isBeta: isBeta))
         // Inherited from the iOS availability information
-        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, isBeta: isBeta))
         // No iPad availability because it's marked as unavailable in the Info.plist
         
         // From the in-source attribute
-        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, unconditionallyDeprecated: expectedUnconditionalInfo, unconditionallyUnavailable: expectedUnconditionalInfo, isBeta: isBeta))
+        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, isBeta: isBeta))
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
 
-        #expect(summary.platforms == renderNode.metadata.platforms)
+        #expect(summary.isBeta       == isBeta)
+        #expect(summary.isDeprecated == isDeprecated)
         try assertRoundTripCoding(summary)
         
         let summaryRenderReference = summary.makeTopicRenderReference()
@@ -639,7 +727,7 @@ struct LinkDestinationSummaryTests {
         #expect(summaryRenderReference.isDeprecated == isDeprecated)
         try assertRoundTripCoding(summaryRenderReference)
         
-        #expect((node.semantic as? Symbol)?.isDeprecated == isDeprecated)
+        #expect((node.semantic as? Symbol)?.consolidatedAvailability.firstValue?.isDeprecated == isDeprecated)
         
         // Verify that the summary's render reference matches the information from the full page's render reference.
         let pageRenderReference = try #require(RenderContext(documentationContext: context).store.content(for: reference)?.renderReference as? TopicRenderReference)
@@ -698,18 +786,19 @@ struct LinkDestinationSummaryTests {
         #expect(platforms.map(\.name) == ["iOS", "Mac Catalyst", "macOS"])
         
         // From the in-source attribute
-        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        #expect(platforms.dropFirst(0).first == .init(name: "iOS",          introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, isBeta: isBeta))
         // Inherited from the iOS availability information
-        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        #expect(platforms.dropFirst(1).first == .init(name: "Mac Catalyst", introduced: "2.3.4", deprecated: isDeprecated ? "4.5.6" : nil, isBeta: isBeta))
         // No iPad availability because it's marked as unavailable in the Info.plist
         
         // From the in-source attribute
-        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, unconditionallyDeprecated: nil, unconditionallyUnavailable: nil, isBeta: isBeta))
+        #expect(platforms.dropFirst(2).first == .init(name: "macOS",        introduced: "1.2.3", deprecated: isDeprecated ? "3.2.1" : nil, isBeta: isBeta))
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let summary = try #require(summaries.first)
 
-        #expect(summary.platforms == renderNode.metadata.platforms)
+        #expect(summary.isBeta       == isBeta)
+        #expect(summary.isDeprecated == isDeprecated)
         try assertRoundTripCoding(summary)
         
         let summaryRenderReference = summary.makeTopicRenderReference()
@@ -865,11 +954,12 @@ struct LinkDestinationSummaryTests {
         let pageSummary = try #require(summaries.first)
         #expect(pageSummary.title == "Some tutorial title with emoji 💻")
         #expect(pageSummary.relativePresentationURL.absoluteString == "/tutorials/custom-display-name/sometutorial")
-        #expect(pageSummary.referenceURL.absoluteString == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial")
+        #expect(pageSummary.referenceIdentifier == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial")
         #expect(pageSummary.language == .swift)
         #expect(pageSummary.kind     == .tutorial)
         #expect(pageSummary.availableLanguages == [.swift])
-        #expect(pageSummary.platforms == nil)
+        #expect(pageSummary.isDeprecated == false)
+        #expect(pageSummary.isBeta == false)
         #expect(pageSummary.redirects?.map(\.absoluteString) == [
             "old/path/to/this/page",
             "even/older/path/to/this/page",
@@ -877,7 +967,7 @@ struct LinkDestinationSummaryTests {
         #expect(pageSummary.usr                            == nil, "Only symbols have USRs")
         #expect(pageSummary.plainTextDeclaration           == nil, "Only symbols have a plain text declaration")
         #expect(pageSummary.subheadingDeclarationFragments == nil, "Only symbols have subheading declaration fragments")
-        #expect(pageSummary.navigatorDeclarationFragments  == nil, "Only symbols have navigator titles")
+        #expect(pageSummary.navigatorTitle                 == nil, "Only symbols have navigator titles")
         #expect(pageSummary.abstract == [
             .text("Some introductory description of what this tutorial teaches.")
         ])
@@ -887,18 +977,19 @@ struct LinkDestinationSummaryTests {
         let sectionSummary = try #require(summaries.dropFirst().first)
         #expect(sectionSummary.title == "Some section title with emoji 💻")
         #expect(sectionSummary.relativePresentationURL.absoluteString == "/tutorials/custom-display-name/sometutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
-        #expect(sectionSummary.referenceURL.absoluteString == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
+        #expect(sectionSummary.referenceIdentifier == "doc://com.test.custom-identifier/tutorials/Custom-Display-Name/SomeTutorial#Some-section-title-with-emoji-%F0%9F%92%BB")
         #expect(sectionSummary.language == .swift)
         #expect(sectionSummary.kind     == .onPageLandmark)
         #expect(sectionSummary.availableLanguages == [.swift])
-        #expect(sectionSummary.platforms == nil)
+        #expect(sectionSummary.isDeprecated == false)
+        #expect(sectionSummary.isBeta == false)
         #expect(sectionSummary.redirects == [
             URL(string: "old/path/to/this/landmark")!,
         ])
         #expect(sectionSummary.usr == nil, "Only symbols have USRs")
         #expect(sectionSummary.plainTextDeclaration == nil, "Only symbols have a plain text declaration")
         #expect(sectionSummary.subheadingDeclarationFragments == nil, "Only symbols have subheading declaration fragments")
-        #expect(sectionSummary.navigatorDeclarationFragments == nil, "Only symbols have navigator titles")
+        #expect(sectionSummary.navigatorTitle == nil, "Only symbols have navigator titles")
         #expect(sectionSummary.abstract == [
             .text("Some description of what this section teaches."),
         ])
@@ -977,6 +1068,85 @@ struct LinkDestinationSummaryTests {
 
         // iOS in the merged [iOS, tvOS] group is higher priority than macOS
         #expect(summary.plainTextDeclaration == "func someFunction_shared")
+    }
+    
+    @Test(arguments: [
+        "doc://com.example/": /* this is unexpected and unsupported */  ResolvedTopicReference(bundleID: "com.example", path: "/",                                  fragment: nil,        sourceLanguage: .swift),
+        "doc://com.example/documentation/SomeModule/somePage":          ResolvedTopicReference(bundleID: "com.example", path: "/documentation/SomeModule/somePage", fragment: nil,        sourceLanguage: .swift),
+        "doc://com.example/documentation/SomeModule/somePage#fragment": ResolvedTopicReference(bundleID: "com.example", path: "/documentation/SomeModule/somePage", fragment: "fragment", sourceLanguage: .swift),
+    ])
+    func makesResolvedTopicReference(_ referenceIdentifier: String, expectedTopicReference: ResolvedTopicReference) throws {
+        let summary = LinkDestinationSummary(
+            kind: .class,
+            language: .swift,
+            relativePresentationURL: URL(string: "/documentation/somemodule/somepage")!,
+            referenceIdentifier: .init(referenceIdentifier),
+            title: "Some title",
+            availableLanguages: [.swift],
+            variants: []
+        )
+        let reference = summary.makeResolvedTopicReference()
+        #expect(reference == expectedTopicReference)
+        
+        let url = try #require(URL(string: referenceIdentifier))
+        #expect(reference.bundleID.rawValue == url.host())
+        #expect(reference.path              == url.path())
+        #expect(reference.fragment          == url.fragment())
+    }
+    
+    @Test()
+    func makeResolvedTopicReferenceHandlesUnsupportedHostComponent() throws {
+        let summary = LinkDestinationSummary(
+            kind: .class,
+            language: .swift,
+            relativePresentationURL: URL(string: "/documentation/somemodule/somepage")!,
+            referenceIdentifier: .init("doc://unsupported#host?name/documentation/SomeModule/somePage#fragment"),
+            title: "Some title",
+            availableLanguages: [.swift],
+            variants: []
+        )
+        let reference = summary.makeResolvedTopicReference()
+        #expect(reference == ResolvedTopicReference(bundleID: "unsupported-host-name", path: "/documentation/SomeModule/somePage", fragment: "fragment", sourceLanguage: .swift),)
+    }
+    
+    @Test(arguments: [true, false])
+    func onlyIncludesPerPlatformAvailabilityInformationWhenRequested(shouldIncludePerPlatformInformation: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "macOS", introduced: .init(major: 1, minor: 2, patch: 3), deprecated: .init(major: 3, minor: 2, patch: 1)),
+                    .init(domainName: "iOS",   introduced: .init(major: 2, minor: 3, patch: 4), deprecated: .init(major: 4, minor: 5, patch: 6)),
+                ])
+            ]))
+            
+            // Configure the "default availability" to not infer any fallbacks.
+            InfoPlist(defaultAvailability: ["ModuleName": [
+                .init(unavailablePlatformName: .iPadOS),
+                .init(unavailablePlatformName: .catalyst),
+            ]])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let node       = try #require(context.documentationCache["some-symbol-id"])
+        let renderNode = DocumentationNodeConverter(context: context).convert(node)
+        #expect(renderNode.metadata.platforms == [
+            .init(name: "iOS",   introduced: "2.3.4", deprecated: "4.5.6", isBeta: false),
+            .init(name: "macOS", introduced: "1.2.3", deprecated: "3.2.1", isBeta: false),
+        ])
+        
+        let linkSummaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includePerPlatformAvailabilityInformation: shouldIncludePerPlatformInformation)
+        #expect(linkSummaries.count == 1)
+        let linkSummary = try #require(linkSummaries.first)
+        
+        #expect(linkSummary.isBeta       == false)
+        #expect(linkSummary.isDeprecated == true)
+        
+        if shouldIncludePerPlatformInformation {
+            #expect(linkSummary.platforms == renderNode.metadata.platforms)
+        } else {
+            #expect(linkSummary.platforms == nil)
+        }
     }
 }
 

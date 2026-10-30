@@ -21,13 +21,13 @@ struct MarkdownRenderer_PageElementsTests {
     func renderingBreadcrumbs(goal: RenderGoal) {
         let elements = [
             LinkedElement(
-                path: URL(string: "/documentation/ModuleName/index.html")!,
+                path: "documentation/ModuleName/index.html".lowercased(),
                 names: .single(.symbol("ModuleName")),
                 subheadings: .single(.symbol([.init(text: "ModuleName", kind: .identifier)])),
                 abstract: nil
             ),
             LinkedElement(
-                path: URL(string: "/documentation/ModuleName/Something/index.html")!,
+                path: "documentation/ModuleName/Something/index.html".lowercased(),
                 names: .languageSpecificSymbol([
                     .swift:      "Something",
                     .objectiveC: "TLASomething",
@@ -45,7 +45,7 @@ struct MarkdownRenderer_PageElementsTests {
                 abstract: nil
             ),
         ]
-        let breadcrumbs = makeRenderer(goal: goal, elementsToReturn: elements).breadcrumbs(references: elements.map { $0.path }, currentPageNames: .single(.conceptual("ThisPage")))
+        let breadcrumbs = makeRenderer(goal: goal, elementsToReturn: elements).breadcrumbs(references: elements.map(\.path), currentPageNames: .single(.conceptual("ThisPage")))
         switch goal {
         case .richness:
             breadcrumbs.assertMatches(prettyFormatted: true, expected: """
@@ -82,9 +82,11 @@ struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
     func renderingAvailability(goal: RenderGoal) {
         let availability = makeRenderer(goal: goal).availability([
-            .init(name: "First",  introduced: "1.2", deprecated: "3.4", isBeta: false),
-            .init(name: "Second", introduced: "1.2.3",                  isBeta: false),
-            .init(name: "Third",  introduced: "4.5",                    isBeta: true),
+            .init(name: "First",  introduced: "1.2", deprecated: "3.4", isUnconditionallyDeprecated: false, isBeta: false),
+            .init(name: "Second", introduced: "1.2.3",                  isUnconditionallyDeprecated: false, isBeta: false),
+            .init(name: "Third",  introduced: "4.5",                    isUnconditionallyDeprecated: false, isBeta: true),
+            .init(name: "Fourth", introduced: "5.6",                    isUnconditionallyDeprecated: true,  isBeta: false),
+            .init(name: "Fifth",  introduced: nil,                      isUnconditionallyDeprecated: true,  isBeta: false),
         ])
         switch goal {
         case .richness:
@@ -99,6 +101,12 @@ struct MarkdownRenderer_PageElementsTests {
               <li aria-label="Third 4.5+, Available on Third 4.5 and later" class="beta" title="Available on Third 4.5 and later">
                 Third 4.5+
               </li>
+              <li aria-label="Fourth 5.6+, Unconditionally deprecated on Fourth 5.6 and later" class="deprecated" title="Unconditionally deprecated on Fourth 5.6 and later">
+                Fourth 5.6+
+              </li>
+              <li aria-label="Fifth, Unconditionally deprecated on Fifth" class="deprecated" title="Unconditionally deprecated on Fifth">
+                Fifth
+              </li>
             </ul>
             """)
         case .conciseness:
@@ -107,6 +115,8 @@ struct MarkdownRenderer_PageElementsTests {
               <li>First 1.2–3.4</li>
               <li>Second 1.2.3+</li>
               <li>Third 4.5+</li>
+              <li>Fourth 5.6+</li>
+              <li>Fifth</li>
             </ul>
             """)
         }
@@ -321,9 +331,9 @@ struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
     func renderingSwiftDeclaration(goal: RenderGoal) {
         let symbolPaths = [
-            "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
-            "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
-            "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
+            "first-parameter-symbol-id":  "documentation/ModuleName/FirstParameterValue/index.html".lowercased(),
+            "second-parameter-symbol-id": "documentation/ModuleName/SecondParameterValue/index.html".lowercased(),
+            "return-value-symbol-id":     "documentation/ModuleName/ReturnValue/index.html".lowercased(),
         ]
         
         let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
@@ -373,9 +383,9 @@ struct MarkdownRenderer_PageElementsTests {
     @Test
     func prettyPrintsSwiftDeclarations() {
         let symbolPaths = [
-            "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
-            "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
-            "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
+            "first-parameter-symbol-id":  "documentation/ModuleName/FirstParameterValue/index.html".lowercased(),
+            "second-parameter-symbol-id": "documentation/ModuleName/SecondParameterValue/index.html".lowercased(),
+            "return-value-symbol-id":     "documentation/ModuleName/ReturnValue/index.html".lowercased(),
         ]
         
         // func withUnsafeTemporaryAllocation<T, R, E>(of type: T.Type, capacity: Int, _ body: (UnsafeMutableBufferPointer<T>) throws(E) -> R) throws(E) -> R where E : Error, T : ~Copyable, R : ~Copyable
@@ -503,10 +513,10 @@ struct MarkdownRenderer_PageElementsTests {
     @Test(arguments: RenderGoal.allCases)
     func renderingLanguageSpecificDeclarations(goal: RenderGoal) {
         let symbolPaths = [
-            "first-parameter-symbol-id":  URL(string: "/documentation/ModuleName/FirstParameterValue/index.html")!,
-            "second-parameter-symbol-id": URL(string: "/documentation/ModuleName/SecondParameterValue/index.html")!,
-            "return-value-symbol-id":     URL(string: "/documentation/ModuleName/ReturnValue/index.html")!,
-            "error-parameter-symbol-id":  URL(string: "/documentation/Foundation/NSError/index.html")!,
+            "first-parameter-symbol-id":  "documentation/ModuleName/FirstParameterValue/index.html".lowercased(),
+            "second-parameter-symbol-id": "documentation/ModuleName/SecondParameterValue/index.html".lowercased(),
+            "return-value-symbol-id":     "documentation/ModuleName/ReturnValue/index.html".lowercased(),
+            "error-parameter-symbol-id":  "documentation/Foundation/NSError/index.html".lowercased(),
         ]
         
         let declaration = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
@@ -590,7 +600,7 @@ struct MarkdownRenderer_PageElementsTests {
     func renderingSingleLanguageGroupedSectionsWithMultiLanguageLinks(goal: RenderGoal, expectedGroupTitle: String) {
         let elements = [
             LinkedElement(
-                path: URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
+                path: "documentation/ModuleName/SomeClass/index.html".lowercased(),
                 names: .languageSpecificSymbol([
                     .swift:      "SomeClass",
                     .objectiveC: "TLASomeClass",
@@ -608,13 +618,13 @@ struct MarkdownRenderer_PageElementsTests {
                 abstract: parseMarkup(string: "Some _formatted_ description of this class").first as? Paragraph
             ),
             LinkedElement(
-                path: URL(string: "/documentation/ModuleName/SomeArticle/index.html")!,
+                path: "documentation/ModuleName/SomeArticle/index.html".lowercased(),
                 names: .single(.conceptual("Some Article")),
                 subheadings: .single(.conceptual("Some Article")),
                 abstract: parseMarkup(string: "Some **formatted** description of this _article_.").first as? Paragraph
             ),
             LinkedElement(
-                path: URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
+                path: "documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html".lowercased(),
                 names: .languageSpecificSymbol([
                     .swift:      "someMethod(with:and:)",
                     .objectiveC: "someMethodWithFirst:andSecond:",
@@ -643,9 +653,9 @@ struct MarkdownRenderer_PageElementsTests {
         let groupedSection = renderer.groupedSection(named: expectedGroupTitle, groups: [
             .swift: [
                 .init(title: "Group title", content: parseMarkup(string: "Some description of this group"), references: [
-                    URL(string: "/documentation/ModuleName/SomeClass/index.html")!,
-                    URL(string: "/documentation/ModuleName/SomeArticle/index.html")!,
-                    URL(string: "/documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html")!,
+                    "documentation/ModuleName/SomeClass/index.html".lowercased(),
+                    "documentation/ModuleName/SomeArticle/index.html".lowercased(),
+                    "documentation/ModuleName/SomeClass/someMethod(with:and:)/index.html".lowercased(),
                 ])
             ]
         ])
@@ -700,9 +710,9 @@ struct MarkdownRenderer_PageElementsTests {
                       </span>
                       (
                       <span class="identifier">with</span>
-                      :<wbr> Int, 
+                      : Int, 
                       <span class="identifier">and</span>
-                      :<wbr> String)
+                      : String)
                     </code>
                     <code class="occ-only">
                       - 
@@ -825,11 +835,11 @@ struct MarkdownRenderer_PageElementsTests {
     private func makeRenderer(
         goal: RenderGoal,
         elementsToReturn: [LinkedElement] = [],
-        pathsToReturn: [String: URL] = [:],
+        pathsToReturn: [String: String] = [:],
         assetsToReturn: [String: LinkedAsset] = [:],
         fallbackLinkTextsToReturn: [String: String] = [:]
     ) -> MarkdownRenderer<some LinkProvider> {
-        let path = URL(string: "/documentation/ModuleName/Something/ThisPage/index.html")!
+        let path = "documentation/ModuleName/Something/ThisPage/index.html".lowercased()
         
         var elementsByURL = [
             path: LinkedElement(
@@ -861,13 +871,13 @@ struct MarkdownRenderer_PageElementsTests {
 }
 
 struct MultiValueLinkProvider: LinkProvider {
-    var elementsToReturn: [URL: LinkedElement]
-    func element(for path: URL) -> LinkedElement? {
+    var elementsToReturn: [String: LinkedElement]
+    func element(for path: String) -> LinkedElement? {
         elementsToReturn[path]
     }
     
-    var pathsToReturn: [String: URL]
-    func pathForSymbolID(_ usr: String) -> URL? {
+    var pathsToReturn: [String: String]
+    func pathForSymbolID(_ usr: String) -> String? {
         pathsToReturn[usr]
     }
     

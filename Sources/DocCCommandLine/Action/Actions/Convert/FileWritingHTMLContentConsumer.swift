@@ -101,7 +101,8 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
     
     init(
         targetFolder: URL,
-        fileManager: some FileManagerProtocol,
+        inputFileManager: some ReadOnlyFileManagerProtocol,
+        outputFileManager: some FileManagerProtocol,
         htmlTemplate: URL,
         customHeader: URL?,
         customFooter: URL?,
@@ -111,23 +112,23 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         if let customHeader {
             customTemplates.append(.init(
                 id: "custom-header",
-                content: String(decoding: try fileManager.contents(of: customHeader), as: UTF8.self)
+                content: String(decoding: try inputFileManager.contents(of: customHeader), as: UTF8.self)
             ))
         }
         if let customFooter {
             customTemplates.append(.init(
                 id: "custom-footer",
-                content: String(decoding: try fileManager.contents(of: customFooter), as: UTF8.self)
+                content: String(decoding: try inputFileManager.contents(of: customFooter), as: UTF8.self)
             ))
         }
         self.htmlTemplate = try HTMLTemplate(
-            data: fileManager.contents(of: htmlTemplate),
+            data: inputFileManager.contents(of: htmlTemplate),
             customTemplates: customTemplates
         )
         self.prettyPrintOutput = prettyPrintOutput
         self.fileWriter = JSONEncodingRenderNodeWriter(
             targetFolder: targetFolder,
-            fileManager: fileManager,
+            fileManager: outputFileManager,
             transformForStaticHostingIndexHTML: nil
         )
     }

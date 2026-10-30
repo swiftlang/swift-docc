@@ -19,9 +19,6 @@ private import os
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///
-/// A ``DocumentationWorkspace`` discovers serialized documentation bundles from a variety of sources (files on disk, databases, or web services), provides them to the `DocumentationContext`,
-/// and notifies the context when bundles are added or removed using the ``DocumentationContextDataProviderDelegate`` protocol.
-///
 /// When a documentation bundle is registered with the context, all of its content is loaded into memory and relationships between documentation entities are built. When this is done, the context can be queried
 /// about documentation entities, resources, and relationships between entities.
 ///
@@ -210,14 +207,17 @@ public class DocumentationContext {
     /// Mentions of symbols within articles.
     var articleSymbolMentions = ArticleSymbolMentions()
 
-    /// Initializes a documentation context with a given `bundle`.
+    /// An opaque precomputed value that represents which platforms are considered "in beta".
+    let currentBetaPlatforms: Availability.CurrentBetaPlatforms
+
+    /// Initializes a documentation context from a collection of input files.
     ///
     /// - Parameters:
-    ///   - inputs: The inputs to register with the context.
-    ///   - fileManager: The file manager that the context uses to read files from the bundle.
+    ///   - inputs: The collection of input files to register with the context.
+    ///   - dataProvider: The data provider that the context uses to read files from the inputs.
     ///   - diagnosticEngine: The pre-configured engine that will collect diagnostics encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
+    /// - Throws: If an error is encountered while registering the documentation input files.
     package init(
         inputs: DocumentationContext.Inputs,
         dataProvider: any DataProvider,
@@ -235,6 +235,7 @@ public class DocumentationContext {
         self.configuration = configuration
         
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
+        self.currentBetaPlatforms = .init(currentPlatformVersions: configuration.externalMetadata.currentPlatforms)
 
         ResolvedTopicReference.enableReferenceCaching(for: inputs.id)
         try await register()
@@ -1146,12 +1147,11 @@ public class DocumentationContext {
                         }
                     }
 
-                    let overloadGroups: [String: Set<String>] =
-                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
-                        $0.filter { $0.kind == .overloadOf }
-                    }).reduce(into: [:], { acc, relationship in
-                        acc[relationship.target, default: []].insert(relationship.source)
-                    })
+                    let overloadGroups: [String: Set<String>] = unifiedSymbolGraph.relationshipsByLanguage.values.reduce(into: [:]) { acc, relationships in
+                        for relationship in relationships where relationship.kind == . overloadOf {
+                            acc[relationship.target, default: []].insert(relationship.source)
+                        }
+                    }
                     addOverloadGroupReferences(overloadGroups: overloadGroups)
 
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -1305,6 +1305,53 @@ public class DocumentationContext {
                 // Remove the matched article
                 uncuratedDocumentationExtensions.removeValue(forKey: reference)
             }
+            
+            // It's fairly likely that we'll want to move this into the main register/update loop in the future.
+            // The primary reason for not doing this yet is that the symbol needs to both:
+            //  - have easy and fast access to its module so that we can precompute the base availability once per module
+            //  - have been associated with its potential extension file first so that we can add information about directive availability
+            signposter.withIntervalSignpost("Compute consolidated availability") {
+                for (moduleName, unifiedGraph) in symbolGraphLoader.unifiedGraphs {
+                    var symbolBaseAvailability = Availability(defaultAvailability: inputs.info.defaultAvailability?.modules[moduleName])
+                    
+                    documentationCache.reference(symbolID: moduleName).map { moduleReference in
+                        var moduleAvailability = symbolBaseAvailability
+                        moduleAvailability.finalizePlatformFallbacks()
+                        (documentationCache[moduleReference]?.semantic as! Symbol).consolidatedAvailability = .init(defaultVariantValue: moduleAvailability)
+                    }
+                    symbolBaseAvailability.markAllEncounteredPlatforms(in: unifiedGraph)
+                    
+                    for symbol in unifiedGraph.symbols.values {
+                        guard let reference = documentationCache.reference(symbolID: symbol.uniqueIdentifier) else {
+                            continue
+                        }
+                        
+                        var languages = Set<DocumentationDataVariantsTrait>()
+                        for selector in symbol.allSelectors {
+                            languages.insert(.init(interfaceLanguage: selector.interfaceLanguage))
+                        }
+                        let directiveAvailability = documentationCache[reference]?.metadata?.availability
+                        
+                        func makeAvailability(language: SourceLanguage) -> Availability {
+                            var availability = symbolBaseAvailability
+                            availability.addInSourceAvailability(from: symbol, matchingLanguage: language)
+                            
+                            if let directiveAvailability {
+                                availability.addDirectiveAvailability(directiveAvailability, preservingBugOfFirstResettingAvailabilityTo: symbolBaseAvailability)
+                            }
+                            availability.finalizePlatformFallbacks()
+                            
+                            return availability
+                        }
+                        
+                        (documentationCache[reference]?.semantic as! Symbol).consolidatedAvailability = .init(
+                            values: .init(uniqueKeysWithValues: languages.map { trait in
+                                (key: trait, value: makeAvailability(language: trait.sourceLanguage! /* all entries in `otherLanguages` have a language */))
+                            })
+                        )
+                    }
+                }
+            }
 
             // Resolve any external references first
             preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }))
@@ -1312,7 +1359,7 @@ public class DocumentationContext {
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationshipsBySelector)
             
-            for (selector, relationships) in combinedRelationshipsBySelector {
+            for (selector, relationships) in combinedRelationshipsBySelector.sortedBySelector() {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector)
                 // Merge into target symbols the member symbols that get rendered on the same page as target.
@@ -1416,49 +1463,50 @@ public class DocumentationContext {
         var bodyParametersByTarget = [String: [HTTPParameter]]()
         var responsesByTarget = [String: [HTTPResponse]]()
         
-        for edge in relationships {
-            if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
-                if let source = documentationCache[edge.source], let target = documentationCache[edge.target],
-                   let sourceSymbol = source.symbol
-                {
-                    switch (source.kind, target.kind) {
-                    case (.dictionaryKey, .dictionary):
-                        let dictionaryKey = DictionaryKey(name: sourceSymbol.names.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
-                        if keysByTarget[edge.target] == nil {
-                            keysByTarget[edge.target] = [dictionaryKey]
-                        } else {
-                            keysByTarget[edge.target]?.append(dictionaryKey)
-                        }
-                    case (.httpParameter, .httpRequest):
-                        let parameter = HTTPParameter(name: sourceSymbol.names.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
-                        if parametersByTarget[edge.target] == nil {
-                            parametersByTarget[edge.target] = [parameter]
-                        } else {
-                            parametersByTarget[edge.target]?.append(parameter)
-                        }
-                    case (.httpBody, .httpRequest):
-                        let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
-                        bodyByTarget[edge.target] = body
-                    case (.httpParameter, .httpBody):
-                        let parameter = HTTPParameter(name: sourceSymbol.names.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
-                        if bodyParametersByTarget[edge.target] == nil {
-                            bodyParametersByTarget[edge.target] = [parameter]
-                        } else {
-                            bodyParametersByTarget[edge.target]?.append(parameter)
-                        }
-                    case (.httpResponse, .httpRequest):
-                        let statusParts = sourceSymbol.names.title.split(separator: " ", maxSplits: 1)
-                        let statusCode = UInt(statusParts[0]) ?? 0
-                        let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
-                        let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
-                        if responsesByTarget[edge.target] == nil {
-                            responsesByTarget[edge.target] = [response]
-                        } else {
-                            responsesByTarget[edge.target]?.append(response)
-                        }
-                    case (_, _):
-                        continue
+        // For a given container and member symbol, there exists exactly one relationship for the membership.
+        // Ergo, every `memberOf` relationship to a target container will have a distinct source symbol.
+        // Thus, sorting relationships by the source identifier sufficiently guarantees stable ordering.
+        for edge in relationships.lazy.filter({ $0.kind == .memberOf || $0.kind == .optionalMemberOf }).sorted(by: { $0.source < $1.source }) {
+            if let source = documentationCache[edge.source], let target = documentationCache[edge.target],
+               let sourceSymbol = source.symbol
+            {
+                switch (source.kind, target.kind) {
+                case (.dictionaryKey, .dictionary):
+                    let dictionaryKey = DictionaryKey(name: sourceSymbol.names.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                    if keysByTarget[edge.target] == nil {
+                        keysByTarget[edge.target] = [dictionaryKey]
+                    } else {
+                        keysByTarget[edge.target]?.append(dictionaryKey)
                     }
+                case (.httpParameter, .httpRequest):
+                    let parameter = HTTPParameter(name: sourceSymbol.names.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                    if parametersByTarget[edge.target] == nil {
+                        parametersByTarget[edge.target] = [parameter]
+                    } else {
+                        parametersByTarget[edge.target]?.append(parameter)
+                    }
+                case (.httpBody, .httpRequest):
+                    let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
+                    bodyByTarget[edge.target] = body
+                case (.httpParameter, .httpBody):
+                    let parameter = HTTPParameter(name: sourceSymbol.names.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                    if bodyParametersByTarget[edge.target] == nil {
+                        bodyParametersByTarget[edge.target] = [parameter]
+                    } else {
+                        bodyParametersByTarget[edge.target]?.append(parameter)
+                    }
+                case (.httpResponse, .httpRequest):
+                    let statusParts = sourceSymbol.names.title.split(separator: " ", maxSplits: 1)
+                    let statusCode = UInt(statusParts[0]) ?? 0
+                    let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
+                    let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
+                    if responsesByTarget[edge.target] == nil {
+                        responsesByTarget[edge.target] = [response]
+                    } else {
+                        responsesByTarget[edge.target]?.append(response)
+                    }
+                case (_, _):
+                    continue
                 }
             }
         }
@@ -1634,7 +1682,7 @@ public class DocumentationContext {
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
-    // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
+    // TODO: Move this functionality to ``DocumentationCatalogFileTypes`` (rdar://68156425).
     
     /// A type of asset.
     public enum AssetType: CustomStringConvertible {
@@ -1868,7 +1916,8 @@ public class DocumentationContext {
                 markup: articleResult.value.markup,
                 metadata: Metadata(from: metadataMarkup, for: inputs, featureFlags: configuration.featureFlags),
                 redirects: articleResult.value.redirects,
-                options: articleResult.value.options
+                options: articleResult.value.options,
+                availability: articleResult.value.availability
             )
             
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: articleResult.topicGraphNode.source, title: title)
@@ -1900,7 +1949,7 @@ public class DocumentationContext {
                 metadataDirectiveMarkup
             )
             let metadata = Metadata(from: metadataDirectiveMarkup, for: inputs, featureFlags: configuration.featureFlags)
-            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
+            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:], availability: Availability.makeNewArticleBaseAvailability(info: inputs.info))
             let documentationNode = DocumentationNode(
                 reference: reference,
                 kind: .collection,
@@ -2009,8 +2058,8 @@ public class DocumentationContext {
             for sourceLanguage in node.availableSourceLanguages {
                 symbol.automaticTaskGroupsVariants[.init(sourceLanguage: sourceLanguage)] = [automaticTaskGroup]
             }
-        } else if var taskGroupProviding = node.semantic as? (any AutomaticTaskGroupsProviding) {
-            taskGroupProviding.automaticTaskGroups = [automaticTaskGroup]
+        } else if let article = node.semantic as? Article {
+            article.automaticTaskGroups = [automaticTaskGroup]
         }
         
         return articleReferences
@@ -3311,11 +3360,17 @@ private extension DirectedGraph {
         var nodes = [startingPoint]
         var seen: Set<Node> = [startingPoint]
         while !nodes.isEmpty {
-            let matches = nodes.filter(predicate)
+            let matches = Set(nodes.lazy.filter(predicate))
             if !matches.isEmpty {
-                return Set(matches)
+                return matches
             }
-            nodes = nodes.flatMap { neighbors(of: $0) }.filter { seen.insert($0).inserted }
+            var next: [Node] = []
+            for node in nodes {
+                for neighbor in neighbors(of: node) where seen.insert(neighbor).inserted {
+                    next.append(neighbor)
+                }
+            }
+            nodes = next
         }
         return []
     }

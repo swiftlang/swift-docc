@@ -35,7 +35,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            outputLocation: targetBundleURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -133,7 +133,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            outputLocation: targetBundleURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -186,7 +186,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
                 continue
             }
             let indexFileURL = folder.appendingPathComponent("index.html")
-            let testHTMLString = try String(contentsOf: indexFileURL)
+            let testHTMLString = try String(contentsOf: indexFileURL, encoding: .utf8)
             XCTAssertEqual(testHTMLString, indexHTML, "Unexpected content in index.html at \(indexFileURL)")
         }
     }

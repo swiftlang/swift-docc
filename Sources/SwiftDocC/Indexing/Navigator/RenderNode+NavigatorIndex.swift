@@ -140,7 +140,7 @@ extension NavigatorIndexableRenderMetadataRepresentation {
             return false
         }
         
-        return platforms.allSatisfy { $0.isBeta == true }
+        return platforms.allSatisfy { $0.beta }
     }
 }
 
@@ -151,7 +151,7 @@ extension NavigatorIndexableRenderNodeRepresentation {
             $0.deprecated != nil ||
                 // or without a specific version/string for "deprecated:", like so:
                 // @available(*, deprecated, renamed: "Sendable")
-                $0.unconditionallyDeprecated == true
+                $0.isUnconditionallyDeprecated
         } == true
     }
     var isDeprecated: Bool {

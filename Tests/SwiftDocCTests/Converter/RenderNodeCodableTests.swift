@@ -203,7 +203,7 @@ class RenderNodeCodableTests: XCTestCase {
         
         let bundleID: DocumentationContext.Inputs.Identifier = #function
         
-        let renderNodeWithUniqueBundleID = try String(contentsOf: exampleRenderNodeJSON)
+        let renderNodeWithUniqueBundleID = try String(contentsOf: exampleRenderNodeJSON, encoding: .utf8)
             .replacingOccurrences(of: "org.swift.docc.example", with: bundleID.rawValue)
         
         _ = try JSONDecoder().decode(RenderNode.self, from: Data(renderNodeWithUniqueBundleID.utf8))

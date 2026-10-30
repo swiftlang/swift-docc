@@ -104,12 +104,7 @@ final class ExternalPathHierarchyResolver {
         entities.reserveCapacity(linkDestinationSummaries.count)
         symbols.reserveCapacity(linkDestinationSummaries.count)
         for entity in linkDestinationSummaries {
-            let reference = ResolvedTopicReference(
-                bundleID: .init(rawValue: entity.referenceURL.host!),
-                path: entity.referenceURL.path,
-                fragment: entity.referenceURL.fragment,
-                sourceLanguage: entity.language
-            )
+            let reference = entity.makeResolvedTopicReference()
             entities[reference] = entity
             if let usr = entity.usr {
                 symbols[usr] = reference
@@ -147,7 +142,7 @@ final class ExternalPathHierarchyResolver {
         
         self.init(
             linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: dataProvider.contents(of: linkHierarchyFile)),
-            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
+            entityInformation: try FastSymbolGraphJSONDecoder.decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
         )
     }
 }
@@ -155,15 +150,6 @@ final class ExternalPathHierarchyResolver {
 // MARK: ExternalEntity
 
 extension LinkDestinationSummary {
-    /// A value that indicates whether this symbol is under development and likely to change.
-    private var isBeta: Bool {
-        guard let platforms, !platforms.isEmpty else {
-            return false
-        }
-        
-        return platforms.allSatisfy { $0.isBeta == true }
-    }
-    
     /// Create a topic render render reference for this link summary and its content variants.
     func makeTopicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
@@ -171,7 +157,7 @@ extension LinkDestinationSummary {
         var titleVariants = VariantCollection(defaultValue: title)
         var abstractVariants = VariantCollection(defaultValue: abstract ?? [])
         var fragmentVariants = VariantCollection(defaultValue: subheadingDeclarationFragments)
-        var navigatorTitleVariants = VariantCollection(defaultValue: navigatorDeclarationFragments)
+        var navigatorTitleVariants = VariantCollection(defaultValue: navigatorTitle.map { [DeclarationRenderSection.Token(text: $0, kind: .text)] })
         
         for variant in variants {
             let traits = variant.traits
@@ -184,13 +170,13 @@ extension LinkDestinationSummary {
             if let fragment = variant.subheadingDeclarationFragments {
                 fragmentVariants.variants.append(.init(traits: traits, patch: [.replace(value: fragment)]))
             }
-            if let navigatorTitle = variant.navigatorDeclarationFragments {
-                navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle)]))
+            if let navigatorTitle = variant.navigatorTitle {
+                navigatorTitleVariants.variants.append(.init(traits: traits, patch: [.replace(value: navigatorTitle.map { [DeclarationRenderSection.Token(text: $0, kind: .text)] })]))
             }
         }
         
         return TopicRenderReference(
-            identifier: .init(referenceURL.absoluteString),
+            identifier: referenceIdentifier,
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
             url: absolutePresentationURL?.absoluteString ?? relativePresentationURL.absoluteString,
@@ -202,7 +188,7 @@ extension LinkDestinationSummary {
             estimatedTime: nil,
             conformance: nil,
             isBeta: isBeta,
-            isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true || $0.deprecated != nil }) ?? false,
+            isDeprecated: isDeprecated,
             defaultImplementationCount: nil,
             propertyListKeyNames: nil,
             tags: nil,

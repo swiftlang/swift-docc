@@ -365,7 +365,7 @@ struct MarkdownRendererTests {
         assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
             elementToReturn: .init(
-                path: try #require(URL(string: "doc://com.example.test/documentation/Something/SomeArticle/index.html")),
+                path: "documentation/Something/SomeArticle/index.html".lowercased(),
                 names: .single(.conceptual("Some Article Title")),
                 subheadings: .single(.conceptual("Some Article Title")), // Not relevant for inline links
                 abstract: nil // Not relevant for inline links
@@ -382,7 +382,7 @@ struct MarkdownRendererTests {
         assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
             elementToReturn: .init(
-                path: try #require(URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")),
+                path: "documentation/Something/SomeClass/someMethod(_:_:)/index.html".lowercased(),
                 names: .single(.symbol("someMethod(_:_:)")),
                 subheadings: .single(.symbol([ // Not relevant for inline links
                     .init(text: "func ", kind: .decorator),
@@ -469,19 +469,41 @@ struct MarkdownRendererTests {
         )
     }
     
+    @Test(arguments: [
+        "<doc:SomeArticleName>",
+        "<doc://com.example/SomeArticleName>",
+        "<doc://com.example/documentation/ModuleName/SomeClass>",
+    ])
+    func renderingFallbackLinkTextForUnresolvedDocumentationLinks(_ markup: String) {
+        assert(
+            rendering: markup,
+            fallbackLinkTextToReturn: "FallbackLinkText",
+            matches: "<p>FallbackLinkText</p>"
+        )
+    }
+    
     @Test
-    func renderingRelativeLinksToImages() throws {
+    func renderingFallbackLinkTextForUnresolvedSymbolLinks() {
+        assert(
+            rendering: "``ModuleName/SomeClass``",
+            fallbackLinkTextToReturn: "FallbackLinkText",
+            matches: "<p><code>FallbackLinkText</code></p>"
+        )
+    }
+    
+    @Test
+    func renderingRelativeLinksToLocalImages() throws {
         // Only a single image representation
         assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
-                .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))]
+                .light: [1: "images/com.test.example/some-image.png"]
             ]),
             prettyFormatted: true,
             matches: """
             <p>
               <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../../images/com.test.example/some-image.png">
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../images/com.test.example/some-image.png">
               </picture>
             </p>
             """
@@ -492,15 +514,15 @@ struct MarkdownRendererTests {
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
                 .light: [
-                    1: try #require(URL(string: "images/com.test.example/some-image.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
+                    1: "images/com.test.example/some-image.png",
+                    2: "images/com.test.example/some-image@2x.png",
                 ]
             ]),
             prettyFormatted: true,
             matches: """
             <p>
               <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
               </picture>
             </p>
             """
@@ -510,15 +532,15 @@ struct MarkdownRendererTests {
         assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
-                .light: [1: try #require(URL(string: "images/com.test.example/some-image.png"))],
-                .dark:  [1: try #require(URL(string: "images/com.test.example/some-image~dark.png"))],
+                .light: [1: "images/com.test.example/some-image.png"],
+                .dark:  [1: "images/com.test.example/some-image~dark.png"],
             ]),
             prettyFormatted: true,
             matches: """
             <p>
               <picture>
-                <source media="(prefers-color-scheme: light)" src="../../../../images/com.test.example/some-image.png">
-                <source media="(prefers-color-scheme: dark)" src="../../../../images/com.test.example/some-image~dark.png">
+                <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image.png">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark.png">
                 <img alt="Some alt text" decoding="async" loading="lazy">
               </picture>
             </p>
@@ -530,21 +552,37 @@ struct MarkdownRendererTests {
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
                 .light: [
-                    1: try #require(URL(string: "images/com.test.example/some-image.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image@2x.png")),
+                    1: "images/com.test.example/some-image.png",
+                    2: "images/com.test.example/some-image@2x.png",
                 ],
                 .dark: [
-                    1: try #require(URL(string: "images/com.test.example/some-image~dark.png")),
-                    2: try #require(URL(string: "images/com.test.example/some-image~dark@2x.png")),
+                    1: "images/com.test.example/some-image~dark.png",
+                    2: "images/com.test.example/some-image~dark@2x.png",
                 ],
             ]),
             prettyFormatted: true,
             matches: """
             <p>
               <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../../images/com.test.example/some-image@2x.png 2x, ../../../../images/com.test.example/some-image.png 1x">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../../images/com.test.example/some-image~dark.png 1x">
+                <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
                 <img alt="Some alt text" decoding="async" loading="lazy">
+              </picture>
+            </p>
+            """
+        )
+    }
+    
+    @Test(arguments: ["http", "https", "HTTP", "hTtPs"])
+    func renderingAbsoluteWebLinksToImages(scheme: String) throws {
+        // Absolute web URL
+        assert(
+            rendering: "![Some alt text](\(scheme)://example.com/path/to/some-image.png)",
+            prettyFormatted: true,
+            matches: """
+            <p>
+              <picture>
+                <img alt="Some alt text" decoding="async" loading="lazy" src="\(scheme)://example.com/path/to/some-image.png">
               </picture>
             </p>
             """
@@ -606,7 +644,7 @@ struct MarkdownRendererTests {
         sourceLocation: Testing.SourceLocation = #_sourceLocation
     ) {
         let renderer = MarkdownRenderer(
-            path: URL(string: "/documentation/Something/ThisPage/index.html")!,
+            path: "documentation/Something/ThisPage/index.html".lowercased(),
             goal: .richness,
             linkProvider: SingleValueLinkProvider(
                 elementToReturn: elementToReturn,
@@ -620,7 +658,7 @@ struct MarkdownRendererTests {
     
     private func makeExampleMethodWithDifferentLanguageRepresentations() -> LinkedElement {
         LinkedElement(
-            path: URL(string: "doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)/index.html")!,
+            path: "documentation/Something/SomeClass/someMethod(_:_:)/index.html".lowercased(),
             names: .languageSpecificSymbol([
                 .swift:      "doSomething(with:and:)",
                 .objectiveC: "doSomethingWithFirst:andSecond:",
@@ -672,12 +710,12 @@ extension Sequence<HTMLNode> {
 
 struct SingleValueLinkProvider: LinkProvider {
     var elementToReturn: LinkedElement?
-    func element(for path: URL) -> LinkedElement? {
+    func element(for path: String) -> LinkedElement? {
         elementToReturn
     }
     
-    var pathToReturn: URL?
-    func pathForSymbolID(_ usr: String) -> URL? {
+    var pathToReturn: String?
+    func pathForSymbolID(_ usr: String) -> String? {
         pathToReturn
     }
     

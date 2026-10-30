@@ -52,7 +52,7 @@ enum TypedValueError: DescribedError {
     case missingValue(key: String)
     /// The requested value is of the wrong type.
     case wrongType(key: String, expected: Any.Type, actual: Any.Type)
-    /// One or more required ``DocumentationBundle.Info.Key``s are missing.
+    /// One or more required ``DocumentationContext/Inputs/Info/CodingKeys`` are missing.
     case missingRequiredKeys([DocumentationContext.Inputs.Info.CodingKeys])
     
     var errorDescription: String {
