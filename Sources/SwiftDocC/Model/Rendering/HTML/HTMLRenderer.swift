@@ -108,7 +108,7 @@ private struct ContextLinkProvider: LinkProvider {
     func fallbackLinkText(linkString: String) -> String {
         // For unresolved links, especially to symbols, prefer to display only the the last link component without its disambiguation
         PathHierarchy.PathParser.parse(
-            path: String(PathHierarchy.PathParser.split(documentationLink: linkString).link)
+            path: String(PathHierarchy.PathParser.extractLinkFromVerifiedDocumentationLink(linkString).link)
         ).components.last.map { String($0.name) } ?? linkString
     }
     

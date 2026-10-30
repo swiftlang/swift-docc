@@ -422,7 +422,7 @@ extension OutOfProcessReferenceResolver {
                 return .success( cachedSummary.makeResolvedTopicReference() )
             }
             
-            let linkString = String(PathHierarchy.PathParser.split(documentationLink: unresolvedReferenceString).link)
+            let linkString = String(PathHierarchy.PathParser.extractLinkFromVerifiedDocumentationLink(unresolvedReferenceString).link)
             let response: ResponseV2 = try longRunningProcess.sendAndWait(request: RequestV2.link(linkString))
             
             switch response {

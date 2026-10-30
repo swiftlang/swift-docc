@@ -16,7 +16,7 @@ private typealias Parser = PathHierarchy.PathParser
 struct PathParserTests {
     @Test
     func splitsDocumentationLinksFromArchiveIDs() async throws {
-        let split = Parser.split(documentationLink:)
+        let split = Parser.extractLinkFromVerifiedDocumentationLink(_:)
         
         #expect(split("doc:Something")  == (link:  "Something", archiveID: nil))
         #expect(split("doc:/Something") == (link: "/Something", archiveID: nil))
