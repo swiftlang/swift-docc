@@ -590,8 +590,8 @@ private extension KeyedDecodingContainer<JSONPatchOperation.CodingKeys> {
         nilValue: (() -> [Value])? = nil
     ) throws -> VariantPatchOperation<[Value]?> {
         guard !pathComponents.isEmpty else {
-            // The patch applies to the array of values, replace it as a scalar
-            return try _decodeScalarPatch(operation: operation, pathComponents: pathComponents, nilValue: { [] })
+            // The patch applies to the array of values, replace it as a scalar.
+            return try _decodeScalarPatch(operation: operation, pathComponents: pathComponents, nilValue: { nil })
         }
         
         // The patch applies to an individual value but VariantCollection can only store [Value] patches

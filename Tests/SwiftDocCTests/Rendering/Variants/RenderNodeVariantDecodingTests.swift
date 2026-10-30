@@ -354,6 +354,63 @@ struct RenderNodeVariantDecodingTests {
         expectUnsupportedPatchError(decoding: json, at: "/references")
     }
 
+    // MARK: Patches with a null value for an optional array
+
+    /// A `null` value for a property that is an optional array (here, the platforms of the metadata) means that the
+    /// property has no value for that language. It decodes as `nil`, not as an empty array.
+    @Test(arguments: ["add", "replace"])
+    func decodesNullPatchForOptionalMetadataArrayAsNil(operation: String) throws {
+        // The Swift metadata only has platforms when the patch replaces them.
+        let platforms = operation == "replace" ? #", "platforms": [{ "name": "iOS", "introducedAt": "13.0" }]"# : ""
+        let json = makeJSON(
+            patches: """
+            { "op": "\(operation)", "path": "/metadata/platforms", "value": null }
+            """,
+            metadata: """
+            { "title": "myMethod()"\(platforms) }
+            """
+        )
+
+        let node = try decodeNode(json)
+
+        let swiftPlatforms = resolved(node.metadata.platformsVariants, for: "swift")
+        if operation == "replace" {
+            #expect(swiftPlatforms?.count == 1)
+        } else {
+            #expect(swiftPlatforms == nil)
+        }
+        #expect(resolved(node.metadata.platformsVariants, for: "occ") == nil, "A null value is nil, not an empty array")
+    }
+
+    /// The same for the fragments of a reference, which are also an optional array.
+    @Test func decodesNullPatchForOptionalReferenceArrayAsNil() throws {
+        let referenceID = "doc://org.swift.docc.test/documentation/MyKit/MyClass"
+        let escapedID = "doc:~1~1org.swift.docc.test~1documentation~1MyKit~1MyClass"
+        let json = makeJSON(
+            patches: """
+            { "op": "replace", "path": "/references/\(escapedID)/fragments", "value": null }
+            """,
+            references: """
+            {
+              "\(referenceID)": {
+                "type": "topic",
+                "identifier": "\(referenceID)",
+                "title": "MyClass",
+                "url": "/documentation/mykit/myclass",
+                "kind": "symbol",
+                "fragments": [{ "kind": "text", "text": "class MyClass" }]
+              }
+            }
+            """
+        )
+
+        let node = try decodeNode(json)
+
+        let reference = try #require(node.references[referenceID] as? TopicRenderReference)
+        #expect(resolved(reference.fragmentsVariants, for: "swift")?.count == 1)
+        #expect(resolved(reference.fragmentsVariants, for: "occ") == nil, "A null value is nil, not an empty array")
+    }
+
     // MARK: Test helpers
 
     /// Returns the JSON for a Swift render node with the given primary content sections and Objective-C variant overrides.
@@ -439,6 +496,23 @@ struct RenderNodeVariantDecodingTests {
     /// Decodes the render node JSON.
     private func decodeNode(_ json: String) throws -> RenderNode {
         try RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: Data(json.utf8))
+    }
+
+    /// Returns the value of the variant collection for the given language: the default value with the patches
+    /// of that language's variants applied.
+    private func resolved<Value>(_ collection: VariantCollection<Value>, for languageID: String) -> Value {
+        var result = collection.defaultValue
+        for variant in collection.variants where variant.traits == [.interfaceLanguage(languageID)] {
+            for patch in variant.patch {
+                switch patch {
+                case .replace(let value), .add(let value):
+                    result = value
+                case .remove:
+                    break // A non-optional value can't be removed.
+                }
+            }
+        }
+        return result
     }
 
     /// Returns the primary content sections of the render node for the given language.
