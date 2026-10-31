@@ -722,6 +722,9 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     // MARK: Directives
     
     func visit(_ directive: BlockDirective) -> HTMLNode {
+        // TODO: Can we parse the directive automatically here, without importing SwiftDocC?
+        let arguments = directive.argumentText.parseNameValueArguments()
+        
         switch directive.name {
         case "Small":
             // <small> is phrasing content and should be wrapped by <p>,
@@ -730,6 +733,14 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 (child as? Paragraph).map { visit($0.children) } ?? [visit(child)]
             }
             return p(contents: [small(contents: content)])
+        case "Image":
+            let altText = arguments.first(where: { arg in arg.name == "alt"})?.value
+            
+            guard let source = arguments.first(where: { arg in arg.name == "source"})?.value else {
+                fatalError("Malformed Image directive (TODO: move directive parsing elsewhere)")
+            }
+            
+            return p(contents: [makePicture(from: source, altText: altText)])
         default:
             return .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
         }
