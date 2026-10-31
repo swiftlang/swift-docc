@@ -41,10 +41,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// A type that provides information about other pages that the rendered page references.
     let linkProvider: Provider
     
-    package init(path: String, goal: RenderGoal, linkProvider: Provider) {
+    let parsedDirectiveProvider: any ParsedDirectiveProvider // ???: Should this use a generic like Provider?
+    
+    package init(path: String, goal: RenderGoal, linkProvider: Provider, parsedDirectiveProvider: ParsedDirectiveProvider) {
         self.pathComponents = path.components(separatedBy: "/")
         self.goal = goal
         self.linkProvider = linkProvider
+        self.parsedDirectiveProvider = parsedDirectiveProvider
     }
     
     /// Transforms a markdown paragraph into a `<p>` HTML element.
@@ -722,27 +725,22 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     // MARK: Directives
     
     func visit(_ directive: BlockDirective) -> HTMLNode {
-        // TODO: Can we parse the directive automatically here, without importing SwiftDocC?
-        let arguments = directive.argumentText.parseNameValueArguments()
+        guard let parsed = self.parsedDirectiveProvider.parse(blockDirective: directive) else {
+            return .text("") // ???: What's the best way to register an error here?
+        }
         
-        switch directive.name {
-        case "Small":
-            // <small> is phrasing content and should be wrapped by <p>,
+        switch parsed {
+        case .small:
+            //<small> is phrasing content and should be wrapped by <p>,
             // per the HTML spec - not the other way around
             let content = directive.children.flatMap { child -> [HTMLNode] in
                 (child as? Paragraph).map { visit($0.children) } ?? [visit(child)]
             }
             return p(contents: [small(contents: content)])
-        case "Image":
-            let altText = arguments.first(where: { arg in arg.name == "alt"})?.value
-            
-            guard let source = arguments.first(where: { arg in arg.name == "source"})?.value else {
-                fatalError("Malformed Image directive (TODO: move directive parsing elsewhere)")
-            }
-            
+        case .image(let imageDirective):
+            let altText = imageDirective.altText
+            let source = imageDirective.source
             return p(contents: [makePicture(from: source, altText: altText)])
-        default:
-            return .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
         }
     }
     

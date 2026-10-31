@@ -1,0 +1,35 @@
+/*
+ This source file is part of the Swift.org open source project
+
+ Copyright (c) 2026 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+package import Markdown
+
+/// A type that provides information about other pages, and on-page elements, that the rendered page references.
+package protocol ParsedDirectiveProvider {
+    /// Parses and provides information about the block directive, or throws if the block directive can't be parsed.
+    func parse(blockDirective: BlockDirective) -> ParsedDirective?
+}
+
+/// A information about a block directive whose arguments and children the SwiftDocC module has already parsed and validated.
+package enum ParsedDirective {
+    case small
+    case image(Image)
+
+    package struct Image {
+        package var source: String
+        package var altText: String?
+        package var caption: [any Markup]
+        package init(source: String, altText: String? = nil, caption: [any Markup]) {
+            self.source = source
+            self.altText = altText
+            self.caption = caption
+            // TODO: Support device frames
+        }
+    }
+}

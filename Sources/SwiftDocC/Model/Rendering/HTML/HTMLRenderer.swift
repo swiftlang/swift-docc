@@ -137,7 +137,8 @@ package struct HTMLRenderer {
         self.renderer = MarkdownRenderer(
             path: ContextLinkProvider.filePath(for: reference),
             goal: goal,
-            linkProvider: ContextLinkProvider(reference: reference, context: context, goal: goal)
+            linkProvider: ContextLinkProvider(reference: reference, context: context, goal: goal),
+            parsedDirectiveProvider: HTMLRendererParsedDirectiveProvider(context: context, featureFlags: featureFlags)
         )
     }
     
