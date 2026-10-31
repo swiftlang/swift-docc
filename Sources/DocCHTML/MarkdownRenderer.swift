@@ -377,20 +377,28 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// </picture>
     /// ```
     func visit(_ image: Image) -> HTMLNode {
+        guard let source = image.source else {
+            fatalError("No source??")
+        }
+        return makePicture(from: source, altText: image.altText)
+    }
+    
+    private func makePicture(from imageSource: String, altText: String?) -> HTMLNode {
         var imgAttributes: [HTMLNode.Attribute] = [
             .decoding(.async),
             .loading(.lazy),
         ]
-        if let altText = image.altText {
+        
+        if let altText {
             imgAttributes.insert(.alt(altText), at: 0)
         }
         
-        if let source = image.source, source.isAbsoluteWebURL {
-            imgAttributes.append(.src(source))
+        if imageSource.isAbsoluteWebURL {
+            imgAttributes.append(.src(imageSource))
             return picture(contents: [img(attributes: imgAttributes)])
         }
         
-        guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.files.isEmpty else {
+        guard let asset = linkProvider.assetNamed(imageSource), !asset.files.isEmpty else {
             return .text("") // ???: What do we return for images that won't display anything?
         }
         
