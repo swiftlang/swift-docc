@@ -40,10 +40,8 @@ struct HTMLRenderingTests {
         var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderArticle(article)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section id="hero" class="article">
             <nav id="breadcrumbs">
@@ -96,10 +94,8 @@ struct HTMLRenderingTests {
             var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -145,10 +141,8 @@ struct HTMLRenderingTests {
             var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -211,10 +205,8 @@ struct HTMLRenderingTests {
             var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -260,10 +252,8 @@ struct HTMLRenderingTests {
             var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -322,17 +312,14 @@ struct HTMLRenderingTests {
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        
         let reference = try #require(context.documentationCache.reference(symbolID: "sub-class-id"))
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
         var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section>
             <nav id="breadcrumbs">
@@ -405,10 +392,8 @@ struct HTMLRenderingTests {
         var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section>
             <nav id="breadcrumbs">
@@ -488,10 +473,8 @@ struct HTMLRenderingTests {
         var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section>
             <nav id="breadcrumbs">
@@ -581,10 +564,8 @@ struct HTMLRenderingTests {
         var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section id="hero" class="module">
             <hgroup>
@@ -684,10 +665,8 @@ struct HTMLRenderingTests {
             var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -742,10 +721,8 @@ struct HTMLRenderingTests {
             var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderArticle(article)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section id="hero" class="article">
                 <nav id="breadcrumbs">
@@ -808,5 +785,14 @@ struct HTMLRenderingTests {
     
     private func makeHTMLRenderer(for reference: ResolvedTopicReference, in context: DocumentationContext) -> HTMLRenderer {
         HTMLRenderer(reference: reference, context: context, jsonRenderContext: .init(documentationContext: context), goal: .richness, featureFlags: context.configuration.featureFlags)
+    }
+}
+
+private extension HTMLRenderer.RenderedPageInfo {
+    var prettyHTMLString: String? {
+        content.map {
+            let data = HTMLFormatter.format($0, options: .prettyPrint)
+            return String(decoding: data, as: UTF8.self)
+        }
     }
 }
