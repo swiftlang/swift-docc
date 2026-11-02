@@ -162,7 +162,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
   "kind" : "symbol",
   "role" : "collection",
@@ -177,7 +176,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -209,7 +207,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

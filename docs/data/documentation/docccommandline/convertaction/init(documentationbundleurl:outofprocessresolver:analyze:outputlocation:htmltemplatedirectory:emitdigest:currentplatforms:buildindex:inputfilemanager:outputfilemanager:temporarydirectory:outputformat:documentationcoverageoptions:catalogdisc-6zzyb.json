@@ -1847,7 +1847,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommandLine\/documentation\/DocCCommandLine",
   "kind" : "symbol",
   "role" : "collection",
@@ -1862,7 +1861,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1897,7 +1895,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1932,7 +1929,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -2532,7 +2528,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2567,7 +2562,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2602,7 +2596,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2655,7 +2648,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "CatalogDiscoveryOptions"
     }
   ],
@@ -2689,7 +2682,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "DiagnosticEngine"
     }
   ],
@@ -2723,7 +2716,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "DocumentationCoverageOptions"
     }
   ],
@@ -2757,7 +2750,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "FeatureFlags"
     }
   ],
@@ -2791,7 +2784,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "FileManagerProtocol"
     }
   ],
@@ -2825,7 +2818,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "OutOfProcessReferenceResolver"
     }
   ],
@@ -2859,7 +2852,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "PlatformVersion"
     }
   ],
@@ -2893,7 +2886,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "ReadOnlyFileManagerProtocol"
     }
   ],
@@ -2927,7 +2920,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "SourceRepository"
     }
   ],

@@ -72,7 +72,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
   "kind" : "symbol",
   "role" : "collection",
@@ -84,7 +83,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit",
   "kind" : "symbol",
   "role" : "collection",
@@ -96,7 +94,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -129,7 +126,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -171,7 +167,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Availability",
   "kind" : "symbol",
   "navigatorTitle" : [
@@ -189,7 +184,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

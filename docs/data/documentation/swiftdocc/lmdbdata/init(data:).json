@@ -136,7 +136,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -151,7 +150,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -184,7 +182,6 @@
 
   ],
   "defaultImplementations" : 1,
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -224,7 +221,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

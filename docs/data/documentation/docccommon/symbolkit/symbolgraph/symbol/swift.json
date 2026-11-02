@@ -16,7 +16,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "SymbolKit",
-    "externalID" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc",
+    "externalID" : "s:e:s:e:s:9SymbolKit0A5GraphV0A0V5SwiftO16GenericParameterV10DocCCommonE5usingAiJ04FastaC11JSONDecoderVz_ts13DecodingErrorOYKcfc",
     "modules" : [
       {
         "name" : "DocCCommon",
@@ -75,7 +75,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon",
   "kind" : "symbol",
   "role" : "collection",
@@ -87,7 +86,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit",
   "kind" : "symbol",
   "role" : "collection",
@@ -99,7 +97,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -132,7 +129,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -174,7 +170,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCCommon\/documentation\/DocCCommon\/SymbolKit\/SymbolGraph\/Symbol\/Swift",
   "kind" : "symbol",
   "navigatorTitle" : [
@@ -192,7 +187,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -252,7 +246,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -312,7 +305,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -372,7 +364,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

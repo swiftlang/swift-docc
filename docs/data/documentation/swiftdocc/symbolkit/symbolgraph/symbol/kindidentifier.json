@@ -156,7 +156,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -168,7 +167,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit",
   "kind" : "symbol",
   "role" : "collection",
@@ -180,7 +178,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph",
   "kind" : "symbol",
   "navigatorTitle" : [
@@ -198,7 +195,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol",
   "kind" : "symbol",
   "navigatorTitle" : [
@@ -216,7 +212,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -270,7 +265,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

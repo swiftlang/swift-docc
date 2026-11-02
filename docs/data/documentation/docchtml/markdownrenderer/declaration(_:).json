@@ -293,7 +293,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "SourceLanguage"
     }
   ],
@@ -306,7 +306,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
   "kind" : "symbol",
   "role" : "collection",
@@ -318,7 +317,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -353,7 +351,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -417,7 +414,6 @@
       }
     ]
   },
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -492,7 +488,6 @@
       }
     ]
   },
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -548,7 +543,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -577,7 +571,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

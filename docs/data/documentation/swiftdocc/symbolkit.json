@@ -12,7 +12,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:m:s:e:s:e:s:e:s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV9SwiftDocCE2eeoiySbAG_AGtFZ",
+    "externalID" : "s:m:s:e:s:e:s:e:s:9SymbolKit0A5GraphV0A0V14KindIdentifierV9SwiftDocCE05swiftA17CouldHaveChildrenSbvp",
     "modules" : [
       {
         "name" : "SwiftDocC"
@@ -62,7 +62,6 @@
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
   "kind" : "symbol",
   "role" : "collection",
@@ -74,7 +73,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit",
   "kind" : "symbol",
   "role" : "collection",
@@ -86,7 +84,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph",
   "kind" : "symbol",
   "navigatorTitle" : [
