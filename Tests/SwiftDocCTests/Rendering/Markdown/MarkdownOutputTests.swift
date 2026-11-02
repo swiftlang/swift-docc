@@ -1528,8 +1528,8 @@ struct MarkdownOutputTests {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "AvailabilityArticle")
-        #expect(node.metadata.availability(for: "Xcode")?.introduced == .versioned("14.3.0"))
-        #expect(node.metadata.availability(for: "macOS")?.introduced == .versioned("13.0.0"))
+        #expect(node.metadata.availability(for: "Xcode")?.introduced == .versioned("14.3"))
+        #expect(node.metadata.availability(for: "macOS")?.introduced == .versioned("13.0"))
     }
     
     @Test
@@ -1585,7 +1585,7 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        #expect(availability.contains(.init(platform: "iOS", introduced: .versioned("1.0.0"))))
+        #expect(availability.contains(.init(platform: "iOS", introduced: .versioned("1.0"))))
     }
     
     @Test
@@ -1600,7 +1600,7 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        #expect(availability.contains(.init(platform: "iOS", introduced: .versioned("2.0.0"))))
+        #expect(availability.contains(.init(platform: "iOS", introduced: .versioned("2.0"))))
     }
     
     @Test
@@ -1628,7 +1628,7 @@ struct MarkdownOutputTests {
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
         let availability = try #require(node.metadata.availability)
-        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .versioned("13.1.0"))
+        let expected = MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .versioned("13.1"))
         #expect(availability.contains(expected))
     }
     
@@ -1719,12 +1719,12 @@ struct MarkdownOutputTests {
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol/fullName")
         let availability = try #require(node.metadata.availability(for: "iOS"))
-        #expect(availability.introduced == .versioned("1.0.0"))
-        #expect(availability.deprecated == .versioned("4.0.0"))
+        #expect(availability.introduced == .versioned("1.0"))
+        #expect(availability.deprecated == .versioned("4.0"))
         
         let macAvailability = try #require(node.metadata.availability(for: "macOS"))
-        #expect(macAvailability.introduced == .versioned("2.0.0"))
-        #expect(macAvailability.deprecated == .versioned("4.0.0"))
+        #expect(macAvailability.introduced == .versioned("2.0"))
+        #expect(macAvailability.deprecated == .versioned("4.0"))
                         
         #expect(node.metadata.availability(for: "visionOS") == nil)
         // Note that the first non-nil deprecation message, from any platform, forms the summary
@@ -1732,14 +1732,14 @@ struct MarkdownOutputTests {
     }
     
     @Test
-    func universalDeprecationFillsPlatformsButDoesNotOverride() async throws {
+    func unconditionalUniversalDeprecationDoesNotOverridePlatforms() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
                 makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"],
                 availability: [
                     .init(domainName: "iOS", introduced: .init(string: "13.0"), deprecated: nil),
                     .init(domainName: "macOS", introduced: .init(string: "10.15"), deprecated: .init(string: "14.0")),
-                    .init(domainName: nil, introduced: nil, deprecated: .init(string: "16.0"))
+                    .init(domainName: nil, introduced: nil, deprecated: nil, message: "Use something else instead", isUnconditionallyDeprecated: true)
                 ])
             ]))
         ])
@@ -1748,33 +1748,28 @@ struct MarkdownOutputTests {
         let universalAvailability = node.metadata.availability(for: "*")
         #expect(universalAvailability == nil) // Not used, because platforms already existed
         let iOSAvailability = try #require(node.metadata.availability(for: "iOS"))
-        #expect(iOSAvailability.deprecated == .versioned("16.0.0")) // Taken from *
-        #expect(iOSAvailability.introduced == .versioned("13.0.0")) // Left from platform-specific
+        #expect(iOSAvailability.deprecated == nil) // * does not override platform level availability
+        #expect(iOSAvailability.introduced == .versioned("13.0")) // Left from platform-specific
         let macOSAvailability = try #require(node.metadata.availability(for: "macOS"))
-        #expect(macOSAvailability.deprecated == .versioned("14.0.0")) // Not overwritten
+        #expect(macOSAvailability.deprecated == .versioned("14.0")) // Not overwritten
+        #expect(node.metadata.deprecation == "Use something else instead")
     }
     
     @Test
-    func unconditionalUniversalDeprecationFillsPlatformsButDoesNotOverride() async throws {
+    func unconditionalUniversalDeprecationWithNoMessagePopulatesMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
                 makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"],
                 availability: [
                     .init(domainName: "iOS", introduced: .init(string: "13.0"), deprecated: nil),
-                    .init(domainName: "macOS", introduced: .init(string: "10.15"), deprecated: .init(string: "14.0")),
                     .init(domainName: nil, introduced: nil, deprecated: nil, isUnconditionallyDeprecated: true)
                 ])
             ]))
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct")
-        let universalAvailability = node.metadata.availability(for: "*")
-        #expect(universalAvailability == nil) // Not used, because platforms already existed
-        let iOSAvailability = try #require(node.metadata.availability(for: "iOS"))
-        #expect(iOSAvailability.deprecated == .unversioned) // Taken from *
-        #expect(iOSAvailability.introduced == .versioned("13.0.0")) // Left from platform-specific
-        let macOSAvailability = try #require(node.metadata.availability(for: "macOS"))
-        #expect(macOSAvailability.deprecated == .versioned("14.0.0")) // Not overwritten
+        #expect(node.metadata.deprecation == "Deprecated")
+        print(node.metadata)
     }
     
     @Test

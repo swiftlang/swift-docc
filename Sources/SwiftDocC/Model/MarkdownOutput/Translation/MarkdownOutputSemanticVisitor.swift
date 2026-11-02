@@ -396,10 +396,18 @@ private extension MarkdownOutputNode.Metadata.Symbol {
 
 private extension MarkdownOutputNode.Metadata.Availability {
     init(_ platform: Availability.Platform) {
+        let deprecated: Version?
+        if platform.isUnconditionallyDeprecated {
+            deprecated = .unversioned
+        } else if let version = platform.deprecated {
+            deprecated = .versioned(version.stringRepresentation(precisionUpToNonsignificant: .minor))
+        } else {
+            deprecated = nil
+        }
         self.init(
             platform: platform.name,
             introduced: .init(string: platform.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor)),
-            deprecated: .init(string: platform.deprecated?.stringRepresentation(precisionUpToNonsignificant: .minor))
+            deprecated: deprecated
         )
     }
 }
