@@ -154,7 +154,7 @@ public struct GeneratedCurationWriter {
                     updatedFileURL = url
                 }
                 // Append to the end of the file. See if we can avoid reading the existing contents on disk.
-                var contents = try String(contentsOf: existingURL)
+                var contents = try String(contentsOf: existingURL, encoding: .utf8)
                 contents.append("\n")
                 contents.append(curationText)
                 contentsToWrite[updatedFileURL] = contents

@@ -8,12 +8,11 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-package import struct Foundation.URL
 private import DocCCommon
 
 package extension MarkdownRenderer {
     /// Creates an HTML element for the breadcrumbs that lead to the renderer's current page.
-    func breadcrumbs(references: [URL], currentPageNames: LinkedElement.Names) -> HTMLNode {
+    func breadcrumbs(references: [String], currentPageNames: LinkedElement.Names) -> HTMLNode {
         // Breadcrumbs handle symbols differently than most elements in that everything uses a default style (no "code voice")
         func nameElements(for names: LinkedElement.Names) -> [HTMLNode] {
             switch names {

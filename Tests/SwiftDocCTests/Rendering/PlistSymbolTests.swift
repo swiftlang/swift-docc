@@ -124,7 +124,7 @@ class PlistSymbolTests: XCTestCase {
     }
     
     func testDecodeDetailsSectionNoIdeTitle() throws {
-        let modifiedJSON = try String(contentsOf: plistSymbolURL).replacingOccurrences(of: "\"ideTitle\": \"WiFi access\",", with: "")
+        let modifiedJSON = try String(contentsOf: plistSymbolURL, encoding: .utf8).replacingOccurrences(of: "\"ideTitle\": \"WiFi access\",", with: "")
         let symbol = try RenderNode.decode(fromJSON: Data(modifiedJSON.utf8))
 
         let section = try XCTUnwrap(symbol.primaryContentSections.first(where: { $0.kind == .plistDetails }) as? PropertyListDetailsRenderSection)
@@ -136,7 +136,7 @@ class PlistSymbolTests: XCTestCase {
     }
         
     func testDecodePossibleValuesNoTitle() throws {
-        let modifiedJSON = try String(contentsOf: plistSymbolURL).replacingOccurrences(of: "\"title\": \"Possible Values\",", with: "")
+        let modifiedJSON = try String(contentsOf: plistSymbolURL, encoding: .utf8).replacingOccurrences(of: "\"title\": \"Possible Values\",", with: "")
         let symbol = try RenderNode.decode(fromJSON: Data(modifiedJSON.utf8))
 
         let section = try XCTUnwrap(symbol.primaryContentSections.first(where: { $0.kind == .possibleValues }) as? PossibleValuesRenderSection)

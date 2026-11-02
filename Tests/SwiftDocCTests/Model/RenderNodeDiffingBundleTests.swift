@@ -21,7 +21,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let modification = { (url: URL) in
             let symbolURL = url.appendingPathComponent("documentation/mykit.md")
-            let text = try String(contentsOf: symbolURL).replacingOccurrences(of: """
+            let text = try String(contentsOf: symbolURL, encoding: .utf8).replacingOccurrences(of: """
             ## Discussion
 
             MyKit is the best module
@@ -47,7 +47,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let modification = { (url: URL) in
             let articleURL = url.appendingPathComponent("article.md")
-            let text = try String(contentsOf: articleURL).replacingOccurrences(of: "## Topics", with: """
+            let text = try String(contentsOf: articleURL, encoding: .utf8).replacingOccurrences(of: "## Topics", with: """
             ## Topics
 
             ### Tutorials
@@ -82,7 +82,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let modification = { (url: URL) in
             let articleURL = url.appendingPathComponent("article.md")
-            let text = try String(contentsOf: articleURL).replacingOccurrences(of: """
+            let text = try String(contentsOf: articleURL, encoding: .utf8).replacingOccurrences(of: """
             ## See Also
             
             - [Website](https://www.website.com)
@@ -114,7 +114,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let modification = { (url: URL) in
             let symbolURL = url.appendingPathComponent("documentation/mykit.md")
-            let text = try String(contentsOf: symbolURL).replacingOccurrences(of: """
+            let text = try String(contentsOf: symbolURL, encoding: .utf8).replacingOccurrences(of: """
             ### Extensions to other frameworks
 
              - ``SideKit/UncuratedClass/angle``
@@ -147,7 +147,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let modification = { (url: URL) in
             let symbolURL = url.appendingPathComponent("documentation/myclass.md")
-            let text = try String(contentsOf: symbolURL).replacingOccurrences(of: "MyClass abstract.", with: newAbstractValue)
+            let text = try String(contentsOf: symbolURL, encoding: .utf8).replacingOccurrences(of: "MyClass abstract.", with: newAbstractValue)
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
@@ -179,7 +179,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let modification = { (url: URL) in
             let symbolURL = url.appendingPathComponent("documentation/myprotocol.md")
-            let text = try String(contentsOf: symbolURL).replacingOccurrences(of: "# <doc:MyKit/MyProtocol>", with: """
+            let text = try String(contentsOf: symbolURL, encoding: .utf8).replacingOccurrences(of: "# <doc:MyKit/MyProtocol>", with: """
             # <doc:MyKit/MyProtocol>
             
             @DeprecationSummary {
@@ -218,7 +218,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let modification = { (url: URL) in
             let symbolURL = url.appendingPathComponent("documentation/mykit.md")
-            let text = try String(contentsOf: symbolURL).replacingOccurrences(of: "# ``MyKit``", with: """
+            let text = try String(contentsOf: symbolURL, encoding: .utf8).replacingOccurrences(of: "# ``MyKit``", with: """
             # ``MyKit``
 
             @Metadata {
@@ -253,7 +253,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let modification = { (url: URL) in
             let articleURL = url.appendingPathComponent("article.md")
-            let text = try String(contentsOf: articleURL).replacingOccurrences(of: "# My Cool Article", with: """
+            let text = try String(contentsOf: articleURL, encoding: .utf8).replacingOccurrences(of: "# My Cool Article", with: """
             # My Cool Article
 
             @Metadata {

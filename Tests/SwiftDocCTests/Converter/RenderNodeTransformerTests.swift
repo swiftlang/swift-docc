@@ -16,7 +16,7 @@ class RenderNodeTransformerTests: XCTestCase {
     func testCombinationTransformation() throws {
         let symbolJSON = try String(contentsOf: Bundle.module.url(
             forResource: "symbol-with-automatic-see-also-section", withExtension: "json",
-            subdirectory: "Converter Fixtures")!)
+            subdirectory: "Converter Fixtures")!, encoding: .utf8)
 
         let renderNode = try RenderNodeTransformer(renderNodeData: symbolJSON.data(using: .utf8)!)
             .apply(transformation:

@@ -8,7 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-package import struct Foundation.URL
 package import Markdown
 package import DocCCommon
 
@@ -20,9 +19,9 @@ package extension MarkdownRenderer {
         /// Any additional free-form content that describes the group of API.
         package var content: [any Markup]
         /// A list of already resolved references that the renderer should display, in order, for this group.
-        package var references: [URL]
+        package var references: [String]
         
-        package init(title: String?, content: [any Markup], references: [URL]) {
+        package init(title: String?, content: [any Markup], references: [String]) {
             self.title = title
             self.content = content
             self.references = references

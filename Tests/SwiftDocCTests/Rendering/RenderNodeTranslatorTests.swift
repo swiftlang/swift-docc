@@ -761,7 +761,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
         
-        let symbolGraphWithModifiedPlatform = try String(contentsOf: inheritedDefaultImplementationsSGF)
+        let symbolGraphWithModifiedPlatform = try String(contentsOf: inheritedDefaultImplementationsSGF, encoding: .utf8)
         .replacingOccurrences(
             of: """
                 "architecture": "x86_64",

@@ -61,6 +61,14 @@ struct WordBreakTests {
         <wbr>
         Class
         """)
+        
+        assertWordBreaks(for: "func doSomething(with: Int, and: Bool) throws -> String", matches: """
+        func do
+        <wbr>
+        Something(
+        <wbr>
+        with: Int, and: Bool) throws -> String
+        """)
     }
     
     private func assertWordBreaks(

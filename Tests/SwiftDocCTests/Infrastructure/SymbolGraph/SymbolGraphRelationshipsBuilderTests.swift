@@ -120,7 +120,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, selector: swiftSelector, in: inputs, localCache: documentationCache, externalCache: .init(), engine: engine)
         
         // Test default conforms to was added
-        guard let conformsTo = (documentationCache["A"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
+        guard let conformsTo = ((documentationCache["A"]!.semantic as! Symbol).relationshipsVariants.firstValue ?? .init()).groups.first(where: { group -> Bool in
             return group.kind == RelationshipsGroup.Kind.conformsTo
         }) else {
             XCTFail("Conforms to group not added")
@@ -129,7 +129,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertEqual(conformsTo.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/B")
         
         // Test default conformance was added
-        guard let conforming = (documentationCache["B"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
+        guard let conforming = ((documentationCache["B"]!.semantic as! Symbol).relationshipsVariants.firstValue ?? .init()).groups.first(where: { group -> Bool in
             return group.kind == RelationshipsGroup.Kind.conformingTypes
         }) else {
             XCTFail("Conforming types not added")
@@ -149,7 +149,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: inputs, localCache: documentationCache, externalCache: .init(), engine: engine)
         
         // Test inherits was added
-        guard let inherits = (documentationCache["A"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
+        guard let inherits = ((documentationCache["A"]!.semantic as! Symbol).relationshipsVariants.firstValue ?? .init()).groups.first(where: { group -> Bool in
             return group.kind == RelationshipsGroup.Kind.inheritsFrom
         }) else {
             XCTFail("Inherits from not added")
@@ -158,7 +158,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertEqual(inherits.destinations.first?.url?.absoluteString, "doc://com.example.test/documentation/SomeModuleName/B")
         
         // Test descendants were added
-        guard let inherited = (documentationCache["B"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
+        guard let inherited = ((documentationCache["B"]!.semantic as! Symbol).relationshipsVariants.firstValue ?? .init()).groups.first(where: { group -> Bool in
             return group.kind == RelationshipsGroup.Kind.inheritedBy
         }) else {
             XCTFail("Inherited by types not added")
@@ -192,7 +192,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         
         SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: inputs, localCache: documentationCache, externalCache: .init(), engine: engine)
         
-        let relationships = (documentationCache["A"]!.semantic as! Symbol).relationships
+        let relationships = ((documentationCache["A"]!.semantic as! Symbol).relationshipsVariants.firstValue ?? .init())
         guard let inheritsShouldHaveFallback = relationships.groups.first(where: { group -> Bool in
             return group.kind == RelationshipsGroup.Kind.inheritsFrom
         }) else {

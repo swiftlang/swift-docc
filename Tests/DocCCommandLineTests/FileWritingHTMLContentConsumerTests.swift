@@ -307,6 +307,18 @@ struct FileWritingHTMLContentConsumerTests {
               </a>
             </li>
           </ul>
+          <h2>See Also</h2>
+          <h3>Something custom</h3>
+          <ul>
+            <li>
+              <a href="../somearticle/index.html">
+                <p>Some article</p>
+              </a>
+              <p>
+                This is a <i>formatted</i> article.
+              </p>
+            </li>
+          </ul>
         </article></noscript>
             <div id="app"></div>
           </body>
@@ -431,6 +443,15 @@ struct FileWritingHTMLContentConsumerTests {
           <p>This subsection describes something more detailed.</p>
           <h2>See Also</h2>
           <h3>Related Documentation</h3>
+          <ul>
+            <li>
+              <a href="../someclass/index.html">
+                <code>class SomeClass</code>
+              </a>
+              <p>Some in-source description of this class.</p>
+            </li>
+          </ul>
+          <h3>Something custom</h3>
           <ul>
             <li>
               <a href="../someclass/index.html">

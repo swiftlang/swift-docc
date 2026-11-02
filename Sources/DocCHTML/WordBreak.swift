@@ -35,6 +35,10 @@ enum RenderHelpers {
             else {
                 continue
             }
+            // Whitespace is a natural breaking point for text so it's unnecessary to insert a `<wbr>` element before or after a space.
+            guard !current.isSpace && !previous.isSpace else {
+                continue
+            }
             
             result.append(.text(String(utf8View[fromIndex ..< index])!))
             if index < utf8View.endIndex {
@@ -63,6 +67,9 @@ private extension UTF8.CodeUnit {
     }
     var isLowercaseASCIILetter: Bool {
         UTF8.CodeUnit(ascii: "a") <= self && self <= UTF8.CodeUnit(ascii: "z")
+    }
+    var isSpace: Bool {
+        self == UTF8.CodeUnit(ascii: " ")
     }
     
     var isSyntaxSeparator: Bool {

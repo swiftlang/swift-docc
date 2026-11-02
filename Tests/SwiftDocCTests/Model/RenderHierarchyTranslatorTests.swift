@@ -92,7 +92,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
         let (_, _, context) = try await testBundleAndContext(copying: "LegacyBundle_DoNotUseInNewTests") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
-            let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
+            let text = try String(contentsOf: myKitURL, encoding: .utf8).replacingOccurrences(of: "## Topics", with: """
             ## Topics
 
             ### Tutorials

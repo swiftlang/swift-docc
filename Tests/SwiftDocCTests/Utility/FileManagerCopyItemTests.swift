@@ -29,7 +29,7 @@ class FileManagerCopyItemTests: XCTestCase {
     /// This subclass reproduces that behavior by:
     /// - For directory copies: creating the destination, copying only the first child, then throwing
     /// - For file copies: performing the real copy, then throwing (file exists but attributes weren't set)
-    class PartialCopyFileManager: FileManager {
+    final class PartialCopyFileManager: FileManager {
         override func copyItem(at srcURL: URL, to dstURL: URL) throws {
             var isDir: ObjCBool = false
             guard fileExists(atPath: srcURL.path, isDirectory: &isDir) else {

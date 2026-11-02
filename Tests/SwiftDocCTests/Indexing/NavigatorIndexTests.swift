@@ -2352,7 +2352,7 @@ fileprivate func assertUniqueIDs(node: NavigatorTree.Node, message: String = "Th
 fileprivate func testTree(named name: String) throws -> String {
     let fileURL = Bundle.module.url(
         forResource: name, withExtension: "txt", subdirectory: "Test Resources")!
-    return try String(contentsOf: fileURL).trimmingCharacters(in: .newlines)
+    return try String(contentsOf: fileURL, encoding: .utf8).trimmingCharacters(in: .newlines)
 }
 
 fileprivate func buildRenderJSON(
