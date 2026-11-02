@@ -290,13 +290,63 @@ struct MarkdownRendererTests {
     
     @Test
     func renderingSmallDirective() async throws {
+        let stubParsedDirectiveProvider = StubParsedDirectiveProvider(parsed: .small)
         assert(
             rendering: """
             @Small {
                 Licensed under Apache License v2.0
             }
             """,
+            parsedDirectiveProvider: stubParsedDirectiveProvider,
             matches: "<p><small>Licensed under Apache License v2.0</small></p>")
+    }
+    
+    @Test
+    func renderingImageDirective() async throws {
+        var stubParsedDirectiveProvider = StubParsedDirectiveProvider(parsed: .image(.init(source: "test_source", altText: "This is some alt text", caption: [ Text("This is the "), Strong([Text("caption")]), Text(".")])))
+        let linkedAsset = LinkedAsset(files: [
+            .light : [2 : "test_source@2x.png"],
+            .dark : [2 : "test_source~dark@2x.png"],
+        ])
+        assert(
+            rendering: """
+            @Image(source: test_source, alt: "This is some alt text") {
+                This is the **caption**.
+            }
+            """,
+            assetToReturn: linkedAsset,
+            prettyFormatted: true,
+            parsedDirectiveProvider: stubParsedDirectiveProvider,
+            matches: """
+            <figure>
+              <picture>
+                <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
+                <img alt="This is some alt text" decoding="async" loading="lazy">
+              </picture>
+              <figcaption>
+                This is the <b>caption</b>.
+              </figcaption>
+            </figure>
+            """)
+        
+        stubParsedDirectiveProvider = StubParsedDirectiveProvider(parsed: .image(.init(source: "test_source", altText: "This is some alt text", caption: [])))
+        assert(
+            rendering: """
+            @Image(source: test_source, alt: "This is some alt text")
+            """,
+            assetToReturn: linkedAsset,
+            prettyFormatted: true,
+            parsedDirectiveProvider: stubParsedDirectiveProvider,
+            matches: """
+            <figure>
+              <picture>
+                <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
+                <img alt="This is some alt text" decoding="async" loading="lazy">
+              </picture>
+            </figure>
+            """)
     }
     
     @Test
@@ -640,6 +690,7 @@ struct MarkdownRendererTests {
         assetToReturn: LinkedAsset? = nil,
         fallbackLinkTextToReturn: String? = nil,
         prettyFormatted: Bool = false,
+        parsedDirectiveProvider: any ParsedDirectiveProvider = StubParsedDirectiveProvider(),
         matches expectedHTML: String,
         sourceLocation: Testing.SourceLocation = #_sourceLocation
     ) {
@@ -650,7 +701,8 @@ struct MarkdownRendererTests {
                 elementToReturn: elementToReturn,
                 assetToReturn: assetToReturn,
                 fallbackLinkTextToReturn: fallbackLinkTextToReturn
-            )
+            ),
+            parsedDirectiveProvider: parsedDirectiveProvider
         )
         let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
         htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expected: expectedHTML, sourceLocation: sourceLocation)

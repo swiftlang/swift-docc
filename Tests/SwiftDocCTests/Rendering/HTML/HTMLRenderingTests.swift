@@ -791,7 +791,9 @@ struct HTMLRenderingTests {
             
             A root page with an image directive.
             
-            @Image(source: ImageName, alt: "Some alt text")
+            @Image(source: ImageName, alt: "Some alt text") {
+                with a caption!
+            }
             """)
             
             DataFile(name: "ImageName@2x.png", data: Data())
@@ -826,13 +828,16 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Overview">Overview</a>
             </h2>
-            <p>
+            <figure>
               <picture>
                 <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
                 <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
                 <img alt="Some alt text" decoding="async" loading="lazy">
               </picture>
-            </p>
+              <figcaption>
+                <p>with a caption!</p>
+              </figcaption>
+            </figure>
           </section>
         </article>
         """)
