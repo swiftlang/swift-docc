@@ -243,6 +243,12 @@ extension MarkdownOutputSemanticVisitor {
             metadata.deprecation = deprecatedWalker.markdown.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         
+        // If a symbol as a whole is deprecated (either if all platforms are deprecated, or the wildcard platform is deprecated), but with no message, populate the message.
+        // This matches the rendered page output where a symbol with universal deprecation is marked as deprecated, but the individual platforms are not.
+        if symbol.consolidatedAvailability.firstValue?.isDeprecated == true && metadata.deprecation == nil {
+            metadata.deprecation = "Deprecated"
+        }
+        
         // Content
         
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
