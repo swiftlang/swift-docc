@@ -10,7 +10,9 @@
 
 package import Markdown
 
-/// A type that provides information about other pages, and on-page elements, that the rendered page references.
+/// A type that parses a BlockDirective and provides its relevant arguments back so it can be rendered.
+///
+/// This protocol is intended to be used for _renderable_ directives that represent on-page content.
 package protocol RenderableDirectiveParser {
     /// Parses and provides information about the block directive, or throws if the block directive can't be parsed.
     func parse(blockDirective: BlockDirective) -> RenderableDirective?
