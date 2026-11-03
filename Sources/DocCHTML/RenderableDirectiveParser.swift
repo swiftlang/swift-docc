@@ -21,17 +21,5 @@ package protocol RenderableDirectiveParser {
 /// Information about a block directive whose arguments and children the SwiftDocC module has already parsed and validated.
 package enum RenderableDirective {
     case small
-    case image(Image)
-
-    package struct Image {
-        package var source: String
-        package var altText: String?
-        package var caption: [any Markup]
-        package init(source: String, altText: String? = nil, caption: [any Markup]) {
-            self.source = source
-            self.altText = altText
-            self.caption = caption
-            // TODO: Support device frames
-        }
-    }
+    case image(source: String, alt: String?, caption: [any Markup] /* TODO: Support device frames*/)
 }

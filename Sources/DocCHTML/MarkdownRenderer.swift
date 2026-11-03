@@ -737,15 +737,13 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                 (child as? Paragraph).map { visit($0.children) } ?? [visit(child)]
             }
             return p(contents: [small(contents: content)])
-        case .image(let imageDirective):
-            let altText = imageDirective.altText
-            let source = imageDirective.source
-            let caption = imageDirective.caption.map { visit($0) }
+        case .image(let source, let alt, let caption):
+            let renderedCaption = caption.map { visit($0) }
             
             var content = [HTMLNode]()
-            content.append(makePicture(from: source, altText: altText))
+            content.append(makePicture(from: source, altText: alt))
             if !caption.isEmpty {
-                content.append(figcaption(contents: caption))
+                content.append(figcaption(contents: renderedCaption))
             }
             
             return figure(contents: content)

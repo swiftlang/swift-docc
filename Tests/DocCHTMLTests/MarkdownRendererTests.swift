@@ -303,7 +303,7 @@ struct MarkdownRendererTests {
     
     @Test
     func renderingImageDirective() async throws {
-        var stubParsedDirectiveProvider = StubParsedDirectiveProvider(parsed: .image(.init(source: "test_source", altText: "This is some alt text", caption: [ Text("This is the "), Strong([Text("caption")]), Text(".")])))
+        var stubParsedDirectiveProvider = StubParsedDirectiveProvider(parsed: .image(source: "test_source", alt: "This is some alt text", caption: [ Text("This is the "), Strong([Text("caption")]), Text(".")]))
         let linkedAsset = LinkedAsset(files: [
             .light : [2 : "test_source@2x.png"],
             .dark : [2 : "test_source~dark@2x.png"],
@@ -330,7 +330,7 @@ struct MarkdownRendererTests {
             </figure>
             """)
         
-        stubParsedDirectiveProvider = StubParsedDirectiveProvider(parsed: .image(.init(source: "test_source", altText: "This is some alt text", caption: [])))
+        stubParsedDirectiveProvider = StubParsedDirectiveProvider(parsed: .image(source: "test_source", alt: "This is some alt text", caption: []))
         assert(
             rendering: """
             @Image(source: test_source, alt: "This is some alt text")

@@ -39,7 +39,7 @@ struct HTMLRendererDirectiveParser: RenderableDirectiveParser {
         switch blockDirective.name {
         case ImageMedia.directiveName:
             guard let image = parse(ImageMedia.self) else { return nil }
-            return .image(.init(source: image.source.path, altText: image.altText, caption: image.caption.elements))
+            return .image(source: image.source.path, alt: image.altText, caption: image.caption.elements)
         case Small.directiveName:
             return .small
         default:
