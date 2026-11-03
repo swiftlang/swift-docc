@@ -78,6 +78,8 @@ package extension MarkdownRenderer {
 
 private let openParen  = UInt8(ascii: "(")
 private let closeParen = UInt8(ascii: ")")
+private let openAngle  = UInt8(ascii: "<")
+private let closeAngle = UInt8(ascii: ">")
 private let comma      = UInt8(ascii: ",")
 private let colon      = UInt8(ascii: ":")
 private let space      = UInt8(ascii: " ")
@@ -266,14 +268,18 @@ private enum DeclarationFormatter {
     ) -> [HTMLNode] {
         var index = startIndex
         // To know where to insert line breaks and indentation, we need to count and balance the parenthesis.
-        var parenthesisDepth = 0
+        var parenthesisDepth  = 0
+        var angleBracketDepth = 0
         
         lineBreakParameters: while index < fragments.count {
             defer { index &+= 1 }
             
             // We iterate over each fragment's UTF-8 code units to check where we need to insert a line break.
             // Note that it can happen in the middle of a fragment, especially since multiple fragments may have already been joined together.
-            for utf8Index in fragments[index].text.utf8.indices {
+            var utf8Index = fragments[index].text.utf8.startIndex
+            while utf8Index < fragments[index].text.utf8.endIndex {
+                defer { fragments[index].text.utf8.formIndex(after: &utf8Index) }
+                
                 let byte = fragments[index].text.utf8[utf8Index]
                 switch byte {
                 case openParen:
@@ -282,7 +288,10 @@ private enum DeclarationFormatter {
                     }
                     parenthesisDepth &+= 1
                     
-                case comma where parenthesisDepth == 1:
+                case openAngle:  angleBracketDepth &+= 1
+                case closeAngle: angleBracketDepth &-= 1
+                    
+                case comma where parenthesisDepth == 1 && angleBracketDepth == 0:
                     fragments[index].text.replaceSpacesWithNewlineAndIndentation(after: utf8Index)
                     
                 case closeParen:

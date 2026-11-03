@@ -554,6 +554,50 @@ struct MarkdownRenderer_PageElementsTests {
             _ <span class="internalParameter">fn</span>: (<span class="typeIdentifier">UnsafeContinuation</span>&lt;<span class="typeIdentifier">T</span>, <span class="typeIdentifier">Never</span>>) -> <span class="typeIdentifier">Void</span>
         ) <span class="keyword">async</span> -> sending <span class="typeIdentifier">T</span></code></pre>
         """)
+        
+        let functionDeclaration3 = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "functionName", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",            preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "first",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Bool",         preciseIdentifier: "s:Sb"),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Bool",         preciseIdentifier: "s:Sb"),
+                .init(kind: .text,              spelling: "), ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "second",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Result",       preciseIdentifier: "s:s6ResultO"),
+                .init(kind: .text,              spelling: "<",            preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",          preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Never",        preciseIdentifier: "s:s5NeverO"),
+                .init(kind: .text,              spelling: ">, ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "third",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "InlineArray",  preciseIdentifier: "s:s11InlineArrayV"),
+                .init(kind: .text,              spelling: "<5, ",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",          preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ">)",           preciseIdentifier: nil),
+            ]
+        ])
+        
+        #expect(functionDeclaration3.plainTextForTesting == """
+        func functionName(
+            first: (Bool, Bool),
+            second: Result<Int, Never>,
+            third: InlineArray<5, Int>
+        )
+        """)
+        functionDeclaration3.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="keyword">func</span> functionName(
+            first: (<span class="typeIdentifier">Bool</span>, <span class="typeIdentifier">Bool</span>),
+            second: <span class="typeIdentifier">Result</span>&lt;<span class="typeIdentifier">Int</span>, <span class="typeIdentifier">Never</span>>,
+            third: <span class="typeIdentifier">InlineArray</span>&lt;5, <span class="typeIdentifier">Int</span>>
+        )</code></pre>
+        """)
     }
     
     @Test(arguments: RenderGoal.allCases)
