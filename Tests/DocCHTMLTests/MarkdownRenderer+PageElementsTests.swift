@@ -523,7 +523,7 @@ struct MarkdownRenderer_PageElementsTests {
             .objectiveC: [
                 .init(kind: .keyword,           spelling: "extern",              preciseIdentifier: nil),
                 .init(kind: .text,              spelling: " ",                   preciseIdentifier: nil),
-                .init(kind: .typeIdentifier,    spelling: "ReturnValue",         preciseIdentifier: "return-value-symbol-d"),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue",         preciseIdentifier: "return-value-symbol-id"),
                 .init(kind: .text,              spelling: " ",                   preciseIdentifier: nil),
                 .init(kind: .identifier,        spelling: "functionName",        preciseIdentifier: nil),
                 .init(kind: .text,              spelling: "(",                   preciseIdentifier: nil),
@@ -541,7 +541,7 @@ struct MarkdownRenderer_PageElementsTests {
             extern ReturnValue functionName(FirstParameterValue first);
             """)
             singleParameterFunction.assertMatches(prettyFormatted: true, expected: """
-            <pre id="declaration"><code><span class="keyword">extern</span> <span class="typeIdentifier">ReturnValue</span> functionName(<a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a> <span class="internalParameter">first</span>);</code></pre>
+            <pre id="declaration"><code><span class="keyword">extern</span> <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a> functionName(<a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a> <span class="internalParameter">first</span>);</code></pre>
             """)
             
         case .conciseness:
@@ -554,7 +554,7 @@ struct MarkdownRenderer_PageElementsTests {
             .objectiveC: [
                 .init(kind: .keyword,           spelling: "extern",               preciseIdentifier: nil),
                 .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
-                .init(kind: .typeIdentifier,    spelling: "ReturnValue",          preciseIdentifier: "return-value-symbol-d"),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue",          preciseIdentifier: "return-value-symbol-id"),
                 .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
                 .init(kind: .identifier,        spelling: "functionName",         preciseIdentifier: nil),
                 .init(kind: .text,              spelling: "(",                    preciseIdentifier: nil),
@@ -584,7 +584,7 @@ struct MarkdownRenderer_PageElementsTests {
             );
             """)
             multiParameterFunction.assertMatches(prettyFormatted: true, expected: """
-            <pre id="declaration"><code><span class="keyword">extern</span> <span class="typeIdentifier">ReturnValue</span> functionName(
+            <pre id="declaration"><code><span class="keyword">extern</span> <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a> functionName(
                 <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a> <span class="internalParameter">first</span>,
                 <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a> <span class="internalParameter">second</span>,
                 <a class="typeIdentifier" href="../../thirdparametervalue/index.html">ThirdParameterValue</a> <span class="internalParameter">third</span>
@@ -594,6 +594,81 @@ struct MarkdownRenderer_PageElementsTests {
         case .conciseness:
             multiParameterFunction.assertMatches(prettyFormatted: true, expected: """
             <pre><code>extern ReturnValue functionName(FirstParameterValue first, SecondParameterValue second, ThirdParameterValue third);</code></pre>
+            """)
+        }
+        
+        let blockParameterFunction = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .objectiveC: [
+                .init(kind: .keyword,           spelling: "extern",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue",  preciseIdentifier: "return-value-symbol-id"),
+                .init(kind: .text,              spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "functionName", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",            preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "info",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "size_t",       preciseIdentifier: "c:@T@size_t"),
+                .init(kind: .text,              spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "size",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " * (^",        preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "lockPointer",  preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ")(",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "info",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "), ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " (^",          preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "unlockPointer",preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ")(",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "info",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "pointer",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "), ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " (^",          preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "releaseInfo",  preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ")(",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "info",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "));",          preciseIdentifier: nil),
+            ]
+        ])
+        
+        switch goal {
+        case .richness:
+            #expect(blockParameterFunction.childCountForTesting == 1)
+            #expect(blockParameterFunction.childrenForTesting.first?.plainTextForTesting == """
+            extern ReturnValue functionName(
+                void *info,
+                size_t size,
+                void * (^lockPointer)(void *info),
+                void (^unlockPointer)(void *info, void *pointer),
+                void (^releaseInfo)(void *info)
+            );
+            """)
+            blockParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre id="declaration"><code><span class="keyword">extern</span> <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a> functionName(
+                <span class="typeIdentifier">void</span> *<span class="internalParameter">info</span>,
+                <span class="typeIdentifier">size_t</span> <span class="internalParameter">size</span>,
+                <span class="typeIdentifier">void</span> * (^<span class="internalParameter">lockPointer</span>)(<span class="typeIdentifier">void</span> *<span class="internalParameter">info</span>),
+                <span class="typeIdentifier">void</span> (^<span class="internalParameter">unlockPointer</span>)(<span class="typeIdentifier">void</span> *<span class="internalParameter">info</span>, <span class="typeIdentifier">void</span> *<span class="internalParameter">pointer</span>),
+                <span class="typeIdentifier">void</span> (^<span class="internalParameter">releaseInfo</span>)(<span class="typeIdentifier">void</span> *<span class="internalParameter">info</span>)
+            );</code></pre>
+            """)
+            
+        case .conciseness:
+            blockParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre><code>extern ReturnValue functionName(void *info, size_t size, void * (^lockPointer)(void *info), void (^unlockPointer)(void *info, void *pointer), void (^releaseInfo)(void *info));</code></pre>
             """)
         }
     }
