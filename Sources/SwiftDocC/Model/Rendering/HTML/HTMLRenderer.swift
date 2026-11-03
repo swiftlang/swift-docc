@@ -126,7 +126,7 @@ package struct HTMLRenderer {
     let goal: RenderGoal
     let featureFlags: FeatureFlags
     
-    private let renderer: MarkdownRenderer<ContextLinkProvider, HTMLRendererDirectiveParser>
+    private let renderer: MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>
     
     init(reference: ResolvedTopicReference, context: DocumentationContext, jsonRenderContext: RenderContext, goal: RenderGoal, featureFlags: FeatureFlags) {
         self.reference = reference
@@ -138,7 +138,7 @@ package struct HTMLRenderer {
             path: ContextLinkProvider.filePath(for: reference),
             goal: goal,
             linkProvider: ContextLinkProvider(reference: reference, context: context, goal: goal),
-            parsedDirectiveProvider: HTMLRendererDirectiveParser(context: context, featureFlags: featureFlags)
+            renderableDirectiveParser: ContextDirectiveParser(context: context, featureFlags: featureFlags)
         )
     }
     
@@ -338,7 +338,7 @@ package struct HTMLRenderer {
             articleElements.append(contentsOf: renderer.parameters(
                 parameterSections.mapValues { section in
                     section.parameters.map {
-                        MarkdownRenderer<ContextLinkProvider, HTMLRendererDirectiveParser>.ParameterInfo(name: $0.name, content: $0.contents)
+                        MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>.ParameterInfo(name: $0.name, content: $0.contents)
                     }
                 }
             ))
@@ -377,7 +377,7 @@ package struct HTMLRenderer {
         
         // Topics
         do {
-            typealias TaskGroupInfo = MarkdownRenderer<ContextLinkProvider, HTMLRendererDirectiveParser>.TaskGroupInfo
+            typealias TaskGroupInfo = MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>.TaskGroupInfo
             
             // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
             var taskGroupInfo = [TaskGroupInfo]()

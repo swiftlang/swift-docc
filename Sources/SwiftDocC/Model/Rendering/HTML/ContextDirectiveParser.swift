@@ -15,11 +15,11 @@ import DocCHTML
 ///
 /// This provides `DocCHTML.MarkdownRenderer` with the capability to parse BlockDirectives.
 ///
-/// > Important: If you create a new block directive, make sure it's supported in the static HTML version of the page. To do so:
+/// > Important: If you create a new block directive that represents visual content on the page, make sure it's supported in the static HTML version of the page. To do so:
 ///     - Add a new case to the switch statement in `parse(blockDirective:)`
 ///     - Add a corresponding new case to `ParsedDirective` in `DocCHTML`, containing any properties that you may need to render this directive in HTML.
 ///     - Switch over the new case in DocCHTML's `MarkdownRenderer.visit(_ directive:)` and return your directive's custom HTML.
-struct HTMLRendererDirectiveParser: RenderableDirectiveParser {
+struct ContextDirectiveParser: RenderableDirectiveParser {
     private let context: DocumentationContext
     private let featureFlags: FeatureFlags
     
