@@ -1323,7 +1323,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
         // Assert that articles that curates any symbol gets 'API Collection' assigned as the eyebrow title.
         var renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/APICollection")
-        XCTAssertEqual(renderNode.metadata.roleHeading, "API Collection")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "API collection")
         // Assert that articles that curates only other articles don't get any value assigned as the eyebrow title.
         renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/Collection")
         XCTAssertEqual(renderNode.metadata.roleHeading, nil)
@@ -1335,7 +1335,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.roleHeading, "Custom Role")
         // Assert that articles that have a custom page kind the eyebrow title assigned properly.
         renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/SampleCode")
-        XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "Sample code")
     }
     
     func testExpectedRoleHeadingWhenAutomaticRoleHeadingIsDisabled() async throws {
@@ -1422,7 +1422,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         // Assert that articles that have a custom page kind have the eyebrow title assigned properly,
         // even when automatic title headings are disabled.
         renderNode = try renderNodeArticleFromReferencePath(context: context, referencePath: "/documentation/unit-test/SampleCode")
-        XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "Sample code")
     }
 
     func testEncodesOverloadsInRenderNode() async throws {

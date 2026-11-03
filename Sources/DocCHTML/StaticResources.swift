@@ -694,7 +694,7 @@ table {
   }
 }
 
-#Mentioned-In > ul {
+#Mentioned-in > ul {
   padding: 0;
   &> li {
     margin-top: 10px;

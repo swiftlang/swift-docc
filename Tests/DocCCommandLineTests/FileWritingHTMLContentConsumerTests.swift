@@ -307,7 +307,7 @@ struct FileWritingHTMLContentConsumerTests {
               </a>
             </li>
           </ul>
-          <h2>See Also</h2>
+          <h2>See also</h2>
           <h3>Something custom</h3>
           <ul>
             <li>

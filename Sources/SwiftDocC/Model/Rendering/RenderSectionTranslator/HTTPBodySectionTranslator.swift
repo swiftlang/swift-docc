@@ -50,7 +50,7 @@ struct HTTPBodySectionTranslator: RenderSectionTranslator {
         
         return VariantCollection(defaultValue: CodableContentSection(
             RESTBodyRenderSection(
-                title: "HTTP Body",
+                title: "HTTP body",
                 mimeType: mediaType,
                 bodyContentType: renderedTokens ?? [],
                 content: bodyContent,

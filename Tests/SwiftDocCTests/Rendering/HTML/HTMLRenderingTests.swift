@@ -685,9 +685,9 @@ struct HTMLRenderingTests {
                   <h1>first</h1>
                 </hgroup>
               </section>
-              <section id="See-Also">
+              <section id="See-also">
                 <h2>
-                  <a href="#See-Also">See Also</a>
+                  <a href="#See-also">See also</a>
                 </h2>
                 <h3 id="Manually-curated">
                   <a href="#Manually-curated">Manually curated</a>
@@ -742,12 +742,12 @@ struct HTMLRenderingTests {
                 </hgroup>
                 <p>An article with an explicit “See Also” section.</p>
               </section>
-              <section id="See-Also">
+              <section id="See-also">
                 <h2>
-                  <a href="#See-Also">See Also</a>
+                  <a href="#See-also">See also</a>
                 </h2>
-                <h3 id="Related-Documentation">
-                  <a href="#Related-Documentation">Related Documentation</a>
+                <h3 id="Related-documentation">
+                  <a href="#Related-documentation">Related documentation</a>
                 </h3>
                 <ul>
                   <li>

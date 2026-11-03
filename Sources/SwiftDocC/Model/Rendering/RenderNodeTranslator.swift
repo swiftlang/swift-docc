@@ -785,7 +785,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     context.topicGraph.nodeWithReference(topicReference)?.kind.isSymbol ?? false
                 }
                 if curatesSymbols {
-                    node.metadata.roleHeading = "API Collection"
+                    node.metadata.roleHeading = "API collection"
                 }
             default:
                 break

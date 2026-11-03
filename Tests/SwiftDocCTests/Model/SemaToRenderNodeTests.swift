@@ -125,7 +125,7 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(assessments.anchor, "Check-Your-Understanding")
+        XCTAssertEqual(assessments.anchor, "Check-your-understanding")
         XCTAssertEqual(assessments.assessments.count, 2)
         guard let firstAssessment = assessments.assessments.first else {
             XCTFail("Missing first assessment.")
@@ -674,7 +674,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(tile0Items[0], makeListItem(reference: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial"))
         XCTAssertEqual(tile0Items[1], makeListItem(reference: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2"))
         
-        XCTAssertEqual(tiles[1].title, "Sample Code")
+        XCTAssertEqual(tiles[1].title, "Sample code")
         guard case .unorderedList(let tile1List) = tiles[1].content[1] else {
             XCTFail()
             return

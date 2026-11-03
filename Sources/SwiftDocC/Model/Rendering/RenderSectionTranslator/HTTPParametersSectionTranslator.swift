@@ -27,7 +27,7 @@ struct HTTPParametersSectionTranslator: RenderSectionTranslator {
         
         return VariantCollection(defaultValue: CodableContentSection(
             RESTParametersRenderSection(
-                title: "\(parameterSource.rawValue.capitalized) Parameters",
+                title: "\(parameterSource.rawValue.capitalized) parameters",
                 parameters: filteredParameters.map { renderNodeTranslator.createRenderProperty(name: $0.name, contents: $0.contents, required: $0.required, symbol: $0.symbol) },
                 source: parameterSource
             )

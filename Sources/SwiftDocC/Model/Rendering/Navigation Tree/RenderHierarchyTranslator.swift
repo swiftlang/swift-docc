@@ -165,7 +165,7 @@ struct RenderHierarchyTranslator {
             let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
             let assessmentLinkReference = LinkReference(
                 identifier: RenderReferenceIdentifier(assessmentReference.absoluteString),
-                title: "Check Your Understanding",
+                title: "Check your understanding",
                 url: urlGenerator.presentationURLForReference(assessmentReference).relativeString
             )
             linkReferences[assessmentReference.absoluteString] = assessmentLinkReference

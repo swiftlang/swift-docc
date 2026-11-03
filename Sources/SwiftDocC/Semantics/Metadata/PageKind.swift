@@ -50,7 +50,7 @@ extension Metadata {
                 case .article:
                     return "Article"
                 case .sampleCode:
-                    return "Sample Code"
+                    return "Sample code"
                 }
             }
 

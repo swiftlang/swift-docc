@@ -21,7 +21,7 @@ public struct TutorialAssessmentsRenderSection: RenderSection, Equatable {
     public var anchor: String
     
     /// The display title for an assessments section.
-    public static let title = "Check Your Understanding"
+    public static let title = "Check your understanding"
     
     /// A render-friendly representation of an assessment question.
     public struct Assessment: Codable, TextIndexing, Equatable {
