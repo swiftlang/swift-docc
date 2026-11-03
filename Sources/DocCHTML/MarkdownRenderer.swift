@@ -381,7 +381,8 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     func visit(_ image: Image) -> HTMLNode {
         guard let source = image.source else {
-            fatalError("No source??")
+            // Without a source, we cannot display an image.
+            return .text("")
         }
         return makePicture(from: source, altText: image.altText)
     }
