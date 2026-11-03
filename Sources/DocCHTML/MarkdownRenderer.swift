@@ -33,7 +33,7 @@ package enum RenderGoal {
 /// An HTML renderer for DocC markdown content.
 ///
 /// Markdown elements that have different meaning depending on where they occur in the page structure (for example links in prose vs. links in topic sections) should be handled at a layer above this plain markdown renderer.
-package struct MarkdownRenderer<Provider: LinkProvider> {
+package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirectiveParser> {
     /// The path components within the output archive to the page that this renderer renders.
     private let pathComponents: [String]
     /// The goal of the rendered HTML output.
@@ -41,13 +41,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// A type that provides information about other pages that the rendered page references.
     let linkProvider: Provider
     
-    let parsedDirectiveProvider: any ParsedDirectiveProvider // ???: Should this use a generic like Provider?
+    let renderableDirectiveParser: Parser
     
-    package init(path: String, goal: RenderGoal, linkProvider: Provider, parsedDirectiveProvider: ParsedDirectiveProvider) {
+    package init(path: String, goal: RenderGoal, linkProvider: Provider, renderableDirectiveParser: Parser) {
         self.pathComponents = path.components(separatedBy: "/")
         self.goal = goal
         self.linkProvider = linkProvider
-        self.parsedDirectiveProvider = parsedDirectiveProvider
+        self.renderableDirectiveParser = renderableDirectiveParser
     }
     
     /// Transforms a markdown paragraph into a `<p>` HTML element.
@@ -725,7 +725,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     // MARK: Directives
     
     func visit(_ directive: BlockDirective) -> HTMLNode {
-        guard let parsed = self.parsedDirectiveProvider.parse(blockDirective: directive) else {
+        guard let parsed = self.renderableDirectiveParser.parse(blockDirective: directive) else {
             return .text("") // ???: What's the best way to register an error here?
         }
         

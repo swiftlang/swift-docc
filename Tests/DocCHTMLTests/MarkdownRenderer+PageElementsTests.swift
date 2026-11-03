@@ -838,7 +838,7 @@ struct MarkdownRenderer_PageElementsTests {
         pathsToReturn: [String: String] = [:],
         assetsToReturn: [String: LinkedAsset] = [:],
         fallbackLinkTextsToReturn: [String: String] = [:]
-    ) -> MarkdownRenderer<some LinkProvider> {
+    ) -> MarkdownRenderer<some LinkProvider, some RenderableDirectiveParser> {
         let path = "documentation/ModuleName/Something/ThisPage/index.html".lowercased()
         
         var elementsByURL = [

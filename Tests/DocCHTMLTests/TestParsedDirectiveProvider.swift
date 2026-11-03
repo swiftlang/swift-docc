@@ -11,12 +11,12 @@
 import DocCHTML
 import Markdown
 
-struct StubParsedDirectiveProvider: ParsedDirectiveProvider {
-    var parsed: (BlockDirective) -> ParsedDirective?
+struct StubParsedDirectiveProvider: RenderableDirectiveParser {
+    var parsed: (BlockDirective) -> RenderableDirective?
     
     init() { parsed = { _ in return nil } }
-    init(parsed: ParsedDirective?) {
+    init(parsed: RenderableDirective?) {
         self.parsed = { _ in return parsed }
     }
-    func parse(blockDirective: BlockDirective) -> ParsedDirective? { parsed(blockDirective) }
+    func parse(blockDirective: BlockDirective) -> RenderableDirective? { parsed(blockDirective) }
 }

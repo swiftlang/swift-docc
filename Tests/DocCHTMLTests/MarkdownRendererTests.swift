@@ -690,7 +690,7 @@ struct MarkdownRendererTests {
         assetToReturn: LinkedAsset? = nil,
         fallbackLinkTextToReturn: String? = nil,
         prettyFormatted: Bool = false,
-        parsedDirectiveProvider: any ParsedDirectiveProvider = StubParsedDirectiveProvider(),
+        parsedDirectiveProvider: some RenderableDirectiveParser = StubParsedDirectiveProvider(),
         matches expectedHTML: String,
         sourceLocation: Testing.SourceLocation = #_sourceLocation
     ) {

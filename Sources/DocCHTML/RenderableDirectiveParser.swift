@@ -11,13 +11,13 @@
 package import Markdown
 
 /// A type that provides information about other pages, and on-page elements, that the rendered page references.
-package protocol ParsedDirectiveProvider {
+package protocol RenderableDirectiveParser {
     /// Parses and provides information about the block directive, or throws if the block directive can't be parsed.
-    func parse(blockDirective: BlockDirective) -> ParsedDirective?
+    func parse(blockDirective: BlockDirective) -> RenderableDirective?
 }
 
-/// A information about a block directive whose arguments and children the SwiftDocC module has already parsed and validated.
-package enum ParsedDirective {
+/// Information about a block directive whose arguments and children the SwiftDocC module has already parsed and validated.
+package enum RenderableDirective {
     case small
     case image(Image)
 
