@@ -300,6 +300,113 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func renderingTabNavigatorDirective() async throws {
+        assert(
+            rendering: """
+            @TabNavigator {
+                @Tab("First") {
+                    Some _formatted_ content
+                }
+                @Tab("Second") {
+                    Some content
+
+                    Some more content
+                }
+                @Tab("Third") {
+                    Even more content
+                }
+            }
+            """,
+            prettyFormatted: true,
+            matches: """
+            <div class="tabnavigator" data-tabs-count="3">
+              <details name="tabnavigator" data-tab-index="1" open>
+                <summary>First</summary>
+                <div class="tabnavigator-tab">
+                  <p>
+                    Some <i>formatted</i> content
+                  </p>
+                </div>
+              </details>
+              <details name="tabnavigator" data-tab-index="2">
+                <summary>Second</summary>
+                <div class="tabnavigator-tab">
+                  <p>Some content</p>
+                  <p>Some more content</p>
+                </div>
+              </details>
+              <details name="tabnavigator" data-tab-index="3">
+                <summary>Third</summary>
+                <div class="tabnavigator-tab">
+                  <p>Even more content</p>
+                </div>
+              </details>
+            </div>
+            """
+        )
+    }
+    
+    @Test
+    func renderingTabNavigatorDirectiveIgnoresNonTabChildren() async throws {
+        assert(
+            rendering: """
+            @TabNavigator {
+                Some content that isn't in a tab
+
+                @Small {
+                    Some directive that isn't a tab
+                }
+
+                @Tab("Only") {
+                    Some tab content
+                }
+            }
+            """,
+            prettyFormatted: true,
+            matches: """
+            <div class="tabnavigator" data-tabs-count="1">
+              <details name="tabnavigator" data-tab-index="1" open>
+                <summary>Only</summary>
+                <div class="tabnavigator-tab">
+                  <p>Some tab content</p>
+                </div>
+              </details>
+            </div>
+            """
+        )
+    }
+    
+    @Test
+    func renderingTabNavigatorDirectiveSkipsTabsWithoutTitle() async throws {
+        assert(
+            rendering: """
+            @TabNavigator {
+                @Tab {
+                    Some content in a tab without a title
+                }
+                @Tab(unknown: "Not a title") {
+                    Some content in a tab with only a labeled argument
+                }
+                @Tab("Titled") {
+                    Some content in a tab with a title
+                }
+            }
+            """,
+            prettyFormatted: true,
+            matches: """
+            <div class="tabnavigator" data-tabs-count="1">
+              <details name="tabnavigator" data-tab-index="1" open>
+                <summary>Titled</summary>
+                <div class="tabnavigator-tab">
+                  <p>Some content in a tab with a title</p>
+                </div>
+              </details>
+            </div>
+            """
+        )
+    }
+    
+    @Test
     func renderingCodeBlocks() async throws {
         assert(
             rendering: """
