@@ -890,8 +890,18 @@ body > header {
     &[data-tab-index="7"] { --index: 7; }
     &[data-tab-index="8"] { --index: 8; }
 
-    &[open] {
+    /* Prevent closing the open tab by clicking its own title, without disabling the tab's content */
+    &[open] > summary {
       pointer-events: none;
+    }
+
+    /* Closed tabs overlap the open tab's content in the grid, so only their titles should receive clicks */
+    &:not([open]) {
+      pointer-events: none;
+
+      > summary {
+        pointer-events: auto;
+      }
     }
 
     &::details-content {
