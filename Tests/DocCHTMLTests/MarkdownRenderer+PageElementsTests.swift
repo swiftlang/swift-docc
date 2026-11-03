@@ -508,6 +508,52 @@ struct MarkdownRenderer_PageElementsTests {
         <pre id="declaration"><code><span class="attribute">@freestanding</span>(declaration)
         <span class="keyword">macro</span> warning(_ <span class="internalParameter">message</span>: <span class="typeIdentifier">String</span>)</code></pre>
         """)
+        
+        // func withUnsafeContinuation<T>(isolation: isolated (any Actor)?, _ fn: (UnsafeContinuation<T, Never>) -> Void) async -> sending T
+        let functionDeclaration2 = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",                   preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",                      preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "withUnsafeContinuation", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "<",                      preciseIdentifier: nil),
+                .init(kind: .genericParameter,  spelling: "T",                      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ">(",                     preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "isolation",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",                     preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "isolated",               preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " (any ",                 preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Actor",                  preciseIdentifier: "s:ScA"),
+                .init(kind: .text,              spelling: ")?, ",                   preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "_",                      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",                      preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "fn",                     preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",                    preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "UnsafeContinuation",     preciseIdentifier: "s:Scc"),
+                .init(kind: .text,              spelling: "<",                      preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "T",                      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",                     preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Never",                  preciseIdentifier: "s:s5NeverO"),
+                .init(kind: .text,              spelling: ">) -> ",                 preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Void",                   preciseIdentifier: "s:s4Voida"),
+                .init(kind: .text,              spelling: ") ",                     preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "async",                  preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " -> sending ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "T",                      preciseIdentifier: nil),
+            ]
+        ])
+        
+        #expect(functionDeclaration2.plainTextForTesting == """
+        func withUnsafeContinuation<T>(
+            isolation: isolated (any Actor)?,
+            _ fn: (UnsafeContinuation<T, Never>) -> Void
+        ) async -> sending T
+        """)
+        functionDeclaration2.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="keyword">func</span> withUnsafeContinuation&lt;T>(
+            isolation: <span class="keyword">isolated</span> (any <span class="typeIdentifier">Actor</span>)?,
+            _ <span class="internalParameter">fn</span>: (<span class="typeIdentifier">UnsafeContinuation</span>&lt;<span class="typeIdentifier">T</span>, <span class="typeIdentifier">Never</span>>) -> <span class="typeIdentifier">Void</span>
+        ) <span class="keyword">async</span> -> sending <span class="typeIdentifier">T</span></code></pre>
+        """)
     }
     
     @Test(arguments: RenderGoal.allCases)
