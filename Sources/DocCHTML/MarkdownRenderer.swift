@@ -728,11 +728,16 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 contents: directive.children.map { visit($0) }
             )
         case "TabNavigator":
-            let tabs: [(directive: BlockDirective, name: String)] = directive.children.compactMap { child in
+            let tabs: [(directive: BlockDirective, title: String)] = directive.children.compactMap { child in
+                // Like the Render JSON output, skip tabs without a title (DocC warns about the missing argument)
                 guard let tabDirective = child as? BlockDirective,
-                      tabDirective.name == "Tab" else { return nil }
-                let args = tabDirective.argumentText.parseNameValueArguments()
-                return (tabDirective, args.first?.value ?? "Unknown")
+                      tabDirective.name == "Tab",
+                      let title = tabDirective.argumentText
+                          .parseNameValueArguments()
+                          .first(where: { $0.name.isEmpty })?
+                          .value
+                else { return nil }
+                return (tabDirective, title)
             }
 
             return div(
@@ -747,7 +752,7 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                             .data("tab-index", String(i + 1)),
                         ] + (i == 0 ? ([.open]) : ([])),
                         contents: [
-                            summary(contents: [.text(tab.name)]),
+                            summary(contents: [.text(tab.title)]),
                             visit(tab.directive)
                         ]
                     )
