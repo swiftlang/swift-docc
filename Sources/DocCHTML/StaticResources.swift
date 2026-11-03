@@ -915,7 +915,7 @@ body > header {
     z-index: 1;
 
     details[open] & {
-      border-bottom: 1px solid #000; // FIXME: use currentColor
+      border-bottom: 1px solid #000; /* FIXME: use currentColor */
       font-weight: bold;
     }
   }
