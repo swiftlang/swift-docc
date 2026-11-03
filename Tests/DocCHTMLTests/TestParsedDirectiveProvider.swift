@@ -11,7 +11,7 @@
 import DocCHTML
 import Markdown
 
-struct StubParsedDirectiveProvider: RenderableDirectiveParser {
+struct StubDirectiveParser: RenderableDirectiveParser {
     var parsed: (BlockDirective) -> RenderableDirective?
     
     init() { parsed = { _ in return nil } }
