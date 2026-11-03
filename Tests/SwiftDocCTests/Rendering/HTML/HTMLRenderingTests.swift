@@ -784,7 +784,7 @@ struct HTMLRenderingTests {
     }
     
     @Test
-    func imageDirectiveRendersInHTML() async throws {
+    func blockDirectivesRenderInHTML() async throws {
         let catalog = Folder(name: "unit-test.docc") {
             TextFile(name: "Root.md", utf8Content: """
             # Root
