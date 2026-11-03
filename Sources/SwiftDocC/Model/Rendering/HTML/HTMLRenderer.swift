@@ -138,7 +138,7 @@ package struct HTMLRenderer {
             path: ContextLinkProvider.filePath(for: reference),
             goal: goal,
             linkProvider: ContextLinkProvider(reference: reference, context: context, goal: goal),
-            renderableDirectiveParser: ContextDirectiveParser(context: context, featureFlags: featureFlags)
+            renderableDirectiveParser: ContextDirectiveParser(context: context)
         )
     }
     

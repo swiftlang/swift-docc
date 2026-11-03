@@ -21,11 +21,9 @@ import DocCHTML
 ///     - Switch over the new case in DocCHTML's `MarkdownRenderer.visit(_ directive:)` and return your directive's custom HTML.
 struct ContextDirectiveParser: RenderableDirectiveParser {
     private let context: DocumentationContext
-    private let featureFlags: FeatureFlags
     
-    init(context: DocumentationContext, featureFlags: FeatureFlags) {
+    init(context: DocumentationContext) {
         self.context = context
-        self.featureFlags = featureFlags
     }
     
     func parse(blockDirective: Markdown.BlockDirective) -> DocCHTML.RenderableDirective? {
@@ -33,7 +31,7 @@ struct ContextDirectiveParser: RenderableDirectiveParser {
         var diagnostics = [Diagnostic]()
         
         func parse<D: DirectiveConvertible>(_: D.Type) -> D? {
-            D(from: blockDirective, source: nil, for: context.inputs, featureFlags: featureFlags, diagnostics: &diagnostics)
+            D(from: blockDirective, source: nil, for: context.inputs, featureFlags: context.configuration.featureFlags, diagnostics: &diagnostics)
         }
         
         switch blockDirective.name {
