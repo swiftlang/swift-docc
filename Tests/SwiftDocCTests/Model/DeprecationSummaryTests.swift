@@ -365,7 +365,7 @@ struct DeprecationSummaryTests {
                         domain: .init(rawValue: "MapKit JS"),
                         introducedVersion: .init(major: 5, minor: 0, patch: 0),
                         deprecatedVersion: .init(major: 5, minor: 9999, patch: 0),
-                        obsoletedVersion: .init(major: 5, minor: 9999, patch: 0),
+                        obsoletedVersion: nil,
                         message: nil,
                         renamed: nil,
                         isUnconditionallyDeprecated: true,
