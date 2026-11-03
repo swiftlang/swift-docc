@@ -740,7 +740,15 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
         case .image(let imageDirective):
             let altText = imageDirective.altText
             let source = imageDirective.source
-            return p(contents: [makePicture(from: source, altText: altText)])
+            let caption = imageDirective.caption.map { visit($0) }
+            
+            var content = [HTMLNode]()
+            content.append(makePicture(from: source, altText: altText))
+            if !caption.isEmpty {
+                content.append(figcaption(contents: caption))
+            }
+            
+            return figure(contents: content)
         }
     }
     
