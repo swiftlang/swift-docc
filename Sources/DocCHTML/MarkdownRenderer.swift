@@ -726,9 +726,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     // MARK: Directives
     
     func visit(_ directive: BlockDirective) -> HTMLNode {
-        guard let parsed = self.renderableDirectiveParser.parse(blockDirective: directive) else {
-            return .text("") // ???: What's the best way to register an error here?
-        }
+        let parsed = self.renderableDirectiveParser.parse(blockDirective: directive)
         
         switch parsed {
         case .small:
@@ -748,6 +746,9 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             }
             
             return figure(contents: content)
+        case .none:
+            // If the directive cannot be parsed into a known RenderableDirective, nothing should be rendered.
+            return .text("")
         }
     }
     
