@@ -722,6 +722,37 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
                 (child as? Paragraph).map { visit($0.children) } ?? [visit(child)]
             }
             return p(contents: [small(contents: content)])
+        case "Tab":
+            return div(
+                attributes: [.class("tabnavigator-tab")],
+                contents: directive.children.map { visit($0) }
+            )
+        case "TabNavigator":
+            let tabs: [(directive: BlockDirective, name: String)] = directive.children.compactMap { child in
+                guard let tabDirective = child as? BlockDirective,
+                      tabDirective.name == "Tab" else { return nil }
+                let args = tabDirective.argumentText.parseNameValueArguments()
+                return (tabDirective, args.first?.value ?? "Unknown")
+            }
+
+            return div(
+                attributes: [
+                    .class("tabnavigator"),
+                    .style("--count: \(tabs.count)")
+                ],
+                contents: tabs.enumerated().map { i, tab in
+                    details(
+                        attributes: [
+                            .name("tabnavigator"),
+                            .style("--index: \(i + 1)"),
+                        ] + (i == 0 ? ([.open]) : ([])),
+                        contents: [
+                            summary(contents: [.text(tab.name)]),
+                            visit(tab.directive)
+                        ]
+                    )
+                }
+            )
         default:
             return .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
         }

@@ -854,6 +854,53 @@ body > header {
   }
 }
 
+.tabnavigator {
+  display: grid;
+  grid-template-columns: repeat(var(--count), 1fr);
+  grid-template-rows: auto 1fr;
+
+  &:not(:first-child) {
+    margin-block-start: var(--spacing-stacked-margin-large);
+  }
+
+  details {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / span 2;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+
+    &[open] {
+      pointer-events: none;
+    }
+
+    &::details-content {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      padding: 1rem;
+    }
+
+    &:not([open])::details-content {
+      display: none;
+    }
+  }
+
+  summary {
+    border-bottom: 1px solid var(--color-grid);
+    cursor: pointer;
+    display: grid;
+    grid-column: var(--index) / span 1;
+    grid-row: 1;
+    padding: 1rem;
+    z-index: 1;
+
+    details[open] & {
+      border-bottom: 1px solid #000; // FIXME: use currentColor
+      font-weight: bold;
+    }
+  }
+}
+
 body > footer {
   width: 100%;
   height: 63px;
