@@ -217,7 +217,9 @@ struct Availability {
     ) {
         if !availableDirectives.isEmpty {
             // !!!: Preserve the bug that adding a single `@Available` directive causes a symbol to ignore all its in-source information but not its Info.plist "default" values (rdar://171807245)
+            let originalWildcardInfo = knownPlatforms[.wildcard]
             knownPlatforms = defaultAvailability.knownPlatforms
+            knownPlatforms[.wildcard] = originalWildcardInfo
         }
         
         for directive in availableDirectives {
@@ -473,23 +475,45 @@ struct Availability {
     /// Determines whether or not a page as a whole is considered to be deprecated.
     ///
     /// A page as a whole is considered to be deprecated if the API is deprecated on all the platforms that the API is available for.
+    /// This can also take the form of an unconditional wildcard deprecation (for example `@available(*, deprecated)` in Swift).
+    /// In this case it's possible that the page is considered to be deprecated even though _none_ of the individual platforms have any deprecation information.
     var isDeprecated: Bool {
-        // A page without any availability information (for example a module without default availability)
-        // isn't deprecated. Without this check, `allSatisfy` returns true, which reflects the content as deprecated.
-        let hasAnyAvailabilityInformation = (knownPlatforms + customPlatformsByName.values).contains { $0.source != .initialValue }
-        guard hasAnyAvailabilityInformation else {
-            return false
+        if case .available(_, _, true) = knownPlatforms[.wildcard].state {
+            // A symbol with wildcard unconditional availability is considered deprecated
+            return true
         }
-        return knownPlatforms.allSatisfy {
-            switch $0.state {
-                case .available(_, .some, _):
-                    // !!!: Preserve the bug that directives don't mark pages as deprecated (rdar://173761647)
-                    $0.source < .directiveOverride
-                case .available(_, _, true): true
-                case .unavailable:           true // Unavailable platforms don't count against a page's deprecated status
-                case .available(_, nil, _):  false
+        
+        var foundDeprecatedPlatforms = false
+        
+        func checkPlatform(_ platform: Information) -> Bool? {
+            switch platform.state {
+                case .available(_, nil, false):
+                    // If the page is available without being deprecated for one platform, it is not considered to be deprecated as a whole.
+                    return false
+                case .available:
+                    guard platform.source < .directiveOverride else {
+                        // !!!: Preserve the bug that directives don't mark pages as deprecated (rdar://173761647)
+                        return false
+                    }
+                    foundDeprecatedPlatforms = true
+                    return nil
+                case .unavailable:
+                    return nil // Unavailable platforms don't count against a page's deprecated status
             }
         }
+        
+        for platform in knownPlatforms {
+            if let earlyExitResult = checkPlatform(platform) {
+                return earlyExitResult
+            }
+        }
+        for platform in customPlatformsByName.values {
+            if let earlyExitResult = checkPlatform(platform) {
+                return earlyExitResult
+            }
+        }
+        
+        return foundDeprecatedPlatforms
     }
 }
 
