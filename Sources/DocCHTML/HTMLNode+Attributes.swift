@@ -126,7 +126,10 @@ extension HTMLNode {
         package static func csp(_ policy: String) -> Attribute { .init(name: "csp", value: policy) }
 
         /// The URL of an `<object>` element's resource.
-        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) } 
+        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) }
+
+        /// Custom data attributes intended to store custom data private to the page or application
+        package static func data(_ name: String, _ value: String) -> Attribute { .init(name: "data-\(name)", value: value) }
 
         /// Either the machine-readable representation of a `<time>` element's date-time value or the date-time value associated with an `<ins>` or `<del>` element's change.
         package static func datetime(_ machineReadableRepresentation: String) -> Attribute { .init(name: "datetime", value: machineReadableRepresentation) }

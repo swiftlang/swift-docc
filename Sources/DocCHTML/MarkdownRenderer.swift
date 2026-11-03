@@ -738,13 +738,13 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
             return div(
                 attributes: [
                     .class("tabnavigator"),
-                    .style("--count: \(tabs.count)")
+                    .data("tabs-count", String(tabs.count)),
                 ],
                 contents: tabs.enumerated().map { i, tab in
                     details(
                         attributes: [
                             .name("tabnavigator"),
-                            .style("--index: \(i + 1)"),
+                            .data("tab-index", String(i + 1)),
                         ] + (i == 0 ? ([.open]) : ([])),
                         contents: [
                             summary(contents: [.text(tab.name)]),
