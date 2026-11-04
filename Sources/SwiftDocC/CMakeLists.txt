@@ -179,6 +179,7 @@ add_library(SwiftDocC
   Model/Rendering/Diffing/Differences.swift
   Model/Rendering/Diffing/RenderNode+Diffable.swift
   Model/Rendering/DocumentationContentRenderer.swift
+  Model/Rendering/HTML/ContextDirectiveParser.swift
   Model/Rendering/HTML/HTMLContentConsumer.swift
   Model/Rendering/HTML/HTMLRenderer.swift
   Model/Rendering/HTML/HTMLRenderer+FullPage.swift
