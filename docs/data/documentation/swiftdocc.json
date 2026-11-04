@@ -355,7 +355,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalNodeConsumer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileManagerProtocol",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTMLContentConsumer",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReadOnlyFileManagerProtocol",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveThisNavigatorIndexWorkaround"
       ],
       "title" : "Protocols"
     },
@@ -3617,6 +3618,37 @@
   "title" : "RemoveHierarchyTransformation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/removehierarchytransformation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RemoveThisNavigatorIndexWorkaround": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RemoveThisNavigatorIndexWorkaround"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveThisNavigatorIndexWorkaround",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RemoveThisNavigatorIndexWorkaround"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RemoveThisNavigatorIndexWorkaround",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/removethisnavigatorindexworkaround"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderContext": {
   "abstract" : [

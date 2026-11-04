@@ -29420,6 +29420,22 @@
                 "type" : "protocol"
               },
               {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/removethisnavigatorindexworkaround\/consume(navigatorindexrendernode:)",
+                    "title" : "func consume(navigatorIndexRenderNode: RenderNode) throws",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdocc\/removethisnavigatorindexworkaround",
+                "title" : "RemoveThisNavigatorIndexWorkaround",
+                "type" : "protocol"
+              },
+              {
                 "title" : "Structures",
                 "type" : "groupMarker"
               },
