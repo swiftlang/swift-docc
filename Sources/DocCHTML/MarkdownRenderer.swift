@@ -40,7 +40,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     let goal: RenderGoal
     /// A type that provides information about other pages that the rendered page references.
     let linkProvider: Provider
-    
+    /// A type that parses on-page renderable directives and returns the information required to render the directive in HTML.
     let renderableDirectiveParser: Parser
     
     package init(path: String, goal: RenderGoal, linkProvider: Provider, renderableDirectiveParser: Parser) {
