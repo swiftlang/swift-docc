@@ -425,9 +425,9 @@ struct HTMLRenderingTests {
               <li>
                 <a href="../dosomething()-88gib/index.html">
                   <code>
-                    <span class="identifier">
+                    <i>
                       do<wbr>Something()
-                    </span>
+                    </i>
                   </code>
                 </a>
                 <p>Some documentation</p>
@@ -587,9 +587,9 @@ struct HTMLRenderingTests {
               <li>
                 <a href="secondclass/index.html">
                   <code>
-                    <span class="identifier">
+                    <i>
                       Second<wbr>Class
-                    </span>
+                    </i>
                   </code>
                 </a>
               </li>
@@ -614,9 +614,9 @@ struct HTMLRenderingTests {
               <li>
                 <a href="firstclass/index.html">
                   <code>
-                    <span class="identifier">
+                    <i>
                       First<wbr>Class
-                    </span>
+                    </i>
                   </code>
                 </a>
               </li>
@@ -696,7 +696,7 @@ struct HTMLRenderingTests {
                   <li>
                     <a href="../second/index.html">
                       <code>
-                        <span class="identifier">second</span>
+                        <i>second</i>
                       </code>
                     </a>
                   </li>
@@ -753,7 +753,7 @@ struct HTMLRenderingTests {
                   <li>
                     <a href="../../modulename/something/third/index.html">
                       <code>
-                        <span class="identifier">third</span>
+                        <i>third</i>
                       </code>
                     </a>
                   </li>
@@ -765,14 +765,14 @@ struct HTMLRenderingTests {
                   <li>
                     <a href="../../modulename/something/first/index.html">
                       <code>
-                        <span class="identifier">first</span>
+                        <i>first</i>
                       </code>
                     </a>
                   </li>
                   <li>
                     <a href="../../modulename/something/second/index.html">
                       <code>
-                        <span class="identifier">second</span>
+                        <i>second</i>
                       </code>
                     </a>
                   </li>

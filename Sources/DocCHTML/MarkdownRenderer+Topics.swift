@@ -152,7 +152,7 @@ package extension MarkdownRenderer {
                 case .decorator:
                     wordBreak(symbolName: $0.text)
                 case .identifier:
-                    [ span(attributes: [.class($0.kind.rawValue)], contents: wordBreak(symbolName: $0.text)) ]
+                    [ i(contents: wordBreak(symbolName: $0.text)) ]
                 }
             })
         case .conciseness:
