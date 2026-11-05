@@ -378,7 +378,7 @@ private func _warnAboutDeprecatedDefaultAvailabilityFormat(source: URL?, infoPli
     let rangeAndSuggestion = _extractRangeAndSuggestion(from: infoPlistData, source: source)
     let groupIdentifier = "ModuleSpecificDefaultAvailability"
     
-    if moduleNames.count == 1 {
+    if moduleNames.count <= 1 {
         inputs._infoPlitsLegacyFormatDiagnostic = Diagnostic(
             source: source,
             severity: .warning,
@@ -450,7 +450,7 @@ private func _extractRangeAndSuggestion(from infoPlistData: Data, source: URL?) 
     guard let endOfFirstValue = remaining.firstRange(of: "</array>")?.upperBound else {
         return nil
     }
-    remaining = remaining[startOfFirstValue...]
+    remaining = remaining[endOfFirstValue...]
     
     // We've found the end of this value when the dictionary element ends immediately after an array element.
     guard let endOfValue = remaining.firstMatch(of: #/</array>\s*</dict>/#)?.endIndex else {

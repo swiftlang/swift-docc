@@ -139,12 +139,12 @@ public struct DefaultAvailability: Codable, Equatable {
         .iPadOS: .iOS,
     ]
 
-    @available(*, deprecated, message: "Pass  'init(with:)' instead. This deprecated API will be removed after 6.6 is released.")
+    @available(*, deprecated, message: "Pass 'init(with:)' instead. This deprecated API will be removed after 6.6 is released.")
     public init(with deprecatedAvailabilityByModuleName: [String: [ModuleAvailability]]) {
         info = .deprecated(deprecatedAvailabilityByModuleName)
     }
     
-    /// Creates a default availability container..
+    /// Creates a default availability container.
     /// - Parameter availability: The default platform availability.
     public init(with availability: [ModuleAvailability]) {
         info = .current(availability)
