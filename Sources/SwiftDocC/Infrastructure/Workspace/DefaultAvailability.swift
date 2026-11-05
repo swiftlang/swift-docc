@@ -151,13 +151,21 @@ public struct DefaultAvailability: Codable, Equatable {
     }
 
     public init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
+        var container: any UnkeyedDecodingContainer
         do {
-            info = .current(try container.decode([ModuleAvailability].self))
-            return
-        } catch DecodingError.typeMismatch {
+            container = try decoder.unkeyedContainer()
+        } catch {
+            let container = try decoder.singleValueContainer()
             info = .deprecated(try container.decode([String: [ModuleAvailability]].self))
+            return
         }
+        
+        var availability = [ModuleAvailability]()
+        while !container.isAtEnd {
+            availability.append(try container.decode(ModuleAvailability.self))
+        }
+        info = .current(availability)
+        return
     }
     
     public func encode(to encoder: any Encoder) throws {
