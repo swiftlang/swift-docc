@@ -19,7 +19,7 @@ struct MarkdownRendererTests {
     func renderingParagraphsWithFormattedText() {
         assert(
             rendering: "This is a paragraph with _emphasized_ and **strong** text.",
-            matches: "<p>This is a paragraph with <i>emphasized</i> and <b>strong</b> text.</p>"
+            matches: "<p>This is a paragraph with <em>emphasized</em> and <strong>strong</strong> text.</p>"
         )
         
         assert(
@@ -88,12 +88,12 @@ struct MarkdownRendererTests {
             matches: """
             <h1 id="One">
               <a href="#One">
-                <i>One</i>
+                <em>One</em>
               </a>
             </h1>
             <h2 id="Two">
               <a href="#Two">
-                <b>Two</b>
+                <strong>Two</strong>
               </a>
             </h2>
             <h3 id="Three">
@@ -125,10 +125,10 @@ struct MarkdownRendererTests {
               <tbody>
                 <tr>
                   <td>
-                    <b>One</b>
+                    <strong>One</strong>
                   </td>
                   <td>
-                    <i>Two</i>
+                    <em>Two</em>
                   </td>
                 </tr>
               </tbody>
@@ -324,7 +324,7 @@ struct MarkdownRendererTests {
                 <img alt="This is some alt text" decoding="async" loading="lazy">
               </picture>
               <figcaption>
-                This is the <b>caption</b>.
+                This is the <strong>caption</strong>.
               </figcaption>
             </figure>
             """)
@@ -479,7 +479,7 @@ struct MarkdownRendererTests {
             matches: """
             <p>
               <a href="../someclass/somemethod(_:_:)/index.html">
-                Custom <i>formatted</i> title
+                Custom <em>formatted</em> title
               </a>
             </p>
             """

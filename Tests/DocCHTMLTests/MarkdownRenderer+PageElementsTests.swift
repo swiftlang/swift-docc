@@ -146,13 +146,13 @@ struct MarkdownRenderer_PageElementsTests {
                 <dt>First</dt>
                 <dd>
                   <p>
-                    Some <i>formatted</i> description with <code>code</code>
+                    Some <em>formatted</em> description with <code>code</code>
                   </p>
                 </dd>
                 <dt>Second</dt>
                 <dd>
                   <p>
-                    Some <b>other</b> <i>formatted</i> description
+                    Some <strong>other</strong> <em>formatted</em> description
                   </p>
                   <p>That spans two paragraphs</p>
                 </dd>
@@ -166,13 +166,13 @@ struct MarkdownRenderer_PageElementsTests {
               <dt>First</dt>
               <dd>
                 <p>
-                  Some <i>formatted</i> description with <code>code</code>
+                  Some <em>formatted</em> description with <code>code</code>
                 </p>
               </dd>
               <dt>Second</dt>
               <dd>
                 <p>
-                  Some <b>other</b> <i>formatted</i> description
+                  Some <strong>other</strong> <em>formatted</em> description
                 </p>
                 <p>That spans two paragraphs</p>
               </dd>
@@ -688,7 +688,7 @@ struct MarkdownRenderer_PageElementsTests {
                     </code>
                   </a>
                   <p>
-                    Some <i>formatted</i> description of this class
+                    Some <em>formatted</em> description of this class
                   </p>
                 </li>
                 <li>
@@ -698,7 +698,7 @@ struct MarkdownRenderer_PageElementsTests {
                     </p>
                   </a>
                   <p>
-                    Some <b>formatted</b> description of this <i>article</i>.
+                    Some <strong>formatted</strong> description of this <em>article</em>.
                   </p>
                 </li>
                 <li>
@@ -736,7 +736,7 @@ struct MarkdownRenderer_PageElementsTests {
                   <code>class SomeClass</code>
                 </a>
                 <p>
-                  Some <i>formatted</i> description of this class
+                  Some <em>formatted</em> description of this class
                 </p>
               </li>
               <li>
@@ -744,7 +744,7 @@ struct MarkdownRenderer_PageElementsTests {
                   <p>Some Article</p>
                 </a>
                 <p>
-                  Some <b>formatted</b> description of this <i>article</i>.
+                  Some <strong>formatted</strong> description of this <em>article</em>.
                 </p>
               </li>
               <li>

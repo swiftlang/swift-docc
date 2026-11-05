@@ -219,13 +219,13 @@ struct FileWritingHTMLContentConsumerTests {
               <h1>ModuleName</h1>
             </hgroup>
             <p>
-              Some <b>formatted</b> description of this module
+              Some <strong>formatted</strong> description of this module
             </p>
           </section>
           <h2>Topics</h2>
           <h3>Something custom</h3>
           <p>
-            A custom <i>formatted</i> description of this topic section
+            A custom <em>formatted</em> description of this topic section
           </p>
           <ul>
             <li>
@@ -233,7 +233,7 @@ struct FileWritingHTMLContentConsumerTests {
                 <p>Some article</p>
               </a>
               <p>
-                This is a <i>formatted</i> article.
+                This is a <em>formatted</em> article.
               </p>
             </li>
             <li>
@@ -315,7 +315,7 @@ struct FileWritingHTMLContentConsumerTests {
                 <p>Some article</p>
               </a>
               <p>
-                This is a <i>formatted</i> article.
+                This is a <em>formatted</em> article.
               </p>
             </li>
           </ul>
@@ -356,7 +356,7 @@ struct FileWritingHTMLContentConsumerTests {
                 Deprecated
               </p>
               <p>
-                Some <b>formatted</b> description of why this method is deprecated.
+                Some <strong>formatted</strong> description of why this method is deprecated.
               </p>
             </aside>
           </section>
@@ -388,7 +388,7 @@ struct FileWritingHTMLContentConsumerTests {
                 <p>Some article</p>
               </a>
               <p>
-                This is a <i>formatted</i> article.
+                This is a <em>formatted</em> article.
               </p>
             </li>
           </ul>
@@ -420,14 +420,14 @@ struct FileWritingHTMLContentConsumerTests {
               <h1>Some article</h1>
             </hgroup>
             <p>
-              This is a <i>formatted</i> article.
+              This is a <em>formatted</em> article.
             </p>
             <aside class="deprecated">
               <p class="label">
                 Deprecated
               </p>
               <p>
-                Description of why this <i>article</i> is deprecated.
+                Description of why this <em>article</em> is deprecated.
               </p>
             </aside>
           </section>
@@ -609,7 +609,7 @@ struct FileWritingHTMLContentConsumerTests {
               <h1>RootArticle</h1>
             </hgroup>
             <p>
-              This is a <i>formatted</i> article that becomes the root page (because there is only one page).
+              This is a <em>formatted</em> article that becomes the root page (because there is only one page).
             </p>
           </section>
         </article></noscript>\(templateHasNoScriptTag ? "" : "\n")

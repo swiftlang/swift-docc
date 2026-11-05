@@ -154,14 +154,14 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         }
     }
     
-    /// Transforms a markdown emphasis into a`<i>` HTML element.
+    /// Transforms a markdown emphasis into a`<em>` HTML element.
     func visit(_ emphasis: Emphasis) -> HTMLNode {
-        i(contents: visit(emphasis.children))
+        em(contents: visit(emphasis.children))
     }
     
-    /// Transforms a markdown strong into a`<b>` HTML element.
+    /// Transforms a markdown strong into a`<strong>` HTML element.
     func visit(_ strong: Strong) -> HTMLNode {
-        b(contents: visit(strong.children))
+        DocCHTML.strong(contents: visit(strong.children))
     }
     
     /// Transforms a markdown strikethrough into a`<s>` HTML element.
