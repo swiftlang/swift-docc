@@ -159,7 +159,7 @@ extension DocumentationContext {
         // Because of this, we carry this diagnostic on the inputs so that we can report it later.
         //
         // This warning is temporary and can be removed after 6.6 is released.
-        var _infoPlitsLegacyFormatDiagnostic: Diagnostic? = nil
+        var _infoPlistLegacyFormatDiagnostic: Diagnostic? = nil
     }
 }
 

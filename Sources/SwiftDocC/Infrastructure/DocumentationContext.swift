@@ -227,7 +227,7 @@ public class DocumentationContext {
         self.inputs = inputs
         self.dataProvider = dataProvider
         self.diagnosticEngine = diagnosticEngine
-        if let diagnostic = inputs._infoPlitsLegacyFormatDiagnostic {
+        if let diagnostic = inputs._infoPlistLegacyFormatDiagnostic {
             diagnosticEngine.emit(diagnostic)
         }
         

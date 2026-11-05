@@ -379,7 +379,7 @@ private func _warnAboutDeprecatedDefaultAvailabilityFormat(source: URL?, infoPli
     let groupIdentifier = "ModuleSpecificDefaultAvailability"
     
     if moduleNames.count <= 1 {
-        inputs._infoPlitsLegacyFormatDiagnostic = Diagnostic(
+        inputs._infoPlistLegacyFormatDiagnostic = Diagnostic(
             source: source,
             severity: .warning,
             range: rangeAndSuggestion?.range,
@@ -396,7 +396,7 @@ private func _warnAboutDeprecatedDefaultAvailabilityFormat(source: URL?, infoPli
             } ?? []
         )
     } else {
-        inputs._infoPlitsLegacyFormatDiagnostic = Diagnostic(
+        inputs._infoPlistLegacyFormatDiagnostic = Diagnostic(
             source: source,
             severity: .warning,
             range: rangeAndSuggestion?.range,
