@@ -461,7 +461,7 @@ private func _extractRangeAndSuggestion(from infoPlistData: Data, source: URL?) 
         let before = infoPlist.utf8[..<index] // SourceLocations are measured in number of bytes.
         let line = before.count(where: { $0 == .init(ascii: "\n") }) + 1
         
-        let lineStartIndex = before.lastIndex(of: .init(ascii: "\n")) ?? before.startIndex
+        let lineStartIndex = before.lastIndex(of: .init(ascii: "\n")).map { before.index(after: $0) } ?? before.startIndex
         let column = before.distance(from: lineStartIndex, to: index) + 1
         
         return SourceLocation(line: line, column: column, source: source)
