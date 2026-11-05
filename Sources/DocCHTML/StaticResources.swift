@@ -814,6 +814,7 @@ pre {
 body > header {
   position: sticky;
   top: 0;
+  box-sizing: border-box;
   width: 100%;
   height: 52px;
   z-index: 5;
