@@ -508,6 +508,11 @@ struct MarkdownOutputTests {
             TextFile(name: "Tabs.md", utf8Content: """
                 # Tabs
 
+                @Metadata {
+                    @SupportedLanguage(objc)
+                    @SupportedLanguage(swift)
+                }
+
                 Showing how language tabs only render the primary language
 
                 ## Overview
@@ -527,9 +532,12 @@ struct MarkdownOutputTests {
                 """)
         ])
 
-        let (node, _) = try await markdownOutput(catalog: catalog, path: "Tabs")
-        #expect(node.markdown.contains("I am an Objective-C code block") == false)
-        #expect(node.markdown.contains("I am a Swift code block"))
+        // The page has multiple source languages, so repeat the conversion to catch any dependence on set iteration order.
+        for _ in 0..<10 {
+            let (node, _) = try await markdownOutput(catalog: catalog, path: "Tabs")
+            #expect(node.markdown.contains("I am an Objective-C code block") == false)
+            #expect(node.markdown.contains("I am a Swift code block"))
+        }
     }
     
     @Test
