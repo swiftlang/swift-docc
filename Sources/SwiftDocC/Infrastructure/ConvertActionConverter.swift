@@ -123,7 +123,14 @@ package enum ConvertActionConverter {
                             try htmlContentConsumer.consume(pageInfo: pageInfo, forPage: identifier)
                             
                             if isStaticHTMLOutput {
-                                return // Don't create a (JSON) render node for this page
+                                // Don't write a (JSON) render node for this page, but create one for the navigator index.
+                                // FIXME: Create the navigator index without creating a render node. (rdar://177867282)
+                                if let navigatorIndexConsumer = outputConsumer as? any RemoveThisNavigatorIndexWorkaround,
+                                   let renderNode = converter.renderNode(for: entity)
+                                {
+                                    try navigatorIndexConsumer.consume(navigatorIndexRenderNode: renderNode)
+                                }
+                                return
                             }
                         }
 

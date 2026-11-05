@@ -12,7 +12,7 @@ import Foundation
 import SwiftDocC
 private import Markdown
 
-struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, ExternalNodeConsumer, ConvertOutputMarkdownConsumer {
+struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, ExternalNodeConsumer, ConvertOutputMarkdownConsumer, RemoveThisNavigatorIndexWorkaround {
     var targetFolder: URL
     var bundleRootFolder: URL?
     var inputFileManager: any ReadOnlyFileManagerProtocol
@@ -59,6 +59,10 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
         try renderNodeWriter.write(renderNode, encoder: makeEncoder())
         
         // Index the node, if indexing is enabled.
+        indexer?.index(renderNode)
+    }
+    
+    func consume(navigatorIndexRenderNode renderNode: RenderNode) throws {
         indexer?.index(renderNode)
     }
     

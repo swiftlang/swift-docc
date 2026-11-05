@@ -1091,7 +1091,7 @@ struct MarkdownRenderer_PageElementsTests {
         pathsToReturn: [String: String] = [:],
         assetsToReturn: [String: LinkedAsset] = [:],
         fallbackLinkTextsToReturn: [String: String] = [:]
-    ) -> MarkdownRenderer<some LinkProvider> {
+    ) -> MarkdownRenderer<some LinkProvider, some RenderableDirectiveParser> {
         let path = "documentation/ModuleName/Something/ThisPage/index.html".lowercased()
         
         var elementsByURL = [
@@ -1114,7 +1114,7 @@ struct MarkdownRenderer_PageElementsTests {
             pathsToReturn: pathsToReturn,
             assetsToReturn: assetsToReturn,
             fallbackLinkTextsToReturn: fallbackLinkTextsToReturn
-        ))
+        ), renderableDirectiveParser: StubDirectiveParser())
     }
     
     private func parseMarkup(string: String) -> [any Markup] {

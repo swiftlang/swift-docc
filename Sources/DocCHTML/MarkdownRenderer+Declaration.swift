@@ -234,7 +234,7 @@ private enum DeclarationFormatter {
     ///   - fragments: The SymbolKit declaration fragments to create a pretty printed HTML output for.
     ///   - renderer: The renderer that resolves USRs and determines the relative path from the current page to the linked page.
     /// - Returns: The list of HTML nodes that represent the syntax-highlightable declaration fragments.
-    static func prettyPrintedSwiftDeclaration<LinkProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider>) -> [HTMLNode] {
+    static func prettyPrintedSwiftDeclaration<LinkProvider, ParsedDirectiveProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider, ParsedDirectiveProvider>) -> [HTMLNode] {
         return withJoinedConsecutiveFragments(fragments) { fragments, externalParametersCount, _ in
             guard !fragments.isEmpty else {
                 return []
@@ -261,10 +261,10 @@ private enum DeclarationFormatter {
         }
     }
     
-    private static func _prettyPrintSwiftLikeFragments<LinkProvider>(
+    private static func _prettyPrintSwiftLikeFragments<LinkProvider, ParsedDirectiveProvider>(
         _ fragments: UnsafeMutableBufferPointer<DeclarationFormatter.Fragment>,
         from startIndex: Int,
-        using renderer: MarkdownRenderer<LinkProvider>
+        using renderer: MarkdownRenderer<LinkProvider, ParsedDirectiveProvider>
     ) -> [HTMLNode] {
         var index = startIndex
         // To know where to insert line breaks and indentation, we need to count and balance the parenthesis.
@@ -326,7 +326,7 @@ private enum DeclarationFormatter {
     ///   - fragments: The SymbolKit declaration fragments to create a pretty printed HTML output for.
     ///   - renderer: The renderer that resolves USRs and determines the relative path from the current page to the linked page.
     /// - Returns: The list of XML nodes that represent the syntax-highlightable declaration fragments.
-    static func prettyPrintedObjectiveCDeclaration<LinkProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider>) -> [HTMLNode] {
+    static func prettyPrintedObjectiveCDeclaration<LinkProvider, ParsedDirectiveProvider>(_ fragments: [MarkdownRenderer.DeclarationFragment], using renderer: MarkdownRenderer<LinkProvider, ParsedDirectiveProvider>) -> [HTMLNode] {
         return withJoinedConsecutiveFragments(fragments) { fragments, _, internalParametersCount in
             guard !fragments.isEmpty else {
                 return []
