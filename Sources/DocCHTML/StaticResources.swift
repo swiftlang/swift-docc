@@ -863,6 +863,8 @@ body > header {
  Its sizes are in pixels, computed for a 17px root font size.
  */
 #navigator {
+  --color-navigator-item-hover: rgba(0, 0, 255, 0.05);
+  
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -871,6 +873,30 @@ body > header {
   background: white;
   font-size: 17px;
   line-height: 25px;
+  
+  .technology-title {
+    display: flex;
+    margin-inline: 20px;
+    padding: 8px 10px 8px 20px;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-decoration: none;
+    
+    h2 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      padding: 0;
+      color: black;
+      font-size: 19px;
+      line-height: 23px;
+      font-weight: 600;
+    }
+    
+    &:hover {
+      background: var(--color-navigator-item-hover);
+    }
+  }
 }
 
 /* On narrow screens, the navigator is hidden. */
@@ -999,6 +1025,8 @@ figcaption {
   
   // This script is in the root of the output.
   const rootURL = new URL(".", script.src);
+  // Like the page's own links, the navigator's links are relative to the page, for example "../../", so that the output works from any location or hosting path.
+  const pathToRoot = script.getAttribute("src").replace(/[^/]*$/, "");
   
   // Returns the navigator index path, for example "/documentation/mykit/myclass", of a link to a page in this output.
   function indexPathForLink(href) {
@@ -1007,6 +1035,12 @@ figcaption {
   }
   const currentPath = indexPathForLink(location.href);
   
+  // Returns the link to a page's file, without encoding characters that are common in symbol names, like ":" or "(".
+  function hrefForPath(path) {
+    const components = path.split("/").filter(Boolean).map((component) => encodeURI(component).replace(/[#?]/g, encodeURIComponent));
+    return pathToRoot + components.join("/") + "/index.html";
+  }
+  
   // MARK: Navigator data
   
   const languages = index.interfaceLanguages;
@@ -1014,14 +1048,22 @@ figcaption {
   // In rare cases there are multiple top-level roots. Prefer the one whose path matches the current page.
   const rootPath = currentPath.split("/").slice(0, 3).join("/");
   const rootModule = modules?.find(({ path }) => path?.toLowerCase() === rootPath) ?? modules?.[0];
-  if (!rootModule?.children?.length) {
+  if (!rootModule?.path || !rootModule.children?.length) {
     return;
   }
+  const technologyPath = rootModule.path.toLowerCase();
+  
+  const technologyTitle = document.createElement("a");
+  technologyTitle.className = "technology-title";
+  technologyTitle.href = hrefForPath(technologyPath);
+  technologyTitle.innerHTML = `<h2></h2>`;
+  technologyTitle.firstChild.textContent = rootModule.title;
   
   // The navigator goes before the page's main content, in the container below the page's header.
   const navigator = document.createElement("nav");
   navigator.id = "navigator";
   navigator.setAttribute("aria-label", "Documentation Navigator");
+  navigator.append(technologyTitle);
   const container = document.querySelector("body > .full-width-container");
   const main = container.querySelector(":scope > main");
   main.before(navigator);
