@@ -1993,6 +1993,22 @@
                 "type" : "protocol"
               },
               {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/docchtml\/renderabledirectiveparser\/parse(blockdirective:)",
+                    "title" : "func parse(blockDirective: BlockDirective) -> RenderableDirective?",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/docchtml\/renderabledirectiveparser",
+                "title" : "RenderableDirectiveParser",
+                "type" : "protocol"
+              },
+              {
                 "title" : "Structures",
                 "type" : "groupMarker"
               },
@@ -4687,8 +4703,8 @@
                     "type" : "groupMarker"
                   },
                   {
-                    "path" : "\/documentation\/docchtml\/markdownrenderer\/init(path:goal:linkprovider:)",
-                    "title" : "init(path: String, goal: RenderGoal, linkProvider: Provider)",
+                    "path" : "\/documentation\/docchtml\/markdownrenderer\/init(path:goal:linkprovider:renderabledirectiveparser:)",
+                    "title" : "init(path: String, goal: RenderGoal, linkProvider: Provider, renderableDirectiveParser: Parser)",
                     "type" : "init"
                   },
                   {
@@ -4960,6 +4976,27 @@
                 ],
                 "path" : "\/documentation\/docchtml\/rendergoal",
                 "title" : "RenderGoal",
+                "type" : "enum"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Enumeration Cases",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/docchtml\/renderabledirective\/image(source:alt:caption:)",
+                    "title" : "case image(source: String, alt: String?, caption: [any Markup])",
+                    "type" : "case"
+                  },
+                  {
+                    "path" : "\/documentation\/docchtml\/renderabledirective\/small",
+                    "title" : "case small",
+                    "type" : "case"
+                  }
+                ],
+                "path" : "\/documentation\/docchtml\/renderabledirective",
+                "title" : "RenderableDirective",
                 "type" : "enum"
               },
               {

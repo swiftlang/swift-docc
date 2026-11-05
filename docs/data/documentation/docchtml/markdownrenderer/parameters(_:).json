@@ -46,13 +46,29 @@
           "type" : "codeVoice"
         },
         {
+          "text" : " and ",
+          "type" : "text"
+        },
+        {
+          "code" : "Parser",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : " conforms to ",
+          "type" : "text"
+        },
+        {
+          "code" : "RenderableDirectiveParser",
+          "type" : "codeVoice"
+        },
+        {
           "text" : ".",
           "type" : "text"
         }
       ]
     },
     "extendedModule" : "DocCHTML",
-    "externalID" : "s:8DocCHTML16MarkdownRendererV10parametersySayAA8HTMLNodeVGSDy0A7CCommon14SourceLanguageVSayAC13ParameterInfoVyx_GGGF",
+    "externalID" : "s:8DocCHTML16MarkdownRendererV10parametersySayAA8HTMLNodeVGSDy0A7CCommon14SourceLanguageVSayAC13ParameterInfoVyxq__GGGF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -407,6 +423,22 @@
         "type" : "codeVoice"
       },
       {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
+        "type" : "codeVoice"
+      },
+      {
         "text" : ".",
         "type" : "text"
       }
@@ -470,6 +502,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {

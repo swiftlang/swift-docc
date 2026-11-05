@@ -11,7 +11,7 @@
       <h1>MarkdownRenderer</h1>
     </hgroup>
     <p>An HTML renderer for DocC markdown content.</p>
-    <pre><code>struct MarkdownRenderer&lt;Provider> where Provider : LinkProvider</code></pre>
+    <pre><code>struct MarkdownRenderer&lt;Provider, Parser> where Provider : LinkProvider, Parser : RenderableDirectiveParser</code></pre>
   </section>
   <h2>Overview</h2>
   <p>Markdown elements that have different meaning depending on where they occur in the page structure (for example links in prose vs. links in topic sections) should be handled at a layer above this plain markdown renderer.</p>
@@ -46,8 +46,8 @@
   <h3>Initializers</h3>
   <ul>
     <li>
-      <a href="init(path:goal:linkprovider:)/index.html">
-        <code>init(path: String, goal: RenderGoal, linkProvider: Provider)</code>
+      <a href="init(path:goal:linkprovider:renderabledirectiveparser:)/index.html">
+        <code>init(path: String, goal: RenderGoal, linkProvider: Provider, renderableDirectiveParser: Parser)</code>
       </a>
     </li>
   </ul>

@@ -86,6 +86,14 @@
             },
             {
               "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "genericParameter",
+              "text" : "Parser"
+            },
+            {
+              "kind" : "text",
               "text" : "> "
             },
             {
@@ -109,6 +117,24 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:8DocCHTML12LinkProviderP",
               "text" : "LinkProvider"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "text" : "Parser"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirectiveParser",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8DocCHTML25RenderableDirectiveParserP",
+              "text" : "RenderableDirectiveParser"
             }
           ]
         }
@@ -160,7 +186,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/init(path:goal:linkProvider:)"
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/init(path:goal:linkProvider:renderableDirectiveParser:)"
       ],
       "title" : "Initializers"
     },
@@ -319,6 +345,22 @@
         "type" : "codeVoice"
       },
       {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
+        "type" : "codeVoice"
+      },
+      {
         "text" : ".",
         "type" : "text"
       }
@@ -379,6 +421,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {
@@ -448,6 +506,22 @@
         "type" : "codeVoice"
       },
       {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
+        "type" : "codeVoice"
+      },
+      {
         "text" : ".",
         "type" : "text"
       }
@@ -511,6 +585,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {
@@ -580,6 +670,22 @@
         "type" : "codeVoice"
       },
       {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
+        "type" : "codeVoice"
+      },
+      {
         "text" : ".",
         "type" : "text"
       }
@@ -643,6 +749,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {
@@ -721,6 +843,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {
@@ -844,6 +982,22 @@
         "type" : "codeVoice"
       },
       {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
+        "type" : "codeVoice"
+      },
+      {
         "text" : ".",
         "type" : "text"
       }
@@ -928,6 +1082,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {
@@ -1035,6 +1205,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {
@@ -1154,6 +1340,22 @@
         "type" : "codeVoice"
       },
       {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
+        "type" : "codeVoice"
+      },
+      {
         "text" : ".",
         "type" : "text"
       }
@@ -1236,7 +1438,7 @@
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/markdownrenderer\/groupedsection(named:groups:)"
 },
-"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/init(path:goal:linkProvider:)": {
+"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/init(path:goal:linkProvider:renderableDirectiveParser:)": {
   "abstract" : [
 
   ],
@@ -1298,15 +1500,32 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "renderableDirectiveParser"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML16MarkdownRendererV6Parserq_mfp",
+      "text" : "Parser"
+    },
+    {
+      "kind" : "text",
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/init(path:goal:linkProvider:)",
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/init(path:goal:linkProvider:renderableDirectiveParser:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(path:goal:linkProvider:)",
+  "title" : "init(path:goal:linkProvider:renderableDirectiveParser:)",
   "type" : "topic",
-  "url" : "\/documentation\/docchtml\/markdownrenderer\/init(path:goal:linkprovider:)"
+  "url" : "\/documentation\/docchtml\/markdownrenderer\/init(path:goal:linkprovider:renderabledirectiveparser:)"
 },
 "doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/parameters(_:)": {
   "abstract" : [
@@ -1339,6 +1558,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {
@@ -1481,6 +1716,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {
@@ -1716,6 +1967,40 @@
   "title" : "wordBreak(symbolName:)",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/markdownrenderer\/wordbreak(symbolname:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/RenderableDirectiveParser": {
+  "abstract" : [
+    {
+      "text" : "A type that parses a BlockDirective and provides its relevant arguments back so it can be rendered.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderableDirectiveParser"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirectiveParser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderableDirectiveParser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderableDirectiveParser",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/renderabledirectiveparser"
 }
 }
 }

@@ -14,7 +14,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:8DocCHTML16MarkdownRendererV8ListInfoV5title10referencesAEyx_GSSSg_SaySSGtcfc",
+    "externalID" : "s:8DocCHTML16MarkdownRendererV8ListInfoV5title10referencesAEyxq__GSSSg_SaySSGtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -230,6 +230,22 @@
       },
       {
         "code" : "LinkProvider",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
         "type" : "codeVoice"
       },
       {

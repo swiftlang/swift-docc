@@ -197,6 +197,22 @@
         "type" : "codeVoice"
       },
       {
+        "text" : " and ",
+        "type" : "text"
+      },
+      {
+        "code" : "Parser",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "RenderableDirectiveParser",
+        "type" : "codeVoice"
+      },
+      {
         "text" : ".",
         "type" : "text"
       }

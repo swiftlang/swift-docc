@@ -1,0 +1,255 @@
+{
+  "abstract" : [
+    {
+      "text" : "A type that parses a BlockDirective and provides its relevant arguments back so it can be rendered.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirectiveParser"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML25RenderableDirectiveParserP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "RenderableDirectiveParser"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "RenderableDirectiveParser"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "RenderableDirectiveParser.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L16"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "RenderableDirectiveParser"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "Linux"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "RenderableDirectiveParser"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "This protocol is intended to be used for ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "renderable",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " directives that represent on-page content.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirectiveParser\/parse(blockDirective:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/renderabledirectiveparser"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/RenderableDirectiveParser": {
+  "abstract" : [
+    {
+      "text" : "A type that parses a BlockDirective and provides its relevant arguments back so it can be rendered.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderableDirectiveParser"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirectiveParser",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderableDirectiveParser"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderableDirectiveParser",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/renderabledirectiveparser"
+},
+"doc://DocCHTML/documentation/DocCHTML/RenderableDirectiveParser/parse(blockDirective:)": {
+  "abstract" : [
+    {
+      "text" : "Parses and provides information about the block directive, or throws if the block directive can’t be parsed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parse"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "blockDirective"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
+      "text" : "BlockDirective"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML19RenderableDirectiveO",
+      "text" : "RenderableDirective"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirectiveParser\/parse(blockDirective:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "parse(blockDirective:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/renderabledirectiveparser\/parse(blockdirective:)"
+}
+}
+}

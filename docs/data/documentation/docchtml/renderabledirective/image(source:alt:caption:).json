@@ -3,21 +3,29 @@
     "paths" : [
       [
         "doc:\/\/DocCHTML\/documentation\/DocCHTML",
-        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer"
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective"
       ]
     ]
   },
   "identifier" : {
     "interfaceLanguage" : "swift",
-    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/init(path:goal:linkProvider:)"
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective\/image(source:alt:caption:)"
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:8DocCHTML16MarkdownRendererV4path4goal12linkProviderACyxGSS_AA10RenderGoalOxtcfc",
+    "externalID" : "s:8DocCHTML19RenderableDirectiveO5imageyACSS_SSSgSay8Markdown6Markup_pGtcACmF",
     "fragments" : [
       {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
         "kind" : "identifier",
-        "text" : "init"
+        "text" : "image"
       },
       {
         "kind" : "text",
@@ -25,7 +33,7 @@
       },
       {
         "kind" : "externalParam",
-        "text" : "path"
+        "text" : "source"
       },
       {
         "kind" : "text",
@@ -42,7 +50,7 @@
       },
       {
         "kind" : "externalParam",
-        "text" : "goal"
+        "text" : "alt"
       },
       {
         "kind" : "text",
@@ -50,29 +58,37 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:8DocCHTML10RenderGoalO",
-        "text" : "RenderGoal"
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
       },
       {
         "kind" : "text",
-        "text" : ", "
+        "text" : "?, "
       },
       {
         "kind" : "externalParam",
-        "text" : "linkProvider"
+        "text" : "caption"
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": ["
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:8DocCHTML16MarkdownRendererV8Providerxmfp",
-        "text" : "Provider"
+        "preciseIdentifier" : "s:8Markdown6MarkupP",
+        "text" : "Markup"
       },
       {
         "kind" : "text",
-        "text" : ")"
+        "text" : "])"
       }
     ],
     "modules" : [
@@ -81,13 +97,13 @@
       }
     ],
     "remoteSource" : {
-      "fileName" : "MarkdownRenderer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer.swift#L44"
+      "fileName" : "RenderableDirectiveParser.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L24"
     },
     "role" : "symbol",
-    "roleHeading" : "Initializer",
-    "symbolKind" : "init",
-    "title" : "init(path:goal:linkProvider:)"
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "RenderableDirective.image(source:alt:caption:)"
   },
   "primaryContentSections" : [
     {
@@ -102,7 +118,15 @@
           "tokens" : [
             {
               "kind" : "keyword",
-              "text" : "init"
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "image"
             },
             {
               "kind" : "text",
@@ -110,7 +134,7 @@
             },
             {
               "kind" : "externalParam",
-              "text" : "path"
+              "text" : "source"
             },
             {
               "kind" : "text",
@@ -127,38 +151,45 @@
             },
             {
               "kind" : "externalParam",
-              "text" : "goal"
+              "text" : "alt"
             },
             {
               "kind" : "text",
               "text" : ": "
             },
             {
-              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderGoal",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:8DocCHTML10RenderGoalO",
-              "text" : "RenderGoal"
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
             },
             {
               "kind" : "text",
-              "text" : ", "
+              "text" : "?, "
             },
             {
               "kind" : "externalParam",
-              "text" : "linkProvider"
+              "text" : "caption"
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": ["
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
             },
             {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:8DocCHTML16MarkdownRendererV8Providerxmfp",
-              "text" : "Provider"
+              "preciseIdentifier" : "s:8Markdown6MarkupP",
+              "text" : "Markup"
             },
             {
               "kind" : "text",
-              "text" : ")"
+              "text" : "])"
             }
           ]
         }
@@ -177,7 +208,7 @@
   "variants" : [
     {
       "paths" : [
-        "\/documentation\/docchtml\/markdownrenderer\/init(path:goal:linkprovider:)"
+        "\/documentation\/docchtml\/renderabledirective\/image(source:alt:caption:)"
       ],
       "traits" : [
         {
@@ -199,17 +230,17 @@
   "type" : "topic",
   "url" : "\/documentation\/docchtml"
 },
-"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer": {
+"doc://DocCHTML/documentation/DocCHTML/RenderableDirective": {
   "abstract" : [
     {
-      "text" : "An HTML renderer for DocC markdown content.",
+      "text" : "Information about a block directive whose arguments and children the SwiftDocC module has already parsed and validated.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "enum"
     },
     {
       "kind" : "text",
@@ -217,30 +248,38 @@
     },
     {
       "kind" : "identifier",
-      "text" : "MarkdownRenderer"
+      "text" : "RenderableDirective"
     }
   ],
-  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer",
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "MarkdownRenderer"
+      "text" : "RenderableDirective"
     }
   ],
   "role" : "symbol",
-  "title" : "MarkdownRenderer",
+  "title" : "RenderableDirective",
   "type" : "topic",
-  "url" : "\/documentation\/docchtml\/markdownrenderer"
+  "url" : "\/documentation\/docchtml\/renderabledirective"
 },
-"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/init(path:goal:linkProvider:)": {
+"doc://DocCHTML/documentation/DocCHTML/RenderableDirective/image(source:alt:caption:)": {
   "abstract" : [
 
   ],
   "fragments" : [
     {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
       "kind" : "identifier",
-      "text" : "init"
+      "text" : "image"
     },
     {
       "kind" : "text",
@@ -248,7 +287,7 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "path"
+      "text" : "source"
     },
     {
       "kind" : "text",
@@ -265,7 +304,7 @@
     },
     {
       "kind" : "externalParam",
-      "text" : "goal"
+      "text" : "alt"
     },
     {
       "kind" : "text",
@@ -273,71 +312,45 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8DocCHTML10RenderGoalO",
-      "text" : "RenderGoal"
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
     },
     {
       "kind" : "text",
-      "text" : ", "
+      "text" : "?, "
     },
     {
       "kind" : "externalParam",
-      "text" : "linkProvider"
+      "text" : "caption"
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": ["
     },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8DocCHTML16MarkdownRendererV8Providerxmfp",
-      "text" : "Provider"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/init(path:goal:linkProvider:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(path:goal:linkProvider:)",
-  "type" : "topic",
-  "url" : "\/documentation\/docchtml\/markdownrenderer\/init(path:goal:linkprovider:)"
-},
-"doc://DocCHTML/documentation/DocCHTML/RenderGoal": {
-  "abstract" : [
-    {
-      "text" : "The primary goal for the rendered HTML output.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "enum"
+      "text" : "any"
     },
     {
       "kind" : "text",
       "text" : " "
     },
     {
-      "kind" : "identifier",
-      "text" : "RenderGoal"
-    }
-  ],
-  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderGoal",
-  "kind" : "symbol",
-  "navigatorTitle" : [
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
     {
-      "kind" : "identifier",
-      "text" : "RenderGoal"
+      "kind" : "text",
+      "text" : "])"
     }
   ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective\/image(source:alt:caption:)",
+  "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderGoal",
+  "title" : "RenderableDirective.image(source:alt:caption:)",
   "type" : "topic",
-  "url" : "\/documentation\/docchtml\/rendergoal"
+  "url" : "\/documentation\/docchtml\/renderabledirective\/image(source:alt:caption:)"
 }
 }
 }
