@@ -101,7 +101,13 @@ package enum ConvertActionConverter {
                         if let htmlContentConsumer {
                             // TODO: Design a better way to indicate a primary output format and which "render" steps does and doesn't need (rdar://177867282)
                             let isStaticHTMLOutput = htmlContentConsumer._isPrimaryOutputFormat
-                            var renderer = HTMLRenderer(reference: identifier, context: context, goal: isStaticHTMLOutput ? .richness : .conciseness, featureFlags: featureFlags)
+                            var renderer = HTMLRenderer(
+                                reference: identifier,
+                                context: context,
+                                jsonRenderContext: renderContext,
+                                goal: isStaticHTMLOutput ? .richness : .conciseness,
+                                featureFlags: featureFlags
+                            )
                             
                             let pageInfo: HTMLRenderer.RenderedPageInfo
                             if let symbol = entity.semantic as? Symbol {
@@ -117,7 +123,14 @@ package enum ConvertActionConverter {
                             try htmlContentConsumer.consume(pageInfo: pageInfo, forPage: identifier)
                             
                             if isStaticHTMLOutput {
-                                return // Don't create a (JSON) render node for this page
+                                // Don't write a (JSON) render node for this page, but create one for the navigator index.
+                                // FIXME: Create the navigator index without creating a render node. (rdar://177867282)
+                                if let navigatorIndexConsumer = outputConsumer as? any RemoveThisNavigatorIndexWorkaround,
+                                   let renderNode = converter.renderNode(for: entity)
+                                {
+                                    try navigatorIndexConsumer.consume(navigatorIndexRenderNode: renderNode)
+                                }
+                                return
                             }
                         }
 

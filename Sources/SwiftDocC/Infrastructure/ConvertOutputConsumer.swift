@@ -91,6 +91,11 @@ package protocol ExternalNodeConsumer {
     func consume(externalRenderNode: ExternalRenderNode) throws
 }
 
+// FIXME: Create the navigator index without creating a render node. (rdar://177867282)
+package protocol RemoveThisNavigatorIndexWorkaround {
+    func consume(navigatorIndexRenderNode: RenderNode) throws
+}
+
 extension _WillBeMadeNonPublicConvertOutputConsumer {
     @available(*, deprecated, renamed: "consume(assetsInInputs:)", message: "Use 'consume(assetsInInputs:)' instead. This deprecated API will be removed after 6.5 is released.")
     func consume(assetsInBundle inputs: DocumentationContext.Inputs) throws {

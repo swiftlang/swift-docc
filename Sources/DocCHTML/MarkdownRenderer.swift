@@ -33,18 +33,21 @@ package enum RenderGoal {
 /// An HTML renderer for DocC markdown content.
 ///
 /// Markdown elements that have different meaning depending on where they occur in the page structure (for example links in prose vs. links in topic sections) should be handled at a layer above this plain markdown renderer.
-package struct MarkdownRenderer<Provider: LinkProvider> {
+package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirectiveParser> {
     /// The path components within the output archive to the page that this renderer renders.
     private let pathComponents: [String]
     /// The goal of the rendered HTML output.
     let goal: RenderGoal
     /// A type that provides information about other pages that the rendered page references.
     let linkProvider: Provider
+    /// A type that parses on-page renderable directives and returns the information required to render the directive in HTML.
+    let renderableDirectiveParser: Parser
     
-    package init(path: String, goal: RenderGoal, linkProvider: Provider) {
+    package init(path: String, goal: RenderGoal, linkProvider: Provider, renderableDirectiveParser: Parser) {
         self.pathComponents = path.components(separatedBy: "/")
         self.goal = goal
         self.linkProvider = linkProvider
+        self.renderableDirectiveParser = renderableDirectiveParser
     }
     
     /// Transforms a markdown paragraph into a `<p>` HTML element.
@@ -377,20 +380,29 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     /// </picture>
     /// ```
     func visit(_ image: Image) -> HTMLNode {
+        guard let source = image.source else {
+            // Without a source, we cannot display an image.
+            return .text("")
+        }
+        return makePicture(from: source, altText: image.altText)
+    }
+    
+    private func makePicture(from imageSource: String, altText: String?) -> HTMLNode {
         var imgAttributes: [HTMLNode.Attribute] = [
             .decoding(.async),
             .loading(.lazy),
         ]
-        if let altText = image.altText {
+        
+        if let altText {
             imgAttributes.insert(.alt(altText), at: 0)
         }
         
-        if let source = image.source, source.isAbsoluteWebURL {
-            imgAttributes.append(.src(source))
+        if imageSource.isAbsoluteWebURL {
+            imgAttributes.append(.src(imageSource))
             return picture(contents: [img(attributes: imgAttributes)])
         }
         
-        guard let asset = image.source.flatMap({ linkProvider.assetNamed($0) }), !asset.files.isEmpty else {
+        guard let asset = linkProvider.assetNamed(imageSource), !asset.files.isEmpty else {
             return .text("") // ???: What do we return for images that won't display anything?
         }
         
@@ -714,16 +726,29 @@ package struct MarkdownRenderer<Provider: LinkProvider> {
     // MARK: Directives
     
     func visit(_ directive: BlockDirective) -> HTMLNode {
-        switch directive.name {
-        case "Small":
-            // <small> is phrasing content and should be wrapped by <p>,
+        let parsed = self.renderableDirectiveParser.parse(blockDirective: directive)
+        
+        switch parsed {
+        case .small:
+            //<small> is phrasing content and should be wrapped by <p>,
             // per the HTML spec - not the other way around
             let content = directive.children.flatMap { child -> [HTMLNode] in
                 (child as? Paragraph).map { visit($0.children) } ?? [visit(child)]
             }
             return p(contents: [small(contents: content)])
-        default:
-            return .text("") // TODO: Support the block directives that appear as in-page content (rdar://165755944)
+        case .image(let source, let alt, let caption):
+            let renderedCaption = caption.map { visit($0) }
+            
+            var content = [HTMLNode]()
+            content.append(makePicture(from: source, altText: alt))
+            if !caption.isEmpty {
+                content.append(figcaption(contents: renderedCaption))
+            }
+            
+            return figure(contents: content)
+        case .none:
+            // If the directive cannot be parsed into a known RenderableDirective, nothing should be rendered.
+            return .text("")
         }
     }
     

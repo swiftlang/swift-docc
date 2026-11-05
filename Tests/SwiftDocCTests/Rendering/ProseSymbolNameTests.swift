@@ -143,7 +143,7 @@ struct ProseSymbolNameTests {
         // C. Static HTML — verify the word breaks land in the expected locations whether the link
         // text uses the symbol's title or its prose name.
         let symbol = try #require(node.semantic as? Symbol)
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: .init())
+        var renderer = HTMLRenderer(reference: reference, context: context, jsonRenderContext: .init(documentationContext: context), goal: .richness, featureFlags: .init())
         let html = try #require(renderer.renderSymbol(symbol).content.map {
             String(decoding: HTMLFormatter.format($0), as: UTF8.self)
         })
