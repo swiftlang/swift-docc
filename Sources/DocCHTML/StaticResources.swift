@@ -912,6 +912,18 @@ body > footer {
     }
   }
 }
+
+figure {
+    margin-top: var(--spacing-stacked-margin-xlarge); 
+}
+
+figcaption {
+    text-align: center;
+    
+    p {
+      font-size: 0.82rem;
+    }
+}
 """.utf8))
     
     // MARK: Icons
