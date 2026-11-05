@@ -59,7 +59,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     /// into XML nodes representing this HTML structure
     /// ```html
-    /// <p>Some <i>formatted</i> text</p>
+    /// <p>Some <em>formatted</em> text</p>
     /// ```
     func visit(_ paragraph: Paragraph) -> HTMLNode {
         p(contents: visit(paragraph.children))
@@ -103,7 +103,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     /// <h1 id="some-formatted-text">
     ///   <a href="#some-formatted-text">
-    ///     Some <i>formatted</i>text
+    ///     Some <em>formatted</em>text
     ///   </a>
     /// </h1>
     /// ```
