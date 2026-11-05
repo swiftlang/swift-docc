@@ -16,16 +16,25 @@ import DocCTestUtilities
 import SymbolKit
 
 struct HTMLRenderingTests {
-    @Test
-    func imageSourcesUseRelativePaths() async throws {
+    
+    enum ImageSyntax: CaseIterable {
+        case markdown, directive
+    }
+    
+    @Test(arguments: ImageSyntax.allCases)
+    func imageSourcesUseRelativePaths(_ imageSyntax: ImageSyntax) async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            TextFile(name: "Root.md", utf8Content: """
-            # Root
-            
-            A root page with an image.
-            
-            ![Some alt text](ImageName)
-            """)
+            TextFile(name: "Root.md") { """
+                # Root
+                
+                A root page with an image.
+                
+                """
+                switch imageSyntax {
+                    case .markdown:  "![Some alt text](ImageName)"
+                    case .directive: "@Image(source: ImageName, alt: \"Some alt text\")"
+                }
+            }
             
             DataFile(name: "ImageName@2x.png", data: Data())
             DataFile(name: "ImageName~dark@2x.png", data: Data())
@@ -59,13 +68,11 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Overview">Overview</a>
             </h2>
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
+              <img alt="Some alt text" decoding="async" loading="lazy">
+            </picture>
           </section>
         </article>
         """)
@@ -781,66 +788,6 @@ struct HTMLRenderingTests {
             </article>
             """)
         }
-    }
-    
-    @Test
-    func blockDirectivesRenderInHTML() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            TextFile(name: "Root.md", utf8Content: """
-            # Root
-            
-            A root page with an image directive.
-            
-            @Image(source: ImageName, alt: "Some alt text") {
-                with a caption!
-            }
-            """)
-            
-            DataFile(name: "ImageName@2x.png", data: Data())
-            DataFile(name: "ImageName~dark@2x.png", data: Data())
-        }
-        
-        let context = try await load(catalog: catalog)
-        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
-
-        let reference = try #require(context.soleRootModuleReference)
-        let article = try #require(context.documentationCache[reference]?.semantic as? Article)
-        
-        var renderer = makeHTMLRenderer(for: reference, in: context)
-        let pageInfo = renderer.renderArticle(article)
-        
-        let html = try #require(pageInfo.prettyHTMLString)
-        #expect(html == """
-        <article>
-          <section id="hero" class="article">
-            <nav id="breadcrumbs">
-              <ul>
-                <li>Root</li>
-              </ul>
-            </nav>
-            <hgroup>
-              <p>Article</p>
-              <h1>Root</h1>
-            </hgroup>
-            <p>A root page with an image directive.</p>
-          </section>
-          <section id="Overview">
-            <h2>
-              <a href="#Overview">Overview</a>
-            </h2>
-            <figure>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-              <figcaption>
-                <p>with a caption!</p>
-              </figcaption>
-            </figure>
-          </section>
-        </article>
-        """)
     }
     
     private func makeHTMLRenderer(for reference: ResolvedTopicReference, in context: DocumentationContext) -> HTMLRenderer {

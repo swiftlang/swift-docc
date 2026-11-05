@@ -296,7 +296,7 @@ struct MarkdownRendererTests {
                 Licensed under Apache License v2.0
             }
             """,
-            renderableDirectiveToReturn: .small,
+            directiveToReturn: .small,
             matches: "<p><small>Licensed under Apache License v2.0</small></p>")
     }
     
@@ -315,7 +315,7 @@ struct MarkdownRendererTests {
             """,
             assetToReturn: linkedAsset,
             prettyFormatted: true,
-            renderableDirectiveToReturn: renderableDirectiveWithCaption,
+            directiveToReturn: renderableDirectiveWithCaption,
             matches: """
             <figure>
               <picture>
@@ -336,15 +336,29 @@ struct MarkdownRendererTests {
             """,
             assetToReturn: linkedAsset,
             prettyFormatted: true,
-            renderableDirectiveToReturn: renderableDirectiveNoCaption,
+            directiveToReturn: renderableDirectiveNoCaption,
             matches: """
-            <figure>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
-                <img alt="This is some alt text" decoding="async" loading="lazy">
-              </picture>
-            </figure>
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
+              <img alt="This is some alt text" decoding="async" loading="lazy">
+            </picture>
+            """)
+        
+        let renderableDirectiveEmptyCaption = RenderableDirective.image(source: "test_source", alt: "This is some alt text", caption: [])
+        assert(
+            rendering: """
+            @Image(source: test_source, alt: "This is some alt text") { }
+            """,
+            assetToReturn: linkedAsset,
+            prettyFormatted: true,
+            directiveToReturn: renderableDirectiveEmptyCaption,
+            matches: """
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
+              <img alt="This is some alt text" decoding="async" loading="lazy">
+            </picture>
             """)
     }
     
@@ -550,11 +564,9 @@ struct MarkdownRendererTests {
             ]),
             prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../images/com.test.example/some-image.png">
-              </picture>
-            </p>
+            <picture>
+              <img alt="Some alt text" decoding="async" loading="lazy" src="../../../images/com.test.example/some-image.png">
+            </picture>
             """
         )
         
@@ -569,11 +581,9 @@ struct MarkdownRendererTests {
             ]),
             prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
-              </picture>
-            </p>
+            <picture>
+              <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
+            </picture>
             """
         )
         
@@ -586,13 +596,11 @@ struct MarkdownRendererTests {
             ]),
             prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark.png">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark.png">
+              <img alt="Some alt text" decoding="async" loading="lazy">
+            </picture>
             """
         )
         
@@ -611,13 +619,11 @@ struct MarkdownRendererTests {
             ]),
             prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
+              <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
+              <img alt="Some alt text" decoding="async" loading="lazy">
+            </picture>
             """
         )
     }
@@ -629,11 +635,9 @@ struct MarkdownRendererTests {
             rendering: "![Some alt text](\(scheme)://example.com/path/to/some-image.png)",
             prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="\(scheme)://example.com/path/to/some-image.png">
-              </picture>
-            </p>
+            <picture>
+              <img alt="Some alt text" decoding="async" loading="lazy" src="\(scheme)://example.com/path/to/some-image.png">
+            </picture>
             """
         )
     }
@@ -689,7 +693,7 @@ struct MarkdownRendererTests {
         assetToReturn: LinkedAsset? = nil,
         fallbackLinkTextToReturn: String? = nil,
         prettyFormatted: Bool = false,
-        renderableDirectiveToReturn: RenderableDirective? = nil,
+        directiveToReturn: RenderableDirective? = nil,
         matches expectedHTML: String,
         sourceLocation: Testing.SourceLocation = #_sourceLocation
     ) {
@@ -701,7 +705,7 @@ struct MarkdownRendererTests {
                 assetToReturn: assetToReturn,
                 fallbackLinkTextToReturn: fallbackLinkTextToReturn
             ),
-            renderableDirectiveParser: StubDirectiveParser(parsed: renderableDirectiveToReturn)
+            renderableDirectiveParser: SingleValueDirectiveParser(directiveToReturn: directiveToReturn)
         )
         let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
         htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expected: expectedHTML, sourceLocation: sourceLocation)
@@ -778,5 +782,12 @@ struct SingleValueLinkProvider: LinkProvider {
     var fallbackLinkTextToReturn: String?
     func fallbackLinkText(linkString: String) -> String {
         fallbackLinkTextToReturn ?? linkString
+    }
+}
+
+struct SingleValueDirectiveParser: RenderableDirectiveParser {
+    var directiveToReturn: RenderableDirective?
+    func parse(blockDirective: BlockDirective) -> RenderableDirective? {
+        directiveToReturn
     }
 }

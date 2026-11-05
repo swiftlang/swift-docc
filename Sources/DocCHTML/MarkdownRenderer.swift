@@ -62,7 +62,11 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// <p>Some <i>formatted</i> text</p>
     /// ```
     func visit(_ paragraph: Paragraph) -> HTMLNode {
-        p(contents: visit(paragraph.children))
+        if paragraph.childCount == 1, let image = paragraph.child(at: 0) as? Image {
+            visit(image)
+        } else {
+            p(contents: visit(paragraph.children))
+        }
     }
     
     /// Transforms a markdown block quote into a `<aside>` HTML element that represents an "aside".
@@ -381,7 +385,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     func visit(_ image: Image) -> HTMLNode {
         guard let source = image.source else {
-            // Without a source, we cannot display an image.
+            // ???: What do we return for images that won't display anything?
             return .text("")
         }
         return makePicture(from: source, altText: image.altText)
@@ -737,15 +741,23 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             }
             return p(contents: [small(contents: content)])
         case .image(let source, let alt, let caption):
-            let renderedCaption = caption.map { visit($0) }
+            let picture = makePicture(from: source, altText: alt)
             
-            var content = [HTMLNode]()
-            content.append(makePicture(from: source, altText: alt))
-            if !caption.isEmpty {
-                content.append(figcaption(contents: renderedCaption))
+            if caption.isEmpty {
+                return picture
             }
-            
-            return figure(contents: content)
+            else if caption.count == 1,
+                      let paragraph = caption.first as? Paragraph,
+                      paragraph.isEmpty
+            {
+                return picture
+            }
+            else {
+                return figure(contents: [
+                    picture,
+                    figcaption(contents: caption.map { visit($0) })
+                ])
+            }
         case .none:
             // If the directive cannot be parsed into a known RenderableDirective, nothing should be rendered.
             return .text("")
