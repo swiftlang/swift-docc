@@ -152,7 +152,9 @@ package extension MarkdownRenderer {
                 case .decorator:
                     wordBreak(symbolName: $0.text)
                 case .identifier:
-                    [ i(contents: wordBreak(symbolName: $0.text)) ]
+                    // A `<b>` element is defined to semantically represent:
+                    // > text to which attention is being drawn for utilitarian purposes without conveying any extra importance and with no implication of an alternate voice or mood
+                    [ b(contents: wordBreak(symbolName: $0.text)) ]
                 }
             })
         case .conciseness:

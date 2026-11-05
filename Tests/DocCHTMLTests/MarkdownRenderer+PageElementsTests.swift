@@ -675,14 +675,14 @@ struct MarkdownRenderer_PageElementsTests {
                 <li>
                   <a href="../../someclass/index.html">
                     <code class="swift-only">
-                      class <i>
+                      class <b>
                         Some<wbr>Class
-                      </i>
+                      </b>
                     </code>
                     <code class="occ-only">
-                      @interface <i>
+                      @interface <b>
                         TLASome<wbr>Class
-                      </i>
+                      </b>
                     </code>
                   </a>
                   <p>
@@ -702,14 +702,14 @@ struct MarkdownRenderer_PageElementsTests {
                 <li>
                   <a href="../../someclass/somemethod(with:and:)/index.html">
                     <code class="swift-only">
-                      func <i>
+                      func <b>
                         some<wbr>Method
-                      </i>(<i>with</i>: Int, <i>and</i>: String)
+                      </b>(<b>with</b>: Int, <b>and</b>: String)
                     </code>
                     <code class="occ-only">
-                      - <i>
+                      - <b>
                         some<wbr>Method<wbr>With<wbr>First:<wbr>and<wbr>Second:
-                      </i>
+                      </b>
                     </code>
                   </a>
                 </li>

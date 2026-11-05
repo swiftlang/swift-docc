@@ -589,9 +589,9 @@ dl {
           line-height: 24px;
           color: rgb(102, 102, 102);
           
-          &>i {
+          &>b {
             color: var(--color-figure-blue);
-            font-style: normal;
+            font-weight: normal;
           }
         }
       }
