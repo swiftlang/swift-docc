@@ -305,7 +305,7 @@ struct MarkdownRendererTests {
         func content(_ markdown: String) -> [any Markup] {
             Array(Document(parsing: markdown).children)
         }
-        
+
         assert(
             rendering: """
             @TabNavigator {
@@ -349,7 +349,7 @@ struct MarkdownRendererTests {
             """
         )
     }
-    
+
     @Test
     func renderingImageDirective() async throws {
         let linkedAsset = LinkedAsset(files: [
