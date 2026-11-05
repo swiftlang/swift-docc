@@ -83,6 +83,7 @@ private let closeAngle = UInt8(ascii: ">")
 private let comma      = UInt8(ascii: ",")
 private let colon      = UInt8(ascii: ":")
 private let space      = UInt8(ascii: " ")
+private let hyphen     = UInt8(ascii: "-")
 
 /// A scope for a collection of methods that pretty print declarations
 private enum DeclarationFormatter {
@@ -287,6 +288,15 @@ private enum DeclarationFormatter {
                         fragments[index].text.replaceSpacesWithNewlineAndIndentation(after: utf8Index)
                     }
                     parenthesisDepth &+= 1
+                    
+                case hyphen:
+                    let utf8View = fragments[index].text.utf8
+                    if let nextIndex = utf8View.index(utf8Index, offsetBy: 1, limitedBy: utf8View.endIndex),
+                        utf8View[nextIndex] == closeAngle
+                    {
+                        // Skip past the "->" to avoid unbalancing the angle bracket depth.
+                        utf8View.formIndex(after: &utf8Index)
+                    }
                     
                 case openAngle:  angleBracketDepth &+= 1
                 case closeAngle: angleBracketDepth &-= 1

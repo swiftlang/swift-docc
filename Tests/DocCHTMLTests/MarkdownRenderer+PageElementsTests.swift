@@ -598,6 +598,49 @@ struct MarkdownRenderer_PageElementsTests {
             third: <span class="typeIdentifier">InlineArray</span>&lt;5, <span class="typeIdentifier">Int</span>>
         )</code></pre>
         """)
+        
+        let functionDeclaration4 = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "doSomething", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",           preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "first",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",         preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ") -> (), ",   preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "second",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "String",      preciseIdentifier: "s:SS"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Bool",        preciseIdentifier: "s:Sb"),
+                .init(kind: .text,              spelling: ") -> ",       preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",         preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "third",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": () -> (",   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Double",      preciseIdentifier: "s:Sd"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Bool",        preciseIdentifier: "s:Sb"),
+                .init(kind: .text,              spelling: ")) -> ",      preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "String",      preciseIdentifier: "s:SS"),
+            ]
+        ])
+        
+        #expect(functionDeclaration4.plainTextForTesting == """
+        func doSomething(
+            first: (Int) -> (),
+            second: (String, Bool) -> Int,
+            third: () -> (Double, Bool)
+        ) -> String
+        """)
+        functionDeclaration4.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="keyword">func</span> doSomething(
+            first: (<span class="typeIdentifier">Int</span>) -> (),
+            second: (<span class="typeIdentifier">String</span>, <span class="typeIdentifier">Bool</span>) -> <span class="typeIdentifier">Int</span>,
+            third: () -> (<span class="typeIdentifier">Double</span>, <span class="typeIdentifier">Bool</span>)
+        ) -> <span class="typeIdentifier">String</span></code></pre>
+        """)
     }
     
     @Test(arguments: RenderGoal.allCases)
