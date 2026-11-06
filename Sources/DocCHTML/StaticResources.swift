@@ -912,12 +912,15 @@ body > header {
       position: relative;
       padding: 5px var(--navigator-inset);
       
-      a {
+      a, h3 {
         display: block;
         overflow: hidden;
-        color: inherit;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+      
+      a {
+        color: inherit;
         text-decoration: none;
         
         /* Make the entire row a click target for the link, with a background on hover or keyboard focus */
@@ -931,6 +934,14 @@ body > header {
         &:is(:hover, :focus-visible):after {
           background: var(--color-navigator-item-hover);
         }
+      }
+      
+      h3 {
+        padding: 0;
+        color: var(--color-figure-gray-secondary);
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: 600;
       }
     }
   }
@@ -1098,10 +1109,14 @@ figcaption {
   }
   const technologyPath = rootModule.path.toLowerCase();
   
-  // Each item is a list item with a link to its page.
+  // Each item is a list item with a link to its page, or with a heading for a group of pages.
   function makeRow(item) {
-    const title = document.createElement("a");
-    title.href = hrefForPath(item.path);
+    const isGroupMarker = item.type === "groupMarker";
+    
+    const title = document.createElement(isGroupMarker ? "h3" : "a");
+    if (!isGroupMarker) {
+      title.href = hrefForPath(item.path);
+    }
     title.textContent = item.title;
     
     const row = document.createElement("li");
@@ -1116,8 +1131,7 @@ figcaption {
   technologyTitle.firstChild.textContent = rootModule.title;
   
   const list = document.createElement("ul");
-  // The navigator lists the module's pages, without the headings of the groups that organize them.
-  list.append(...rootModule.children.filter(({ type }) => type !== "groupMarker").map(makeRow));
+  list.append(...rootModule.children.map(makeRow));
   
   // The navigator goes before the page's main content, in the container below the page's header.
   const navigator = document.createElement("nav");
