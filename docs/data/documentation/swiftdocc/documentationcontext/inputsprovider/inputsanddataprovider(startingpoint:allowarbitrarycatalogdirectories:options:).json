@@ -111,7 +111,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationInputsProvider.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Input%20Discovery\/DocumentationInputsProvider.swift#L286"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Input%20Discovery\/DocumentationInputsProvider.swift#L302"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

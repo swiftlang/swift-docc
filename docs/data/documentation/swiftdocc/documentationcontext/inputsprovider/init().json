@@ -38,7 +38,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationInputsProvider.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Input%20Discovery\/DocumentationInputsProvider.swift#L66"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Input%20Discovery\/DocumentationInputsProvider.swift#L68"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

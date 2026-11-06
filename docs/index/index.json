@@ -6086,7 +6086,13 @@
                         "type" : "init"
                       },
                       {
-                        "path" : "\/documentation\/swiftdocc\/defaultavailability\/init(with:)",
+                        "path" : "\/documentation\/swiftdocc\/defaultavailability\/init(with:)-66y36",
+                        "title" : "init(with: [ModuleAvailability])",
+                        "type" : "init"
+                      },
+                      {
+                        "deprecated" : true,
+                        "path" : "\/documentation\/swiftdocc\/defaultavailability\/init(with:)-69d2u",
                         "title" : "init(with: [String : [ModuleAvailability]])",
                         "type" : "init"
                       },

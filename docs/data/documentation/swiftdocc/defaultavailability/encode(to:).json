@@ -82,7 +82,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DefaultAvailability.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L149"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L171"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -198,7 +198,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DefaultAvailability": {
   "abstract" : [
     {
-      "text" : "A collection of modules and the default platform availability for symbols in that module.",
+      "text" : "A collection of default platform availability.",
       "type" : "text"
     }
   ],

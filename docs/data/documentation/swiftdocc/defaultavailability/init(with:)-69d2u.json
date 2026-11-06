@@ -1,0 +1,291 @@
+{
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Pass 'init(with:)' instead. This deprecated API will be removed after 6.6 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/init(with:)-69d2u"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC19DefaultAvailabilityV4withACSDySSSayAC06ModuleD0VGG_tcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "with"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : " : ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV06ModuleD0V",
+        "text" : "ModuleAvailability"
+      },
+      {
+        "kind" : "text",
+        "text" : "]])"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "DefaultAvailability.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L143"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(with:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "Linux"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "with"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "deprecatedAvailabilityByModuleName"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : " : ["
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV06ModuleD0V",
+              "text" : "ModuleAvailability"
+            },
+            {
+              "kind" : "text",
+              "text" : "]])"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/defaultavailability\/init(with:)-69d2u"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DefaultAvailability": {
+  "abstract" : [
+    {
+      "text" : "A collection of default platform availability.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DefaultAvailability"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DefaultAvailability"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DefaultAvailability",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/defaultavailability"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DefaultAvailability/ModuleAvailability": {
+  "abstract" : [
+    {
+      "text" : "A platform name and version number pair.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ModuleAvailability"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ModuleAvailability"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DefaultAvailability.ModuleAvailability",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/defaultavailability\/moduleavailability"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DefaultAvailability/init(with:)-69d2u": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "with"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV06ModuleD0V",
+      "text" : "ModuleAvailability"
+    },
+    {
+      "kind" : "text",
+      "text" : "]])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/init(with:)-69d2u",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(with:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/defaultavailability\/init(with:)-69d2u"
+}
+}
+}
