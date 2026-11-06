@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,7 +27,7 @@ struct HTTPParametersSectionTranslator: RenderSectionTranslator {
         
         return VariantCollection(defaultValue: CodableContentSection(
             RESTParametersRenderSection(
-                title: "\(parameterSource.rawValue.capitalized) Parameters",
+                title: "\(parameterSource.rawValue.capitalized) parameters",
                 parameters: filteredParameters.map { renderNodeTranslator.createRenderProperty(name: $0.name, contents: $0.contents, required: $0.required, symbol: $0.symbol) },
                 source: parameterSource
             )

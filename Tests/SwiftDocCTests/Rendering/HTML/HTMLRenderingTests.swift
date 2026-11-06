@@ -124,8 +124,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Conforms-To">
-                  <a href="#Conforms-To">Conforms To</a>
+                <h3 id="Conforms-to">
+                  <a href="#Conforms-to">Conforms to</a>
                 </h3>
                 <ul>
                   <li>
@@ -171,8 +171,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Conforming-Types">
-                  <a href="#Conforming-Types">Conforming Types</a>
+                <h3 id="Conforming-types">
+                  <a href="#Conforming-types">Conforming types</a>
                 </h3>
                 <ul>
                   <li>
@@ -235,8 +235,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Inherits-From">
-                  <a href="#Inherits-From">Inherits From</a>
+                <h3 id="Inherits-from">
+                  <a href="#Inherits-from">Inherits from</a>
                 </h3>
                 <ul>
                   <li>
@@ -282,8 +282,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Inherited-By">
-                  <a href="#Inherited-By">Inherited By</a>
+                <h3 id="Inherited-by">
+                  <a href="#Inherited-by">Inherited by</a>
                 </h3>
                 <ul>
                   <li>
@@ -348,8 +348,8 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Relationships">Relationships</a>
             </h2>
-            <h3 id="Inherits-From">
-              <a href="#Inherits-From">Inherits From</a>
+            <h3 id="Inherits-from">
+              <a href="#Inherits-from">Inherits from</a>
             </h3>
             <ul>
               <li>
@@ -360,8 +360,8 @@ struct HTMLRenderingTests {
                 </a>
               </li>
             </ul>
-            <h3 id="Conforms-To">
-              <a href="#Conforms-To">Conforms To</a>
+            <h3 id="Conforms-to">
+              <a href="#Conforms-to">Conforms to</a>
             </h3>
             <ul>
               <li>
@@ -421,12 +421,12 @@ struct HTMLRenderingTests {
               </h1>
             </hgroup>
           </section>
-          <section id="Default-Implementations">
+          <section id="Default-implementations">
             <h2>
-              <a href="#Default-Implementations">Default Implementations</a>
+              <a href="#Default-implementations">Default implementations</a>
             </h2>
-            <h3 id="SomeProtocol-Implementations">
-              <a href="#SomeProtocol-Implementations">SomeProtocol Implementations</a>
+            <h3 id="SomeProtocol-implementations">
+              <a href="#SomeProtocol-implementations">SomeProtocol implementations</a>
             </h3>
             <ul>
               <li>
@@ -503,14 +503,14 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Topics">Topics</a>
             </h2>
-            <h3 id="Default-Implementations">
-              <a href="#Default-Implementations">Default Implementations</a>
+            <h3 id="Default-implementations">
+              <a href="#Default-implementations">Default implementations</a>
             </h3>
             <ul>
               <li>
                 <a href="someprotocol-implementations/index.html">
                   <p class="api-collection">
-                    SomeProtocol Implementations
+                    SomeProtocol implementations
                   </p>
                 </a>
               </li>
@@ -520,8 +520,8 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Relationships">Relationships</a>
             </h2>
-            <h3 id="Conforms-To">
-              <a href="#Conforms-To">Conforms To</a>
+            <h3 id="Conforms-to">
+              <a href="#Conforms-to">Conforms to</a>
             </h3>
             <ul>
               <li>
@@ -692,9 +692,9 @@ struct HTMLRenderingTests {
                   <h1>first</h1>
                 </hgroup>
               </section>
-              <section id="See-Also">
+              <section id="See-also">
                 <h2>
-                  <a href="#See-Also">See Also</a>
+                  <a href="#See-also">See also</a>
                 </h2>
                 <h3 id="Manually-curated">
                   <a href="#Manually-curated">Manually curated</a>
@@ -749,12 +749,12 @@ struct HTMLRenderingTests {
                 </hgroup>
                 <p>An article with an explicit “See Also” section.</p>
               </section>
-              <section id="See-Also">
+              <section id="See-also">
                 <h2>
-                  <a href="#See-Also">See Also</a>
+                  <a href="#See-also">See also</a>
                 </h2>
-                <h3 id="Related-Documentation">
-                  <a href="#Related-Documentation">Related Documentation</a>
+                <h3 id="Related-documentation">
+                  <a href="#Related-documentation">Related documentation</a>
                 </h3>
                 <ul>
                   <li>

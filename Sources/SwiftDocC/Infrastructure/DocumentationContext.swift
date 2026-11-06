@@ -278,7 +278,6 @@ public class DocumentationContext {
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
             NonOverviewHeadingChecker(sourceFile: source).any(),
-            MiscasedSectionHeading(sourceFile: source).any(),
             SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
             InvalidCodeBlockOption(sourceFile: source).any(),
         ])

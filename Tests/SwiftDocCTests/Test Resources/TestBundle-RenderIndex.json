@@ -638,7 +638,7 @@
       {
         "children" : [
           {
-            "title" : "Enumeration Cases",
+            "title" : "Enumeration cases",
             "type" : "groupMarker"
           },
           {
@@ -657,7 +657,7 @@
             "type" : "init"
           },
           {
-            "title" : "Instance Properties",
+            "title" : "Instance properties",
             "type" : "groupMarker"
           },
           {
@@ -671,7 +671,7 @@
             "type" : "property"
           },
           {
-            "title" : "Instance Methods",
+            "title" : "Instance methods",
             "type" : "groupMarker"
           },
           {
@@ -680,19 +680,19 @@
             "type" : "method"
           },
           {
-            "title" : "Type Aliases",
+            "title" : "Type aliases",
             "type" : "groupMarker"
           },
           {
             "children" : [
               {
-                "title" : "Default Implementations",
+                "title" : "Default implementations",
                 "type" : "groupMarker"
               },
               {
                 "children" : [
                   {
-                    "title" : "Instance Methods",
+                    "title" : "Instance methods",
                     "type" : "groupMarker"
                   },
                   {
@@ -702,7 +702,7 @@
                   }
                 ],
                 "path" : "\/documentation\/sidekit\/sideclass\/element\/protocol-implementations",
-                "title" : "Protocol Implementations",
+                "title" : "Protocol implementations",
                 "type" : "collection"
               }
             ],
@@ -718,13 +718,13 @@
       {
         "children" : [
           {
-            "title" : "Instance Methods",
+            "title" : "Instance methods",
             "type" : "groupMarker"
           },
           {
             "children" : [
               {
-                "title" : "SideProtocol Implementations",
+                "title" : "SideProtocol implementations",
                 "type" : "groupMarker"
               },
               {

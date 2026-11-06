@@ -133,25 +133,25 @@
 ┣╸SideKit
 ┃ ┣╸Basics
 ┃ ┣╸SideClass
-┃ ┃ ┣╸Enumeration Cases
+┃ ┃ ┣╸Enumeration cases
 ┃ ┃ ┣╸case Value(Int)
 ┃ ┃ ┣╸Initializers
 ┃ ┃ ┣╸init()
-┃ ┃ ┣╸Instance Properties
+┃ ┃ ┣╸Instance properties
 ┃ ┃ ┣╸var path: String
 ┃ ┃ ┣╸var url: URL
-┃ ┃ ┣╸Instance Methods
+┃ ┃ ┣╸Instance methods
 ┃ ┃ ┣╸func myFunction()
-┃ ┃ ┣╸Type Aliases
+┃ ┃ ┣╸Type aliases
 ┃ ┃ ┗╸Element
-┃ ┃   ┣╸Default Implementations
-┃ ┃   ┗╸Protocol Implementations
-┃ ┃     ┣╸Instance Methods
+┃ ┃   ┣╸Default implementations
+┃ ┃   ┗╸Protocol implementations
+┃ ┃     ┣╸Instance methods
 ┃ ┃     ┗╸inherited()
 ┃ ┣╸SideProtocol
-┃ ┃ ┣╸Instance Methods
+┃ ┃ ┣╸Instance methods
 ┃ ┃ ┗╸func1()
-┃ ┃   ┣╸SideProtocol Implementations
+┃ ┃   ┣╸SideProtocol implementations
 ┃ ┃   ┗╸func1()
 ┃ ┣╸Classes
 ┃ ┗╸UncuratedClass
