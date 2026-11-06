@@ -131,11 +131,11 @@ package extension MarkdownRenderer {
     
     /// Transforms the symbol name fragments into a `<code>` HTML element that represents a symbol's subheading.
     ///
-    /// When the renderer has a ``RenderGoal/richness`` goal, it creates one `<span>` HTML element per fragment that could be styled differently through CSS:
+    /// When the renderer has a ``RenderGoal/richness`` goal, it creates `<b>` HTML elements for each ``LinkedElement/SymbolNameFragment/Kind/identifier`` fragment that can be styled differently through CSS:
     /// ```
     /// <code class="swift-only">
     ///   class 
-    ///   <span class="identifier">Some<wbr>Class</span>
+    ///   <b>Some<wbr>Class</b>
     /// </code>
     /// ```
     ///
@@ -152,7 +152,9 @@ package extension MarkdownRenderer {
                 case .decorator:
                     wordBreak(symbolName: $0.text)
                 case .identifier:
-                    [ span(attributes: [.class($0.kind.rawValue)], contents: wordBreak(symbolName: $0.text)) ]
+                    // A `<b>` element is defined to semantically represent:
+                    // > text to which attention is being drawn for utilitarian purposes without conveying any extra importance and with no implication of an alternate voice or mood
+                    [ b(contents: wordBreak(symbolName: $0.text)) ]
                 }
             })
         case .conciseness:
