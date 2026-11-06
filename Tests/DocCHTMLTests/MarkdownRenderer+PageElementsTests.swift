@@ -146,13 +146,13 @@ struct MarkdownRenderer_PageElementsTests {
                 <dt>First</dt>
                 <dd>
                   <p>
-                    Some <i>formatted</i> description with <code>code</code>
+                    Some <em>formatted</em> description with <code>code</code>
                   </p>
                 </dd>
                 <dt>Second</dt>
                 <dd>
                   <p>
-                    Some <b>other</b> <i>formatted</i> description
+                    Some <strong>other</strong> <em>formatted</em> description
                   </p>
                   <p>That spans two paragraphs</p>
                 </dd>
@@ -166,13 +166,13 @@ struct MarkdownRenderer_PageElementsTests {
               <dt>First</dt>
               <dd>
                 <p>
-                  Some <i>formatted</i> description with <code>code</code>
+                  Some <em>formatted</em> description with <code>code</code>
                 </p>
               </dd>
               <dt>Second</dt>
               <dd>
                 <p>
-                  Some <b>other</b> <i>formatted</i> description
+                  Some <strong>other</strong> <em>formatted</em> description
                 </p>
                 <p>That spans two paragraphs</p>
               </dd>
@@ -971,20 +971,18 @@ struct MarkdownRenderer_PageElementsTests {
                 <li>
                   <a href="../../someclass/index.html">
                     <code class="swift-only">
-                      class 
-                      <span class="identifier">
+                      class <b>
                         Some<wbr>Class
-                      </span>
+                      </b>
                     </code>
                     <code class="occ-only">
-                      @interface 
-                      <span class="identifier">
+                      @interface <b>
                         TLASome<wbr>Class
-                      </span>
+                      </b>
                     </code>
                   </a>
                   <p>
-                    Some <i>formatted</i> description of this class
+                    Some <em>formatted</em> description of this class
                   </p>
                 </li>
                 <li>
@@ -994,27 +992,20 @@ struct MarkdownRenderer_PageElementsTests {
                     </p>
                   </a>
                   <p>
-                    Some <b>formatted</b> description of this <i>article</i>.
+                    Some <strong>formatted</strong> description of this <em>article</em>.
                   </p>
                 </li>
                 <li>
                   <a href="../../someclass/somemethod(with:and:)/index.html">
                     <code class="swift-only">
-                      func 
-                      <span class="identifier">
+                      func <b>
                         some<wbr>Method
-                      </span>
-                      (
-                      <span class="identifier">with</span>
-                      : Int, 
-                      <span class="identifier">and</span>
-                      : String)
+                      </b>(<b>with</b>: Int, <b>and</b>: String)
                     </code>
                     <code class="occ-only">
-                      - 
-                      <span class="identifier">
+                      - <b>
                         some<wbr>Method<wbr>With<wbr>First:<wbr>and<wbr>Second:
-                      </span>
+                      </b>
                     </code>
                   </a>
                 </li>
@@ -1032,7 +1023,7 @@ struct MarkdownRenderer_PageElementsTests {
                   <code>class SomeClass</code>
                 </a>
                 <p>
-                  Some <i>formatted</i> description of this class
+                  Some <em>formatted</em> description of this class
                 </p>
               </li>
               <li>
@@ -1040,7 +1031,7 @@ struct MarkdownRenderer_PageElementsTests {
                   <p>Some Article</p>
                 </a>
                 <p>
-                  Some <b>formatted</b> description of this <i>article</i>.
+                  Some <strong>formatted</strong> description of this <em>article</em>.
                 </p>
               </li>
               <li>
