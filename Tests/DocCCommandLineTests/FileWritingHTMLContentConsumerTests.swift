@@ -219,13 +219,13 @@ struct FileWritingHTMLContentConsumerTests {
               <h1>ModuleName</h1>
             </hgroup>
             <p>
-              Some <b>formatted</b> description of this module
+              Some <strong>formatted</strong> description of this module
             </p>
           </section>
           <h2>Topics</h2>
           <h3>Something custom</h3>
           <p>
-            A custom <i>formatted</i> description of this topic section
+            A custom <em>formatted</em> description of this topic section
           </p>
           <ul>
             <li>
@@ -233,7 +233,7 @@ struct FileWritingHTMLContentConsumerTests {
                 <p>Some article</p>
               </a>
               <p>
-                This is a <i>formatted</i> article.
+                This is a <em>formatted</em> article.
               </p>
             </li>
             <li>
@@ -282,14 +282,14 @@ struct FileWritingHTMLContentConsumerTests {
             <p>Some in-source description of this class.</p>
             <pre><code>class SomeClass</code></pre>
           </section>
-          <h2>Mentioned In</h2>
+          <h2>Mentioned in</h2>
           <ul>
             <li>
               <a href="../somearticle/index.html">Some article</a>
             </li>
           </ul>
           <h2>Topics</h2>
-          <h3>Instance Methods</h3>
+          <h3>Instance methods</h3>
           <ul>
             <li>
               <a href="somemethod(with:and:)/index.html">
@@ -299,7 +299,7 @@ struct FileWritingHTMLContentConsumerTests {
             </li>
           </ul>
           <h2>Relationships</h2>
-          <h3>Conforms To</h3>
+          <h3>Conforms to</h3>
           <ul>
             <li>
               <a href="../someprotocol/index.html">
@@ -307,7 +307,7 @@ struct FileWritingHTMLContentConsumerTests {
               </a>
             </li>
           </ul>
-          <h2>See Also</h2>
+          <h2>See also</h2>
           <h3>Something custom</h3>
           <ul>
             <li>
@@ -315,7 +315,7 @@ struct FileWritingHTMLContentConsumerTests {
                 <p>Some article</p>
               </a>
               <p>
-                This is a <i>formatted</i> article.
+                This is a <em>formatted</em> article.
               </p>
             </li>
           </ul>
@@ -356,7 +356,7 @@ struct FileWritingHTMLContentConsumerTests {
                 Deprecated
               </p>
               <p>
-                Some <b>formatted</b> description of why this method is deprecated.
+                Some <strong>formatted</strong> description of why this method is deprecated.
               </p>
             </aside>
           </section>
@@ -375,20 +375,20 @@ struct FileWritingHTMLContentConsumerTests {
               </p>
             </dd>
           </dl>
-          <h2>Return Value</h2>
+          <h2>Return value</h2>
           <p>Description of the return value.</p>
           <h2>Discussion</h2>
           <p>Further description of this method and how to use it.</p>
           
-          <h2>See Also</h2>
-          <h3>Related Documentation</h3>
+          <h2>See also</h2>
+          <h3>Related documentation</h3>
           <ul>
             <li>
               <a href="../../somearticle/index.html">
                 <p>Some article</p>
               </a>
               <p>
-                This is a <i>formatted</i> article.
+                This is a <em>formatted</em> article.
               </p>
             </li>
           </ul>
@@ -420,14 +420,14 @@ struct FileWritingHTMLContentConsumerTests {
               <h1>Some article</h1>
             </hgroup>
             <p>
-              This is a <i>formatted</i> article.
+              This is a <em>formatted</em> article.
             </p>
             <aside class="deprecated">
               <p class="label">
                 Deprecated
               </p>
               <p>
-                Description of why this <i>article</i> is deprecated.
+                Description of why this <em>article</em> is deprecated.
               </p>
             </aside>
           </section>
@@ -441,8 +441,8 @@ struct FileWritingHTMLContentConsumerTests {
           </p>
           <h3>Details</h3>
           <p>This subsection describes something more detailed.</p>
-          <h2>See Also</h2>
-          <h3>Related Documentation</h3>
+          <h2>See also</h2>
+          <h3>Related documentation</h3>
           <ul>
             <li>
               <a href="../someclass/index.html">
@@ -491,7 +491,7 @@ struct FileWritingHTMLContentConsumerTests {
             <pre><code>protocol SomeProtocol</code></pre>
           </section>
           <h2>Relationships</h2>
-          <h3>Conforming Types</h3>
+          <h3>Conforming types</h3>
           <ul>
             <li>
               <a href="../someclass/index.html">
@@ -609,7 +609,7 @@ struct FileWritingHTMLContentConsumerTests {
               <h1>RootArticle</h1>
             </hgroup>
             <p>
-              This is a <i>formatted</i> article that becomes the root page (because there is only one page).
+              This is a <em>formatted</em> article that becomes the root page (because there is only one page).
             </p>
           </section>
         </article></noscript>\(templateHasNoScriptTag ? "" : "\n")

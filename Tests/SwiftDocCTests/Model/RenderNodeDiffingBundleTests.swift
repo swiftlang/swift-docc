@@ -272,7 +272,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
         let expectedRoleHeadingDiff = JSONPatchOperation.replace(pointer: JSONPointer(pathComponents: ["metadata", "roleHeading"]),
-                                                                 value: AnyCodable("Sample Code"))
+                                                                 value: AnyCodable("Sample code"))
         assertDifferences(differences,
                           contains: expectedRoleHeadingDiff,
                           valueType: String.self)

@@ -94,7 +94,7 @@ final class RenderIndexTests: XCTestCase {
                         "type": "class",
                         "children": [
                           {
-                            "title": "Type Methods",
+                            "title": "Type methods",
                             "type": "groupMarker"
                           },
                           {
@@ -190,7 +190,7 @@ final class RenderIndexTests: XCTestCase {
                         "type": "class",
                         "children": [
                           {
-                            "title": "Instance Methods",
+                            "title": "Instance methods",
                             "type": "groupMarker"
                           },
                           {
@@ -199,16 +199,16 @@ final class RenderIndexTests: XCTestCase {
                             "type": "method"
                           },
                           {
-                            "title": "Default Implementations",
+                            "title": "Default implementations",
                             "type": "groupMarker"
                           },
                           {
                             "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
-                            "title": "MixedLanguageProtocol Implementations",
+                            "title": "MixedLanguageProtocol implementations",
                             "type": "collection",
                             "children": [
                               {
-                                "title": "Instance Methods",
+                                "title": "Instance methods",
                                 "type": "groupMarker"
                               },
                               {
@@ -230,7 +230,7 @@ final class RenderIndexTests: XCTestCase {
                         "type": "protocol",
                         "children": [
                           {
-                            "title": "Instance Methods",
+                            "title": "Instance methods",
                             "type": "groupMarker"
                           },
                           {
@@ -241,7 +241,7 @@ final class RenderIndexTests: XCTestCase {
                         ]
                       },
                       {
-                        "title": "Type Aliases",
+                        "title": "Type aliases",
                         "type": "groupMarker"
                       },
                       {
@@ -256,7 +256,7 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "children": [
                           {
-                            "title": "Enumeration Cases",
+                            "title": "Enumeration cases",
                             "type": "groupMarker"
                           },
                           {
@@ -302,7 +302,7 @@ final class RenderIndexTests: XCTestCase {
                             "type": "article"
                           },
                           {
-                            "title": "Instance Methods",
+                            "title": "Instance methods",
                             "type": "groupMarker"
                           },
                           {
@@ -330,7 +330,7 @@ final class RenderIndexTests: XCTestCase {
                         "type": "class",
                         "children": [
                           {
-                            "title": "Type Methods",
+                            "title": "Type methods",
                             "type": "groupMarker"
                           },
                           {
@@ -413,7 +413,7 @@ final class RenderIndexTests: XCTestCase {
                                 "type": "article"
                               },
                               {
-                                "title": "Instance Methods",
+                                "title": "Instance methods",
                                 "type": "groupMarker"
                               },
                               {
@@ -444,16 +444,16 @@ final class RenderIndexTests: XCTestCase {
                             "type": "init"
                           },
                           {
-                            "title": "Default Implementations",
+                            "title": "Default implementations",
                             "type": "groupMarker"
                           },
                           {
                             "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
-                            "title": "MixedLanguageProtocol Implementations",
+                            "title": "MixedLanguageProtocol implementations",
                             "type": "collection",
                             "children": [
                               {
-                                "title": "Instance Methods",
+                                "title": "Instance methods",
                                 "type": "groupMarker"
                               },
                               {
@@ -475,7 +475,7 @@ final class RenderIndexTests: XCTestCase {
                         "type": "protocol",
                         "children": [
                           {
-                            "title": "Instance Methods",
+                            "title": "Instance methods",
                             "type": "groupMarker"
                           },
                           {
@@ -501,7 +501,7 @@ final class RenderIndexTests: XCTestCase {
                             "type": "init"
                           },
                           {
-                            "title": "Type Properties",
+                            "title": "Type properties",
                             "type": "groupMarker"
                           },
                           {

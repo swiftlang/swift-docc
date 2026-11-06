@@ -16,16 +16,25 @@ import DocCTestUtilities
 import SymbolKit
 
 struct HTMLRenderingTests {
-    @Test
-    func imageSourcesUseRelativePaths() async throws {
+    
+    enum ImageSyntax: CaseIterable {
+        case markdown, directive
+    }
+    
+    @Test(arguments: ImageSyntax.allCases)
+    func imageSourcesUseRelativePaths(_ imageSyntax: ImageSyntax) async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            TextFile(name: "Root.md", utf8Content: """
-            # Root
-            
-            A root page with an image.
-            
-            ![Some alt text](ImageName)
-            """)
+            TextFile(name: "Root.md") { """
+                # Root
+                
+                A root page with an image.
+                
+                """
+                switch imageSyntax {
+                    case .markdown:  "![Some alt text](ImageName)"
+                    case .directive: "@Image(source: ImageName, alt: \"Some alt text\")"
+                }
+            }
             
             DataFile(name: "ImageName@2x.png", data: Data())
             DataFile(name: "ImageName~dark@2x.png", data: Data())
@@ -59,13 +68,11 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Overview">Overview</a>
             </h2>
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
+              <img alt="Some alt text" decoding="async" loading="lazy">
+            </picture>
           </section>
         </article>
         """)
@@ -117,8 +124,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Conforms-To">
-                  <a href="#Conforms-To">Conforms To</a>
+                <h3 id="Conforms-to">
+                  <a href="#Conforms-to">Conforms to</a>
                 </h3>
                 <ul>
                   <li>
@@ -164,8 +171,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Conforming-Types">
-                  <a href="#Conforming-Types">Conforming Types</a>
+                <h3 id="Conforming-types">
+                  <a href="#Conforming-types">Conforming types</a>
                 </h3>
                 <ul>
                   <li>
@@ -228,8 +235,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Inherits-From">
-                  <a href="#Inherits-From">Inherits From</a>
+                <h3 id="Inherits-from">
+                  <a href="#Inherits-from">Inherits from</a>
                 </h3>
                 <ul>
                   <li>
@@ -275,8 +282,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Inherited-By">
-                  <a href="#Inherited-By">Inherited By</a>
+                <h3 id="Inherited-by">
+                  <a href="#Inherited-by">Inherited by</a>
                 </h3>
                 <ul>
                   <li>
@@ -341,8 +348,8 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Relationships">Relationships</a>
             </h2>
-            <h3 id="Inherits-From">
-              <a href="#Inherits-From">Inherits From</a>
+            <h3 id="Inherits-from">
+              <a href="#Inherits-from">Inherits from</a>
             </h3>
             <ul>
               <li>
@@ -353,8 +360,8 @@ struct HTMLRenderingTests {
                 </a>
               </li>
             </ul>
-            <h3 id="Conforms-To">
-              <a href="#Conforms-To">Conforms To</a>
+            <h3 id="Conforms-to">
+              <a href="#Conforms-to">Conforms to</a>
             </h3>
             <ul>
               <li>
@@ -414,20 +421,20 @@ struct HTMLRenderingTests {
               </h1>
             </hgroup>
           </section>
-          <section id="Default-Implementations">
+          <section id="Default-implementations">
             <h2>
-              <a href="#Default-Implementations">Default Implementations</a>
+              <a href="#Default-implementations">Default implementations</a>
             </h2>
-            <h3 id="SomeProtocol-Implementations">
-              <a href="#SomeProtocol-Implementations">SomeProtocol Implementations</a>
+            <h3 id="SomeProtocol-implementations">
+              <a href="#SomeProtocol-implementations">SomeProtocol implementations</a>
             </h3>
             <ul>
               <li>
                 <a href="../dosomething()-88gib/index.html">
                   <code>
-                    <span class="identifier">
+                    <b>
                       do<wbr>Something()
-                    </span>
+                    </b>
                   </code>
                 </a>
                 <p>Some documentation</p>
@@ -496,14 +503,14 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Topics">Topics</a>
             </h2>
-            <h3 id="Default-Implementations">
-              <a href="#Default-Implementations">Default Implementations</a>
+            <h3 id="Default-implementations">
+              <a href="#Default-implementations">Default implementations</a>
             </h3>
             <ul>
               <li>
                 <a href="someprotocol-implementations/index.html">
                   <p class="api-collection">
-                    SomeProtocol Implementations
+                    SomeProtocol implementations
                   </p>
                 </a>
               </li>
@@ -513,8 +520,8 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Relationships">Relationships</a>
             </h2>
-            <h3 id="Conforms-To">
-              <a href="#Conforms-To">Conforms To</a>
+            <h3 id="Conforms-to">
+              <a href="#Conforms-to">Conforms to</a>
             </h3>
             <ul>
               <li>
@@ -587,9 +594,9 @@ struct HTMLRenderingTests {
               <li>
                 <a href="secondclass/index.html">
                   <code>
-                    <span class="identifier">
+                    <b>
                       Second<wbr>Class
-                    </span>
+                    </b>
                   </code>
                 </a>
               </li>
@@ -614,9 +621,9 @@ struct HTMLRenderingTests {
               <li>
                 <a href="firstclass/index.html">
                   <code>
-                    <span class="identifier">
+                    <b>
                       First<wbr>Class
-                    </span>
+                    </b>
                   </code>
                 </a>
               </li>
@@ -685,9 +692,9 @@ struct HTMLRenderingTests {
                   <h1>first</h1>
                 </hgroup>
               </section>
-              <section id="See-Also">
+              <section id="See-also">
                 <h2>
-                  <a href="#See-Also">See Also</a>
+                  <a href="#See-also">See also</a>
                 </h2>
                 <h3 id="Manually-curated">
                   <a href="#Manually-curated">Manually curated</a>
@@ -696,7 +703,7 @@ struct HTMLRenderingTests {
                   <li>
                     <a href="../second/index.html">
                       <code>
-                        <span class="identifier">second</span>
+                        <b>second</b>
                       </code>
                     </a>
                   </li>
@@ -742,18 +749,18 @@ struct HTMLRenderingTests {
                 </hgroup>
                 <p>An article with an explicit “See Also” section.</p>
               </section>
-              <section id="See-Also">
+              <section id="See-also">
                 <h2>
-                  <a href="#See-Also">See Also</a>
+                  <a href="#See-also">See also</a>
                 </h2>
-                <h3 id="Related-Documentation">
-                  <a href="#Related-Documentation">Related Documentation</a>
+                <h3 id="Related-documentation">
+                  <a href="#Related-documentation">Related documentation</a>
                 </h3>
                 <ul>
                   <li>
                     <a href="../../modulename/something/third/index.html">
                       <code>
-                        <span class="identifier">third</span>
+                        <b>third</b>
                       </code>
                     </a>
                   </li>
@@ -765,14 +772,14 @@ struct HTMLRenderingTests {
                   <li>
                     <a href="../../modulename/something/first/index.html">
                       <code>
-                        <span class="identifier">first</span>
+                        <b>first</b>
                       </code>
                     </a>
                   </li>
                   <li>
                     <a href="../../modulename/something/second/index.html">
                       <code>
-                        <span class="identifier">second</span>
+                        <b>second</b>
                       </code>
                     </a>
                   </li>
@@ -781,66 +788,6 @@ struct HTMLRenderingTests {
             </article>
             """)
         }
-    }
-    
-    @Test
-    func blockDirectivesRenderInHTML() async throws {
-        let catalog = Folder(name: "unit-test.docc") {
-            TextFile(name: "Root.md", utf8Content: """
-            # Root
-            
-            A root page with an image directive.
-            
-            @Image(source: ImageName, alt: "Some alt text") {
-                with a caption!
-            }
-            """)
-            
-            DataFile(name: "ImageName@2x.png", data: Data())
-            DataFile(name: "ImageName~dark@2x.png", data: Data())
-        }
-        
-        let context = try await load(catalog: catalog)
-        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
-
-        let reference = try #require(context.soleRootModuleReference)
-        let article = try #require(context.documentationCache[reference]?.semantic as? Article)
-        
-        var renderer = makeHTMLRenderer(for: reference, in: context)
-        let pageInfo = renderer.renderArticle(article)
-        
-        let html = try #require(pageInfo.prettyHTMLString)
-        #expect(html == """
-        <article>
-          <section id="hero" class="article">
-            <nav id="breadcrumbs">
-              <ul>
-                <li>Root</li>
-              </ul>
-            </nav>
-            <hgroup>
-              <p>Article</p>
-              <h1>Root</h1>
-            </hgroup>
-            <p>A root page with an image directive.</p>
-          </section>
-          <section id="Overview">
-            <h2>
-              <a href="#Overview">Overview</a>
-            </h2>
-            <figure>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-              <figcaption>
-                <p>with a caption!</p>
-              </figcaption>
-            </figure>
-          </section>
-        </article>
-        """)
     }
     
     private func makeHTMLRenderer(for reference: ResolvedTopicReference, in context: DocumentationContext) -> HTMLRenderer {

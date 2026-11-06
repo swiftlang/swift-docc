@@ -147,11 +147,11 @@ section {
 /* Draw a separator between the Topics section and any non-"hero" section (with a background) before it */
 article > section:not(#hero) + #Topics,
 /* Draw a separator between the See Also section and any non-"hero" section (with a background) before it */
-article > section:not(#hero) + #See-Also,
+article > section:not(#hero) + #See-also,
 /* Draw a separator between the Relationships section and any non-"hero" section (with a background) before it */
 article > section:not(#hero) + #Relationships,
 /* Draw a separator between the Default Implementations section and any non-"hero" section (with a background) before it */
-article > section:not(#hero) + #Default-Implementations,
+article > section:not(#hero) + #Default-implementations,
 /* Draw a separator between a symbol's first and second sections */
 article > section:first-of-type:not(#hero) + section
 {
@@ -567,7 +567,7 @@ dl {
   }
 }
 
-#Topics, #See-Also, #Relationships, #Default-Implementations {
+#Topics, #See-also, #Relationships, #Default-implementations {
   &> ul {
     padding: 0;
     &> li {
@@ -589,8 +589,9 @@ dl {
           line-height: 24px;
           color: rgb(102, 102, 102);
           
-          &>.identifier {
+          &>b {
             color: var(--color-figure-blue);
+            font-weight: normal;
           }
         }
       }
@@ -694,7 +695,7 @@ table {
   }
 }
 
-#Mentioned-In > ul {
+#Mentioned-in > ul {
   padding: 0;
   &> li {
     margin-top: 10px;
@@ -913,8 +914,9 @@ body > footer {
   }
 }
 
-figure {
-    margin-top: var(--spacing-stacked-margin-xlarge); 
+figure, picture {
+    display: block;
+    margin-top: var(--spacing-stacked-margin-xlarge);
 }
 
 figcaption {

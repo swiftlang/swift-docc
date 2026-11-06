@@ -146,13 +146,13 @@ struct MarkdownRenderer_PageElementsTests {
                 <dt>First</dt>
                 <dd>
                   <p>
-                    Some <i>formatted</i> description with <code>code</code>
+                    Some <em>formatted</em> description with <code>code</code>
                   </p>
                 </dd>
                 <dt>Second</dt>
                 <dd>
                   <p>
-                    Some <b>other</b> <i>formatted</i> description
+                    Some <strong>other</strong> <em>formatted</em> description
                   </p>
                   <p>That spans two paragraphs</p>
                 </dd>
@@ -166,13 +166,13 @@ struct MarkdownRenderer_PageElementsTests {
               <dt>First</dt>
               <dd>
                 <p>
-                  Some <i>formatted</i> description with <code>code</code>
+                  Some <em>formatted</em> description with <code>code</code>
                 </p>
               </dd>
               <dt>Second</dt>
               <dd>
                 <p>
-                  Some <b>other</b> <i>formatted</i> description
+                  Some <strong>other</strong> <em>formatted</em> description
                 </p>
                 <p>That spans two paragraphs</p>
               </dd>
@@ -276,16 +276,16 @@ struct MarkdownRenderer_PageElementsTests {
         switch goal {
         case .richness:
             returns.assertMatches(prettyFormatted: true, expected: """
-            <section id="Return-Value">
+            <section id="Return-value">
               <h2>
-                <a href="#Return-Value">Return Value</a>
+                <a href="#Return-value">Return value</a>
               </h2>
             \(commonHTML.indenting(depth: 1))
             </section>
             """)
         case .conciseness:
             returns.assertMatches(prettyFormatted: true, expected: """
-            <h2>Return Value</h2>
+            <h2>Return value</h2>
             \(commonHTML)
             """)
         }
@@ -313,16 +313,16 @@ struct MarkdownRenderer_PageElementsTests {
         switch goal {
         case .richness:
             returns.assertMatches(prettyFormatted: true, expected: """
-            <section id="Return-Value">
+            <section id="Return-value">
               <h2>
-                <a href="#Return-Value">Return Value</a>
+                <a href="#Return-value">Return value</a>
               </h2>
             \(commonHTML.indenting(depth: 1))
             </section>
             """)
         case .conciseness:
             returns.assertMatches(prettyFormatted: true, expected: """
-            <h2>Return Value</h2>
+            <h2>Return value</h2>
             \(commonHTML)
             """)
         }
@@ -508,6 +508,302 @@ struct MarkdownRenderer_PageElementsTests {
         <pre id="declaration"><code><span class="attribute">@freestanding</span>(declaration)
         <span class="keyword">macro</span> warning(_ <span class="internalParameter">message</span>: <span class="typeIdentifier">String</span>)</code></pre>
         """)
+        
+        // func withUnsafeContinuation<T>(isolation: isolated (any Actor)?, _ fn: (UnsafeContinuation<T, Never>) -> Void) async -> sending T
+        let functionDeclaration2 = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",                   preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",                      preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "withUnsafeContinuation", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "<",                      preciseIdentifier: nil),
+                .init(kind: .genericParameter,  spelling: "T",                      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ">(",                     preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "isolation",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",                     preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "isolated",               preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " (any ",                 preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Actor",                  preciseIdentifier: "s:ScA"),
+                .init(kind: .text,              spelling: ")?, ",                   preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "_",                      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",                      preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "fn",                     preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",                    preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "UnsafeContinuation",     preciseIdentifier: "s:Scc"),
+                .init(kind: .text,              spelling: "<",                      preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "T",                      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",                     preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Never",                  preciseIdentifier: "s:s5NeverO"),
+                .init(kind: .text,              spelling: ">) -> ",                 preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Void",                   preciseIdentifier: "s:s4Voida"),
+                .init(kind: .text,              spelling: ") ",                     preciseIdentifier: nil),
+                .init(kind: .keyword,           spelling: "async",                  preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " -> sending ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "T",                      preciseIdentifier: nil),
+            ]
+        ])
+        
+        #expect(functionDeclaration2.plainTextForTesting == """
+        func withUnsafeContinuation<T>(
+            isolation: isolated (any Actor)?,
+            _ fn: (UnsafeContinuation<T, Never>) -> Void
+        ) async -> sending T
+        """)
+        functionDeclaration2.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="keyword">func</span> withUnsafeContinuation&lt;T>(
+            isolation: <span class="keyword">isolated</span> (any <span class="typeIdentifier">Actor</span>)?,
+            _ <span class="internalParameter">fn</span>: (<span class="typeIdentifier">UnsafeContinuation</span>&lt;<span class="typeIdentifier">T</span>, <span class="typeIdentifier">Never</span>>) -> <span class="typeIdentifier">Void</span>
+        ) <span class="keyword">async</span> -> sending <span class="typeIdentifier">T</span></code></pre>
+        """)
+        
+        let functionDeclaration3 = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "functionName", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",            preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "first",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Bool",         preciseIdentifier: "s:Sb"),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Bool",         preciseIdentifier: "s:Sb"),
+                .init(kind: .text,              spelling: "), ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "second",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Result",       preciseIdentifier: "s:s6ResultO"),
+                .init(kind: .text,              spelling: "<",            preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",          preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Never",        preciseIdentifier: "s:s5NeverO"),
+                .init(kind: .text,              spelling: ">, ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "third",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "InlineArray",  preciseIdentifier: "s:s11InlineArrayV"),
+                .init(kind: .text,              spelling: "<5, ",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",          preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ">)",           preciseIdentifier: nil),
+            ]
+        ])
+        
+        #expect(functionDeclaration3.plainTextForTesting == """
+        func functionName(
+            first: (Bool, Bool),
+            second: Result<Int, Never>,
+            third: InlineArray<5, Int>
+        )
+        """)
+        functionDeclaration3.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="keyword">func</span> functionName(
+            first: (<span class="typeIdentifier">Bool</span>, <span class="typeIdentifier">Bool</span>),
+            second: <span class="typeIdentifier">Result</span>&lt;<span class="typeIdentifier">Int</span>, <span class="typeIdentifier">Never</span>>,
+            third: <span class="typeIdentifier">InlineArray</span>&lt;5, <span class="typeIdentifier">Int</span>>
+        )</code></pre>
+        """)
+        
+        let functionDeclaration4 = makeRenderer(goal: .richness, pathsToReturn: symbolPaths).declaration([
+            .swift:  [
+                .init(kind: .keyword,           spelling: "func",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",           preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "doSomething", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",           preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "first",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",         preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ") -> (), ",   preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "second",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": (",         preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "String",      preciseIdentifier: "s:SS"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Bool",        preciseIdentifier: "s:Sb"),
+                .init(kind: .text,              spelling: ") -> ",       preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Int",         preciseIdentifier: "s:Si"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "third",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ": () -> (",   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Double",      preciseIdentifier: "s:Sd"),
+                .init(kind: .text,              spelling: ", ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "Bool",        preciseIdentifier: "s:Sb"),
+                .init(kind: .text,              spelling: ")) -> ",      preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "String",      preciseIdentifier: "s:SS"),
+            ]
+        ])
+        
+        #expect(functionDeclaration4.plainTextForTesting == """
+        func doSomething(
+            first: (Int) -> (),
+            second: (String, Bool) -> Int,
+            third: () -> (Double, Bool)
+        ) -> String
+        """)
+        functionDeclaration4.assertMatches(prettyFormatted: true, expected: """
+        <pre id="declaration"><code><span class="keyword">func</span> doSomething(
+            first: (<span class="typeIdentifier">Int</span>) -> (),
+            second: (<span class="typeIdentifier">String</span>, <span class="typeIdentifier">Bool</span>) -> <span class="typeIdentifier">Int</span>,
+            third: () -> (<span class="typeIdentifier">Double</span>, <span class="typeIdentifier">Bool</span>)
+        ) -> <span class="typeIdentifier">String</span></code></pre>
+        """)
+    }
+    
+    @Test(arguments: RenderGoal.allCases)
+    func prettyPrintsCDeclarations(goal: RenderGoal) {
+        let symbolPaths = [
+            "first-parameter-symbol-id":  "documentation/ModuleName/FirstParameterValue/index.html".lowercased(),
+            "second-parameter-symbol-id": "documentation/ModuleName/SecondParameterValue/index.html".lowercased(),
+            "third-parameter-symbol-id":  "documentation/ModuleName/ThirdParameterValue/index.html".lowercased(),
+            "return-value-symbol-id":     "documentation/ModuleName/ReturnValue/index.html".lowercased(),
+        ]
+        
+        let singleParameterFunction = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .objectiveC: [
+                .init(kind: .keyword,           spelling: "extern",              preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",                   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue",         preciseIdentifier: "return-value-symbol-id"),
+                .init(kind: .text,              spelling: " ",                   preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "functionName",        preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",                   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue", preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " ",                   preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",               preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ");",                  preciseIdentifier: nil),
+            ]
+        ])
+        
+        switch goal {
+        case .richness:
+            #expect(singleParameterFunction.childCountForTesting == 1)
+            #expect(singleParameterFunction.childrenForTesting.first?.plainTextForTesting == """
+            extern ReturnValue functionName(FirstParameterValue first);
+            """)
+            singleParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre id="declaration"><code><span class="keyword">extern</span> <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a> functionName(<a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a> <span class="internalParameter">first</span>);</code></pre>
+            """)
+            
+        case .conciseness:
+            singleParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre><code>extern ReturnValue functionName(FirstParameterValue first);</code></pre>
+            """)
+        }
+        
+        let multiParameterFunction = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .objectiveC: [
+                .init(kind: .keyword,           spelling: "extern",               preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue",          preciseIdentifier: "return-value-symbol-id"),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "functionName",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",                    preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "FirstParameterValue",  preciseIdentifier: "first-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "first",                preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",                   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "SecondParameterValue", preciseIdentifier: "second-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "second",               preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",                   preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ThirdParameterValue",  preciseIdentifier: "third-parameter-symbol-id"),
+                .init(kind: .text,              spelling: " ",                    preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "third",                preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ");",                   preciseIdentifier: nil),
+            ]
+        ])
+        
+        switch goal {
+        case .richness:
+            #expect(multiParameterFunction.childCountForTesting == 1)
+            #expect(multiParameterFunction.childrenForTesting.first?.plainTextForTesting == """
+            extern ReturnValue functionName(
+                FirstParameterValue first,
+                SecondParameterValue second,
+                ThirdParameterValue third
+            );
+            """)
+            multiParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre id="declaration"><code><span class="keyword">extern</span> <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a> functionName(
+                <a class="typeIdentifier" href="../../firstparametervalue/index.html">FirstParameterValue</a> <span class="internalParameter">first</span>,
+                <a class="typeIdentifier" href="../../secondparametervalue/index.html">SecondParameterValue</a> <span class="internalParameter">second</span>,
+                <a class="typeIdentifier" href="../../thirdparametervalue/index.html">ThirdParameterValue</a> <span class="internalParameter">third</span>
+            );</code></pre>
+            """)
+            
+        case .conciseness:
+            multiParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre><code>extern ReturnValue functionName(FirstParameterValue first, SecondParameterValue second, ThirdParameterValue third);</code></pre>
+            """)
+        }
+        
+        let blockParameterFunction = makeRenderer(goal: goal, pathsToReturn: symbolPaths).declaration([
+            .objectiveC: [
+                .init(kind: .keyword,           spelling: "extern",       preciseIdentifier: nil),
+                .init(kind: .text,              spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "ReturnValue",  preciseIdentifier: "return-value-symbol-id"),
+                .init(kind: .text,              spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .identifier,        spelling: "functionName", preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "(",            preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "info",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "size_t",       preciseIdentifier: "c:@T@size_t"),
+                .init(kind: .text,              spelling: " ",            preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "size",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " * (^",        preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "lockPointer",  preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ")(",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "info",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "), ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " (^",          preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "unlockPointer",preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ")(",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "info",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ", ",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "pointer",      preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "), ",          preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " (^",          preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "releaseInfo",  preciseIdentifier: nil),
+                .init(kind: .text,              spelling: ")(",           preciseIdentifier: nil),
+                .init(kind: .typeIdentifier,    spelling: "void",         preciseIdentifier: "c:v"),
+                .init(kind: .text,              spelling: " *",           preciseIdentifier: nil),
+                .init(kind: .internalParameter, spelling: "info",         preciseIdentifier: nil),
+                .init(kind: .text,              spelling: "));",          preciseIdentifier: nil),
+            ]
+        ])
+        
+        switch goal {
+        case .richness:
+            #expect(blockParameterFunction.childCountForTesting == 1)
+            #expect(blockParameterFunction.childrenForTesting.first?.plainTextForTesting == """
+            extern ReturnValue functionName(
+                void *info,
+                size_t size,
+                void * (^lockPointer)(void *info),
+                void (^unlockPointer)(void *info, void *pointer),
+                void (^releaseInfo)(void *info)
+            );
+            """)
+            blockParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre id="declaration"><code><span class="keyword">extern</span> <a class="typeIdentifier" href="../../returnvalue/index.html">ReturnValue</a> functionName(
+                <span class="typeIdentifier">void</span> *<span class="internalParameter">info</span>,
+                <span class="typeIdentifier">size_t</span> <span class="internalParameter">size</span>,
+                <span class="typeIdentifier">void</span> * (^<span class="internalParameter">lockPointer</span>)(<span class="typeIdentifier">void</span> *<span class="internalParameter">info</span>),
+                <span class="typeIdentifier">void</span> (^<span class="internalParameter">unlockPointer</span>)(<span class="typeIdentifier">void</span> *<span class="internalParameter">info</span>, <span class="typeIdentifier">void</span> *<span class="internalParameter">pointer</span>),
+                <span class="typeIdentifier">void</span> (^<span class="internalParameter">releaseInfo</span>)(<span class="typeIdentifier">void</span> *<span class="internalParameter">info</span>)
+            );</code></pre>
+            """)
+            
+        case .conciseness:
+            blockParameterFunction.assertMatches(prettyFormatted: true, expected: """
+            <pre><code>extern ReturnValue functionName(void *info, size_t size, void * (^lockPointer)(void *info), void (^unlockPointer)(void *info, void *pointer), void (^releaseInfo)(void *info));</code></pre>
+            """)
+        }
     }
     
     @Test(arguments: RenderGoal.allCases)
@@ -675,20 +971,18 @@ struct MarkdownRenderer_PageElementsTests {
                 <li>
                   <a href="../../someclass/index.html">
                     <code class="swift-only">
-                      class 
-                      <span class="identifier">
+                      class <b>
                         Some<wbr>Class
-                      </span>
+                      </b>
                     </code>
                     <code class="occ-only">
-                      @interface 
-                      <span class="identifier">
+                      @interface <b>
                         TLASome<wbr>Class
-                      </span>
+                      </b>
                     </code>
                   </a>
                   <p>
-                    Some <i>formatted</i> description of this class
+                    Some <em>formatted</em> description of this class
                   </p>
                 </li>
                 <li>
@@ -698,27 +992,20 @@ struct MarkdownRenderer_PageElementsTests {
                     </p>
                   </a>
                   <p>
-                    Some <b>formatted</b> description of this <i>article</i>.
+                    Some <strong>formatted</strong> description of this <em>article</em>.
                   </p>
                 </li>
                 <li>
                   <a href="../../someclass/somemethod(with:and:)/index.html">
                     <code class="swift-only">
-                      func 
-                      <span class="identifier">
+                      func <b>
                         some<wbr>Method
-                      </span>
-                      (
-                      <span class="identifier">with</span>
-                      : Int, 
-                      <span class="identifier">and</span>
-                      : String)
+                      </b>(<b>with</b>: Int, <b>and</b>: String)
                     </code>
                     <code class="occ-only">
-                      - 
-                      <span class="identifier">
+                      - <b>
                         some<wbr>Method<wbr>With<wbr>First:<wbr>and<wbr>Second:
-                      </span>
+                      </b>
                     </code>
                   </a>
                 </li>
@@ -736,7 +1023,7 @@ struct MarkdownRenderer_PageElementsTests {
                   <code>class SomeClass</code>
                 </a>
                 <p>
-                  Some <i>formatted</i> description of this class
+                  Some <em>formatted</em> description of this class
                 </p>
               </li>
               <li>
@@ -744,7 +1031,7 @@ struct MarkdownRenderer_PageElementsTests {
                   <p>Some Article</p>
                 </a>
                 <p>
-                  Some <b>formatted</b> description of this <i>article</i>.
+                  Some <strong>formatted</strong> description of this <em>article</em>.
                 </p>
               </li>
               <li>
@@ -861,7 +1148,7 @@ struct MarkdownRenderer_PageElementsTests {
             pathsToReturn: pathsToReturn,
             assetsToReturn: assetsToReturn,
             fallbackLinkTextsToReturn: fallbackLinkTextsToReturn
-        ), renderableDirectiveParser: StubDirectiveParser())
+        ), renderableDirectiveParser: SingleValueDirectiveParser())
     }
     
     private func parseMarkup(string: String) -> [any Markup] {
