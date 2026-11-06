@@ -901,6 +901,39 @@ body > header {
       background: var(--color-navigator-item-hover);
     }
   }
+  
+  &> ul {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0 var(--navigator-inset) 10px;
+    list-style: none;
+    
+    &> li {
+      position: relative;
+      padding: 5px var(--navigator-inset);
+      
+      a {
+        display: block;
+        overflow: hidden;
+        color: inherit;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-decoration: none;
+        
+        /* Make the entire row a click target for the link, with a background on hover or keyboard focus */
+        &:after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 4px;
+        }
+        
+        &:is(:hover, :focus-visible):after {
+          background: var(--color-navigator-item-hover);
+        }
+      }
+    }
+  }
 }
 
 /* On narrow screens, the navigator is hidden. */
@@ -1065,17 +1098,32 @@ figcaption {
   }
   const technologyPath = rootModule.path.toLowerCase();
   
+  // Each item is a list item with a link to its page.
+  function makeRow(item) {
+    const title = document.createElement("a");
+    title.href = hrefForPath(item.path);
+    title.textContent = item.title;
+    
+    const row = document.createElement("li");
+    row.append(title);
+    return row;
+  }
+  
   const technologyTitle = document.createElement("a");
   technologyTitle.className = "technology-title";
   technologyTitle.href = hrefForPath(technologyPath);
   technologyTitle.innerHTML = `<h2></h2>`;
   technologyTitle.firstChild.textContent = rootModule.title;
   
+  const list = document.createElement("ul");
+  // The navigator lists the module's pages, without the headings of the groups that organize them.
+  list.append(...rootModule.children.filter(({ type }) => type !== "groupMarker").map(makeRow));
+  
   // The navigator goes before the page's main content, in the container below the page's header.
   const navigator = document.createElement("nav");
   navigator.id = "navigator";
   navigator.setAttribute("aria-label", "Documentation Navigator");
-  navigator.append(technologyTitle);
+  navigator.append(technologyTitle, list);
   const container = document.querySelector("body > .full-width-container");
   const main = container.querySelector(":scope > main");
   main.before(navigator);
