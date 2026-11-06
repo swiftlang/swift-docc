@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Foundation
 import Testing
 import DocCHTML
 @testable import SwiftDocC
@@ -146,6 +147,59 @@ struct HTMLRenderFullPageTests {
             </html>
             """)
         }
+    }
+    
+    @Test
+    func includesCustomScriptsAtEndOfFullPageBody() async throws {
+        let fullPage = HTMLRenderer.makeFullPage(
+            mainContent: article(contents: []),
+            metadata: (title: "Some title", description: nil),
+            for: reference,
+            customScripts: [
+                .init(name: "local-script"),
+                .init(name: "async-local-script.js", async: true),
+                .init(url: "https://example.com/external-script.js", type: "module", integrity: "sha384-abc"),
+            ]
+        )
+        
+        let formattedPage = String(decoding: HTMLFormatter.format(fullPage, options: .prettyPrint), as: UTF8.self)
+        #expect(formattedPage.contains("""
+            </footer>
+            <script src="../../../../custom-scripts/local-script.js"></script>
+            <script async src="../../../../custom-scripts/async-local-script.js"></script>
+            <script crossorigin="anonymous" integrity="sha384-abc" src="https://example.com/external-script.js" type="module"></script>
+          </body>
+        """))
+    }
+    
+    @Test
+    func preparesCustomScriptsFromFile() async throws {
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "path", content: [
+                TextFile(name: "custom-scripts.json", utf8Content: """
+                [
+                    { "name": "local-script", "run": "on-navigate" },
+                    { "url": "https://example.com/external-script.js", "integrity": "sha384-abc" },
+                    { "url": "https://example.com/invalid.js", "name": "invalid" },
+                    { "async": true }
+                ]
+                """),
+            ]),
+        ])
+        
+        let customScripts = try HTMLRenderer.prepareForFullPage(
+            customHeader: nil,
+            customFooter: nil,
+            customScripts: URL(fileURLWithPath: "/path/custom-scripts.json"),
+            fileManager: fileSystem
+        ).customScripts
+        // Custom scripts without exactly one of a `url` or a `name` are skipped.
+        #expect(customScripts == [
+            .init(name: "local-script"),
+            .init(url: "https://example.com/external-script.js", integrity: "sha384-abc"),
+        ])
+        
+        #expect(try HTMLRenderer.prepareForFullPage(customHeader: nil, customFooter: nil, fileManager: fileSystem).customScripts.isEmpty)
     }
 }
 

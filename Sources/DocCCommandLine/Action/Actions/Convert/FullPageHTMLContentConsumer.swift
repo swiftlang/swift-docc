@@ -20,6 +20,7 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     
     private let customHeader: HTMLNode?
     private let customFooter: HTMLNode?
+    private let customScripts: [CustomScript]
     private let prettyPrint: Bool
     
     // FIXME: Extract the file writing (and directory creation) functionality from this RenderNode (JSON) specific type.
@@ -31,9 +32,10 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
         outputFileManager: some FileManagerProtocol,
         prettyPrint: Bool,
         customHeader: URL?,
-        customFooter: URL?
+        customFooter: URL?,
+        customScripts: URL? = nil
     ) throws {
-        (self.customHeader, self.customFooter) = try HTMLRenderer.prepareForFullPage(customHeader: customHeader, customFooter: customFooter, fileManager: inputFileManager)
+        (self.customHeader, self.customFooter, self.customScripts) = try HTMLRenderer.prepareForFullPage(customHeader: customHeader, customFooter: customFooter, customScripts: customScripts, fileManager: inputFileManager)
         self.prettyPrint = prettyPrint
         
         self.fileWriter = JSONEncodingRenderNodeWriter(
@@ -48,7 +50,7 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
         metadata: (title: String, description: String?),
         forPage reference: ResolvedTopicReference
     ) throws {
-        let page = HTMLRenderer.makeFullPage(mainContent: mainContent ?? article(contents: []), metadata: metadata, for: reference, customHeader: customHeader, customFooter: customFooter)
+        let page = HTMLRenderer.makeFullPage(mainContent: mainContent ?? article(contents: []), metadata: metadata, for: reference, customHeader: customHeader, customFooter: customFooter, customScripts: customScripts)
         
         let htmlData = HTMLFormatter.format(page, options: prettyPrint ? .prettyPrint : [])
         

@@ -470,6 +470,17 @@ extension Docc {
             @Flag(help: "Allows for custom templates, like `header.html`.")
             var experimentalEnableCustomTemplates = false
 
+            /// A user-provided value that is true if the user enables support for custom scripts.
+            /// Enabled by default (and if the user supplies custom scripts for their documentation webpage); documentation hosting services can choose to disable support for this feature.
+            @Flag(
+                name: .customLong("custom-scripts"),
+                inversion: .prefixedEnableDisable,
+                help: ArgumentHelp("Support custom scripts, configured with a `custom-scripts.json` file in the documentation catalog.", discussion: """
+                Pass '--disable-custom-scripts' when building documentation from sources you don't trust, for example on a documentation hosting service.
+                """)
+            )
+            var enableCustomScripts = true
+
             /// A user-provided value that is true if the user enables support for code block annotations.
             @Flag(
                 name: .customLong("code-block-annotations"),

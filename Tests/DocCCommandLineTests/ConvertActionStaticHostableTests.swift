@@ -48,7 +48,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
         
         // Test the content of the output folder.
         var expectedContent = [
-            "data", "documentation", "tutorials", "downloads", "images", "videos",
+            "data", "documentation", "tutorials", "downloads", "images", "videos", "custom-scripts",
             "index.html", "index",
             "metadata.json", "link-hierarchy.json", "linkable-entities.json"
         ]

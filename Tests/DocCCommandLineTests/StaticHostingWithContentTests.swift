@@ -84,6 +84,7 @@ struct StaticHostingWithContentTests {
         // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
         #expect(fileSystem.dump(subHierarchyFrom: "/output-dir") == """
         output-dir/
+        ├─ custom-scripts/
         ├─ data/
         │  ╰─ documentation/
         │     ╰─ rootarticle.json
