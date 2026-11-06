@@ -852,6 +852,24 @@ body > header {
     }
   }
   
+  /* When the page has a navigator, the button that shows and hides it displays the sidebar icon before the title instead. */
+  #navigator-toggle {
+    width: var(--header-icon-width);
+    height: 25px;
+    padding: 0;
+    border: none;
+    background: url(sidebar.svg) no-repeat left center;
+    cursor: pointer;
+    
+    + h2 {
+      margin-right: auto;
+      
+      &:before {
+        content: none;
+      }
+    }
+  }
+  
   span {
     float: right;
     line-height: 18px;
@@ -1085,7 +1103,7 @@ body > header {
 
 /* On narrow screens, the navigator is hidden. */
 @media only screen and (max-width: 1023px) {
-  #navigator {
+  #navigator, #navigator-toggle {
     display: none;
   }
 }
@@ -1110,7 +1128,7 @@ body > header {
   }
 }
 
-/* On wider screens, the navigator displays in a column next to the page's content. */
+/* On wider screens, the navigator displays in a column next to the page's content, unless the reader hides it. */
 @media only screen and (min-width: 1024px) {
   #navigator {
     /* A default width of 400px, but between 30% and 40% of the window width, up to a 1521px wide window. */
@@ -1125,6 +1143,14 @@ body > header {
     #navigator {
       width: 543px;
     }
+  }
+  
+  /* The navigator takes no space when the reader hides it. */
+  body.navigator-collapsed #navigator {
+    width: 0;
+    /* The navigator's border doesn't take up space either. */
+    margin-inline-end: -1px;
+    visibility: hidden;
   }
 }
 
@@ -1221,7 +1247,7 @@ figcaption {
     
     // MARK: Scripts
     
-    /// The script that renders the navigator sidebar from the navigator index.
+    /// The script that renders the navigator sidebar from the navigator index and lets the reader show and hide it.
     package static let navigatorScript = File(filename: "navigator.js", data: Data("""
 // Renders the navigator sidebar from the navigator index in the output's "index/index.json" file.
 (async () => {
@@ -1249,6 +1275,13 @@ figcaption {
   function hrefForPath(path) {
     const components = path.split("/").filter(Boolean).map((component) => encodeURI(component).replace(/[#?]/g, encodeURIComponent));
     return pathToRoot + components.join("/") + "/index.html";
+  }
+  
+  // Accessing storage throws when the browser or the reader disables it. Then the navigator's state only lasts for the page.
+  function withStorage(body) {
+    try {
+      return body();
+    } catch {}
   }
   
   // MARK: Navigator data
@@ -1307,7 +1340,7 @@ figcaption {
   
   const list = makeList(rootModule.children, 0);
   
-  // The navigator goes before the page's main content, in the container below the page's header.
+  // The navigator goes before the page's main content, in the container below the page's header, and the button that shows and hides the navigator goes in the header.
   const navigator = document.createElement("nav");
   navigator.id = "navigator";
   navigator.setAttribute("aria-label", "Documentation Navigator");
@@ -1315,6 +1348,28 @@ figcaption {
   const container = document.querySelector("body > .full-width-container");
   const main = container.querySelector(":scope > main");
   main.before(navigator);
+  // The page's default header is right before the container, after any custom header. The button goes before its title, so that it isn't part of the heading.
+  const headerTitle = container.previousElementSibling.querySelector("h2");
+  headerTitle.insertAdjacentHTML("beforebegin", `<button type="button" id="navigator-toggle" aria-controls="navigator" aria-label="Documentation Navigator"></button>`);
+  const toggle = headerTitle.previousElementSibling;
+  
+  // The navigator is visible unless the reader hides it.
+  const collapsedStorageKey = "docc.navigator.collapsed";
+  
+  function updateToggle() {
+    const isVisible = !document.body.classList.contains("navigator-collapsed");
+    toggle.setAttribute("aria-expanded", isVisible);
+  }
+  
+  document.body.classList.toggle("navigator-collapsed", withStorage(() => localStorage.getItem(collapsedStorageKey)) === "true");
+  
+  toggle.addEventListener("click", () => {
+    const isCollapsed = document.body.classList.toggle("navigator-collapsed");
+    withStorage(() => localStorage.setItem(collapsedStorageKey, isCollapsed));
+    updateToggle();
+  });
+  
+  updateToggle();
 })();
 
 """.utf8))

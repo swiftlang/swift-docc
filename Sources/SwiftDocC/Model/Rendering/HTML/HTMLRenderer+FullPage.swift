@@ -70,8 +70,6 @@ package extension HTMLRenderer {
         
         // 2. The default header
         bodyElements.append(header(contents: [
-            // FIXME: Make this a button that toggles the navigator sidebar (rdar://177705101)
-            // This is blocked by the sidebar requiring RenderNode input
             h2(contents: [.text("Documentation")]),
             
             // FIXME: Support switching between language representations of the page (rdar://177705327)
