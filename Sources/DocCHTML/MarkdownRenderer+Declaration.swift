@@ -291,11 +291,10 @@ private enum DeclarationFormatter {
                     
                 case hyphen:
                     let utf8View = fragments[index].text.utf8
-                    if let nextIndex = utf8View.index(utf8Index, offsetBy: 1, limitedBy: utf8View.endIndex),
-                        utf8View[nextIndex] == closeAngle
-                    {
+                    let nextUTF8Index = utf8View.index(after: utf8Index)
+                    if nextUTF8Index < utf8View.endIndex, utf8View[nextUTF8Index] == closeAngle {
                         // Skip past the "->" to avoid unbalancing the angle bracket depth.
-                        utf8View.formIndex(after: &utf8Index)
+                        utf8Index = nextUTF8Index
                     }
                     
                 case openAngle:  angleBracketDepth &+= 1
