@@ -816,11 +816,15 @@ pre {
 }
 
 body > header {
+  /* The width of the sidebar icon before the header's title */
+  --header-icon-width: 30px;
+  
   position: sticky;
   top: 0;
   box-sizing: border-box;
   width: 100%;
   height: 52px;
+  padding-inline: 22px;
   z-index: 5;
   
   display: flex;
@@ -842,12 +846,10 @@ body > header {
     margin-top: 0;
     
     &:before {
-      width: 30px;
+      width: var(--header-icon-width);
       display: inline-block;
       content: url(sidebar.svg)
     }
-    
-    margin-left: 22px;
   }
   
   span {
@@ -855,8 +857,6 @@ body > header {
     line-height: 18px;
     font-size: 14px;
     display: inline-block;
-    
-    margin-right: 22px;
   }
 }
 
