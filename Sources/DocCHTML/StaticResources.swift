@@ -897,6 +897,59 @@ body > header {
       background: var(--color-navigator-item-hover);
     }
   }
+  
+  .scroller {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding-bottom: 10px;
+  }
+  
+  .navigator-card-item {
+    display: flex;
+    min-height: 32px;
+    padding-inline: 20px;
+    
+    &:hover .head-wrapper {
+      background: var(--color-navigator-item-hover);
+    }
+  }
+  
+  .head-wrapper {
+    position: relative;
+    display: flex;
+    flex: 1;
+    align-items: center;
+    min-width: 0;
+    padding: 5px 20px 5px 0;
+    border-radius: 4px;
+  }
+  
+  .depth-spacer {
+    flex: 0 0 auto;
+    width: calc(var(--nesting-index) * 15px + 20px);
+  }
+  
+  .title-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+  }
+  
+  .leaf-link {
+    overflow: hidden;
+    color: inherit;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+    
+    /* Make the entire row a click target for the link */
+    &:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+  }
 }
 
 /* On narrow screens, the navigator is hidden. */
@@ -1023,6 +1076,8 @@ figcaption {
     return;
   }
   
+  const INDEX_ROOT_KEY = "<root>";
+  
   // This script is in the root of the output.
   const rootURL = new URL(".", script.src);
   // Like the page's own links, the navigator's links are relative to the page, for example "../../", so that the output works from any location or hosting path.
@@ -1041,8 +1096,6 @@ figcaption {
     return pathToRoot + components.join("/") + "/index.html";
   }
   
-  // MARK: Navigator data
-  
   const languages = index.interfaceLanguages;
   const modules = languages.swift?.length ? languages.swift : Object.values(languages).find((modules) => modules.length);
   // In rare cases there are multiple top-level roots. Prefer the one whose path matches the current page.
@@ -1053,20 +1106,66 @@ figcaption {
   }
   const technologyPath = rootModule.path.toLowerCase();
   
+  // All the items, in the order that the navigator displays them. An item's position in this list is its unique identifier.
+  const children = [];
+  function flattenNestedData(nodes, parent, depth) {
+    nodes.forEach(({ children: nodeChildren, ...node }) => {
+      Object.assign(node, {
+        uid: children.length,
+        parent: parent?.uid ?? INDEX_ROOT_KEY,
+        depth,
+        childUIDs: [],
+      });
+      parent?.childUIDs.push(node.uid);
+      children.push(node);
+      flattenNestedData(nodeChildren ?? [], node, depth + 1);
+    });
+  }
+  flattenNestedData(rootModule.children, null, 0);
+  
+  const getChildren = (uid) => uid === INDEX_ROOT_KEY
+    ? children.filter(({ parent }) => parent === INDEX_ROOT_KEY)
+    : children[uid].childUIDs.map((child) => children[child]);
+  
+  // Each item is a row with its title, which links to its page.
+  function makeRow(item) {
+    const row = document.createElement("div");
+    row.className = "navigator-card-item";
+    row.style.setProperty("--nesting-index", item.depth);
+    row.innerHTML = `<div class="head-wrapper"><div class="depth-spacer"></div><div class="title-container"></div></div>`;
+    
+    const titleContainer = row.querySelector(".title-container");
+    
+    const link = document.createElement("a");
+    link.className = "leaf-link";
+    link.href = hrefForPath(item.path);
+    link.textContent = item.title;
+    titleContainer.append(link);
+    return row;
+  }
+  
+  const appendRows = (container, items) => container.append(...items.map(makeRow));
+  
   const technologyTitle = document.createElement("a");
   technologyTitle.className = "technology-title";
   technologyTitle.href = hrefForPath(technologyPath);
   technologyTitle.innerHTML = `<h2></h2>`;
   technologyTitle.firstChild.textContent = rootModule.title;
   
+  const scroller = document.createElement("div");
+  scroller.className = "scroller";
+  
   // The navigator goes before the page's main content, in the container below the page's header.
   const navigator = document.createElement("nav");
   navigator.id = "navigator";
   navigator.setAttribute("aria-label", "Documentation Navigator");
-  navigator.append(technologyTitle);
+  navigator.append(technologyTitle, scroller);
   const container = document.querySelector("body > .full-width-container");
   const main = container.querySelector(":scope > main");
   main.before(navigator);
+  
+  // The navigator lists the module's pages, without the headings of the groups that organize them.
+  appendRows(scroller, getChildren(INDEX_ROOT_KEY).filter(({ type }) => type !== "groupMarker"));
 })();
 
 """.utf8))
