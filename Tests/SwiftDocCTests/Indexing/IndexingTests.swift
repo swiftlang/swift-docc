@@ -214,9 +214,13 @@ class IndexingTests: XCTestCase {
             let plistURL = url.appendingPathComponent("Info.plist")
             let plistData = try Data(contentsOf: plistURL)
             var plist = try DocumentationContext.Inputs.Info(from: plistData)
-            let existingAvailability = plist.defaultAvailability?.modules["FillIntroduced"]
-            plist.defaultAvailability?.modules["MyKit"] = existingAvailability
-            XCTAssertNotNil(plist.defaultAvailability?.modules["MyKit"])
+            if case .deprecated(let deprecatedDefaultAvailabilityByModule) = plist.defaultAvailability?.info,
+               let existingAvailability = deprecatedDefaultAvailabilityByModule["FillIntroduced"]
+            {
+                plist.defaultAvailability?.info = .current(existingAvailability)
+            } else {
+                XCTFail("Unexpectedly decoded the current default availability format from the deprecated legacy inputs")
+            }
             
             let updatedPlistData = try PropertyListEncoder().encode(plist)
             try updatedPlistData.write(to: plistURL)
