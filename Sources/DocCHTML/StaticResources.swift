@@ -1048,6 +1048,23 @@ body > header {
     }
   }
   
+  /* A "Beta" or "Deprecated" badge after a title */
+  .technology-title > span, li > a + span, summary > a + span {
+    margin-block: auto;
+    margin-inline-start: 5px;
+    padding: 2px 4px;
+    border-radius: 1px;
+    color: white;
+    background-color: var(--color-figure-gray-secondary);
+    font-size: 12px;
+    line-height: 16px;
+    white-space: nowrap;
+    
+    &.deprecated {
+      background-color: var(--color-badge-deprecated);
+    }
+  }
+  
   &> ul {
     flex: 1 1 auto;
     overflow-y: auto;
@@ -1061,11 +1078,16 @@ body > header {
       list-style: none;
     }
     
-    /* Each row is a link or a heading, or for an item with children, the `<summary>` of a `<details>` element. */
-    li > :is(a, h3), summary {
+    /* Each row is a heading, a list item with a link, or for an item with children, the `<summary>` of a `<details>` element. */
+    li > h3, li:has(> a), summary {
       position: relative;
       padding: 5px var(--navigator-inset);
       padding-inline-start: calc(var(--navigator-inset) + var(--depth) * 15px);
+    }
+    
+    /* A row with a badge displays it after the title, which shortens with an ellipsis. */
+    li:has(> a + span), summary:has(> a + span) {
+      display: flex;
     }
     
     summary {
@@ -1362,9 +1384,16 @@ figcaption {
   }
   const technologyPath = rootModule.path.toLowerCase();
   
+  function makeBadge(variant) {
+    const badge = document.createElement("span");
+    badge.className = variant;
+    badge.textContent = variant === "deprecated" ? "Deprecated" : "Beta";
+    return badge;
+  }
+  
   // Each item is a list item with a link to its page, or with a heading for a group of pages.
   // An item with children holds a `<details>` element whose `<summary>` holds the link, and the script creates the item's children the first time it opens, so that large hierarchies stay fast.
-  function makeRow(item, depth) {
+  function makeRow(item, depth, isInBetaItem) {
     const isGroupMarker = item.type === "groupMarker";
     
     const title = document.createElement(isGroupMarker ? "h3" : "a");
@@ -1373,28 +1402,31 @@ figcaption {
     }
     title.textContent = item.title;
     
+    // If the item's parent or the module is beta, the item doesn't display its own "Beta" badge.
+    const badge = item.deprecated ? makeBadge("deprecated") : item.beta && !isInBetaItem ? makeBadge("beta") : null;
+    
     const row = document.createElement("li");
     if (isGroupMarker || !item.children?.length) {
-      row.append(title);
+      row.append(title, ...(badge ? [badge] : []));
       return row;
     }
     
     const summary = document.createElement("summary");
-    summary.append(title);
+    summary.append(title, ...(badge ? [badge] : []));
     const details = document.createElement("details");
     details.append(summary);
     // The item starts closed, so its first "toggle" event comes after it opens.
     details.addEventListener("toggle", () => {
-      details.append(makeList(item.children, depth + 1));
+      details.append(makeList(item.children, depth + 1, isInBetaItem || item.beta));
     }, { once: true });
     row.append(details);
     return row;
   }
   
-  function makeList(items, depth) {
+  function makeList(items, depth, isInBetaItem) {
     const list = document.createElement("ul");
     list.style.setProperty("--depth", depth);
-    list.append(...items.map((item) => makeRow(item, depth)));
+    list.append(...items.map((item) => makeRow(item, depth, isInBetaItem)));
     return list;
   }
   
@@ -1403,8 +1435,11 @@ figcaption {
   technologyTitle.href = hrefForPath(technologyPath);
   technologyTitle.innerHTML = `<h2></h2>`;
   technologyTitle.firstChild.textContent = rootModule.title;
+  if (rootModule.beta) {
+    technologyTitle.append(makeBadge("beta"));
+  }
   
-  const list = makeList(rootModule.children, 0);
+  const list = makeList(rootModule.children, 0, rootModule.beta);
   
   // On narrow screens, the navigator has a title and a button that closes it.
   const head = document.createElement("header");
