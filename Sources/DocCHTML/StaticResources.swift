@@ -825,7 +825,8 @@ body > header {
   box-sizing: border-box;
   width: 100%;
   height: 52px;
-  padding-inline: 22px;
+  /* On wide screens, center the header's content in at most 1920px, like the navigator and the page's content. */
+  padding-inline: calc(max(0px, (100% - 1920px) / 2) + 22px);
   z-index: 5;
   
   display: flex;
