@@ -12,6 +12,7 @@ public import Markdown
 
 /// A section that contains groups of related symbols or external links.
 public struct SeeAlsoSection: GroupedSection {
+    @available(*, deprecated, message: "This property is needlessly optional and is unused. This deprecated API will be removed after 6.6 is released.")
     public static let title: String? = "See Also"
     
     public var content: [any Markup]
