@@ -1421,7 +1421,7 @@ class ConvertServiceTests: XCTestCase {
                 "/documentation/SideKit/SideClass/Element/inherited()",
                 "/documentation/SideKit/UncuratedClass",
                 "/documentation/Test-Bundle/article2",
-                "/documentation/SideKit/SideClass/Element/Protocol-Implementations",
+                "/documentation/SideKit/SideClass/Element/Protocol-implementations",
                 "/documentation/FillIntroduced/iOSMacOSOnly()",
                 "/documentation/Test-Bundle/article3",
                 "/documentation/SideKit/SideClass/Element",
@@ -1661,7 +1661,7 @@ class ConvertServiceTests: XCTestCase {
                 let referenceStore = try XCTUnwrap(referenceStore)
                 let paths = Set(referenceStore.topics.keys.map(\.path))
                 XCTAssertTrue(paths.contains("/documentation/SideKit/SideClass/Element"))
-                XCTAssertFalse(paths.contains("/documentation/SideKit/SideClass/Element/Protocol-Implementations"))
+                XCTAssertFalse(paths.contains("/documentation/SideKit/SideClass/Element/Protocol-implementations"))
             }
 
         )

@@ -227,6 +227,9 @@ public class DocumentationContext {
         self.inputs = inputs
         self.dataProvider = dataProvider
         self.diagnosticEngine = diagnosticEngine
+        if let diagnostic = inputs._infoPlistLegacyFormatDiagnostic {
+            diagnosticEngine.emit(diagnostic)
+        }
         
         var configuration = configuration
         if let bundleFlags = inputs.info.featureFlags {
@@ -278,7 +281,6 @@ public class DocumentationContext {
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
             NonOverviewHeadingChecker(sourceFile: source).any(),
-            MiscasedSectionHeading(sourceFile: source).any(),
             SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
             InvalidCodeBlockOption(sourceFile: source).any(),
         ])
@@ -1312,7 +1314,7 @@ public class DocumentationContext {
             //  - have been associated with its potential extension file first so that we can add information about directive availability
             signposter.withIntervalSignpost("Compute consolidated availability") {
                 for (moduleName, unifiedGraph) in symbolGraphLoader.unifiedGraphs {
-                    var symbolBaseAvailability = Availability(defaultAvailability: inputs.info.defaultAvailability?.modules[moduleName])
+                    var symbolBaseAvailability = Availability(defaultAvailability: inputs.info.defaultAvailability?.platforms(moduleName: moduleName))
                     
                     documentationCache.reference(symbolID: moduleName).map { moduleReference in
                         var moduleAvailability = symbolBaseAvailability
@@ -3373,5 +3375,14 @@ private extension DirectedGraph {
             nodes = next
         }
         return []
+    }
+}
+
+private extension DefaultAvailability {
+    func platforms(moduleName: String) -> [DefaultAvailability.ModuleAvailability]? {
+        switch info {
+            case .current(let modules): modules
+            case .deprecated( let modules): modules[moduleName]
+        }
     }
 }

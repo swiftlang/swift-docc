@@ -10,7 +10,7 @@
 
 /// A section that contains an HTTP request's responses.
 public struct HTTPResponsesSection {
-    public static let title = "Response Codes"
+    public static let title = "Response codes"
     
     /// The list of responses.
     public var responses = [HTTPResponse]()

@@ -1445,9 +1445,9 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertNil(tree.lookup[discussionID]!.symbol)
         XCTAssertEqual(tree.lookup[discussionID]!.name, "Discussion")
         
-        let protocolImplementationsID = try tree.find(path: "/SideKit/SideClass/Element#Protocol-Implementations", onlyFindSymbols: false)
+        let protocolImplementationsID = try tree.find(path: "/SideKit/SideClass/Element#Protocol-implementations", onlyFindSymbols: false)
         XCTAssertNil(tree.lookup[protocolImplementationsID]!.symbol)
-        XCTAssertEqual(tree.lookup[protocolImplementationsID]!.name, "Protocol-Implementations")
+        XCTAssertEqual(tree.lookup[protocolImplementationsID]!.name, "Protocol-implementations")
         
         let landmarkID = try tree.find(path: "/Test-Bundle/TestTutorial#Create-a-New-AR-Project-💻", onlyFindSymbols: false)
         XCTAssertNil(tree.lookup[landmarkID]!.symbol)

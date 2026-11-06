@@ -678,9 +678,9 @@ struct LinkDestinationSummaryTests {
             ]))
             
             // Configure the "default availability" to not infer either iPadOS availability from the iOS availability (but still infer Mac Catalyst availability from the iOS availability)
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(unavailablePlatformName: .iPadOS),
-            ]])
+            ])
         }
 
         var configuration = DocumentationContext.Configuration()
@@ -758,9 +758,9 @@ struct LinkDestinationSummaryTests {
             """)
             
             // Configure the "default availability" to not infer either iPadOS availability from the iOS availability (but still infer Mac Catalyst availability from the iOS availability)
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(unavailablePlatformName: .iPadOS),
-            ]])
+            ])
         }
 
         var configuration = DocumentationContext.Configuration()
@@ -1120,10 +1120,10 @@ struct LinkDestinationSummaryTests {
             ]))
             
             // Configure the "default availability" to not infer any fallbacks.
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(unavailablePlatformName: .iPadOS),
                 .init(unavailablePlatformName: .catalyst),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
