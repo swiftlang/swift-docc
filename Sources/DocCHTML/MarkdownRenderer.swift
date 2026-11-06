@@ -750,13 +750,13 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             return div(
                 attributes: [
                     .class("tabnavigator"),
-                    .data("tabs-count", String(tabs.count)),
+                    .customData("tabs-count", String(tabs.count)),
                 ],
                 contents: tabs.enumerated().map { i, tab in
                     details(
                         attributes: [
                             .name("tabnavigator"),
-                            .data("tab-index", String(i + 1)),
+                            .customData("tab-index", String(i + 1)),
                         ] + (i == 0 ? ([.open]) : ([])),
                         contents: [
                             summary(contents: [.text(tab.title)]),

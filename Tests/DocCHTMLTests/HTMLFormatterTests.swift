@@ -38,6 +38,13 @@ struct HTMLFormatterTests {
     }
     
     @Test
+    func prefixesCustomDataAttributeNames() {
+        let html = p(attributes: [.customData("tab-name", "swift")], contents: [.text("Some text")])
+
+        #expect(htmlString(for: html) == #"<p data-tab-name="swift">Some text</p>"#)
+    }
+
+    @Test
     func formatsAttributesInOrder() {
         do {
             let html = input(.type("radio"), .name("color-scheme"), .value("light"), .checked, .hidden(.hidden))
