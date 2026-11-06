@@ -10,10 +10,131 @@
 
 import Foundation
 import XCTest
+import Testing
 import SymbolKit
+import Markdown
 @testable import SwiftDocC
 import DocCTestUtilities
 import DocCCommon
+
+struct DefaultAvailabilityTests_new {
+    @Test(arguments: [false, true])
+    func warnsAboutLegacyDefaultAvailabilityFormat(withMultipleModules: Bool) async throws {
+        // We don't have initializers to create this legacy format so it has to be decoded from a string/data
+        var originalPlist = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>ModuleName</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>FirstPlatform</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>SecondPlatform</string>
+                        <key>version</key>
+                        <string>1.2.3</string>
+                    </dict>
+                </array>
+        """
+        if withMultipleModules {
+            originalPlist.append("""
+        
+                <key>OtherModuleName</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>ThirdPlatform</string>
+                        <key>version</key>
+                        <string>4.5.6</string>
+                    </dict>
+                </array>
+        """)
+        }
+        originalPlist.append("""
+        
+            </dict>
+        </dict>
+        </plist>
+        """)
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName"))
+            
+            DataFile(name: "Info.plist", data: Data(originalPlist.utf8))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.map(\.identifier) == [
+            withMultipleModules ? "MultipleModuleDefaultAvailability" : "ModuleSpecificDefaultAvailability"
+        ], "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let diagnostic = try #require(context.diagnostics.first)
+        if withMultipleModules {
+            #expect(diagnostic.summary == "Default availability cannot specify more than one module; found information for 'ModuleName' and 'OtherModuleName'")
+        } else {
+            #expect(diagnostic.summary == "Default availability is not module-specific")
+        }
+        
+        #expect(diagnostic.solutions.count == 1)
+        let solution = try #require(diagnostic.solutions.first)
+        
+        let suggestedPlist = try solution.applyTo(originalPlist)
+        #expect(suggestedPlist == """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>CDAppleDefaultAvailability</key>
+            <array>
+                    <dict>
+                        <key>name</key>
+                        <string>FirstPlatform</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>SecondPlatform</string>
+                        <key>version</key>
+                        <string>1.2.3</string>
+                    </dict>
+                </array>
+        </dict>
+        </plist>
+        """)
+        
+        #expect(solution.replacements.count == 1)
+        let replacement = try #require(solution.replacements.first)
+        
+        #expect(replacement.range.lowerBound.line   == 6)
+        #expect(replacement.range.lowerBound.column == 5) // starts at index 1
+        
+        if withMultipleModules {
+            #expect(replacement.range.upperBound.line == 29)
+        } else {
+            #expect(replacement.range.upperBound.line == 20)
+        }
+        #expect(replacement.range.upperBound.column == 12) // starts at index 1
+        
+        #expect(replacement.replacement == """
+        <array>
+                    <dict>
+                        <key>name</key>
+                        <string>FirstPlatform</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>SecondPlatform</string>
+                        <key>version</key>
+                        <string>1.2.3</string>
+                    </dict>
+                </array>
+        """)
+    }
+}
 
 class DefaultAvailabilityTests: XCTestCase {
 
@@ -598,3 +719,4 @@ class DefaultAvailabilityTests: XCTestCase {
         }
     }
 }
+

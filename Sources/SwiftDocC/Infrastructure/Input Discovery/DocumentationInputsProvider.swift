@@ -447,10 +447,10 @@ private func _extractRangeAndSuggestion(from infoPlistData: Data, source: URL?) 
     remaining = remaining[startOfFirstValue...]
     
     // The values inside each array element doesn't contain any inner arrays, so the end of it is the next array closing tag.
-    guard let endOfFirstValue = remaining.firstRange(of: "</array>")?.upperBound else {
+    guard let endOfFirstValue = remaining.firstRange(of: "</array>") else {
         return nil
     }
-    remaining = remaining[endOfFirstValue...]
+    remaining = remaining[endOfFirstValue.lowerBound...]
     
     // We've found the end of this value when the dictionary element ends immediately after an array element.
     guard let endOfValue = remaining.firstMatch(of: #/</array>\s*</dict>/#)?.endIndex else {
@@ -469,6 +469,6 @@ private func _extractRangeAndSuggestion(from infoPlistData: Data, source: URL?) 
     
     return (
         sourceLocation(index: startOfValue) ..< sourceLocation(index: endOfValue),
-        String(infoPlist[startOfFirstValue ..< endOfFirstValue])
+        String(infoPlist[startOfFirstValue ..< endOfFirstValue.upperBound])
     )
 }
