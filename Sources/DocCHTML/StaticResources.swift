@@ -49,6 +49,7 @@ package enum StaticResources {
         // UI element icons
         anchorIcon,
         sidebarIcon,
+        chevronIcon,
     ]
     
     // MARK: Stylesheets
@@ -1007,10 +1008,47 @@ body > header {
     padding: 0 var(--navigator-inset) 10px;
     list-style: none;
     
-    &> li {
+    /* The lists of an item's children, which indent their items by 15px for each level. */
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    
+    /* Each row is a link or a heading, or for an item with children, the `<summary>` of a `<details>` element. */
+    li > :is(a, h3), summary {
       position: relative;
       padding: 5px var(--navigator-inset);
+      padding-inline-start: calc(var(--navigator-inset) + var(--depth) * 15px);
+    }
+    
+    summary {
+      display: block;
+      cursor: pointer;
       
+      /* The chevron opens and closes the item, so it's above the link's click target. It fills the space before the title, so that it's easy to click. */
+      &:before {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        top: calc(50% - var(--navigator-inset) / 2);
+        inset-inline-start: calc(var(--depth) * 15px);
+        width: var(--navigator-inset);
+        height: var(--navigator-inset);
+        background: url(chevron.svg) no-repeat center / 10px;
+        transition: transform 0.15s ease-in;
+      }
+      
+      details[open] > &:before {
+        transform: rotate(90deg);
+      }
+      
+      &:is(:hover, :focus-visible) > a:after {
+        background: var(--color-navigator-item-hover);
+      }
+    }
+    
+    li {
       a, h3 {
         display: block;
         overflow: hidden;
@@ -1036,7 +1074,6 @@ body > header {
       }
       
       h3 {
-        padding: 0;
         color: var(--color-figure-gray-secondary);
         font-size: inherit;
         line-height: inherit;
@@ -1227,7 +1264,8 @@ figcaption {
   const technologyPath = rootModule.path.toLowerCase();
   
   // Each item is a list item with a link to its page, or with a heading for a group of pages.
-  function makeRow(item) {
+  // An item with children holds a `<details>` element whose `<summary>` holds the link, and the script creates the item's children the first time it opens, so that large hierarchies stay fast.
+  function makeRow(item, depth) {
     const isGroupMarker = item.type === "groupMarker";
     
     const title = document.createElement(isGroupMarker ? "h3" : "a");
@@ -1237,8 +1275,28 @@ figcaption {
     title.textContent = item.title;
     
     const row = document.createElement("li");
-    row.append(title);
+    if (isGroupMarker || !item.children?.length) {
+      row.append(title);
+      return row;
+    }
+    
+    const summary = document.createElement("summary");
+    summary.append(title);
+    const details = document.createElement("details");
+    details.append(summary);
+    // The item starts closed, so its first "toggle" event comes after it opens.
+    details.addEventListener("toggle", () => {
+      details.append(makeList(item.children, depth + 1));
+    }, { once: true });
+    row.append(details);
     return row;
+  }
+  
+  function makeList(items, depth) {
+    const list = document.createElement("ul");
+    list.style.setProperty("--depth", depth);
+    list.append(...items.map((item) => makeRow(item, depth)));
+    return list;
   }
   
   const technologyTitle = document.createElement("a");
@@ -1247,8 +1305,7 @@ figcaption {
   technologyTitle.innerHTML = `<h2></h2>`;
   technologyTitle.firstChild.textContent = rootModule.title;
   
-  const list = document.createElement("ul");
-  list.append(...rootModule.children.map(makeRow));
+  const list = makeList(rootModule.children, 0);
   
   // The navigator goes before the page's main content, in the container below the page's header.
   const navigator = document.createElement("nav");
@@ -1304,6 +1361,13 @@ figcaption {
 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 20 20" fill="#666">
   <path d="M19.34,4.88L15.12,.66c-.87-.87-2.3-.87-3.17,0l-3.55,3.56-1.38,1.38-1.4,1.4c-.47,.47-.68,1.09-.64,1.7,.02,.29,.09,.58,.21,.84,.11,.23,.24,.44,.43,.63l4.22,4.22h0l.53-.53,.53-.53h0l-4.22-4.22c-.29-.29-.29-.77,0-1.06l1.4-1.4,.91-.91,.58-.58,.55-.55,2.9-2.9c.29-.29,.77-.29,1.06,0l4.22,4.22c.29,.29,.29,.77,0,1.06l-2.9,2.9c.14,.24,.24,.49,.31,.75,.08,.32,.11,.64,.09,.96l3.55-3.55c.87-.87,.87-2.3,0-3.17Z"/>
   <path d="M14.41,9.82s0,0,0,0l-4.22-4.22h0l-.53,.53-.53,.53h0l4.22,4.22c.29,.29,.29,.77,0,1.06l-1.4,1.4-.91,.91-.58,.58-.55,.55h0l-2.9,2.9c-.29,.29-.77,.29-1.06,0L1.73,14.04c-.29-.29-.29-.77,0-1.06l2.9-2.9c-.14-.24-.24-.49-.31-.75-.08-.32-.11-.64-.09-.97L.68,11.93c-.87,.87-.87,2.3,0,3.17l4.22,4.22c.87,.87,2.3,.87,3.17,0l3.55-3.55,1.38-1.38,1.4-1.4c.47-.47,.68-1.09,.64-1.7-.02-.29-.09-.58-.21-.84-.11-.22-.24-.44-.43-.62Z"/>
+</svg>
+""".utf8))
+
+    /// The icon that DocC displays next to items in the navigator sidebar that have children, which rotates when the item opens.
+    static let chevronIcon = File(filename: "chevron.svg", data: Data("""
+<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10px" height="10px" viewBox="0 0 14 14" fill="#666">
+  <path d="M2.964 1.366l0.649-0.76 7.426 6.343-7.423 6.445-0.655-0.755 6.545-5.683-6.542-5.59z"/>
 </svg>
 """.utf8))
 
