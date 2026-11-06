@@ -865,6 +865,8 @@ body > header {
  */
 #navigator {
   --color-navigator-item-hover: rgba(0, 0, 255, 0.05);
+  /* The space between the navigator's edges and its items, and between the start of an item and its title, so that the titles line up. */
+  --navigator-inset: 20px;
   
   box-sizing: border-box;
   display: flex;
@@ -877,8 +879,9 @@ body > header {
   
   .technology-title {
     display: flex;
-    margin-inline: 20px;
-    padding: 8px 10px 8px 20px;
+    margin-inline: var(--navigator-inset);
+    padding-block: 8px;
+    padding-inline: var(--navigator-inset) 10px;
     border-radius: 4px;
     white-space: nowrap;
     text-decoration: none;
