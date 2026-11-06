@@ -914,8 +914,9 @@ body > footer {
   }
 }
 
-figure {
-    margin-top: var(--spacing-stacked-margin-xlarge); 
+figure, picture {
+    display: block;
+    margin-top: var(--spacing-stacked-margin-xlarge);
 }
 
 figcaption {
