@@ -192,22 +192,22 @@ struct HTMLFormatterTests {
         func makeExample(paragraphAttributes: [HTMLNode.Attribute]) -> HTMLNode {
             p(attributes: paragraphAttributes, contents: [
                 .text("Some "),
-                b(contents: [.text("bold")]),
+                strong(contents: [.text("important")]),
                 .text(" and "),
-                i(contents: [.text("italicized")]),
+                em(contents: [.text("emphasized")]),
                 .text(" text."),
             ])
         }
         
         #expect(htmlString(for: makeExample(paragraphAttributes: [.id("something")]), options: .prettyPrint) == """
         <p id="something">
-          Some <b>bold</b> and <i>italicized</i> text.
+          Some <strong>important</strong> and <em>emphasized</em> text.
         </p>
         """)
         
         #expect(htmlString(for: makeExample(paragraphAttributes: []), options: .prettyPrint) == """
         <p>
-          Some <b>bold</b> and <i>italicized</i> text.
+          Some <strong>important</strong> and <em>emphasized</em> text.
         </p>
         """)
     }
@@ -221,19 +221,19 @@ struct HTMLFormatterTests {
         
         let html = p(attributes: [.id("something")], contents: [
             .text("Some "),
-            b(contents: [.text("bold")]),
-            .text("text before a "),
+            strong(contents: [.text("important")]),
+            .text(" text before a "),
             a(attributes: [.href("#something")], contents: [.text("link")]),
             .text(" and some "),
-            i(contents: [.text("italicized")]),
+            em(contents: [.text("emphasized")]),
             .text(" text after."),
         ])
         
         #expect(htmlString(for: html, options: .prettyPrint) == """
         <p id="something">
-          Some <b>bold</b>text before a 
+          Some <strong>important</strong> text before a 
           <a href="#something">link</a>
-           and some <i>italicized</i> text after.
+           and some <em>emphasized</em> text after.
         </p>
         """)
     }

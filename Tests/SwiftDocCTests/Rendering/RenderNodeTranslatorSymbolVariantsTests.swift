@@ -434,7 +434,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 XCTAssertEqual(
                     returnsSection.content,
                     [
-                        .heading(.init(level: 2, text: "Return Value", anchor: "return-value")),
+                        .heading(.init(level: 2, text: "Return value", anchor: "return-value")),
                         .paragraph(.init(inlineContent: [.text("Swift Returns Section")]))
                     ]
                 )
@@ -444,7 +444,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 XCTAssertEqual(
                     returnsSection.content,
                     [
-                        .heading(.init(level: 2, text: "Return Value", anchor: "return-value")),
+                        .heading(.init(level: 2, text: "Return value", anchor: "return-value")),
                         .paragraph(.init(inlineContent: [.text("Objective-C Returns Section")]))
                     ]
                 )
@@ -665,7 +665,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(renderNode.relationshipSections.count, 1)
                 let relationshipSection = try XCTUnwrap(renderNode.relationshipSections.first)
-                XCTAssertEqual(relationshipSection.title, "Inherited By")
+                XCTAssertEqual(relationshipSection.title, "Inherited by")
                 
                 XCTAssertEqual(
                     relationshipSection.identifiers,
@@ -675,7 +675,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             assertAfterApplyingVariant: { renderNode in
                 XCTAssertEqual(renderNode.relationshipSections.count, 1)
                 let relationshipSection = try XCTUnwrap(renderNode.relationshipSections.first)
-                XCTAssertEqual(relationshipSection.title, "Conforms To")
+                XCTAssertEqual(relationshipSection.title, "Conforms to")
                 
                 XCTAssertEqual(
                     relationshipSection.identifiers,
@@ -713,7 +713,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(renderNode.relationshipSections.count, 1)
                 let relationshipSection = try XCTUnwrap(renderNode.relationshipSections.first)
-                XCTAssertEqual(relationshipSection.title, "Inherited By")
+                XCTAssertEqual(relationshipSection.title, "Inherited by")
                 
                 XCTAssertEqual(
                     relationshipSection.identifiers,
@@ -946,7 +946,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(renderNode.seeAlsoSections.count, 2)
                 let taskGroup = try XCTUnwrap(renderNode.seeAlsoSections.first)
-                XCTAssertEqual(taskGroup.title, "Related Documentation")
+                XCTAssertEqual(taskGroup.title, "Related documentation")
                 
                 XCTAssertEqual(
                     taskGroup.identifiers,
@@ -956,7 +956,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             assertAfterApplyingVariant: { renderNode in
                 XCTAssertEqual(renderNode.seeAlsoSections.count, 2)
                 let taskGroup = try XCTUnwrap(renderNode.seeAlsoSections.first)
-                XCTAssertEqual(taskGroup.title, "Related Documentation")
+                XCTAssertEqual(taskGroup.title, "Related documentation")
                 
                 XCTAssertEqual(
                     taskGroup.identifiers,

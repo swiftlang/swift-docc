@@ -59,10 +59,14 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     /// into XML nodes representing this HTML structure
     /// ```html
-    /// <p>Some <i>formatted</i> text</p>
+    /// <p>Some <em>formatted</em> text</p>
     /// ```
     func visit(_ paragraph: Paragraph) -> HTMLNode {
-        p(contents: visit(paragraph.children))
+        if paragraph.childCount == 1, let image = paragraph.child(at: 0) as? Image {
+            visit(image)
+        } else {
+            p(contents: visit(paragraph.children))
+        }
     }
     
     /// Transforms a markdown block quote into a `<aside>` HTML element that represents an "aside".
@@ -103,7 +107,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     /// <h1 id="some-formatted-text">
     ///   <a href="#some-formatted-text">
-    ///     Some <i>formatted</i>text
+    ///     Some <em>formatted</em>text
     ///   </a>
     /// </h1>
     /// ```
@@ -154,14 +158,14 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         }
     }
     
-    /// Transforms a markdown emphasis into a`<i>` HTML element.
+    /// Transforms a markdown emphasis into a`<em>` HTML element.
     func visit(_ emphasis: Emphasis) -> HTMLNode {
-        i(contents: visit(emphasis.children))
+        em(contents: visit(emphasis.children))
     }
     
-    /// Transforms a markdown strong into a`<b>` HTML element.
+    /// Transforms a markdown strong into a`<strong>` HTML element.
     func visit(_ strong: Strong) -> HTMLNode {
-        b(contents: visit(strong.children))
+        DocCHTML.strong(contents: visit(strong.children))
     }
     
     /// Transforms a markdown strikethrough into a`<s>` HTML element.
@@ -381,7 +385,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     func visit(_ image: Image) -> HTMLNode {
         guard let source = image.source else {
-            // Without a source, we cannot display an image.
+            // ???: What do we return for images that won't display anything?
             return .text("")
         }
         return makePicture(from: source, altText: image.altText)
@@ -737,15 +741,23 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             }
             return p(contents: [small(contents: content)])
         case .image(let source, let alt, let caption):
-            let renderedCaption = caption.map { visit($0) }
+            let picture = makePicture(from: source, altText: alt)
             
-            var content = [HTMLNode]()
-            content.append(makePicture(from: source, altText: alt))
-            if !caption.isEmpty {
-                content.append(figcaption(contents: renderedCaption))
+            if caption.isEmpty {
+                return picture
             }
-            
-            return figure(contents: content)
+            else if caption.count == 1,
+                      let paragraph = caption.first as? Paragraph,
+                      paragraph.isEmpty
+            {
+                return picture
+            }
+            else {
+                return figure(contents: [
+                    picture,
+                    figcaption(contents: caption.map { visit($0) })
+                ])
+            }
         case .tabNavigator(tabs: let tabs):
             return div(
                 attributes: [

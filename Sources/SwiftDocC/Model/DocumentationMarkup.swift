@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -184,11 +184,11 @@ struct DocumentationMarkup {
                 if discussionIndex == nil {
                     // Level 2 heading found at start of discussion
                     if let heading = child as? Heading, heading.level == 2 {
-                        switch heading.plainText {
-                        case TopicsSection.title:
+                        switch heading.plainText.lowercased() {
+                        case "topics":
                             currentSection = .topics
                             continue
-                        case SeeAlsoSection.title:
+                        case "see also":
                             currentSection = .seeAlso
                             continue
                         default: break
@@ -205,13 +205,13 @@ struct DocumentationMarkup {
                 
                 // Level 2 heading found inside discussion
                 if let heading = child as? Heading, heading.level == 2 {
-                    switch heading.plainText {
-                    case TopicsSection.title:
+                    switch heading.plainText.lowercased() {
+                    case "topics":
                         finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
                         currentSection = .topics
                         continue
                         
-                    case SeeAlsoSection.title:
+                    case "see also":
                         finalizeDiscussion(over: markup.children(at: discussionIndex ..< index))
                         currentSection = .seeAlso
                         continue
@@ -229,8 +229,8 @@ struct DocumentationMarkup {
                 if let heading = child as? Heading {
                     // Level 2 heading found inside Topics
                     if heading.level == 2 {
-                        switch heading.plainText {
-                        case SeeAlsoSection.title:
+                        switch heading.plainText.lowercased() {
+                        case "see also":
                             if let topicsIndex, topicsFirstTaskGroupIndex != nil {
                                 topicsSection = TopicsSection(content: markup.children(at: topicsIndex ..< index))
                             }
