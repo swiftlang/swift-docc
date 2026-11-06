@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SeeAlso.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/SeeAlso.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/SeeAlso.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

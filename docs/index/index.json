@@ -13038,6 +13038,7 @@
                             "type" : "groupMarker"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/topicssection\/title",
                             "title" : "static let title: String?",
                             "type" : "property"
@@ -13068,6 +13069,7 @@
                             "type" : "groupMarker"
                           },
                           {
+                            "deprecated" : true,
                             "path" : "\/documentation\/swiftdocc\/seealsosection\/title",
                             "title" : "static let title: String?",
                             "type" : "property"
