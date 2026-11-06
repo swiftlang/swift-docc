@@ -230,6 +230,25 @@ extension MarkdownOutputSemanticVisitor {
             metadata.availability = platforms.map { .init($0) }
         }
          
+        if let deprecated = symbol.deprecatedSummaryVariants[.swift], deprecated.content.isEmpty == false {
+            var deprecatedWalker = markdownWalker
+            deprecatedWalker.markdown = ""
+            
+            deprecatedWalker.withRemoveIndentation(from: deprecated.content[0]) { walker in
+                for element in deprecated.content {
+                    walker.visit(element)
+                }
+            }
+            
+            metadata.deprecation = deprecatedWalker.markdown.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        
+        // If a symbol as a whole is deprecated (either if all platforms are deprecated, or the wildcard platform is deprecated), but with no message, populate the message.
+        // This matches the rendered page output where a symbol with universal deprecation is marked as deprecated, but the individual platforms are not.
+        if symbol.consolidatedAvailability.firstValue?.isDeprecated == true && metadata.deprecation == nil {
+            metadata.deprecation = "Deprecated"
+        }
+        
         // Content
         
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
@@ -384,12 +403,18 @@ private extension MarkdownOutputNode.Metadata.Symbol {
 
 private extension MarkdownOutputNode.Metadata.Availability {
     init(_ platform: Availability.Platform) {
+        let deprecated: Version?
+        if platform.isUnconditionallyDeprecated {
+            deprecated = .unversioned
+        } else if let version = platform.deprecated {
+            deprecated = .versioned(version.stringRepresentation(precisionUpToNonsignificant: .minor))
+        } else {
+            deprecated = nil
+        }
         self.init(
             platform: platform.name,
-            // FIXME: It would be more consistent with other output to use `stringRepresentation(precisionUpToNonsignificant: .minor)` for both these versions.
-            introduced: platform.introduced?.description,
-            deprecated: platform.deprecated?.description,
-            unavailable: false
+            introduced: .init(string: platform.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor)),
+            deprecated: deprecated
         )
     }
 }
