@@ -1129,7 +1129,7 @@ body > header {
   }
 }
 
-/* On narrow screens, the navigator is a panel over the page's content that the reader opens and closes. */
+/* On narrow screens, the navigator is a panel that slides in over the page's content when the reader opens it, and hides after it slides out. */
 @media only screen and (max-width: 1023px) {
   #navigator {
     position: fixed;
@@ -1138,10 +1138,16 @@ body > header {
     padding-top: 0;
     border-inline-end: none;
     visibility: hidden;
+    transform: translateX(-100%);
+    /* The panel stays visible while it slides out, because `visibility` transitions as visible until it ends. */
+    transition: transform 0.15s ease-in, visibility 0.15s;
   }
   
   body.navigator-open #navigator {
     visibility: visible;
+    transform: none;
+    /* The panel is visible as soon as it opens, so that its close button can have the focus. */
+    transition-property: transform;
   }
   
   #navigator > header {
@@ -1183,6 +1189,8 @@ body > header {
     position: sticky;
     top: 52px;
     height: calc(100vh - 52px);
+    /* The column stays visible while it narrows or widens, because `visibility` transitions as visible until it ends. */
+    transition: width 0.3s ease-in, visibility 0.3s;
   }
   
   @media (min-width: 1521px) {
@@ -1191,12 +1199,18 @@ body > header {
     }
   }
   
-  /* The navigator takes no space when the reader hides it. */
+  /* The navigator narrows to nothing when the reader hides it, and hides after that. */
   body.navigator-collapsed #navigator {
     width: 0;
     /* The navigator's border doesn't take up space either. */
     margin-inline-end: -1px;
     visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #navigator {
+    transition: none;
   }
 }
 
@@ -1431,7 +1445,14 @@ figcaption {
     }
   }
   
-  wideScreen.addEventListener("change", () => setPanelOpen(false));
+  wideScreen.addEventListener("change", () => {
+    // The navigator switches between the column and the panel without a transition.
+    navigator.style.transition = "none";
+    setPanelOpen(false);
+    // Reading a layout value applies the new styles while the transition is off.
+    navigator.offsetWidth;
+    navigator.style.transition = "";
+  });
   
   toggle.addEventListener("click", () => {
     if (wideScreen.matches) {
