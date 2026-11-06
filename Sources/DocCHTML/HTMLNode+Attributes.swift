@@ -126,7 +126,20 @@ extension HTMLNode {
         package static func csp(_ policy: String) -> Attribute { .init(name: "csp", value: policy) }
 
         /// The URL of an `<object>` element's resource.
-        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) } 
+        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) }
+
+        /// Custom data attributes intended to store custom data private to the page or application.
+        ///
+        /// - Parameters:
+        ///   - name: The name that follows the `data-` prefix. It must be non-empty and only contain lowercase ASCII letters, digits, `-`, `.`, or `_`.
+        ///   - value: The value of the attribute.
+        package static func customData(_ name: String, _ value: String) -> Attribute {
+            assert(
+                !name.isEmpty && name.utf8.allSatisfy { ($0 >= UInt8(ascii: "a") && $0 <= UInt8(ascii: "z")) || ($0 >= UInt8(ascii: "0") && $0 <= UInt8(ascii: "9")) || $0 == UInt8(ascii: "-") || $0 == UInt8(ascii: ".") || $0 == UInt8(ascii: "_") },
+                "Custom data attribute name '\(name)' must be non-empty and only contain lowercase ASCII letters, digits, '-', '.', or '_'."
+            )
+            return .init(name: "data-\(name)", value: value)
+        }
 
         /// Either the machine-readable representation of a `<time>` element's date-time value or the date-time value associated with an `<ins>` or `<del>` element's change.
         package static func datetime(_ machineReadableRepresentation: String) -> Attribute { .init(name: "datetime", value: machineReadableRepresentation) }

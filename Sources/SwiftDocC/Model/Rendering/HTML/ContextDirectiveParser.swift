@@ -40,6 +40,12 @@ struct ContextDirectiveParser: RenderableDirectiveParser {
             return .image(source: image.source.path, alt: image.altText, caption: image.caption.elements)
         case Small.directiveName:
             return .small
+        case TabNavigator.directiveName:
+            guard let tabNavigator = parse(TabNavigator.self) else { return nil }
+            return .tabNavigator(tabs: tabNavigator.tabs.map { tab in (
+                title: tab.title,
+                content: tab.childMarkup
+            ) })
         default:
             return nil
         }

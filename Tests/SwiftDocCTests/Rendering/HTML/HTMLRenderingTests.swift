@@ -790,6 +790,55 @@ struct HTMLRenderingTests {
         }
     }
     
+    @Test
+    func tabNavigatorRendersInHTML() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "Root.md", utf8Content: """
+            # Root
+
+            A root page with a tab navigator.
+
+            @TabNavigator {
+                @Tab("First") {
+                    Some _formatted_ content
+                }
+                @Tab("Second") {
+                    Some content
+
+                    Some more content
+                }
+            }
+            """)
+        }
+
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        let reference = try #require(context.soleRootModuleReference)
+        let article = try #require(context.documentationCache[reference]?.semantic as? Article)
+
+        var renderer = makeHTMLRenderer(for: reference, in: context)
+        let pageInfo = renderer.renderArticle(article)
+
+        let html = try #require(pageInfo.prettyHTMLString)
+        let expectedTabs = """
+        <div class="tabnavigator" data-tabs-count="2">
+              <details name="tabnavigator" data-tab-index="1" open>
+                <summary>First</summary>
+                <p>
+                  Some <em>formatted</em> content
+                </p>
+              </details>
+              <details name="tabnavigator" data-tab-index="2">
+                <summary>Second</summary>
+                <p>Some content</p>
+                <p>Some more content</p>
+              </details>
+            </div>
+        """
+        #expect(html.contains(expectedTabs), "\(html)")
+    }
+
     private func makeHTMLRenderer(for reference: ResolvedTopicReference, in context: DocumentationContext) -> HTMLRenderer {
         HTMLRenderer(reference: reference, context: context, jsonRenderContext: .init(documentationContext: context), goal: .richness, featureFlags: context.configuration.featureFlags)
     }

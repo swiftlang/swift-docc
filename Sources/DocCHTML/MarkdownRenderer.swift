@@ -758,6 +758,26 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                     figcaption(contents: caption.map { visit($0) })
                 ])
             }
+        case .tabNavigator(tabs: let tabs):
+            return div(
+                attributes: [
+                    .class("tabnavigator"),
+                    .customData("tabs-count", String(tabs.count)),
+                ],
+                contents: tabs.enumerated().map { i, tab in
+                    details(
+                        attributes: [
+                            .name("tabnavigator"),
+                            .customData("tab-index", String(i + 1)),
+                        ] + (i == 0 ? ([.open]) : ([])),
+                        contents: [
+                            summary(contents: [.text(tab.title)]),
+                        ] + (
+                            tab.content.map { visit($0) }
+                        )
+                    )
+                }
+            )
         case .none:
             // If the directive cannot be parsed into a known RenderableDirective, nothing should be rendered.
             return .text("")

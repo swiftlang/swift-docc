@@ -858,6 +858,83 @@ body > header {
   }
 }
 
+.tabnavigator {
+  --count: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--count), 1fr);
+  grid-template-rows: auto 1fr;
+
+  /* Map the `data-tabs-count` attribute to a number (typed `attr()` isn't supported in all browsers) */
+  &[data-tabs-count="2"] { --count: 2; }
+  &[data-tabs-count="3"] { --count: 3; }
+  &[data-tabs-count="4"] { --count: 4; }
+  &[data-tabs-count="5"] { --count: 5; }
+  &[data-tabs-count="6"] { --count: 6; }
+  &[data-tabs-count="7"] { --count: 7; }
+  &[data-tabs-count="8"] { --count: 8; }
+
+  &:not(:first-child) {
+    margin-block-start: var(--spacing-stacked-margin-large);
+  }
+
+  details {
+    --index: 1;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / span 2;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+
+    /* Map the `data-tab-index` attribute to a number (typed `attr()` isn't supported in all browsers) */
+    &[data-tab-index="2"] { --index: 2; }
+    &[data-tab-index="3"] { --index: 3; }
+    &[data-tab-index="4"] { --index: 4; }
+    &[data-tab-index="5"] { --index: 5; }
+    &[data-tab-index="6"] { --index: 6; }
+    &[data-tab-index="7"] { --index: 7; }
+    &[data-tab-index="8"] { --index: 8; }
+
+    /* Prevent closing the open tab by clicking its own title, without disabling the tab's content */
+    &[open] > summary {
+      pointer-events: none;
+    }
+
+    /* Closed tabs overlap the open tab's content in the grid, so only their titles should receive clicks */
+    &:not([open]) {
+      pointer-events: none;
+
+      > summary {
+        pointer-events: auto;
+      }
+    }
+
+    &::details-content {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      padding: 1rem;
+    }
+
+    &:not([open])::details-content {
+      display: none;
+    }
+  }
+
+  summary {
+    border-bottom: 1px solid var(--color-grid);
+    cursor: pointer;
+    display: grid;
+    grid-column: var(--index) / span 1;
+    grid-row: 1;
+    padding: 1rem;
+    z-index: 1;
+
+    details[open] & {
+      border-bottom: 1px solid #000; /* FIXME: use currentColor */
+      font-weight: bold;
+    }
+  }
+}
+
 /*
  The navigator sidebar.
  Its sizes are in pixels, computed for a 17px root font size.

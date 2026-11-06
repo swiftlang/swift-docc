@@ -22,4 +22,5 @@ package protocol RenderableDirectiveParser {
 package enum RenderableDirective {
     case small
     case image(source: String, alt: String?, caption: [any Markup] /* TODO: Support device frames*/)
+    case tabNavigator(tabs: [(title: String, content: [any Markup])])
 }
