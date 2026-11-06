@@ -472,12 +472,13 @@ add_library(SwiftDocC
   Utility/SymbolGraphAvailability+Filter.swift
   Utility/Synchronization.swift
   Utility/ValidatedURL.swift
-  Utility/Version.swift)
+  Utility/Version.swift
+  Utility/ZipFileReader+ReadOnlyFileManagerProtocol.swift)
 target_link_libraries(SwiftDocC PRIVATE
-  DocCCommon)
-target_link_libraries(SwiftDocC PRIVATE
+  DocCCommon
   DocCHTML)
 target_link_libraries(SwiftDocC PUBLIC
+  Zip
   SwiftMarkdown::Markdown
   DocC::SymbolKit
   LMDB::CLMDB
