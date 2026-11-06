@@ -196,7 +196,7 @@
           "code" : [
             "<h1 id=\"some-formatted-text\">",
             "  <a href=\"#some-formatted-text\">",
-            "    Some <i>formatted<\/i>text",
+            "    Some <em>formatted<\/em>text",
             "  <\/a>",
             "<\/h1>"
           ],
