@@ -59,7 +59,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     /// into XML nodes representing this HTML structure
     /// ```html
-    /// <p>Some <i>formatted</i> text</p>
+    /// <p>Some <em>formatted</em> text</p>
     /// ```
     func visit(_ paragraph: Paragraph) -> HTMLNode {
         if paragraph.childCount == 1, let image = paragraph.child(at: 0) as? Image {
@@ -107,7 +107,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     /// <h1 id="some-formatted-text">
     ///   <a href="#some-formatted-text">
-    ///     Some <i>formatted</i>text
+    ///     Some <em>formatted</em>text
     ///   </a>
     /// </h1>
     /// ```
@@ -158,14 +158,14 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         }
     }
     
-    /// Transforms a markdown emphasis into a`<i>` HTML element.
+    /// Transforms a markdown emphasis into a`<em>` HTML element.
     func visit(_ emphasis: Emphasis) -> HTMLNode {
-        i(contents: visit(emphasis.children))
+        em(contents: visit(emphasis.children))
     }
     
-    /// Transforms a markdown strong into a`<b>` HTML element.
+    /// Transforms a markdown strong into a`<strong>` HTML element.
     func visit(_ strong: Strong) -> HTMLNode {
-        b(contents: visit(strong.children))
+        DocCHTML.strong(contents: visit(strong.children))
     }
     
     /// Transforms a markdown strikethrough into a`<s>` HTML element.
