@@ -4834,6 +4834,11 @@
                 "type" : "func"
               },
               {
+                "path" : "\/documentation\/docchtml\/div(attributes:contents:)",
+                "title" : "func div(attributes: [HTMLNode.Attribute], contents: [HTMLNode]) -> HTMLNode",
+                "type" : "func"
+              },
+              {
                 "path" : "\/documentation\/docchtml\/dl(attributes:contents:)",
                 "title" : "func dl(attributes: [HTMLNode.Attribute], contents: [HTMLNode]) -> HTMLNode",
                 "type" : "func"
@@ -4931,6 +4936,11 @@
               {
                 "path" : "\/documentation\/docchtml\/pre(attributes:contents:)",
                 "title" : "func pre(attributes: [HTMLNode.Attribute], contents: [HTMLNode]) -> HTMLNode",
+                "type" : "func"
+              },
+              {
+                "path" : "\/documentation\/docchtml\/script(attributes:contents:)",
+                "title" : "func script(attributes: [HTMLNode.Attribute], contents: [HTMLNode]) -> HTMLNode",
                 "type" : "func"
               },
               {
@@ -5033,6 +5043,11 @@
                   {
                     "path" : "\/documentation\/docchtml\/staticresources\/allfiles",
                     "title" : "static let allFiles: [StaticResources.File]",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/docchtml\/staticresources\/navigatorscript",
+                    "title" : "static let navigatorScript: StaticResources.File",
                     "type" : "property"
                   }
                 ],

@@ -147,7 +147,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTMLRenderer+FullPage.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLRenderer+FullPage.swift#L123"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/HTML\/HTMLRenderer+FullPage.swift#L127"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",

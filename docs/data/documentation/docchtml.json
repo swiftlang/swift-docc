@@ -72,6 +72,7 @@
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/aside(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/body(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/code(attributes:contents:)",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/div(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/dl(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/fieldSet(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/footer(attributes:contents:)",
@@ -92,6 +93,7 @@
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ol(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/p(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/pre(attributes:contents:)",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/script(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/section(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/span(attributes:contents:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/title(attributes:text:)",
@@ -980,6 +982,94 @@
   "title" : "code(attributes:contents:)",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/code(attributes:contents:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/div(attributes:contents:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "<div>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element with the given attributes and contents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "div"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "attributes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
+      "text" : "HTMLNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "contents"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
+      "text" : "HTMLNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "]) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
+      "text" : "HTMLNode"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/div(attributes:contents:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "div(attributes:contents:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/div(attributes:contents:)"
 },
 "doc://DocCHTML/documentation/DocCHTML/dl(attributes:contents:)": {
   "abstract" : [
@@ -2710,6 +2800,94 @@
   "title" : "pre(attributes:contents:)",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/pre(attributes:contents:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/script(attributes:contents:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new ",
+      "type" : "text"
+    },
+    {
+      "code" : "<script>",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " element with the given attributes and contents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "script"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "attributes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
+      "text" : "HTMLNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "contents"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
+      "text" : "HTMLNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "]) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
+      "text" : "HTMLNode"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/script(attributes:contents:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "script(attributes:contents:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/script(attributes:contents:)"
 },
 "doc://DocCHTML/documentation/DocCHTML/section(attributes:contents:)": {
   "abstract" : [
