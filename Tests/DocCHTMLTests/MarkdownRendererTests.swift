@@ -329,14 +329,13 @@ struct MarkdownRendererTests {
             </figure>
             """)
         
-        let renderableDirectiveNoCaption = RenderableDirective.image(source: "test_source", alt: "This is some alt text", caption: [])
         assert(
             rendering: """
             @Image(source: test_source, alt: "This is some alt text")
             """,
             assetToReturn: linkedAsset,
             prettyFormatted: true,
-            directiveToReturn: renderableDirectiveNoCaption,
+            directiveToReturn: RenderableDirective.image(source: "test_source", alt: "This is some alt text", caption: []),
             matches: """
             <picture>
               <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
@@ -345,14 +344,13 @@ struct MarkdownRendererTests {
             </picture>
             """)
         
-        let renderableDirectiveEmptyCaption = RenderableDirective.image(source: "test_source", alt: "This is some alt text", caption: [])
         assert(
             rendering: """
             @Image(source: test_source, alt: "This is some alt text") { }
             """,
             assetToReturn: linkedAsset,
             prettyFormatted: true,
-            directiveToReturn: renderableDirectiveEmptyCaption,
+            directiveToReturn: .image(source: "test_source", alt: "This is some alt text", caption: [Paragraph([])]),
             matches: """
             <picture>
               <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
