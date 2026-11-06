@@ -909,7 +909,7 @@ body > header {
     min-height: 32px;
     padding-inline: 20px;
     
-    &:hover .head-wrapper {
+    &:not(.is-group):hover .head-wrapper {
       background: var(--color-navigator-item-hover);
     }
   }
@@ -948,6 +948,18 @@ body > header {
       content: "";
       position: absolute;
       inset: 0;
+    }
+  }
+  
+  .is-group .leaf-link {
+    padding: 0;
+    color: var(--color-figure-gray-secondary);
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: 600;
+    
+    &:after {
+      display: none;
     }
   }
 }
@@ -1127,18 +1139,23 @@ figcaption {
     ? children.filter(({ parent }) => parent === INDEX_ROOT_KEY)
     : children[uid].childUIDs.map((child) => children[child]);
   
-  // Each item is a row with its title, which links to its page.
+  // Each item is a row with its title, which links to its page, or a heading for a group of pages.
   function makeRow(item) {
+    const isGroupMarker = item.type === "groupMarker";
+    
     const row = document.createElement("div");
     row.className = "navigator-card-item";
+    row.classList.toggle("is-group", isGroupMarker);
     row.style.setProperty("--nesting-index", item.depth);
     row.innerHTML = `<div class="head-wrapper"><div class="depth-spacer"></div><div class="title-container"></div></div>`;
     
     const titleContainer = row.querySelector(".title-container");
     
-    const link = document.createElement("a");
+    const link = document.createElement(isGroupMarker ? "h3" : "a");
     link.className = "leaf-link";
-    link.href = hrefForPath(item.path);
+    if (!isGroupMarker) {
+      link.href = hrefForPath(item.path);
+    }
     link.textContent = item.title;
     titleContainer.append(link);
     return row;
@@ -1164,8 +1181,7 @@ figcaption {
   const main = container.querySelector(":scope > main");
   main.before(navigator);
   
-  // The navigator lists the module's pages, without the headings of the groups that organize them.
-  appendRows(scroller, getChildren(INDEX_ROOT_KEY).filter(({ type }) => type !== "groupMarker"));
+  appendRows(scroller, getChildren(INDEX_ROOT_KEY));
 })();
 
 """.utf8))
