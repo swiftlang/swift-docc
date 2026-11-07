@@ -405,7 +405,6 @@ extension HTMLNode {
         /// The stepping interval for the `<input>` element with a numeric input type ("date", "month", "week", "time", "number", "range", or "datetime-local").
         package static func step(_ interval: Int) -> Attribute { .init(name: "step", value: interval.description) }
 
-        @available(*, deprecated, message: "Use style sheet file to define CSS instead.")
         package static func style(_ value: String) -> Attribute { .init(name: "style", value: value) } 
 
         @available(*, deprecated, message: "Us a `<caption>` element to describe this `<table>` element instead.")
