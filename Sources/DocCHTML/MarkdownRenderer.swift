@@ -760,6 +760,23 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             }
         case .row(let columns):
             var columnsHTML: [HTMLNode] = []
+            for column in columns {
+                let alignment = switch column.alignment {
+                case .leading:  "start"
+                case .center:   "center"
+                case .trailing: "end"
+                }
+                let attributes: [HTMLNode.Attribute] = [
+                    .class("column"),
+                    .style("--column-size: \(column.size); --alignment: \(alignment)")
+                ]
+                
+                let columnHTML = div(
+                    attributes: attributes,
+                    contents: column.content.map { visit($0) }
+                )
+                columnsHTML.append(columnHTML)
+            }
             return div(attributes: [.class("row")], contents: columnsHTML)
         case .none:
             // If the directive cannot be parsed into a known RenderableDirective, nothing should be rendered.
