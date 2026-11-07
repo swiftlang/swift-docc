@@ -1007,6 +1007,24 @@ figcaption {
       font-size: 0.82rem;
     }
 }
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: var(--spacing-stacked-margin-xlarge);
+}
+
+.row > .column {
+    /* column-size acts as a proportion; */
+    flex: var(--column-size, 1) 1 0;
+    text-align: var(--alignment, center);
+    min-width: 0; /* lets long columns shrink below their content's width and scroll */
+    
+    @media only screen and (max-width: 735px) {
+        flex-basis: 100%;
+    }
+}
 """.utf8))
     
     // MARK: Scripts
