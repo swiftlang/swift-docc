@@ -868,25 +868,21 @@ body > header {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding-top: 10px;
   border-inline-end: 1px solid var(--color-grid);
   background: white;
   font-size: 17px;
   line-height: 25px;
   
-  .technology-title {
-    display: flex;
-    margin-inline: 20px;
-    padding: 8px 10px 8px 20px;
+  &> h2 {
+    margin: 10px 20px 0;
+    padding: 0 10px 8px 20px;
     border-radius: 4px;
-    white-space: nowrap;
-    text-decoration: none;
     
-    h2 {
+    &> a {
+      white-space: nowrap;
+      text-decoration: none;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin: 0;
-      padding: 0;
       color: black;
       font-size: 19px;
       line-height: 23px;
@@ -1051,13 +1047,12 @@ figcaption {
   if (!rootModule?.path || !rootModule.children?.length) {
     return;
   }
-  const technologyPath = rootModule.path.toLowerCase();
   
-  const technologyTitle = document.createElement("a");
-  technologyTitle.className = "technology-title";
-  technologyTitle.href = hrefForPath(technologyPath);
-  technologyTitle.innerHTML = `<h2></h2>`;
-  technologyTitle.firstChild.textContent = rootModule.title;
+  const technologyLink = document.createElement("a");
+  technologyLink.href = hrefForPath(rootModule.path);
+  technologyLink.textContent = rootModule.title;
+  const technologyTitle = document.createElement("h2");
+  technologyTitle.append(technologyLink);
   
   // The navigator goes before the page's main content, in the container below the page's header.
   const navigator = document.createElement("nav");
@@ -1068,7 +1063,6 @@ figcaption {
   const main = container.querySelector(":scope > main");
   main.before(navigator);
 })();
-
 """.utf8))
     
     // MARK: Icons
