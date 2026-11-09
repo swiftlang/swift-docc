@@ -173,30 +173,30 @@ extension RenderNode: Codable {
                             switch operation {
                             case .replace:
 
-                                // Determine the new values the patch is replacing the array with
-                                let values: [CodableContentSection?]
                                 if try patchContainer.decodeNil(forKey: .value) {
                                     // Replacing with nothing is the same as removing
-                                    values = []
-                                } else {
-                                    values = try patchContainer.decode([CodableContentSection?].self, forKey: .value)
-                                }
-
-                                // Replace all the values
-                                for (index, value) in values.enumerated() {
-                                    if primaryContentSectionsVariants.indices.contains(index) {
-                                        primaryContentSectionsVariants[index].addPatch(.replace(value: value), toVariantWithTraits: traits)
-                                    } else {
-                                        primaryContentSectionsVariants.append(VariantCollection(
-                                            defaultValue: nil,
-                                            variants: [.init(traits: traits, patch: [.replace(value: value)])]
-                                        ))
+                                    for index in primaryContentSectionsVariants.indices {
+                                        primaryContentSectionsVariants[index].addPatch(.remove, toVariantWithTraits: traits)
                                     }
-                                }
+                                } else {
+                                    let values = try patchContainer.decode([CodableContentSection?].self, forKey: .value)
 
-                                // Remove any extra values
-                                for index in values.count ..< primaryContentSectionsVariants.count {
-                                    primaryContentSectionsVariants[index].addPatch(.remove, toVariantWithTraits: traits)
+                                    // Replace all the values
+                                    for (index, value) in values.enumerated() {
+                                        if primaryContentSectionsVariants.indices.contains(index) {
+                                            primaryContentSectionsVariants[index].addPatch(.replace(value: value), toVariantWithTraits: traits)
+                                        } else {
+                                            primaryContentSectionsVariants.append(VariantCollection(
+                                                defaultValue: nil,
+                                                variants: [.init(traits: traits, patch: [.replace(value: value)])]
+                                            ))
+                                        }
+                                    }
+
+                                    // Remove any extra values
+                                    for index in values.count ..< primaryContentSectionsVariants.count {
+                                        primaryContentSectionsVariants[index].addPatch(.remove, toVariantWithTraits: traits)
+                                    }
                                 }
                             case .add:
                                 if try patchContainer.decodeNil(forKey: .value) {
