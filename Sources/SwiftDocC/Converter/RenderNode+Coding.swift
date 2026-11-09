@@ -206,15 +206,9 @@ public extension RenderNode {
     /// - Returns: The data for the encoded render node.
     func encodeToJSON(
         with encoder: JSONEncoder = RenderJSONEncoder.makeEncoder(),
-        renderReferenceCache: RenderReferenceCache? = nil
+        renderReferenceCache: RenderReferenceCache
     ) throws -> Data {
         do {
-            // If there is no topic reference cache, just encode the reference.
-            // To skim a little off the duration we first do a quick check if the key is present at all.
-            guard let renderReferenceCache else {
-                return try encoder.encode(self)
-            }
-            
             // Since we're using a reference cache, skip encoding the references and encode them separately.
             encoder.skipsEncodingReferences = true
             var renderNodeData = try encoder.encode(self)
@@ -243,5 +237,27 @@ public extension RenderNode {
             // Re-throws if any other error happens.
             throw error
         }
+    }
+    
+    /// Encodes a render node value as JSON data.
+    ///
+    /// - Parameters:
+    ///     - encoder: The object that encodes the render node.
+    ///     - renderReferenceCache: A cache for encoded render reference data. When encoding a large number of render nodes, use the same cache instance
+    ///     to avoid encoding the same reference objects repeatedly.
+    /// - Throws: A ``CodingError`` in case the encoder couldn't encode the render node. However, if a renderReferenceCache was not provided,
+    ///           we throw the raw encoding error, if any.
+    /// - Returns: The data for the encoded render node.
+    @available(*, deprecated, message: "Pass a render reference cache. Use 'encodeToJSON(with:renderReferenceCache:)' with a non-optional cache instead. This deprecated API will be removed after 6.6 is released.")
+    func encodeToJSON(
+        with encoder: JSONEncoder = RenderJSONEncoder.makeEncoder(),
+        renderReferenceCache: RenderReferenceCache? = nil
+    ) throws -> Data {
+        guard let renderReferenceCache else {
+            // Don't bother catching and wrapping an encoding error here
+            // inside of `CodingError`, like we do above.
+            return try encoder.encode(self)
+        }
+        return try encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache)
     }
 }
