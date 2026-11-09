@@ -72,7 +72,7 @@ struct RenderNodeVariantEncodingTests {
         // Test the variant overrides are present after encoding to JSON
         try expectVariantOverridesArePresent(
             in: try node.encodeToJSON(),
-            "without a render reference cache"
+            withRenderReferenceCache: false
         )
 
         // Repeat the test, but this time provide a render reference cache.
@@ -82,32 +82,24 @@ struct RenderNodeVariantEncodingTests {
         let cache: RenderReferenceCache = .init([:])
         try expectVariantOverridesArePresent(
             in: try node.encodeToJSON(renderReferenceCache: cache),
-            "with a render reference cache"
+            withRenderReferenceCache: true
         )
     }
 
-    /// Verifies that the given encoded render node data contains variant
-    /// overrides.
-    ///
-    /// - Parameters:
-    ///   - data: The encoded render node data to check.
-    ///   - howItWasEncoded: A description of how the render node was encoded,
-    ///     to tell the two checks apart when one of them fails.
-    ///   - sourceLocation: The location of the call to this function, so that
-    ///     a failure is reported at the call site.
     private func expectVariantOverridesArePresent(
         in data: Data,
-        _ howItWasEncoded: String,
+        withRenderReferenceCache: Bool,
         sourceLocation: SourceLocation = #_sourceLocation
     ) throws {
+        let description = "\(withRenderReferenceCache ? "with" : "without") a render reference cache"
         let json = try #require(
             JSONSerialization.jsonObject(with: data) as? [String: Any],
-            "The encoded render node isn't a JSON object (\(howItWasEncoded))",
+            "The encoded render node isn't a JSON object (\(description))",
             sourceLocation: sourceLocation
         )
         #expect(
             json["variantOverrides"] != nil,
-            "The encoded render node is missing its variant overrides (\(howItWasEncoded))",
+            "The encoded render node is missing its variant overrides (\(description))",
             sourceLocation: sourceLocation
         )
     }
