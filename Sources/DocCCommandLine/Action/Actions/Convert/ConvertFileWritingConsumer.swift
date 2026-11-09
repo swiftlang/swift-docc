@@ -72,12 +72,7 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
     
     func consume(markdownManifest: MarkdownOutputManifest) throws {
         let url = targetFolder.appendingPathComponent("\(markdownManifest.title)-markdown-manifest.json", isDirectory: false)
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-        #if DEBUG
-        encoder.outputFormatting.insert(.prettyPrinted)
-        #endif
-        let data = try encoder.encode(markdownManifest)
+        let data = try MarkdownOutputManifest.makeEncoder().encode(markdownManifest)
         try outputFileManager.createFile(at: url, contents: data)
     }
     
@@ -298,5 +293,17 @@ enum Digest {
         let images: [ImageReference]
         let videos: [VideoReference]
         let downloads: [DownloadReference]
+    }
+}
+
+extension MarkdownOutputManifest {
+    /// Creates an encoder for writing a Markdown output manifest file to a documentation archive.
+    static func makeEncoder() -> JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+        #if DEBUG
+        encoder.outputFormatting.insert(.prettyPrinted)
+        #endif
+        return encoder
     }
 }
