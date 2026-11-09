@@ -405,8 +405,8 @@ h1, h2, h3, h4, h5, h6 {
     
     position: absolute;
     top: 0;
-    left: -50%;
-    width: 200%;
+    left: calc(50% - 50cqw);
+    width: 100cqw;
     height: 100%;
     z-index: -2;
   }
@@ -431,8 +431,9 @@ h1, h2, h3, h4, h5, h6 {
   --icon-size: 250px;
   
   position: absolute;
-  top: calc(50% - var(--icon-size) / 2);
-  right: 25px;
+  top: 10px;
+  /* 25px inset from the right edge of the 'main' container */
+  right: calc(50% - 50cqw + 25px);
   opacity: 0.15;
   z-index: -1;
   
@@ -913,8 +914,7 @@ body > header {
   > main {
     flex: 1;
     min-width: 0;
-    /* Keep full-width backgrounds, like the hero section's, from drawing over the navigator */
-    overflow-x: clip;
+    container-type: inline-size;
   }
 }
 
