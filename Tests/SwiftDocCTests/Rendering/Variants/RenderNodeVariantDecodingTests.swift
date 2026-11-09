@@ -9,7 +9,7 @@
 */
 
 import Testing
-import SwiftDocC
+@testable import SwiftDocC
 import Foundation
 
 /// Tests that decoding a render node populates its variant collections from the `variantOverrides` JSON patches.
@@ -500,19 +500,8 @@ struct RenderNodeVariantDecodingTests {
 
     /// Returns the value of the variant collection for the given language: the default value with the patches
     /// of that language's variants applied.
-    private func resolved<Value>(_ collection: VariantCollection<Value>, for languageID: String) -> Value {
-        var result = collection.defaultValue
-        for variant in collection.variants where variant.traits == [.interfaceLanguage(languageID)] {
-            for patch in variant.patch {
-                switch patch {
-                case .replace(let value), .add(let value):
-                    result = value
-                case .remove:
-                    break // A non-optional value can't be removed.
-                }
-            }
-        }
-        return result
+    private func resolved<Value: VariantCollectionPatchable>(_ collection: VariantCollection<Value>, for languageID: String) -> Value {
+        collection.applied(to: collection.defaultValue, for: [.interfaceLanguage(languageID)])
     }
 
     /// Returns the primary content sections of the render node for the given language.
@@ -525,8 +514,10 @@ struct RenderNodeVariantDecodingTests {
             for variant in collection.variants where variant.traits == [.interfaceLanguage(languageID)] {
                 for patch in variant.patch {
                     switch patch {
-                    case .replace(let value), .add(let value):
+                    case .replace(let value):
                         section = value
+                    case .add:
+                        Issue.record("Unexpected add patch in a primary content section's variant collection")
                     case .remove:
                         section = nil
                     }
