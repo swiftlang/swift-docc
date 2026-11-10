@@ -23,15 +23,13 @@ package extension HTMLRenderer {
     /// Wraps the unique rendered documentation content and its metadata into a full-page document.
     ///
     /// - Parameters:
-    ///   - mainContent: The unique rendered documentation content for this page.
-    ///   - metadata: The title and plain text description to use as metadata for this page.
+    ///   - pageInfo: The rendered documentation content and meta information for this page.
     ///   - reference: The reference that the content and metadata is associated with.
     ///   - customHeader: A custom HTML header that the renderer will include in the full-page output.
     ///   - customFooter: A custom HTML footer that the renderer will include in the full-page output.
     /// - Returns: A full-page static HTML document.
     static func makeFullPage(
-        mainContent: HTMLNode,
-        metadata: (title: String, description: String?),
+        pageInfo: RenderedPageInfo,
         for reference: ResolvedTopicReference,
         customHeader: HTMLNode? = nil,
         customFooter: HTMLNode? = nil
@@ -50,17 +48,17 @@ package extension HTMLRenderer {
                 .href("\(pathPrefixToArchiveRoot)reference.css"),
                 .rel(.stylesheet),
             ),
-            title(text: metadata.title),
+            title(text: pageInfo.metadata.title),
             // The navigator script adds a navigator sidebar to the page once the browser has parsed it.
             script(attributes: [.src("\(pathPrefixToArchiveRoot)\(StaticResources.navigatorScript.filename)"), .defer], contents: []),
         ]
-        if let description = metadata.description {
+        if let description = pageInfo.metadata.plainDescription {
             headElements.append(meta(
                 .content(description),
                 .name("description"),
             ))
         }
-        do {
+        if !pageInfo.codeBlockLanguages.isEmpty {
             headElements.append(
                 script(attributes: [.src("\(pathPrefixToArchiveRoot)\(StaticResources.highlightScript.filename)"), .type("module")], contents: []),
             )
@@ -87,7 +85,7 @@ package extension HTMLRenderer {
         
         // 3. The unique documentation content for this page, in a container that the navigator sidebar displays next to
         bodyElements.append(div(attributes: [.class("full-width-container")], contents: [
-            main(contents: [mainContent]),
+            main(contents: pageInfo.content.map { [$0] } ?? []),
         ]))
         
         // 4. The default footer

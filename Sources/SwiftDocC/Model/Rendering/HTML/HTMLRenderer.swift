@@ -9,7 +9,7 @@
 */
 
 import struct Foundation.URL
-import DocCHTML
+package import DocCHTML
 private import Markdown
 private import SymbolKit
 private import DocCCommon
@@ -126,7 +126,7 @@ package struct HTMLRenderer {
     let goal: RenderGoal
     let featureFlags: FeatureFlags
     
-    private let renderer: MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>
+    private var renderer: MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>
     
     init(reference: ResolvedTopicReference, context: DocumentationContext, jsonRenderContext: RenderContext, goal: RenderGoal, featureFlags: FeatureFlags) {
         self.reference = reference
@@ -143,21 +143,23 @@ package struct HTMLRenderer {
     }
     
     /// Information about a rendered page
-    struct RenderedPageInfo {
+    package struct RenderedPageInfo {
         /// The HTML content of the page.
         ///
         /// The string representation of this node hierarchy is intended to be inserted _somewhere_ inside the `<body>` HTML element.
         /// It _doesn't_ include a page header, footer, navigator, etc. and may be an insufficient representation of the "entire" page
-        var content: HTMLNode?
+        package var content: HTMLNode?
         /// The title and description/abstract of the page.
-        var metadata: Metadata
+        package var metadata: Metadata
         /// Meta information about the page that belongs in the HTML `<head>` element.
-        struct Metadata {
+        package struct Metadata {
             /// The plain text title of this page, suitable as content for the HTML `<title>` element.
-            var title: String
+            package var title: String
             /// The plain text description/abstract of this page, suitable a data for a `<meta>` element for sharing purposes.
-            var plainDescription: String?
+            package var plainDescription: String?
         }
+        /// The supported syntax highlighting languages that can be found in ``content``.
+        package var codeBlockLanguages: Set<HighlightLanguage>
     }
     
     mutating func renderArticle(_ article: Article) -> RenderedPageInfo {
@@ -239,7 +241,8 @@ package struct HTMLRenderer {
             metadata: .init(
                 title: article.title?.plainText ?? node.name.plainText,
                 plainDescription: article.abstract?.plainText
-            )
+            ),
+            codeBlockLanguages: renderer.encounteredCodeBlockLanguages
         )
     }
     
@@ -463,11 +466,12 @@ package struct HTMLRenderer {
             metadata: .init(
                 title: symbol.title,
                 plainDescription: symbol.abstract?.plainText
-            )
+            ),
+            codeBlockLanguages: renderer.encounteredCodeBlockLanguages
         )
     }
     
-    private func makeDeprecationSummaryAside(for markup: [any Markup]) -> HTMLNode {
+    private mutating func makeDeprecationSummaryAside(for markup: [any Markup]) -> HTMLNode {
         var content: [HTMLNode] = [
             p(attributes: [.class("label")], contents: [.text("Deprecated")])
         ]
@@ -479,7 +483,7 @@ package struct HTMLRenderer {
         return aside(attributes: [.class("deprecated")], contents: content)
     }
     
-    private func makeSeeAlsoSection(authored authoredSeeAlso: SeeAlsoSection?, node: DocumentationNode) -> [HTMLNode]? {
+    private mutating func makeSeeAlsoSection(authored authoredSeeAlso: SeeAlsoSection?, node: DocumentationNode) -> [HTMLNode]? {
         var groups = [MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>.TaskGroupInfo]()
         
         if let authoredSeeAlso {

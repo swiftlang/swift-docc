@@ -124,7 +124,8 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test(arguments: RenderGoal.allCases)
     func renderingSingleLanguageParameters(goal: RenderGoal) {
-        let parameters = makeRenderer(goal: goal).parameters([
+        var renderer = makeRenderer(goal: goal)
+        let parameters = renderer.parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some _formatted_ description with `code`")),
                 .init(name: "Second", content: parseMarkup(string: """
@@ -183,7 +184,8 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test
     func renderingLanguageSpecificParameters() {
-        let parameters = makeRenderer(goal: .richness).parameters([
+        var renderer = makeRenderer(goal: .richness)
+        let parameters = renderer.parameters([
             .swift: [
                 .init(name: "FirstCommon", content: parseMarkup(string: "Available in both languages")),
                 .init(name: "SwiftOnly", content: parseMarkup(string: "Only available in Swift")),
@@ -224,7 +226,8 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test
     func renderingManyLanguageSpecificParameters() {
-        let parameters = makeRenderer(goal: .richness).parameters([
+        var renderer = makeRenderer(goal: .richness)
+        let parameters = renderer.parameters([
             .swift: [
                 .init(name: "First", content: parseMarkup(string: "Some description")),
             ],
@@ -264,7 +267,8 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test(arguments: RenderGoal.allCases)
     func renderingSingleLanguageReturnSections(goal: RenderGoal) {
-        let returns = makeRenderer(goal: goal).returns([
+        var renderer = makeRenderer(goal: goal)
+        let returns = renderer.returns([
             .swift: parseMarkup(string: "First paragraph\n\nSecond paragraph")
         ])
         
@@ -293,7 +297,8 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test(arguments: RenderGoal.allCases)
     func renderingLanguageSpecificReturnSections(goal: RenderGoal) {
-        let returns = makeRenderer(goal: goal).returns([
+        var renderer = makeRenderer(goal: goal)
+        let returns = renderer.returns([
             .swift:      parseMarkup(string: "First paragraph\n\nSecond paragraph"),
             .objectiveC: parseMarkup(string: "Other language's paragraph"),
         ])
@@ -944,7 +949,7 @@ struct MarkdownRenderer_PageElementsTests {
             ),
         ]
         
-        let renderer = makeRenderer(goal: goal, elementsToReturn: elements)
+        var renderer = makeRenderer(goal: goal, elementsToReturn: elements)
         let expectedSectionID = expectedGroupTitle.replacingOccurrences(of: " ", with: "-")
         let groupedSection = renderer.groupedSection(named: expectedGroupTitle, groups: [
             .swift: [
@@ -1046,14 +1051,14 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test(arguments: RenderGoal.allCases)
     func testEmptyDiscussionSection(goal: RenderGoal) {
-        let renderer = makeRenderer(goal: goal)
+        var renderer = makeRenderer(goal: goal)
         let discussion = renderer.discussion([], fallbackSectionName: "Fallback")
         #expect(discussion.isEmpty)
     }
     
     @Test(arguments: RenderGoal.allCases)
     func testDiscussionSectionWithoutHeading(goal: RenderGoal) {
-        let renderer = makeRenderer(goal: goal)
+        var renderer = makeRenderer(goal: goal)
         let discussion = renderer.discussion(parseMarkup(string: """
         First paragraph
         
@@ -1085,7 +1090,7 @@ struct MarkdownRenderer_PageElementsTests {
     
     @Test(arguments: RenderGoal.allCases)
     func testDiscussionSectionWithHeading(goal: RenderGoal) {
-        let renderer = makeRenderer(goal: goal)
+        var renderer = makeRenderer(goal: goal)
         let discussion = renderer.discussion(parseMarkup(string: """
         ## Some Heading
         

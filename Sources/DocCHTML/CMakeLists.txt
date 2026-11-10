@@ -14,6 +14,7 @@ add_library(DocCHTML STATIC
   HTMLNode+fromXMLNode.swift
   HTMLNode+Tags.swift
   LinkProvider.swift
+  HighlightLanguage.swift
   MarkdownRenderer+Availability.swift
   MarkdownRenderer+Breadcrumbs.swift
   MarkdownRenderer+Declaration.swift

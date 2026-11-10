@@ -26,8 +26,11 @@ struct HTMLRenderFullPageTests {
         ])
         
         let fullPage = HTMLRenderer.makeFullPage(
-            mainContent: mainContent,
-            metadata: (title: "Some title", description: "Some description"),
+            pageInfo: .init(
+                content: mainContent,
+                metadata: .init(title: "Some title", plainDescription: "Some description"),
+                codeBlockLanguages: []
+            ),
             for: reference
         )
         
@@ -77,6 +80,70 @@ struct HTMLRenderFullPageTests {
     }
     
     @Test
+    func includesSyntaxHighlightScriptWhenCodeBlockLanguagesIsNotEmpty() async throws {
+        let mainContent = article(contents: [
+            pre(contents: [
+                code(attributes: [.class("swift")], contents: [
+                    .text("func doSomething()")
+                ])
+            ])
+        ])
+        
+        let fullPage = HTMLRenderer.makeFullPage(
+            pageInfo: .init(
+                content: mainContent,
+                metadata: .init(title: "Some title", plainDescription: nil),
+                codeBlockLanguages: [.swift]
+            ),
+            for: reference
+        )
+        
+        assert(fullPage, matches: """
+        <!DOCTYPE html>
+        <html lang="en-US">
+          <head>
+            <meta charset="utf-8">
+            <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport">
+            <link href="../../../../reference.css" rel="stylesheet">
+            <title>Some title</title>
+            <script src="../../../../navigator.js" defer></script>
+            <script src="../../../../highlight.mjs" type="module"></script>
+          </head>
+          <body>
+            <header>
+              <h2>Documentation</h2>
+              <span>Language: Swift</span>
+            </header>
+            <div class="full-width-container">
+              <main>
+                <article>
+                  <pre><code class="swift">func doSomething()</code></pre>
+                </article>
+              </main>
+            </div>
+            <footer>
+              <fieldset role="radiogroup">
+                <legend>Select a color scheme preference</legend>
+                <label>
+                  <input name="color-scheme" type="radio" value="light">
+                  Light
+                </label>
+                <label>
+                  <input name="color-scheme" type="radio" value="dark">
+                  Dark
+                </label>
+                <label>
+                  <input checked name="color-scheme" type="radio" value="auto">
+                  Auto
+                </label>
+              </fieldset>
+            </footer>
+          </body>
+        </html>
+        """)
+    }
+    
+    @Test
     func includesCustomHeaderAndFooterInFullPage() async throws {
         let customHeader = header(contents: [
             .text("A custom header")
@@ -94,8 +161,11 @@ struct HTMLRenderFullPageTests {
             ])
             
             let fullPage = HTMLRenderer.makeFullPage(
-                mainContent: mainContent,
-                metadata: (title: "Some title", nil),
+                pageInfo: .init(
+                    content: mainContent,
+                    metadata: .init(title: "Some title", plainDescription: nil),
+                    codeBlockLanguages: []
+                ),
                 for: reference,
                 customHeader: customHeader,
                 customFooter: customFooter

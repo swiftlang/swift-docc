@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-package import DocCHTML
+import DocCHTML
 
 /// A consumer for HTML content produced during documentation conversion.
 package protocol HTMLContentConsumer {
@@ -20,15 +20,10 @@ package protocol HTMLContentConsumer {
     /// It's the consumers responsibility to insert the information into a template or skeletal structure to produce a valid HTML file for each page.
     ///
     /// - Parameters:
-    ///   - mainContent: The contents for this page.
-    ///   - metadata: Metadata information (title and description) about this page.
+    ///   - pageInfo: The contents and meta information for this page.
     ///   - reference: The resolved topic reference that identifies this page.
     func consume(
-        mainContent: HTMLNode?,
-        metadata: (
-            title: String,
-            description: String?
-        ),
+        pageInfo: HTMLRenderer.RenderedPageInfo,
         forPage reference: ResolvedTopicReference
     ) throws
     

@@ -42,6 +42,8 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     let linkProvider: Provider
     /// A type that parses on-page renderable directives and returns the information required to render the directive in HTML.
     let renderableDirectiveParser: Parser
+    /// The supported syntax highlighting languages that the renderer encountered while visiting all content.
+    package var encounteredCodeBlockLanguages = Set<HighlightLanguage>()
     
     package init(path: String, goal: RenderGoal, linkProvider: Provider, renderableDirectiveParser: Parser) {
         self.pathComponents = path.components(separatedBy: "/")
@@ -61,7 +63,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```html
     /// <p>Some <em>formatted</em> text</p>
     /// ```
-    func visit(_ paragraph: Paragraph) -> HTMLNode {
+    mutating func visit(_ paragraph: Paragraph) -> HTMLNode {
         if paragraph.childCount == 1, let image = paragraph.child(at: 0) as? Image {
             visit(image)
         } else {
@@ -83,7 +85,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   <p>Something noteworthy</p>
     /// </aside>
     /// ```
-    func visit(_ blockQuote: BlockQuote) -> HTMLNode {
+    mutating func visit(_ blockQuote: BlockQuote) -> HTMLNode {
         let aside = Aside(blockQuote)
         
         var children: [HTMLNode] = [
@@ -113,7 +115,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't wrap the heading's content in an anchor.
-    package func visit(_ heading: Heading) -> HTMLNode {
+    package mutating func visit(_ heading: Heading) -> HTMLNode {
         selfReferencingHeading(level: heading.level, content: visit(heading.children), plainTextTitle: heading.plainText)
     }
     
@@ -159,17 +161,17 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     }
     
     /// Transforms a markdown emphasis into a`<em>` HTML element.
-    func visit(_ emphasis: Emphasis) -> HTMLNode {
+    mutating func visit(_ emphasis: Emphasis) -> HTMLNode {
         em(contents: visit(emphasis.children))
     }
     
     /// Transforms a markdown strong into a`<strong>` HTML element.
-    func visit(_ strong: Strong) -> HTMLNode {
+    mutating func visit(_ strong: Strong) -> HTMLNode {
         DocCHTML.strong(contents: visit(strong.children))
     }
     
     /// Transforms a markdown strikethrough into a`<s>` HTML element.
-    func visit(_ strikethrough: Strikethrough) -> HTMLNode {
+    mutating func visit(_ strikethrough: Strikethrough) -> HTMLNode {
         s(contents: visit(strikethrough.children))
     }
     
@@ -263,7 +265,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// If the link provider returns `nil`, the renderer instead transforms the link into an HTML version of the provider's ``LinkProvider/fallbackLinkText(linkString:)`` text.
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr>` HTML elements in the symbol name.
-    func visit(_ link: Link) -> HTMLNode {
+    mutating func visit(_ link: Link) -> HTMLNode {
         guard let destination = link.destination else {
             return .text("")
         }
@@ -459,11 +461,16 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   <code>Some block of code</code>
     /// </pre>
     /// ```
-    func visit(_ codeBlock: CodeBlock) -> HTMLNode {
-        pre(
-            attributes: codeBlock.language.map { [.class($0)] } ?? [],
-            contents: [code(contents: [.text(codeBlock.code)])]
-        )
+    mutating func visit(_ codeBlock: CodeBlock) -> HTMLNode {
+        let attributes: [HTMLNode.Attribute]
+        if let language = codeBlock.language, let knowLanguage = HighlightLanguage(name: language) {
+            encounteredCodeBlockLanguages.insert(knowLanguage)
+            attributes = [.class(knowLanguage.rawValue)]
+        } else {
+            attributes = []
+        }
+        
+        return pre(attributes: attributes, contents: [code(contents: [.text(codeBlock.code)])])
     }
     
     // MARK: List
@@ -497,7 +504,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </li>
     /// </ul>
     /// ```
-    func visit(_ unorderedList: UnorderedList) -> HTMLNode {
+    mutating func visit(_ unorderedList: UnorderedList) -> HTMLNode {
         ul(contents: visit(unorderedList.children))
     }
     
@@ -520,14 +527,14 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </li>
     /// </ol>
     /// ```
-    func visit(_ orderedList: OrderedList) -> HTMLNode {
+    mutating func visit(_ orderedList: OrderedList) -> HTMLNode {
         ol(contents: visit(orderedList.children))
     }
     
     /// Transforms a markdown list item into a`<li>` HTML element.
     ///
     /// See ``visit(_:)-(UnorderedList)`` or ``visit(_:)-(OrderedList)`` for examples.
-    func visit(_ listItem: ListItem) -> HTMLNode {
+    mutating func visit(_ listItem: ListItem) -> HTMLNode {
         li(contents: visit(listItem.children))
     }
     
@@ -569,7 +576,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </tbody>
     /// </table>
     /// ```
-    func visit(_ table: Table) -> HTMLNode {
+    mutating func visit(_ table: Table) -> HTMLNode {
         var content: [HTMLNode] = []
                 
         if !table.head.isEmpty {
@@ -646,7 +653,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: Markup children
     
-    private func visit(_ container: MarkupChildren) -> [HTMLNode] {
+    private mutating func visit(_ container: MarkupChildren) -> [HTMLNode] {
         var children: [HTMLNode] = []
         children.reserveCapacity(container.underestimatedCount)
         
@@ -729,7 +736,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: Directives
     
-    func visit(_ directive: BlockDirective) -> HTMLNode {
+    mutating func visit(_ directive: BlockDirective) -> HTMLNode {
         let parsed = self.renderableDirectiveParser.parse(blockDirective: directive)
         
         switch parsed {
@@ -825,7 +832,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     // MARK: Default
     
     @_disfavoredOverload
-    package func visit(_ markup: some Markup) -> HTMLNode {
+    package mutating func visit(_ markup: some Markup) -> HTMLNode {
         // Check common markup types first
         if let paragraph = markup as? Paragraph {
             return visit(paragraph)
