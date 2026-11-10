@@ -377,16 +377,18 @@ section:first-of-type > hgroup > p {
   }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  padding-inline-end: 23px; /* for the hover icon */
+main {
+  h1, h2, h3, h4, h5, h6 {
+    padding-inline-end: 23px; /* for the hover icon */
   
-  &> a {
-    text-decoration: none;
-    color: black; /* TODO: dark mode */
-    &:hover {
-      &:after {
-        margin-left: 7px;
-        content: url(anchor.svg)
+    &> a {
+      text-decoration: none;
+      color: black; /* TODO: dark mode */
+      &:hover {
+        &:after {
+          margin-left: 7px;
+          content: url(anchor.svg)
+        }
       }
     }
   }
