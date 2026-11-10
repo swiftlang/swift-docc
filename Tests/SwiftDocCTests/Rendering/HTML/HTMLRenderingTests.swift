@@ -808,6 +808,12 @@ struct HTMLRenderingTests {
                     Some more content
                 }
             }
+
+            @TabNavigator {
+                @Tab("Other") {
+                    Other content
+                }
+            }
             """)
         }
 
@@ -821,15 +827,18 @@ struct HTMLRenderingTests {
         let pageInfo = renderer.renderArticle(article)
 
         let html = try #require(pageInfo.prettyHTMLString)
+        // Each tab navigator uses its own `name` so that the tabs of different navigators don't close each other.
+        #expect(html.contains(#"<details name="tabnavigator-5-1" data-tab-index="1" open>"#), "\(html)")
+        #expect(html.contains(#"<details name="tabnavigator-16-1" data-tab-index="1" open>"#), "\(html)")
         let expectedTabs = """
         <div class="tabnavigator" data-tabs-count="2">
-              <details name="tabnavigator" data-tab-index="1" open>
+              <details name="tabnavigator-5-1" data-tab-index="1" open>
                 <summary>First</summary>
                 <p>
                   Some <em>formatted</em> content
                 </p>
               </details>
-              <details name="tabnavigator" data-tab-index="2">
+              <details name="tabnavigator-5-1" data-tab-index="2">
                 <summary>Second</summary>
                 <p>Some content</p>
                 <p>Some more content</p>

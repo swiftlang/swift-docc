@@ -330,18 +330,18 @@ struct MarkdownRendererTests {
             ]),
             matches: """
             <div class="tabnavigator" data-tabs-count="3">
-              <details name="tabnavigator" data-tab-index="1" open>
+              <details name="tabnavigator-1-1" data-tab-index="1" open>
                 <summary>First</summary>
                 <p>
                   Some <em>formatted</em> content
                 </p>
               </details>
-              <details name="tabnavigator" data-tab-index="2">
+              <details name="tabnavigator-1-1" data-tab-index="2">
                 <summary>Second</summary>
                 <p>Some content</p>
                 <p>Some more content</p>
               </details>
-              <details name="tabnavigator" data-tab-index="3">
+              <details name="tabnavigator-1-1" data-tab-index="3">
                 <summary>Third</summary>
                 <p>Even more content</p>
               </details>

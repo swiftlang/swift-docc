@@ -759,6 +759,11 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                 ])
             }
         case .tabNavigator(tabs: let tabs):
+            // `<details>` elements with the same `name` form an exclusive group,
+            // so each navigator on the page needs its own
+            let groupName = directive.range.map { range in
+                "tabnavigator-\(range.lowerBound.line)-\(range.lowerBound.column)"
+            } ?? "tabnavigator"
             return div(
                 attributes: [
                     .class("tabnavigator"),
@@ -767,7 +772,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                 contents: tabs.enumerated().map { i, tab in
                     details(
                         attributes: [
-                            .name("tabnavigator"),
+                            .name(groupName),
                             .customData("tab-index", String(i + 1)),
                         ] + (i == 0 ? ([.open]) : ([])),
                         contents: [
