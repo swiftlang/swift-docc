@@ -468,7 +468,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: List
     
-    /// Transforms a markdown unordered list into a`<ul>` HTML element.
+    /// Transforms a markdown unordered list into a `<ul>` or `<dl>` HTML element.
     ///
     /// As part of transforming the unordered list, the renderer also transforms all of its list items and their content recursively.
     /// For example, the renderer transforms this markdown
@@ -497,8 +497,53 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </li>
     /// </ul>
     /// ```
+    ///
+    /// If the list items indicate terms, the renderer transforms them into a `<dl>` HTML element instead.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// - term First: The first term's definition.
+    /// - term Second: The second term's definition.
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <dl>
+    ///   <dt>First</dt>
+    ///   <dd>
+    ///     <p>The first term's definition.</p>
+    ///   </dd>
+    ///   <dt>Second</dt>
+    ///   <dd>
+    ///     <p>The second term's definition.</p>
+    ///   </dd>
+    /// </dl>
+    /// ```
+    /// A list that mixes term items and other items becomes consecutive sibling `<dl>` and `<ul>` HTML elements, one for each run of items of the same kind.
     func visit(_ unorderedList: UnorderedList) -> HTMLNode {
-        ul(contents: visit(unorderedList.children))
+        let renderedItems = unorderedList.listItems.map { (listItem: $0, contents: visit($0.children)) }
+        let lists = renderedItems.termListRuns(detectingTermsWith: _termAndDefinition(for:)).map { run in
+            switch run {
+                case .plainItems(let items):
+                    ul(contents: items.map { li(contents: $0.contents) })
+                case .termItems(let terms):
+                    dl(contents: terms.flatMap { [$0.term, $0.definition] })
+            }
+        }
+        return lists.count == 1 ? lists[0] : ._fragment(lists)
+    }
+    
+    /// Returns the `<dt>` and `<dd>` HTML elements for a rendered list item that indicates a term, or `nil` if the list item doesn't indicate a term.
+    private func _termAndDefinition(for item: (listItem: ListItem, contents: [HTMLNode])) -> (term: HTMLNode, definition: HTMLNode)? {
+        // An HTML block can also render as a `<p>` element, and a paragraph with only an image doesn't.
+        guard item.listItem.child(at: 0) is Paragraph,
+              case .element(.p, _, let paragraphContents)? = item.contents.first?._storage,
+              let detected = paragraphContents.detectedTermListItem()
+        else {
+            return nil
+        }
+        return (
+            term: dt(contents: detected.term),
+            definition: dd(contents: [p(contents: detected.definitionFirstParagraph)] + item.contents.dropFirst())
+        )
     }
     
     /// Transforms a markdown ordered list into a`<ul>` HTML element.

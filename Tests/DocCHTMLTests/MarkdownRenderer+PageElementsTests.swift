@@ -181,6 +181,46 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
     
+    @Test(arguments: RenderGoal.allCases)
+    func renderingParametersWithTermListDescriptions(goal: RenderGoal) {
+        let parameters = makeRenderer(goal: goal).parameters([
+            .swift: [
+                .init(name: "Value", content: parseMarkup(string: "- term A: B.")),
+            ]
+        ])
+        
+        let commonHTML = """
+        <dl>
+          <dt>Value</dt>
+          <dd>
+            <dl>
+              <dt>A</dt>
+              <dd>
+                <p>B.</p>
+              </dd>
+            </dl>
+          </dd>
+        </dl>
+        """
+        
+        switch goal {
+        case .richness:
+            parameters.assertMatches(prettyFormatted: true, expected: """
+            <section id="Parameters">
+              <h2>
+                <a href="#Parameters">Parameters</a>
+              </h2>
+            \(commonHTML.indenting(depth: 1))
+            </section>
+            """)
+        case .conciseness:
+            parameters.assertMatches(prettyFormatted: true, expected: """
+            <h2>Parameters</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+    
     @Test
     func renderingLanguageSpecificParameters() {
         let parameters = makeRenderer(goal: .richness).parameters([
@@ -307,6 +347,48 @@ struct MarkdownRenderer_PageElementsTests {
         </p>
         <p class="occ-only">
           Other language’s paragraph
+        </p>
+        """
+        
+        switch goal {
+        case .richness:
+            returns.assertMatches(prettyFormatted: true, expected: """
+            <section id="Return-value">
+              <h2>
+                <a href="#Return-value">Return value</a>
+              </h2>
+            \(commonHTML.indenting(depth: 1))
+            </section>
+            """)
+        case .conciseness:
+            returns.assertMatches(prettyFormatted: true, expected: """
+            <h2>Return value</h2>
+            \(commonHTML)
+            """)
+        }
+    }
+
+    @Test(arguments: RenderGoal.allCases)
+    func renderingLanguageSpecificReturnSectionsWithTermLists(goal: RenderGoal) {
+        let returns = makeRenderer(goal: goal).returns([
+            .swift:      parseMarkup(string: "- term A: B.\n- plain"),
+            .objectiveC: parseMarkup(string: "Other"),
+        ])
+        
+        let commonHTML = """
+        <dl class="swift-only">
+          <dt>A</dt>
+          <dd>
+            <p>B.</p>
+          </dd>
+        </dl>
+        <ul class="swift-only">
+          <li>
+            <p>plain</p>
+          </li>
+        </ul>
+        <p class="occ-only">
+          Other
         </p>
         """
         

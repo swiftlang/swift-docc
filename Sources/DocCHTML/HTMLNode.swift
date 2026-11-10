@@ -8,6 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+private import DocCCommon
+
 package struct HTMLNode: Sendable {
     // This type should be though of as opaque with a file-private implementation.
     // However, to avoid needing to define the formatting and parsing of HTML all in this file,
@@ -123,5 +125,15 @@ extension HTMLNode._Tag {
                      true
             default: false
         }
+    }
+}
+
+extension HTMLNode: TermListDetectableInline {
+    var termListPlainText: String? {
+        if case .text(let text) = _storage { text } else { nil }
+    }
+    
+    init(termListPlainText: String) {
+        self = .text(termListPlainText)
     }
 }
