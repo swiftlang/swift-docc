@@ -33,17 +33,4 @@ struct String_WhitespaceTests {
     func collapsesConsecutiveSeparators(input: String, expected: String) {
         #expect(input.replacingWhitespaceAndPunctuation(with: "-") == expected)
     }
-    
-    @Test(arguments: [
-        ("", "", ""),
-        ("ABC", "ABC", "ABC"),
-        ("\t ABC\t ", "ABC\t ", "\t ABC"),
-        ("\t ", "", ""),
-        ("\n ABC \n", "ABC \n", "\n ABC"),
-        ("start ABC end", "start ABC end", "start ABC end"),
-    ])
-    func trimsLeadingAndTrailingWhitespaceIndependently(input: String, expectedLeading: String, expectedTrailing: String) {
-        #expect(input.removingLeadingWhitespace() == expectedLeading)
-        #expect(input.removingTrailingWhitespace() == expectedTrailing)
-    }
 }

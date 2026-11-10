@@ -10,6 +10,7 @@
 
 public import Foundation
 private import Markdown
+private import DocCCommon
 
 /// Writes diagnostic messages to a text output stream.
 ///

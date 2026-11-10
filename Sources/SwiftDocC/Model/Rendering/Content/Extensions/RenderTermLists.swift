@@ -10,6 +10,7 @@
 
 private import Markdown
 import Foundation
+private import DocCCommon
 
 protocol ListableItem {}
 extension RenderBlockContent.ListItem: ListableItem {}
@@ -282,24 +283,5 @@ extension RenderInlineContent {
         } else {
             return RenderInlineContent.text(newText)
         }
-    }
-}
-
-extension String {
-    /// Returns a new string made by removing whitespace from the beginning of the string.
-    func removingLeadingWhitespace() -> String {
-        guard let index = self.firstIndex(where: { !$0.isWhitespace }) else { return "" }
-        if index == startIndex {
-            // Avoid a potential copy if the string doesn't have any leading whitespace.
-            return self
-        }
-        return String(self[index...])
-    }
-    
-    /// Returns a new string made by removing whitespace from the end of the string.
-    func removingTrailingWhitespace() -> String {
-        guard let index = self.lastIndex(where: { !$0.isWhitespace }) else { return "" }
-        // It's not worth checking if the index is at the end because `index(before: endIndex)` is slower than not checking.
-        return String(self[...index])
     }
 }

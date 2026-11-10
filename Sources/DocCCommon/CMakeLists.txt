@@ -13,7 +13,8 @@ add_library(DocCCommon STATIC
   JSONDecoding/SymbolGraph+FastJSONDecodable.swift
   JSONDecoding/UnsafeRawPointer+HasASCIIPrefix.swift
   Mutex.swift
-  SourceLanguage.swift)
+  SourceLanguage.swift
+  String+WhitespaceTrimming.swift)
 target_link_libraries(DocCCommon PRIVATE
   DocC::SymbolKit)
 set_target_properties(DocCCommon PROPERTIES
