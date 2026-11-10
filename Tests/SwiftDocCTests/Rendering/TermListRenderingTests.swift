@@ -25,6 +25,22 @@ struct TermListRenderingTests {
     }
 
     @Test
+    func removesKeywordAndFollowingWhitespaceRegardlessOfCase() async throws {
+        let content = try await renderedContent("""
+        - term : A
+        - TERM : B
+        - Term  `c`: C
+        """)
+        #expect(content == [
+            .termList(.init(items: [
+                termItem([.text("")], [paragraph([.text("A")])]),
+                termItem([.text("")], [paragraph([.text("B")])]),
+                termItem([.codeVoice(code: "c")], [paragraph([.text("C")])]),
+            ])),
+        ])
+    }
+
+    @Test
     func detectsTermListNestedInDefinition() async throws {
         let content = try await renderedContent("""
         - term A: x
