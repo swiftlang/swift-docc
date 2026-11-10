@@ -1191,7 +1191,8 @@ private extension HTMLNode {
         for child in self.childrenForTesting {
             switch child._storage {
                 case .text(let text): result.append(text)
-                case .element:        result.append(child.plainTextForTesting)
+                case .element,
+                     .fragment:       result.append(child.plainTextForTesting)
                 case .voidElement:    continue
             }
         }
@@ -1200,7 +1201,8 @@ private extension HTMLNode {
     
     var childrenForTesting: [HTMLNode] {
         switch _storage {
-            case .element(_, _, let contents): contents
+            case .element(_, _, let contents),
+                 .fragment(let contents):      contents
             case .text, .voidElement:          []
         }
     }

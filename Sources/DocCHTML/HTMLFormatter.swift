@@ -136,6 +136,13 @@ package struct HTMLFormatter {
             
         case .voidElement(let tag, let attributes):
             _format(voidElement: tag, attributes: attributes)
+            
+        case .fragment(let nodes):
+            // A fragment only reaches the formatter when it's the node passed to `format(_:options:)`.
+            for index in nodes.indices {
+                let nextIndex = index &+ 1 // The index will exceed `nodes.endIndex` long before it overflows.
+                _compactFormat(nodes[index], nextElementTag: nextIndex < nodes.endIndex ? nodes[nextIndex]._tag : nextElementTag)
+            }
         }
     }
     
@@ -283,6 +290,8 @@ package struct HTMLFormatter {
                     case .element(    let tag, let attributes, _),
                          .voidElement(let tag, let attributes):
                         tag.isTextLevelSemantic && attributes.isEmpty
+                    case .fragment:
+                        false
                 }
             }
             if shouldPresentContentsOnSeparateLine, shouldPresentInline(for: firstContents) {
@@ -317,6 +326,18 @@ package struct HTMLFormatter {
             
         case .voidElement(let voidTag, let attributes):
             _format(voidElement: voidTag, attributes: attributes)
+            
+        case .fragment(let nodes):
+            // Format the nodes at the current depth, the first on the current line and the rest on new lines.
+            var siblingState = state
+            siblingState.presentOnCurrentLine = true
+            for index in nodes.indices {
+                let nextIndex = index &+ 1 // The index will exceed `nodes.endIndex` long before it overflows.
+                siblingState.nextElementTag = nextIndex < nodes.endIndex ? nodes[nextIndex]._tag : state.nextElementTag
+                
+                _prettyFormat(nodes[index], state: siblingState)
+                siblingState.presentOnCurrentLine = false
+            }
         }
     }
     
