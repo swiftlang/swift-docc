@@ -82,10 +82,7 @@ package struct HTMLFormatter {
             encoder._append("<!DOCTYPE html>\n")
         }
         
-        if node._tag == .pre {
-            // Whitespace is significant for `<pre>` elements; so format that sub-hierarchy _without_ pretty printing.
-            encoder._compactFormat(node, nextElementTag: nil)
-        } else if options.contains(.prettyPrint) {
+        if options.contains(.prettyPrint) {
             encoder._prettyFormat(node, state: .init())
         } else {
             encoder._compactFormat(node, nextElementTag: nil)
@@ -186,6 +183,12 @@ package struct HTMLFormatter {
         
         if !state.presentOnCurrentLine {
             appendLineBreakAndIndentation()
+        }
+        
+        // Whitespace is significant inside `<pre>` elements; so we switch to formatting that sub-hierarchy _without_ pretty printing.
+        if element._tag == .pre {
+            _compactFormat(element, nextElementTag: state.nextElementTag)
+            return
         }
         
         switch element._storage {
@@ -300,14 +303,7 @@ package struct HTMLFormatter {
                 }
                 childState.presentOnCurrentLine = presentOnCurrentLine
                 
-                // Whitespace is significant inside `<pre>` elements; so we switch to formatting that sub-hierarchy _without_ pretty printing.
-                if child._tag == .pre {
-                    // However, first we add a new line and indentation so that the `<pre>` element starts appropriately indented on a new line.
-                    appendLineBreakAndIndentation(depth: childState.depth)
-                    _compactFormat(child, nextElementTag: childState.nextElementTag)
-                } else {
-                    _prettyFormat(child, state: childState)
-                }
+                _prettyFormat(child, state: childState)
             }
             
             // End tag
