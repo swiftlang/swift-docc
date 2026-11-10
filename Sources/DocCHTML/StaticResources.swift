@@ -910,11 +910,20 @@ body > header {
 /* The navigator and the page's main content display next to each other. */
 .full-width-container {
   display: flex;
+  max-width: 1920px;
+  margin-inline: auto;
   
   > main {
     flex: 1;
     min-width: 0;
     container-type: inline-size;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .full-width-container {
+    box-sizing: border-box;
+    border-inline: 1px solid var(--color-grid);
   }
 }
 
