@@ -9,248 +9,103 @@
 */
 
 import Testing
+import DocCCommon
 @testable import SwiftDocC
 import Foundation
 
-/// Tests that decoding a render node populates its variant collections from the `variantOverrides` JSON patches.
-///
-/// Each test describes a Swift render node and a list of JSON patches that turn it into the Objective-C version.
 struct RenderNodeVariantDecodingTests {
 
     // MARK: Primary content sections
 
     /// A patch that inserts a section in the middle of the list shifts the position of the sections after it,
     /// so the next patch refers to the position of the content section _after_ the insertion.
-    @Test func decodesPrimaryContentSectionsWithInsertedSection() {
-        let json = makeJSON(
-            primaryContentSections: """
-            {
-              "kind": "declarations",
-              "declarations": [
-                { "tokens": [{ "kind": "text", "text": "SwiftDeclaration" }], "languages": ["swift"], "platforms": [] }
-              ]
-            },
-            {
-              "kind": "content",
-              "content": [
-                { "type": "paragraph", "inlineContent": [{ "type": "text", "text": "Swift discussion" }] }
-              ]
-            }
-            """,
-            patches: """
-            {
-              "op": "replace",
-              "path": "/primaryContentSections/0",
-              "value": {
-                "kind": "declarations",
-                "declarations": [
-                  { "tokens": [{ "kind": "text", "text": "ObjCDeclaration" }], "languages": ["occ"], "platforms": [] }
-                ]
-              }
-            },
-            {
-              "op": "add",
-              "path": "/primaryContentSections/1",
-              "value": {
-                "kind": "parameters",
-                "parameters": [{ "name": "param", "content": [] }]
-              }
-            },
-            {
-              "op": "replace",
-              "path": "/primaryContentSections/2",
-              "value": {
-                "kind": "content",
-                "content": [
-                  { "type": "paragraph", "inlineContent": [{ "type": "text", "text": "ObjC discussion" }] }
-                ]
-              }
-            }
-            """
-        )
+    @Test func decodesPrimaryContentSectionsWithInsertedSection() throws {
+        let node = makeNode(primaryContentSections: [
+            declarations("SwiftDeclaration", language: "swift"),
+            discussion("Swift discussion"),
+        ])
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer("primaryContentSections", "0"), encodableValue: declarations("ObjCDeclaration", language: "occ")),
+            .add(pointer: pointer("primaryContentSections", "1"), encodableValue: parameters()),
+            .replace(pointer: pointer("primaryContentSections", "2"), encodableValue: discussion("ObjC discussion")),
+        ])
 
         expectPrimaryContentSections(
-            in: json,
+            in: data,
             swift: ["declarations: SwiftDeclaration", "content: Swift discussion"],
             occ: ["declarations: ObjCDeclaration", "parameters", "content: ObjC discussion"]
         )
     }
 
-    /// A patch that adds a section at the end of the list.
-    @Test func decodesPrimaryContentSectionsWithAppendedSection() {
-        let json = makeJSON(
-            primaryContentSections: """
-            {
-              "kind": "declarations",
-              "declarations": [
-                { "tokens": [{ "kind": "text", "text": "SwiftDeclaration" }], "languages": ["swift"], "platforms": [] }
-              ]
-            },
-            {
-              "kind": "content",
-              "content": [
-                { "type": "paragraph", "inlineContent": [{ "type": "text", "text": "Swift discussion" }] }
-              ]
-            }
-            """,
-            patches: """
-            {
-              "op": "replace",
-              "path": "/primaryContentSections/0",
-              "value": {
-                "kind": "declarations",
-                "declarations": [
-                  { "tokens": [{ "kind": "text", "text": "ObjCDeclaration" }], "languages": ["occ"], "platforms": [] }
-                ]
-              }
-            },
-            {
-              "op": "replace",
-              "path": "/primaryContentSections/1",
-              "value": {
-                "kind": "content",
-                "content": [
-                  { "type": "paragraph", "inlineContent": [{ "type": "text", "text": "ObjC discussion" }] }
-                ]
-              }
-            },
-            {
-              "op": "add",
-              "path": "/primaryContentSections/2",
-              "value": {
-                "kind": "parameters",
-                "parameters": [{ "name": "param", "content": [] }]
-              }
-            }
-            """
-        )
+    @Test func decodesPrimaryContentSectionsWithAppendedSection() throws {
+        let node = makeNode(primaryContentSections: [
+            declarations("SwiftDeclaration", language: "swift"),
+            discussion("Swift discussion"),
+        ])
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer("primaryContentSections", "0"), encodableValue: declarations("ObjCDeclaration", language: "occ")),
+            .replace(pointer: pointer("primaryContentSections", "1"), encodableValue: discussion("ObjC discussion")),
+            .add(pointer: pointer("primaryContentSections", "2"), encodableValue: parameters()),
+        ])
 
         expectPrimaryContentSections(
-            in: json,
+            in: data,
             swift: ["declarations: SwiftDeclaration", "content: Swift discussion"],
             occ: ["declarations: ObjCDeclaration", "content: ObjC discussion", "parameters"]
         )
     }
 
-    /// A patch that replaces the whole list with a longer list.
-    /// The sections beyond the end of the Swift list only exist in the Objective-C variant.
-    @Test func decodesReplacingPrimaryContentSectionsWithMoreSections() {
-        let json = makeJSON(
-            primaryContentSections: """
-            {
-              "kind": "declarations",
-              "declarations": [
-                { "tokens": [{ "kind": "text", "text": "SwiftDeclaration" }], "languages": ["swift"], "platforms": [] }
-              ]
-            }
-            """,
-            patches: """
-            {
-              "op": "replace",
-              "path": "/primaryContentSections",
-              "value": [
-                {
-                  "kind": "declarations",
-                  "declarations": [
-                    { "tokens": [{ "kind": "text", "text": "ObjCDeclaration" }], "languages": ["occ"], "platforms": [] }
-                  ]
-                },
-                {
-                  "kind": "parameters",
-                  "parameters": [{ "name": "param", "content": [] }]
-                },
-                {
-                  "kind": "content",
-                  "content": [
-                    { "type": "paragraph", "inlineContent": [{ "type": "text", "text": "ObjC discussion" }] }
-                  ]
-                }
-              ]
-            }
-            """
-        )
+    @Test func decodesReplacingPrimaryContentSectionsWithMoreSections() throws {
+        let node = makeNode(primaryContentSections: [
+            declarations("SwiftDeclaration", language: "swift"),
+        ])
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer("primaryContentSections"), encodableValue: [
+                CodableContentSection(declarations("ObjCDeclaration", language: "occ")),
+                CodableContentSection(parameters()),
+                CodableContentSection(discussion("ObjC discussion")),
+            ]),
+        ])
 
         expectPrimaryContentSections(
-            in: json,
+            in: data,
             swift: ["declarations: SwiftDeclaration"],
             occ: ["declarations: ObjCDeclaration", "parameters", "content: ObjC discussion"]
         )
     }
 
-    /// A patch that replaces the whole list with a shorter list.
-    /// The Swift sections beyond the end of the Objective-C list are removed in the Objective-C variant.
-    @Test func decodesReplacingPrimaryContentSectionsWithFewerSections() {
-        let json = makeJSON(
-            primaryContentSections: """
-            {
-              "kind": "declarations",
-              "declarations": [
-                { "tokens": [{ "kind": "text", "text": "SwiftDeclaration" }], "languages": ["swift"], "platforms": [] }
-              ]
-            },
-            {
-              "kind": "parameters",
-              "parameters": [{ "name": "param", "content": [] }]
-            },
-            {
-              "kind": "content",
-              "content": [
-                { "type": "paragraph", "inlineContent": [{ "type": "text", "text": "Swift discussion" }] }
-              ]
-            }
-            """,
-            patches: """
-            {
-              "op": "replace",
-              "path": "/primaryContentSections",
-              "value": [
-                {
-                  "kind": "declarations",
-                  "declarations": [
-                    { "tokens": [{ "kind": "text", "text": "ObjCDeclaration" }], "languages": ["occ"], "platforms": [] }
-                  ]
-                }
-              ]
-            }
-            """
-        )
+    @Test func decodesReplacingPrimaryContentSectionsWithFewerSections() throws {
+        let node = makeNode(primaryContentSections: [
+            declarations("SwiftDeclaration", language: "swift"),
+            parameters(),
+            discussion("Swift discussion"),
+        ])
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer("primaryContentSections"), encodableValue: [
+                CodableContentSection(declarations("ObjCDeclaration", language: "occ")),
+            ]),
+        ])
 
         expectPrimaryContentSections(
-            in: json,
+            in: data,
             swift: ["declarations: SwiftDeclaration", "parameters", "content: Swift discussion"],
             occ: ["declarations: ObjCDeclaration"]
         )
     }
 
-    /// A patch that replaces the whole list with `null` removes all the sections in the Objective-C variant only.
-    /// The Swift sections are unaffected.
-    @Test func decodesReplacingPrimaryContentSectionsWithNull() {
-        let json = makeJSON(
-            primaryContentSections: """
-            {
-              "kind": "declarations",
-              "declarations": [
-                { "tokens": [{ "kind": "text", "text": "SwiftDeclaration" }], "languages": ["swift"], "platforms": [] }
-              ]
-            },
-            {
-              "kind": "content",
-              "content": [
-                { "type": "paragraph", "inlineContent": [{ "type": "text", "text": "Swift discussion" }] }
-              ]
-            }
-            """,
-            patches: """
-            {
-              "op": "replace",
-              "path": "/primaryContentSections",
-              "value": null
-            }
-            """
-        )
+    @Test func decodesReplacingPrimaryContentSectionsWithNull() throws {
+        let node = makeNode(primaryContentSections: [
+            declarations("SwiftDeclaration", language: "swift"),
+            discussion("Swift discussion"),
+        ])
+        // An optional `.none` encodes as JSON `null` (a bare `nil` can't be an `any Encodable`):
+        // { "op": "replace", "path": "/primaryContentSections", "value": null }
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer("primaryContentSections"), encodableValue: Int?.none),
+        ])
 
         expectPrimaryContentSections(
-            in: json,
+            in: data,
             swift: ["declarations: SwiftDeclaration", "content: Swift discussion"],
             occ: []
         )
@@ -258,100 +113,56 @@ struct RenderNodeVariantDecodingTests {
 
     // MARK: Patches that replace whole top-level properties
 
-    /// Some legacy variant overrides replace entire top-level properties that don't vary between languages.
-    /// Those patches aren't valid, so decoding the render node throws an error instead of ignoring them.
+    /// Legacy variant overrides replace whole properties that don't vary. The decoder rejects them by path, without decoding the value.
     @Test(arguments: [
-        ("schemaVersion", #"{ "major": 0, "minor": 3, "patch": 0 }"#),
-        ("kind", #""symbol""#),
-        ("topicSectionsStyle", #""compactGrid""#),
-        ("diffAvailability", #"{ "major": { "change": "added", "platform": "MyPlatform", "versions": ["1.0", "2.0 beta 1"] } }"#),
-        ("sampleCodeDownload", """
-            { "action": { "isActive": true, "overridingTitle": "Download", "type": "reference", "identifier": "https://example.com/downloads/MySample.zip" } }
-            """),
-        ("downloadNotAvailableSummary", #"[{ "type": "paragraph", "inlineContent": [{ "type": "text", "text": "This download isn't available." }] }]"#),
-        ("sections", "[]"),
+        "schemaVersion",
+        "kind",
+        "topicSectionsStyle",
+        "diffAvailability",
+        "sampleCodeDownload",
+        "downloadNotAvailableSummary",
+        "sections",
     ])
-    func throwsForPatchesToNonVaryingProperties(name: String, value: String) {
-        let json = makeJSON(
-            primaryContentSections: """
-            {
-              "kind": "declarations",
-              "declarations": [
-                { "tokens": [{ "kind": "text", "text": "SwiftDeclaration" }], "languages": ["swift"], "platforms": [] }
-              ]
-            }
-            """,
-            patches: """
-            { "op": "replace", "path": "/\(name)", "value": \(value) }
-            """
-        )
+    func throwsForPatchesToNonVaryingProperties(name: String) throws {
+        let node = makeNode(primaryContentSections: [declarations("SwiftDeclaration", language: "swift")])
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer(name), encodableValue: "legacy value"),
+        ])
 
-        expectUnsupportedPatchError(decoding: json, at: "/\(name)")
+        expectUnsupportedPatchError(decoding: data, at: "/\(name)")
     }
 
-    /// The metadata itself isn't a variant: a patch can only apply to one of its properties. A patch that replaces the
-    /// whole metadata (as the legacy variant overrides do) isn't valid, so decoding the render node throws an error.
-    @Test func throwsForPatchThatReplacesWholeMetadata() {
-        let json = makeJSON(
-            patches: """
-            {
-              "op": "replace",
-              "path": "/metadata",
-              "value": {
-                "title": "MY_CONSTANT",
-                "role": "symbol",
-                "roleHeading": "Macro",
-                "symbolKind": "macro"
-              }
-            }
-            """,
-            metadata: """
-            {
-              "title": "MY_CONSTANT",
-              "role": "symbol",
-              "roleHeading": "Global Variable"
-            }
-            """
-        )
+    /// Only individual metadata properties can vary, so legacy patches that replace the whole metadata are rejected.
+    @Test func throwsForPatchThatReplacesWholeMetadata() throws {
+        var node = makeNode()
+        node.metadata.title = "MY_CONSTANT"
+        node.metadata.role = "symbol"
+        node.metadata.roleHeading = "Global Variable"
 
-        expectUnsupportedPatchError(decoding: json, at: "/metadata")
+        var objcMetadata = node.metadata
+        objcMetadata.roleHeading = "Macro"
+        objcMetadata.symbolKind = "macro"
+
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer("metadata"), encodableValue: objcMetadata),
+        ])
+
+        expectUnsupportedPatchError(decoding: data, at: "/metadata")
     }
 
-    /// The references dictionary isn't a variant: a patch can only apply to a property of one reference. A patch that
-    /// replaces all the references (as the legacy variant overrides do) isn't valid, so decoding the render node throws
-    /// an error.
-    @Test func throwsForPatchThatReplacesAllReferences() {
+    /// Only properties of a single reference can vary, so legacy patches that replace all the references are rejected.
+    @Test func throwsForPatchThatReplacesAllReferences() throws {
         let referenceID = "doc://org.swift.docc.test/documentation/MyKit/MyClass"
-        let json = makeJSON(
-            patches: """
-            {
-              "op": "replace",
-              "path": "/references",
-              "value": {
-                "\(referenceID)": {
-                  "type": "topic",
-                  "identifier": "\(referenceID)",
-                  "title": "ObjCTitle",
-                  "url": "/documentation/mykit/myclass",
-                  "kind": "symbol"
-                }
-              }
-            }
-            """,
-            references: """
-            {
-              "\(referenceID)": {
-                "type": "topic",
-                "identifier": "\(referenceID)",
-                "title": "SwiftTitle",
-                "url": "/documentation/mykit/myclass",
-                "kind": "symbol"
-              }
-            }
-            """
-        )
+        var node = makeNode()
+        node.references[referenceID] = makeReference(id: referenceID, title: "SwiftTitle")
 
-        expectUnsupportedPatchError(decoding: json, at: "/references")
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer("references"), encodableValue: [
+                referenceID: CodableRenderReference(makeReference(id: referenceID, title: "ObjCTitle")),
+            ]),
+        ])
+
+        expectUnsupportedPatchError(decoding: data, at: "/references")
     }
 
     // MARK: Patches with a null value for an optional array
@@ -360,110 +171,115 @@ struct RenderNodeVariantDecodingTests {
     /// property has no value for that language. It decodes as `nil`, not as an empty array.
     @Test(arguments: ["add", "replace"])
     func decodesNullPatchForOptionalMetadataArrayAsNil(operation: String) throws {
+        var node = makeNode()
+        node.metadata.title = "myMethod()"
         // The Swift metadata only has platforms when the patch replaces them.
-        let platforms = operation == "replace" ? #", "platforms": [{ "name": "iOS", "introducedAt": "13.0" }]"# : ""
-        let json = makeJSON(
-            patches: """
-            { "op": "\(operation)", "path": "/metadata/platforms", "value": null }
-            """,
-            metadata: """
-            { "title": "myMethod()"\(platforms) }
-            """
-        )
+        if operation == "replace" {
+            node.metadata.platforms = [.init(name: "iOS", introduced: "13.0", isBeta: false)]
+        }
 
-        let node = try decodeNode(json)
+        let platformsPointer = pointer("metadata", "platforms")
+        // { "op": "add" or "replace", "path": "/metadata/platforms", "value": null }
+        let data = try encode(node, patches: [
+            operation == "replace"
+                ? .replace(pointer: platformsPointer, encodableValue: [AvailabilityRenderItem]?.none)
+                : .add(pointer: platformsPointer, encodableValue: [AvailabilityRenderItem]?.none),
+        ])
 
-        let swiftPlatforms = resolved(node.metadata.platformsVariants, for: "swift")
+        let decoded = try decodeNode(data)
+
+        let swiftPlatforms = resolved(decoded.metadata.platformsVariants, for: "swift")
         if operation == "replace" {
             #expect(swiftPlatforms?.count == 1)
         } else {
             #expect(swiftPlatforms == nil)
         }
-        #expect(resolved(node.metadata.platformsVariants, for: "occ") == nil, "A null value is nil, not an empty array")
+        #expect(resolved(decoded.metadata.platformsVariants, for: "occ") == nil, "A null value is nil, not an empty array")
     }
 
-    /// The same for the fragments of a reference, which are also an optional array.
     @Test func decodesNullPatchForOptionalReferenceArrayAsNil() throws {
         let referenceID = "doc://org.swift.docc.test/documentation/MyKit/MyClass"
-        let escapedID = "doc:~1~1org.swift.docc.test~1documentation~1MyKit~1MyClass"
-        let json = makeJSON(
-            patches: """
-            { "op": "replace", "path": "/references/\(escapedID)/fragments", "value": null }
-            """,
-            references: """
-            {
-              "\(referenceID)": {
-                "type": "topic",
-                "identifier": "\(referenceID)",
-                "title": "MyClass",
-                "url": "/documentation/mykit/myclass",
-                "kind": "symbol",
-                "fragments": [{ "kind": "text", "text": "class MyClass" }]
-              }
-            }
-            """
+        var node = makeNode()
+        node.references[referenceID] = makeReference(
+            id: referenceID,
+            title: "MyClass",
+            fragments: [.init(text: "class MyClass", kind: .text)]
         )
 
-        let node = try decodeNode(json)
+        // { "op": "replace", "path": "/references/<escaped reference ID>/fragments", "value": null }
+        let data = try encode(node, patches: [
+            .replace(pointer: pointer("references", referenceID, "fragments"), encodableValue: [DeclarationRenderSection.Token]?.none),
+        ])
 
-        let reference = try #require(node.references[referenceID] as? TopicRenderReference)
+        let decoded = try decodeNode(data)
+
+        let reference = try #require(decoded.references[referenceID] as? TopicRenderReference)
         #expect(resolved(reference.fragmentsVariants, for: "swift")?.count == 1)
         #expect(resolved(reference.fragmentsVariants, for: "occ") == nil, "A null value is nil, not an empty array")
     }
 
     // MARK: Test helpers
 
-    /// Returns the JSON for a Swift render node with the given primary content sections and Objective-C variant overrides.
-    ///
-    /// - Parameters:
-    ///   - primaryContentSections: The JSON for the elements of the render node's `primaryContentSections` array.
-    ///   - patches: The JSON for the elements of the `patch` array of the Objective-C variant override.
-    ///   - metadata: The JSON for the render node's `metadata` object.
-    ///   - references: The JSON for the render node's `references` object.
-    private func makeJSON(
-        primaryContentSections: String = "",
-        patches: String,
-        metadata: String = #"{ "title": "myMethod()" }"#,
-        references: String = "{}"
-    ) -> String {
-        """
-        {
-          "schemaVersion": { "major": 0, "minor": 3, "patch": 0 },
-          "identifier": { "url": "doc://org.swift.docc.test/documentation/MyKit/MyClass/myMethod()", "interfaceLanguage": "swift" },
-          "kind": "symbol",
-          "metadata": \(metadata),
-          "sections": [],
-          "references": \(references),
-          "primaryContentSections": [
-            \(primaryContentSections)
-          ],
-          "variantOverrides": [
-            {
-              "traits": [{ "interfaceLanguage": "occ" }],
-              "patch": [
-                \(patches)
-              ]
-            }
-          ]
-        }
-        """
+    private func makeNode(primaryContentSections: [any RenderSection] = []) -> RenderNode {
+        var node = RenderNode(
+            identifier: .init(bundleID: "org.swift.docc.test", path: "/documentation/MyKit/MyClass/myMethod()", sourceLanguage: .swift),
+            kind: .symbol
+        )
+        node.metadata.title = "myMethod()"
+        node.primaryContentSections = primaryContentSections
+        return node
     }
 
-    /// Decodes the render node JSON and checks the primary content sections for each language.
-    ///
-    /// - Parameters:
-    ///   - json: The render node JSON to decode.
-    ///   - swift: The expected descriptions of the Swift sections. See ``describe(_:)``.
-    ///   - occ: The expected descriptions of the Objective-C sections. See ``describe(_:)``.
+    private func makeReference(
+        id: String,
+        title: String,
+        fragments: [DeclarationRenderSection.Token]? = nil
+    ) -> TopicRenderReference {
+        TopicRenderReference(
+            identifier: .init(id),
+            title: title,
+            abstract: [],
+            url: "/documentation/mykit/myclass",
+            kind: .symbol,
+            fragments: fragments
+        )
+    }
+
+    private func declarations(_ text: String, language: String) -> DeclarationsRenderSection {
+        DeclarationsRenderSection(declarations: [
+            .init(languages: [language], platforms: [], tokens: [.init(text: text, kind: .text)])
+        ])
+    }
+
+    private func discussion(_ text: String) -> ContentRenderSection {
+        ContentRenderSection(kind: .content, content: [.paragraph(.init(inlineContent: [.text(text)]))])
+    }
+
+    private func parameters() -> ParametersRenderSection {
+        ParametersRenderSection(parameters: [.init(name: "param", content: [])])
+    }
+
+    private func pointer(_ pathComponents: String...) -> JSONPointer {
+        JSONPointer(pathComponents: pathComponents)
+    }
+
+    private func encode(_ node: RenderNode, patches: [JSONPatchOperation]) throws -> Data {
+        let encoder = RenderJSONEncoder.makeEncoder()
+        encoder.userInfoVariantOverrides = VariantOverrides(values: [
+            VariantOverride(traits: [.interfaceLanguage("occ")], patch: patches)
+        ])
+        return try encoder.encode(node)
+    }
+
     private func expectPrimaryContentSections(
-        in json: String,
+        in data: Data,
         swift: [String],
         occ: [String],
         sourceLocation: SourceLocation = #_sourceLocation
     ) {
         let node: RenderNode
         do {
-            node = try decodeNode(json)
+            node = try decodeNode(data)
         } catch {
             // Record the error at the call site. A thrown error is reported at the test function instead.
             Issue.record(error, "Failed to decode the render node", sourceLocation: sourceLocation)
@@ -474,18 +290,13 @@ struct RenderNodeVariantDecodingTests {
         #expect(describe(sections(of: node, for: "occ")) == occ, "Objective-C sections", sourceLocation: sourceLocation)
     }
 
-    /// Checks that decoding the render node JSON throws the error for a JSON patch that isn't for a variant property.
-    ///
-    /// - Parameters:
-    ///   - json: The render node JSON to decode.
-    ///   - path: The path of the patch that can't be decoded.
     private func expectUnsupportedPatchError(
-        decoding json: String,
+        decoding data: Data,
         at path: String,
         sourceLocation: SourceLocation = #_sourceLocation
     ) {
         #expect(sourceLocation: sourceLocation) {
-            try decodeNode(json)
+            try decodeNode(data)
         } throws: { error in
             guard case DecodingError.dataCorrupted(let context) = error else { return false }
             return context.debugDescription.contains("Unsupported JSON patch for non-variant")
@@ -493,21 +304,14 @@ struct RenderNodeVariantDecodingTests {
         }
     }
 
-    /// Decodes the render node JSON.
-    private func decodeNode(_ json: String) throws -> RenderNode {
-        try RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: Data(json.utf8))
+    private func decodeNode(_ data: Data) throws -> RenderNode {
+        try RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: data)
     }
 
-    /// Returns the value of the variant collection for the given language: the default value with the patches
-    /// of that language's variants applied.
     private func resolved<Value: VariantCollectionPatchable>(_ collection: VariantCollection<Value>, for languageID: String) -> Value {
         collection.applied(to: collection.defaultValue, for: [.interfaceLanguage(languageID)])
     }
 
-    /// Returns the primary content sections of the render node for the given language.
-    ///
-    /// Each primary content section is its own variant collection. The section for a language is the collection's
-    /// default value with the patches of that language's variants applied. Sections that end up as `nil` are omitted.
     private func sections(of node: RenderNode, for languageID: String) -> [any RenderSection] {
         node.primaryContentSectionsVariants.compactMap { collection -> (any RenderSection)? in
             var section = collection.defaultValue
@@ -527,7 +331,6 @@ struct RenderNodeVariantDecodingTests {
         }
     }
 
-    /// Returns a short description of each section: its kind and, for declarations and content, its text.
     private func describe(_ sections: [any RenderSection]) -> [String] {
         sections.map { section in
             switch section {
