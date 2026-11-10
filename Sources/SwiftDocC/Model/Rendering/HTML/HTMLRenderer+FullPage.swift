@@ -60,6 +60,11 @@ package extension HTMLRenderer {
                 .name("description"),
             ))
         }
+        do {
+            headElements.append(
+                script(attributes: [.src("\(pathPrefixToArchiveRoot)\(StaticResources.highlightScript.filename)"), .type("module")], contents: []),
+            )
+        }
         
         // The full page body consists of 5 elements, in order;
         var bodyElements: [HTMLNode] = []
