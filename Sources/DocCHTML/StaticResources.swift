@@ -877,12 +877,12 @@ body > header {
     margin: 10px 20px 0;
     padding: 0 10px 8px 20px;
     border-radius: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
     
     &> a {
       white-space: nowrap;
       text-decoration: none;
-      overflow: hidden;
-      text-overflow: ellipsis;
       color: black;
       font-size: 19px;
       line-height: 23px;
