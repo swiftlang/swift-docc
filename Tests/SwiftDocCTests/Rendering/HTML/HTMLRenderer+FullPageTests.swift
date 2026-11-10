@@ -39,6 +39,7 @@ struct HTMLRenderFullPageTests {
             <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport">
             <link href="../../../../reference.css" rel="stylesheet">
             <title>Some title</title>
+            <script src="../../../../navigator.js" defer></script>
             <meta content="Some description" name="description">
           </head>
           <body>
@@ -46,11 +47,13 @@ struct HTMLRenderFullPageTests {
               <h2>Documentation</h2>
               <span>Language: Swift</span>
             </header>
-            <main>
-              <article>
-                <p>Some documentation</p>
-              </article>
-            </main>
+            <div class="full-width-container">
+              <main>
+                <article>
+                  <p>Some documentation</p>
+                </article>
+              </main>
+            </div>
             <footer>
               <fieldset role="radiogroup">
                 <legend>Select a color scheme preference</legend>
@@ -106,6 +109,7 @@ struct HTMLRenderFullPageTests {
                 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport">
                 <link href="../../../../reference.css" rel="stylesheet">
                 <title>Some title</title>
+                <script src="../../../../navigator.js" defer></script>
               </head>
               <body>
                 <header>A custom header</header>
@@ -113,11 +117,13 @@ struct HTMLRenderFullPageTests {
                   <h2>Documentation</h2>
                   <span>Language: Swift</span>
                 </header>
-                <main>
-                  <article>
-                    <p>Some documentation</p>
-                  </article>
-                </main>
+                <div class="full-width-container">
+                  <main>
+                    <article>
+                      <p>Some documentation</p>
+                    </article>
+                  </main>
+                </div>
                 <footer>
                   <fieldset role="radiogroup">
                     <legend>Select a color scheme preference</legend>

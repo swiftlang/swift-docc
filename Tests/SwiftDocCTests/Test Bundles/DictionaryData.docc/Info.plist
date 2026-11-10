@@ -9,16 +9,13 @@
 	<key>CFBundleIdentifier</key>
 	<string>org.swift.docc.DictionaryData</string>
 	<key>CDAppleDefaultAvailability</key>
-	<dict>
-		<key>Example</key>
-		<array>
-			<dict>
-				<key>name</key>
-				<string>test</string>
-				<key>version</key>
-				<string>1.0</string>
-			</dict>
-		</array>
-	</dict>
+	<array>
+		<dict>
+			<key>name</key>
+			<string>test</string>
+			<key>version</key>
+			<string>1.0</string>
+		</dict>
+	</array>
 </dict>
 </plist>

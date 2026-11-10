@@ -8,18 +8,21 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 import Markdown
 @testable import SwiftDocC
 
-class NonOverviewHeadingCheckerTests: XCTestCase {
-
-    func testFindNonOverviewH2() throws {
+struct NonOverviewHeadingCheckerTests {
+    @Test(arguments: [
+        "Overview", "OVERVIEW", "overview", "OvErViEw",
+    ])
+    func warnsAboutNonOverviewHeading(after overviewHeadingTitle: String) throws {
         let source = """
 # Title
 Abstract
 
-## Overview
+## \(overviewHeadingTitle)
 An overview
 
 ## Discussion
@@ -29,38 +32,39 @@ A discussion
 A subsection
 
 ## Topics
-- ``SymoblLink``
+- ``SymbolLink``
 """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        var checker = NonOverviewHeadingChecker(sourceFile: URL(fileURLWithPath: "/dev/null"))
+        var checker = NonOverviewHeadingChecker(sourceFile: URL(fileURLWithPath: "/dev/null")) // A source file is needed to create diagnostic notes
         checker.visit(document)
 
-        XCTAssertEqual(checker.diagnostics.count, 1)
-        let diagnostic = try XCTUnwrap(checker.diagnostics.first)
+        #expect(checker.diagnostics.count == 1)
+        let diagnostic = try #require(checker.diagnostics.first)
 
-        XCTAssertEqual(diagnostic.notes.count, 1)
-        let note = try XCTUnwrap(diagnostic.notes.first)
-        XCTAssertEqual(note.range.lowerBound.line, 4)
-        XCTAssertEqual(note.range.lowerBound.column, 1)
-        XCTAssertEqual(note.range.upperBound.line, 4)
-        XCTAssertEqual(note.range.upperBound.column, 12)
+        #expect(diagnostic.notes.count == 1)
+        let note = try #require(diagnostic.notes.first)
+        #expect(note.range.lowerBound.line == 4)
+        #expect(note.range.lowerBound.column == 1)
+        #expect(note.range.upperBound.line == 4)
+        #expect(note.range.upperBound.column == 12)
 
         let range = diagnostic.range
-        XCTAssertEqual(range?.lowerBound.line, 7)
-        XCTAssertEqual(diagnostic.solutions.count, 1)
+        #expect(range?.lowerBound.line == 7)
+        #expect(diagnostic.solutions.count == 1)
 
-        let solution = try XCTUnwrap(diagnostic.solutions.first)
-        XCTAssertEqual(solution.replacements.count, 1)
+        let solution = try #require(diagnostic.solutions.first)
+        #expect(solution.replacements.count == 1)
 
-        let replacement = try XCTUnwrap(solution.replacements.first)
-        XCTAssertEqual(replacement.replacement, "### Discussion")
-        XCTAssertEqual(replacement.range.lowerBound.line, 7)
-        XCTAssertEqual(replacement.range.lowerBound.column, 1)
-        XCTAssertEqual(replacement.range.upperBound.line, 7)
-        XCTAssertEqual(replacement.range.upperBound.column, 14)
+        let replacement = try #require(solution.replacements.first)
+        #expect(replacement.replacement == "### Discussion")
+        #expect(replacement.range.lowerBound.line == 7)
+        #expect(replacement.range.lowerBound.column == 1)
+        #expect(replacement.range.upperBound.line == 7)
+        #expect(replacement.range.upperBound.column == 14)
     }
 
-    func testWithNoOverviewSection() throws {
+    @Test
+    func warnsAboutNoOverviewSection() throws {
         let source = """
 # Title
 Abstract
@@ -73,22 +77,22 @@ A discussion
         var checker = NonOverviewHeadingChecker(sourceFile: nil)
         checker.visit(document)
 
-        XCTAssertEqual(checker.diagnostics.count, 1)
-        let diagnostic = try XCTUnwrap(checker.diagnostics.first)
-        XCTAssert(diagnostic.notes.isEmpty)
+        #expect(checker.diagnostics.count == 1)
+        let diagnostic = try #require(checker.diagnostics.first)
+        #expect(diagnostic.notes.isEmpty)
 
         let range = diagnostic.range
-        XCTAssertEqual(range?.lowerBound.line, 4)
-        XCTAssertEqual(diagnostic.solutions.count, 1)
+        #expect(range?.lowerBound.line == 4)
+        #expect(diagnostic.solutions.count == 1)
 
-        let solution = try XCTUnwrap(diagnostic.solutions.first)
-        XCTAssertEqual(solution.replacements.count, 1)
+        let solution = try #require(diagnostic.solutions.first)
+        #expect(solution.replacements.count == 1)
 
-        let replacement = try XCTUnwrap(solution.replacements.first)
-        XCTAssertEqual(replacement.replacement, "## Overview")
-        XCTAssertEqual(replacement.range.lowerBound.line, 4)
-        XCTAssertEqual(replacement.range.lowerBound.column, 1)
-        XCTAssertEqual(replacement.range.upperBound.line, 4)
-        XCTAssertEqual(replacement.range.upperBound.column, 14)
+        let replacement = try #require(solution.replacements.first)
+        #expect(replacement.replacement == "## Overview")
+        #expect(replacement.range.lowerBound.line == 4)
+        #expect(replacement.range.lowerBound.column == 1)
+        #expect(replacement.range.upperBound.line == 4)
+        #expect(replacement.range.upperBound.column == 14)
     }
 }

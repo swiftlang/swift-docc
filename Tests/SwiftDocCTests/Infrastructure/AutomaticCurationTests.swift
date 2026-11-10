@@ -210,11 +210,11 @@ class AutomaticCurationTests: XCTestCase {
             // Check that the automatic topic sections only exist if its elements weren't manually curated
             XCTAssertEqual(
                 !curatedIndices.contains(0),
-                renderNode.topicSections.contains(where: { $0.title == "Type Aliases" })
+                renderNode.topicSections.contains(where: { $0.title == "Type aliases" })
             )
             XCTAssertEqual(
                 !curatedIndices.contains(1),
-                renderNode.topicSections.contains(where: { $0.title == "Enumeration Cases" })
+                renderNode.topicSections.contains(where: { $0.title == "Enumeration cases" })
             )
             XCTAssertEqual(
                 !curatedIndices.contains(2),
@@ -222,11 +222,11 @@ class AutomaticCurationTests: XCTestCase {
             )
             XCTAssertEqual(
                 !curatedIndices.contains(3),
-                renderNode.topicSections.contains(where: { $0.title == "Instance Methods" })
+                renderNode.topicSections.contains(where: { $0.title == "Instance methods" })
             )
             XCTAssertEqual(
                 !curatedIndices.contains(4) || !curatedIndices.contains(5),
-                renderNode.topicSections.contains(where: { $0.title == "Instance Properties" })
+                renderNode.topicSections.contains(where: { $0.title == "Instance properties" })
             )
         }
     }
@@ -354,7 +354,7 @@ class AutomaticCurationTests: XCTestCase {
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // SideKit includes the "Manually curated" task group and additional automatically created groups.
-            XCTAssertEqual(renderNode.topicSections.map { $0.title }, ["Manually curated", "Instance Properties", "Instance Methods", "Type Aliases"])
+            XCTAssertEqual(renderNode.topicSections.map { $0.title }, ["Manually curated", "Instance properties", "Instance methods", "Type aliases"])
             
             // The other symbols in the same topic section appear in this See Also section
             XCTAssertEqual(renderNode.seeAlsoSections.first?.identifiers, [
@@ -478,11 +478,11 @@ class AutomaticCurationTests: XCTestCase {
             try newGraphData.write(to: url.appendingPathComponent("symbol-graphs/clang/MixedLanguageFramework.symbols.json"))
         }
 
-        // Load the "MixedLanguageProtocol Implementations" API COllection
+        // Load the "MixedLanguageProtocol Implementations" API Collection
         let protocolImplementationsNode = try context.entity(
             with: ResolvedTopicReference(
                 bundleID: context.inputs.id,
-                path: "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+                path: "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-implementations",
                 sourceLanguages: [.swift, .objectiveC]
             )
         )
@@ -491,7 +491,7 @@ class AutomaticCurationTests: XCTestCase {
         let protocolImplementationsArticle = try XCTUnwrap(protocolImplementationsNode.semantic as? Article)
         XCTAssertEqual(1, protocolImplementationsArticle.automaticTaskGroups.count)
         let instanceMethodsTaskGroup = protocolImplementationsArticle.automaticTaskGroups.first!
-        XCTAssertEqual("Instance Methods", instanceMethodsTaskGroup.title)
+        XCTAssertEqual("Instance methods", instanceMethodsTaskGroup.title)
 
         // And this task group should contain only one reference, to a combined Swift/Obj-C child node.
         XCTAssertEqual(1, instanceMethodsTaskGroup.references.count)
@@ -563,7 +563,7 @@ class AutomaticCurationTests: XCTestCase {
                 
                 // 'MixedLanguageFramework/Foo-c.typealias' is manually curated in a task group titled "Custom" under 'MixedLanguageFramework/Bar/myStringFunction:error:'
                 // Because this is top-level type is curated under the _member_ of another type, it's not removed from automatic curation.
-                "Type Aliases",
+                "Type aliases",
                 "/documentation/MixedLanguageFramework/Foo-c.typealias",
                 
                 "Enumerations",
@@ -627,7 +627,7 @@ class AutomaticCurationTests: XCTestCase {
                 [taskGroup.title] + taskGroup.references.map(\.path)
             },
             [
-                "Instance Variables",
+                "Instance variables",
                 "/documentation/Whatsit/Whatsit/Ivar",
             ]
         )
@@ -662,7 +662,7 @@ class AutomaticCurationTests: XCTestCase {
                 [taskGroup.title] + taskGroup.references.map(\.path)
             },
             [
-                "Type Subscripts",
+                "Type subscripts",
                 "/documentation/ThirdOrder/SomeStruct/subscript(_:)",
             ]
         )
@@ -744,7 +744,7 @@ class AutomaticCurationTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(protocolTopicSection.title, "Instance Methods")
+        XCTAssertEqual(protocolTopicSection.title, "Instance methods")
         XCTAssertEqual(protocolTopicSection.identifiers, [
             "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)"
         ])
@@ -790,7 +790,7 @@ class AutomaticCurationTests: XCTestCase {
                 return
             }
 
-            XCTAssertEqual(overloadTopic.title, "Instance Methods", file: file, line: line)
+            XCTAssertEqual(overloadTopic.title, "Instance methods", file: file, line: line)
             XCTAssertEqual(overloadTopic.references.map(\.absoluteString), [
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)"
             ], file: file, line: line)
@@ -847,7 +847,7 @@ class AutomaticCurationTests: XCTestCase {
         ])
         
         let defaultTopic = try XCTUnwrap(renderNode.topicSections.last)
-        XCTAssertEqual(defaultTopic.title, "Instance Methods")
+        XCTAssertEqual(defaultTopic.title, "Instance methods")
         XCTAssertEqual(defaultTopic.identifiers, [
             "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
         ])

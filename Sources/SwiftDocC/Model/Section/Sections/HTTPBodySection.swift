@@ -10,7 +10,7 @@
 
 /// A section that contains a request's upload body.
 public struct HTTPBodySection {
-    public static let title = "Request Body"
+    public static let title = "Request body"
     
     /// The request body.
     public var body: HTTPBody

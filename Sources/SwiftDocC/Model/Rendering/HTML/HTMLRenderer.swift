@@ -126,7 +126,7 @@ package struct HTMLRenderer {
     let goal: RenderGoal
     let featureFlags: FeatureFlags
     
-    private let renderer: MarkdownRenderer<ContextLinkProvider>
+    private let renderer: MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>
     
     init(reference: ResolvedTopicReference, context: DocumentationContext, jsonRenderContext: RenderContext, goal: RenderGoal, featureFlags: FeatureFlags) {
         self.reference = reference
@@ -137,7 +137,8 @@ package struct HTMLRenderer {
         self.renderer = MarkdownRenderer(
             path: ContextLinkProvider.filePath(for: reference),
             goal: goal,
-            linkProvider: ContextLinkProvider(reference: reference, context: context, goal: goal)
+            linkProvider: ContextLinkProvider(reference: reference, context: context, goal: goal),
+            renderableDirectiveParser: ContextDirectiveParser(context: context)
         )
     }
     
@@ -170,7 +171,7 @@ package struct HTMLRenderer {
             ),
             // Eyebrow and title
             hgroup(contents: [
-                p(contents: [.text(article.topics == nil ? "Article": "API Collection")]),
+                p(contents: [.text(article.topics == nil ? "Article": "API collection")]),
                 h1(contents: [.text(node.name.plainText)]),
             ]),
         ]
@@ -337,7 +338,7 @@ package struct HTMLRenderer {
             articleElements.append(contentsOf: renderer.parameters(
                 parameterSections.mapValues { section in
                     section.parameters.map {
-                        MarkdownRenderer<ContextLinkProvider>.ParameterInfo(name: $0.name, content: $0.contents)
+                        MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>.ParameterInfo(name: $0.name, content: $0.contents)
                     }
                 }
             ))
@@ -361,7 +362,7 @@ package struct HTMLRenderer {
         // Mentioned In
         if featureFlags.isMentionedInEnabled {
             articleElements.append(contentsOf:
-                renderer.groupedListSection(named: "Mentioned In", groups: [
+                renderer.groupedListSection(named: "Mentioned in", groups: [
                     .swift: [.init(title: nil, references: context.articleSymbolMentions.articlesMentioning(reference).map(\.absoluteString))]
                 ])
             )
@@ -376,7 +377,7 @@ package struct HTMLRenderer {
         
         // Topics
         do {
-            typealias TaskGroupInfo = MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo
+            typealias TaskGroupInfo = MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>.TaskGroupInfo
             
             // TODO: Support language specific topic sections, indicated using @SupportedLanguage directives (rdar://166308418)
             var taskGroupInfo = [TaskGroupInfo]()
@@ -439,7 +440,7 @@ package struct HTMLRenderer {
             .valuesByLanguage()
         {
             articleElements.append(contentsOf:
-                renderer.groupedSection(named: "Default Implementations", groups: relationships.mapValues { groups in
+                renderer.groupedSection(named: "Default implementations", groups: relationships.mapValues { groups in
                     groups.map {
                         .init(title: $0.heading, content: [], references: $0.references.compactMap { topic in
                             switch topic {
@@ -479,7 +480,7 @@ package struct HTMLRenderer {
     }
     
     private func makeSeeAlsoSection(authored authoredSeeAlso: SeeAlsoSection?, node: DocumentationNode) -> [HTMLNode]? {
-        var groups = [MarkdownRenderer<ContextLinkProvider>.TaskGroupInfo]()
+        var groups = [MarkdownRenderer<ContextLinkProvider, ContextDirectiveParser>.TaskGroupInfo]()
         
         if let authoredSeeAlso {
             groups.append(contentsOf: authoredSeeAlso.taskGroups.map { group in
@@ -501,7 +502,7 @@ package struct HTMLRenderer {
         guard !groups.isEmpty else {
             return nil
         }
-        return renderer.groupedSection(named: "See Also", groups: [.swift: groups])
+        return renderer.groupedSection(named: "See also", groups: [.swift: groups])
     }
 }
 

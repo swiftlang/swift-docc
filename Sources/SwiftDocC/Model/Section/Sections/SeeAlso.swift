@@ -12,12 +12,13 @@ public import Markdown
 
 /// A section that contains groups of related symbols or external links.
 public struct SeeAlsoSection: GroupedSection {
+    @available(*, deprecated, message: "This property is needlessly optional and is unused. This deprecated API will be removed after 6.6 is released.")
     public static let title: String? = "See Also"
     
     public var content: [any Markup]
 
     /// The list of groups for the section.
     public var taskGroups: [TaskGroup] {
-        return [TaskGroup(heading: Heading(level: 3, Text("Related Documentation")), content: Array(content))]
+        return [TaskGroup(heading: Heading(level: 3, Text("Related documentation")), content: Array(content))]
     }
 }

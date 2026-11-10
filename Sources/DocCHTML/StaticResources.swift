@@ -40,6 +40,8 @@ package enum StaticResources {
     
     package static let allFiles = [
         referenceStyleSheet,
+        // Scripts
+        navigatorScript,
         // Page kind icons
         apiCollectionIcon,
         articleIcon,
@@ -147,11 +149,11 @@ section {
 /* Draw a separator between the Topics section and any non-"hero" section (with a background) before it */
 article > section:not(#hero) + #Topics,
 /* Draw a separator between the See Also section and any non-"hero" section (with a background) before it */
-article > section:not(#hero) + #See-Also,
+article > section:not(#hero) + #See-also,
 /* Draw a separator between the Relationships section and any non-"hero" section (with a background) before it */
 article > section:not(#hero) + #Relationships,
 /* Draw a separator between the Default Implementations section and any non-"hero" section (with a background) before it */
-article > section:not(#hero) + #Default-Implementations,
+article > section:not(#hero) + #Default-implementations,
 /* Draw a separator between a symbol's first and second sections */
 article > section:first-of-type:not(#hero) + section
 {
@@ -567,7 +569,7 @@ dl {
   }
 }
 
-#Topics, #See-Also, #Relationships, #Default-Implementations {
+#Topics, #See-also, #Relationships, #Default-implementations {
   &> ul {
     padding: 0;
     &> li {
@@ -589,8 +591,9 @@ dl {
           line-height: 24px;
           color: rgb(102, 102, 102);
           
-          &>.identifier {
+          &>b {
             color: var(--color-figure-blue);
+            font-weight: normal;
           }
         }
       }
@@ -694,7 +697,7 @@ table {
   }
 }
 
-#Mentioned-In > ul {
+#Mentioned-in > ul {
   padding: 0;
   &> li {
     margin-top: 10px;
@@ -813,6 +816,7 @@ pre {
 body > header {
   position: sticky;
   top: 0;
+  box-sizing: border-box;
   width: 100%;
   height: 52px;
   z-index: 5;
@@ -851,6 +855,84 @@ body > header {
     display: inline-block;
     
     margin-right: 22px;
+  }
+}
+
+/*
+ The navigator sidebar.
+ Its sizes are in pixels, computed for a 17px root font size.
+ */
+#navigator {
+  --color-navigator-item-hover: rgba(0, 0, 255, 0.05);
+  
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+  border-inline-end: 1px solid var(--color-grid);
+  background: white;
+  font-size: 17px;
+  line-height: 25px;
+  
+  .technology-title {
+    display: flex;
+    margin-inline: 20px;
+    padding: 8px 10px 8px 20px;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-decoration: none;
+    
+    h2 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      padding: 0;
+      color: black;
+      font-size: 19px;
+      line-height: 23px;
+      font-weight: 600;
+    }
+    
+    &:hover {
+      background: var(--color-navigator-item-hover);
+    }
+  }
+}
+
+/* On narrow screens, the navigator is hidden. */
+@media only screen and (max-width: 1023px) {
+  #navigator {
+    display: none;
+  }
+}
+
+/* The navigator and the page's main content display next to each other. */
+.full-width-container {
+  display: flex;
+  
+  > main {
+    flex: 1;
+    min-width: 0;
+    /* Keep full-width backgrounds, like the hero section's, from drawing over the navigator */
+    overflow-x: clip;
+  }
+}
+
+/* On wider screens, the navigator displays in a column next to the page's content. */
+@media only screen and (min-width: 1024px) {
+  #navigator {
+    /* A default width of 400px, but between 30% and 40% of the window width, up to a 1521px wide window. */
+    flex: none;
+    width: clamp(calc(min(100vw, 1521px) * 0.3), 400px, calc(min(100vw, 1521px) * 0.4));
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+  }
+  
+  @media (min-width: 1521px) {
+    #navigator {
+      width: 543px;
+    }
   }
 }
 
@@ -912,6 +994,81 @@ body > footer {
     }
   }
 }
+
+figure, picture {
+    display: block;
+    margin-top: var(--spacing-stacked-margin-xlarge);
+}
+
+figcaption {
+    text-align: center;
+    
+    p {
+      font-size: 0.82rem;
+    }
+}
+""".utf8))
+    
+    // MARK: Scripts
+    
+    /// The script that renders the navigator sidebar from the navigator index.
+    package static let navigatorScript = File(filename: "navigator.js", data: Data("""
+// Renders the navigator sidebar from the navigator index in the output's "index/index.json" file.
+(async () => {
+  // The script reads its own element before it waits for the navigator index, because `document.currentScript` is only set until then.
+  const script = document.currentScript;
+  // Browsers don't let pages from a "file://" URL fetch other files, so the navigator needs the output to be on a web server.
+  const index = await fetch(new URL("index/index.json", script.src)).then((response) => response.ok ? response.json() : null).catch(() => null);
+  if (!index) {
+    return;
+  }
+  
+  // This script is in the root of the output.
+  const rootURL = new URL(".", script.src);
+  // Like the page's own links, the navigator's links are relative to the page, for example "../../", so that the output works from any location or hosting path.
+  const pathToRoot = script.getAttribute("src").replace(/[^/]*$/, "");
+  
+  // Returns the navigator index path, for example "/documentation/mykit/myclass", of a link to a page in this output.
+  function indexPathForLink(href) {
+    const path = new URL(href, location.href).pathname.slice(rootURL.pathname.length).replace(/[/]?(index[.]html)?$/, "");
+    return "/" + decodeURIComponent(path).toLowerCase();
+  }
+  const currentPath = indexPathForLink(location.href);
+  
+  // Returns the link to a page's file, without encoding characters that are common in symbol names, like ":" or "(".
+  function hrefForPath(path) {
+    const components = path.split("/").filter(Boolean).map((component) => encodeURI(component).replace(/[#?]/g, encodeURIComponent));
+    return pathToRoot + components.join("/") + "/index.html";
+  }
+  
+  // MARK: Navigator data
+  
+  const languages = index.interfaceLanguages;
+  const modules = languages.swift?.length ? languages.swift : Object.values(languages).find((modules) => modules.length);
+  // In rare cases there are multiple top-level roots. Prefer the one whose path matches the current page.
+  const rootPath = currentPath.split("/").slice(0, 3).join("/");
+  const rootModule = modules?.find(({ path }) => path?.toLowerCase() === rootPath) ?? modules?.[0];
+  if (!rootModule?.path || !rootModule.children?.length) {
+    return;
+  }
+  const technologyPath = rootModule.path.toLowerCase();
+  
+  const technologyTitle = document.createElement("a");
+  technologyTitle.className = "technology-title";
+  technologyTitle.href = hrefForPath(technologyPath);
+  technologyTitle.innerHTML = `<h2></h2>`;
+  technologyTitle.firstChild.textContent = rootModule.title;
+  
+  // The navigator goes before the page's main content, in the container below the page's header.
+  const navigator = document.createElement("nav");
+  navigator.id = "navigator";
+  navigator.setAttribute("aria-label", "Documentation Navigator");
+  navigator.append(technologyTitle);
+  const container = document.querySelector("body > .full-width-container");
+  const main = container.querySelector(":scope > main");
+  main.before(navigator);
+})();
+
 """.utf8))
     
     // MARK: Icons
