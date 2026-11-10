@@ -1015,7 +1015,7 @@ figcaption {
     margin-top: var(--spacing-stacked-margin-xlarge);
 }
 
-.row > .column {
+.row > div {
     /* column-size acts as a proportion; */
     flex: var(--column-size, 1) 1 0;
     text-align: var(--alignment, center);

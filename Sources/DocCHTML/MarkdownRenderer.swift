@@ -766,7 +766,6 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                 case .trailing: "end"
                 }
                 let attributes: [HTMLNode.Attribute] = [
-                    .class("column"),
                     .style("--column-size: \(column.size); --alignment: \(alignment)")
                 ]
                 return div(

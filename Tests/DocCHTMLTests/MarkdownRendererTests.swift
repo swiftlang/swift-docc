@@ -385,13 +385,13 @@ struct MarkdownRendererTests {
             directiveToReturn: renderableDirectiveWithCaption,
             matches: """
             <div class="row">
-              <div class="column" style="--column-size: 2; --alignment: start">
+              <div style="--column-size: 2; --alignment: start">
                 This is the first column.
               </div>
-              <div class="column" style="--column-size: 1; --alignment: center">
+              <div style="--column-size: 1; --alignment: center">
                 This is the second column.
               </div>
-              <div class="column" style="--column-size: 1; --alignment: end">
+              <div style="--column-size: 1; --alignment: end">
                 This is the third column.
               </div>
             </div>
