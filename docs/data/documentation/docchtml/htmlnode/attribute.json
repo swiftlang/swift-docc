@@ -171,6 +171,7 @@
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/coords(_:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/crossOrigin(_:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/csp(_:)",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/cssCustomProperties(_:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/data(_:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/datetime(_:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/decoding(_:)",
@@ -3675,6 +3676,86 @@
   "title" : "csp(_:)",
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/csp(_:)"
+},
+"doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/cssCustomProperties(_:)": {
+  "abstract" : [
+    {
+      "text" : "An inline ",
+      "type" : "text"
+    },
+    {
+      "code" : "style",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " attribute that only defines CSS custom properties for the style sheet to use.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "cssCustomProperties"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s13KeyValuePairsV",
+      "text" : "KeyValuePairs"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV9AttributeV",
+      "text" : "Attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode\/Attribute\/cssCustomProperties(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "cssCustomProperties(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/htmlnode\/attribute\/csscustomproperties(_:)"
 },
 "doc://DocCHTML/documentation/DocCHTML/HTMLNode/Attribute/data(_:)": {
   "abstract" : [
@@ -9617,6 +9698,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

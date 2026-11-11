@@ -40,7 +40,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderableDirectiveParser.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",

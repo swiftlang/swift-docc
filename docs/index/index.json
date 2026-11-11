@@ -2383,6 +2383,11 @@
                         "type" : "method"
                       },
                       {
+                        "path" : "\/documentation\/docchtml\/htmlnode\/attribute\/csscustomproperties(_:)",
+                        "title" : "static func cssCustomProperties(KeyValuePairs<String, String>) -> Attribute",
+                        "type" : "method"
+                      },
+                      {
                         "path" : "\/documentation\/docchtml\/htmlnode\/attribute\/data(_:)",
                         "title" : "static func data(String) -> Attribute",
                         "type" : "method"
@@ -2719,6 +2724,7 @@
                         "type" : "method"
                       },
                       {
+                        "deprecated" : true,
                         "path" : "\/documentation\/docchtml\/htmlnode\/attribute\/style(_:)",
                         "title" : "static func style(String) -> Attribute",
                         "type" : "method"
@@ -5032,6 +5038,11 @@
                   {
                     "path" : "\/documentation\/docchtml\/renderabledirective\/small",
                     "title" : "case small",
+                    "type" : "case"
+                  },
+                  {
+                    "path" : "\/documentation\/docchtml\/renderabledirective\/tabnavigator(tabs:)",
+                    "title" : "case tabNavigator(tabs: [(title: String, content: [any Markup])])",
                     "type" : "case"
                   }
                 ],

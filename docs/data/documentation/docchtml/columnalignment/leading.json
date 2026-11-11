@@ -35,7 +35,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderableDirectiveParser.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L29"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Case",
