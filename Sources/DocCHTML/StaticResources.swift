@@ -866,15 +866,6 @@ body > header {
   grid-template-columns: repeat(var(--count), auto) minmax(0, 1fr);
   grid-template-rows: auto 1fr;
 
-  /* Map the `data-tabs-count` attribute to a number (typed `attr()` isn't supported in all browsers) */
-  &[data-tabs-count="2"] { --count: 2; }
-  &[data-tabs-count="3"] { --count: 3; }
-  &[data-tabs-count="4"] { --count: 4; }
-  &[data-tabs-count="5"] { --count: 5; }
-  &[data-tabs-count="6"] { --count: 6; }
-  &[data-tabs-count="7"] { --count: 7; }
-  &[data-tabs-count="8"] { --count: 8; }
-
   &:not(:first-child) {
     margin-block-start: var(--spacing-stacked-margin-xlarge);
   }
@@ -891,15 +882,6 @@ body > header {
     grid-row: 1 / span 2;
     grid-template-columns: subgrid;
     grid-template-rows: subgrid;
-
-    /* Map the `data-tab-index` attribute to a number (typed `attr()` isn't supported in all browsers) */
-    &[data-tab-index="2"] { --index: 2; }
-    &[data-tab-index="3"] { --index: 3; }
-    &[data-tab-index="4"] { --index: 4; }
-    &[data-tab-index="5"] { --index: 5; }
-    &[data-tab-index="6"] { --index: 6; }
-    &[data-tab-index="7"] { --index: 7; }
-    &[data-tab-index="8"] { --index: 8; }
 
     /* Prevent closing the open tab by clicking its own title, without disabling the tab's content */
     &[open] > summary {

@@ -38,10 +38,10 @@ struct HTMLFormatterTests {
     }
     
     @Test
-    func prefixesCustomDataAttributeNames() {
-        let html = p(attributes: [.customData("tab-name", "swift")], contents: [.text("Some text")])
+    func formatsCSSCustomPropertiesAsStyleAttribute() {
+        let html = p(attributes: [.cssCustomProperties(["index": "2", "count": "3"])], contents: [.text("Some text")])
 
-        #expect(htmlString(for: html) == #"<p data-tab-name="swift">Some text</p>"#)
+        #expect(htmlString(for: html) == #"<p style="--index: 2; --count: 3">Some text</p>"#)
     }
 
     @Test
