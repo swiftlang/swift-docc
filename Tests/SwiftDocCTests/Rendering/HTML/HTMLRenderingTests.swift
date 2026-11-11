@@ -828,17 +828,17 @@ struct HTMLRenderingTests {
 
         let html = try #require(pageInfo.prettyHTMLString)
         // Each tab navigator uses its own `name` so that the tabs of different navigators don't close each other.
-        #expect(html.contains(#"<details name="tabnavigator-5-1" style="--index: 1" open>"#), "\(html)")
-        #expect(html.contains(#"<details name="tabnavigator-16-1" style="--index: 1" open>"#), "\(html)")
+        #expect(html.contains(#"<details name="tabnavigator-5" style="--index: 1" open>"#), "\(html)")
+        #expect(html.contains(#"<details name="tabnavigator-16" style="--index: 1" open>"#), "\(html)")
         let expectedTabs = """
         <div class="tabnavigator" style="--count: 2">
-              <details name="tabnavigator-5-1" style="--index: 1" open>
+              <details name="tabnavigator-5" style="--index: 1" open>
                 <summary>First</summary>
                 <p>
                   Some <em>formatted</em> content
                 </p>
               </details>
-              <details name="tabnavigator-5-1" style="--index: 2">
+              <details name="tabnavigator-5" style="--index: 2">
                 <summary>Second</summary>
                 <p>Some content</p>
                 <p>Some more content</p>

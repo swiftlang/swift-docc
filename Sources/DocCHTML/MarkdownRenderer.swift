@@ -747,8 +747,8 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                 return picture
             }
             else if caption.count == 1,
-                      let paragraph = caption.first as? Paragraph,
-                      paragraph.isEmpty
+                    let paragraph = caption.first as? Paragraph,
+                    paragraph.isEmpty
             {
                 return picture
             }
@@ -758,11 +758,25 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                     figcaption(contents: caption.map { visit($0) })
                 ])
             }
+        case .row(let columns):
+            return div(attributes: [.class("row")], contents: columns.map { column in
+                let alignment = switch column.alignment {
+                case .leading:  "start"
+                case .center:   "center"
+                case .trailing: "end"
+                }
+                let attributes: [HTMLNode.Attribute] = [
+                    .cssCustomProperties(["column-size": String(column.size), "alignment": alignment])
+                ]
+                return div(
+                    attributes: attributes,
+                    contents: column.content.map { visit($0) }
+                )
+            })
         case .tabNavigator(tabs: let tabs):
-            // `<details>` elements with the same `name` form an exclusive group,
-            // so each navigator on the page needs its own
+            // `<details>` elements with the same `name` form an exclusive group, so each navigator on the page needs its own
             let groupName = directive.range.map { range in
-                "tabnavigator-\(range.lowerBound.line)-\(range.lowerBound.column)"
+                "tabnavigator-\(range.lowerBound.line)"
             } ?? "tabnavigator"
             return div(
                 attributes: [

@@ -40,6 +40,17 @@ struct ContextDirectiveParser: RenderableDirectiveParser {
             return .image(source: image.source.path, alt: image.altText, caption: image.caption.elements)
         case Small.directiveName:
             return .small
+        case Row.directiveName:
+            guard let row = parse(Row.self) else { return nil }
+            let columns = row.columns.map { column in
+                let alignment: ColumnAlignment = switch column.alignment {
+                case .leading: .leading
+                case .center: .center
+                case .trailing: .trailing
+                }
+                return (size: column.size, alignment: alignment, content: column.content.elements)
+            }
+            return .row(columns: columns)
         case TabNavigator.directiveName:
             guard let tabNavigator = parse(TabNavigator.self) else { return nil }
             return .tabNavigator(tabs: tabNavigator.tabs.map { tab in (
