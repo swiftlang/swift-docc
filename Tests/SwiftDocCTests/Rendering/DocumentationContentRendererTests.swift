@@ -8,10 +8,11 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Foundation
 import Testing
 import SymbolKit
 import Markdown
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 import DocCTestUtilities
 import DocCCommon
 
@@ -167,6 +168,58 @@ struct DocumentationContentRendererTests {
         let section = DocumentationContentRenderer(context: context)
             .conformanceSectionFor(memberReference, collectedConstraints: [:])
         #expect(section?.constraints.plainText == "Self is Bar.")
+    }
+
+    @Test
+    func rendersConformanceConstraintsForProtocolFromAnotherModule() async throws {
+        struct ExternalProtocolResolver: GlobalExternalSymbolResolver {
+            func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+                guard preciseIdentifier == "s:Other.Q" else {
+                    return nil
+                }
+                let reference = ResolvedTopicReference(bundleID: "com.example.other", path: "/documentation/Other/Q", sourceLanguage: .swift)
+                let entity = LinkResolver.ExternalEntity(
+                    kind: .protocol,
+                    language: .swift,
+                    relativePresentationURL: URL(string: "/documentation/other/q")!,
+                    referenceIdentifier: .init(reference.absoluteString),
+                    title: "Q",
+                    availableLanguages: [.swift],
+                    variants: []
+                )
+                return (reference, entity)
+            }
+        }
+
+        // extension Box: Other.Q where T: Other.Q {}
+        var conformance = SymbolGraph.Relationship(source: "s:Box", target: "s:Other.Q", kind: .conformsTo, targetFallback: "Other.Q")
+        conformance.mixins = makeMixins([
+            SymbolGraph.Relationship.Swift.GenericConstraints(constraints: [
+                .init(kind: .conformance, leftTypeName: "T", rightTypeName: "Other.Q")
+            ])
+        ])
+
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(
+                moduleName: "SomeModule",
+                symbols: [
+                    makeSymbol(id: "s:Box", kind: .struct, pathComponents: ["Box"]),
+                ],
+                relationships: [conformance]
+            )),
+        ])
+
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.globalSymbolResolver = ExternalProtocolResolver()
+        let context = try await load(catalog: catalog, configuration: configuration)
+
+        let boxReference = ResolvedTopicReference(bundleID: context.inputs.id, path: "/documentation/SomeModule/Box", sourceLanguage: .swift)
+        let boxNode = try context.entity(with: boxReference)
+        var translator = RenderNodeTranslator(context: context, identifier: boxReference)
+        let renderNode = try #require(translator.visit(boxNode.semantic) as? RenderNode)
+
+        let protocolReference = try #require(renderNode.references["doc://com.example.other/documentation/Other/Q"] as? TopicRenderReference)
+        #expect(protocolReference.conformance?.constraints.plainText == "T conforms to Other.Q.")
     }
 
     private func makeDocumentationContentRenderer() async throws -> DocumentationContentRenderer {
