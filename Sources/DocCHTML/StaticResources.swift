@@ -405,8 +405,8 @@ h1, h2, h3, h4, h5, h6 {
     
     position: absolute;
     top: 0;
-    left: -50%;
-    width: 200%;
+    left: calc(50% - 50cqw);
+    width: 100cqw;
     height: 100%;
     z-index: -2;
   }
@@ -431,8 +431,9 @@ h1, h2, h3, h4, h5, h6 {
   --icon-size: 250px;
   
   position: absolute;
-  top: calc(50% - var(--icon-size) / 2);
-  right: 25px;
+  top: 10px;
+  /* 25px inset from the right edge of the 'main' container */
+  right: calc(50% - 50cqw + 25px);
   opacity: 0.15;
   z-index: -1;
   
@@ -909,12 +910,20 @@ body > header {
 /* The navigator and the page's main content display next to each other. */
 .full-width-container {
   display: flex;
+  max-width: 1920px;
+  margin-inline: auto;
   
   > main {
     flex: 1;
     min-width: 0;
-    /* Keep full-width backgrounds, like the hero section's, from drawing over the navigator */
-    overflow-x: clip;
+    container-type: inline-size;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .full-width-container {
+    box-sizing: border-box;
+    border-inline: 1px solid var(--color-grid);
   }
 }
 
@@ -1005,6 +1014,24 @@ figcaption {
     
     p {
       font-size: 0.82rem;
+    }
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: var(--spacing-stacked-margin-xlarge);
+}
+
+.row > div {
+    /* column-size acts as a proportion; */
+    flex: var(--column-size, 1) 1 0;
+    text-align: var(--alignment, center);
+    min-width: 0; /* lets long columns shrink below their content's width and scroll */
+    
+    @media only screen and (max-width: 735px) {
+        flex-basis: 100%;
     }
 }
 """.utf8))
