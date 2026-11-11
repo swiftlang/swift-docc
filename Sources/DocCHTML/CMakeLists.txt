@@ -42,6 +42,10 @@ set_target_properties(DocCHTML PROPERTIES
 # SwiftPM embeds these files in the code as properties of a `PackageResources` structure (`.embedInCode()`).
 # CMake doesn't support package resources, so this generates the same structure, again whenever a file changes.
 set(DocCHTML_RESOURCES
+  Resources/anchor.svg
+  Resources/api-collection.svg
+  Resources/article.svg
+  Resources/module.svg
   Resources/sidebar.svg)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${DocCHTML_RESOURCES})
 foreach(resource IN LISTS DocCHTML_RESOURCES)

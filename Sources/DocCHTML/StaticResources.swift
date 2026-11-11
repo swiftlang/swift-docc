@@ -45,11 +45,11 @@ package enum StaticResources {
         // Scripts
         navigatorScript,
         // Page kind icons
-        apiCollectionIcon,
-        articleIcon,
-        moduleIcon,
+        File(filename: "api-collection.svg", data: Data(PackageResources.api_collection_svg)),
+        File(filename: "article.svg", data: Data(PackageResources.article_svg)),
+        File(filename: "module.svg", data: Data(PackageResources.module_svg)),
         // UI element icons
-        anchorIcon,
+        File(filename: "anchor.svg", data: Data(PackageResources.anchor_svg)),
         File(filename: "sidebar.svg", data: Data(PackageResources.sidebar_svg)),
     ]
     
@@ -1262,43 +1262,6 @@ figcaption {
   main.before(navigator);
 })();
 
-""".utf8))
-    
-    // MARK: Icons
-
-    /// The icon that DocC displays for API collection pages and their references in curation or the navigation hierarchy.
-    static let apiCollectionIcon = File(filename: "api-collection.svg", data: Data("""
-<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14px" height="14px" viewBox="0 0 14 14" fill="#666">
-  <path d="m1 1v12h12v-12zm11 11h-10v-10h10z"/>
-  <path d="m3 4h8v1h-8zm0 2.5h8v1h-8zm0 2.5h8v1h-8z"/>
-  <path d="m3 4h8v1h-8z"/>
-  <path d="m3 6.5h8v1h-8z"/>
-  <path d="m3 9h8v1h-8z"/>
-</svg>
-""".utf8))
-
-    /// The icon that DocC displays for article pages and their references in curation or the navigation hierarchy.
-    static let articleIcon = File(filename: "article.svg", data: Data("""
-<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px" viewBox="0 0 14 14" fill="#666">
-  <path d="M8.033 1l3.967 4.015v7.985h-10v-12zM7.615 2h-4.615v10h8v-6.574z"></path>
-  <path d="M7 1h1v4h-1z"></path>
-  <path d="M7 5h5v1h-5z"></path>
-</svg>
-""".utf8))
-
-    /// The icon that DocC displays for module/framework pages and their references in curation or the navigation hierarchy.
-    static let moduleIcon = File(filename: "module.svg", data: Data("""
-<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="15px" height="15px" viewBox="0 0 14 14" fill="#666">
-  <path d="M3.39,9l3.16,1.84.47.28.47-.28L10.61,9l.45.26,1.08.63L7,12.91l-5.16-3,1.08-.64L3.39,9M7,0,0,4.1,2.47,5.55,0,7,2.47,8.44,0,9.9,7,14l7-4.1L11.53,8.45,14,7,11.53,5.56,14,4.1ZM7,7.12,5.87,6.45l-1.54-.9L3.39,5,1.85,4.1,7,1.08l5.17,3L10.6,5l-.93.55-1.54.91ZM7,10,3.39,7.9,1.85,7,3.4,6.09,4.94,7,7,8.2,9.06,7,10.6,6.1,12.15,7l-1.55.9Z"/>
-</svg>
-""".utf8))
-
-    /// The icon that DocC displays, on-hover, next to headings that are links to themselves.
-    static let anchorIcon = File(filename: "anchor.svg", data: Data("""
-<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 20 20" fill="#666">
-  <path d="M19.34,4.88L15.12,.66c-.87-.87-2.3-.87-3.17,0l-3.55,3.56-1.38,1.38-1.4,1.4c-.47,.47-.68,1.09-.64,1.7,.02,.29,.09,.58,.21,.84,.11,.23,.24,.44,.43,.63l4.22,4.22h0l.53-.53,.53-.53h0l-4.22-4.22c-.29-.29-.29-.77,0-1.06l1.4-1.4,.91-.91,.58-.58,.55-.55,2.9-2.9c.29-.29,.77-.29,1.06,0l4.22,4.22c.29,.29,.29,.77,0,1.06l-2.9,2.9c.14,.24,.24,.49,.31,.75,.08,.32,.11,.64,.09,.96l3.55-3.55c.87-.87,.87-2.3,0-3.17Z"/>
-  <path d="M14.41,9.82s0,0,0,0l-4.22-4.22h0l-.53,.53-.53,.53h0l4.22,4.22c.29,.29,.29,.77,0,1.06l-1.4,1.4-.91,.91-.58,.58-.55,.55h0l-2.9,2.9c-.29,.29-.77,.29-1.06,0L1.73,14.04c-.29-.29-.29-.77,0-1.06l2.9-2.9c-.14-.24-.24-.49-.31-.75-.08-.32-.11-.64-.09-.97L.68,11.93c-.87,.87-.87,2.3,0,3.17l4.22,4.22c.87,.87,2.3,.87,3.17,0l3.55-3.55,1.38-1.38,1.4-1.4c.47-.47,.68-1.09,.64-1.7-.02-.29-.09-.58-.21-.84-.11-.22-.24-.44-.43-.62Z"/>
-</svg>
 """.utf8))
 
 }
