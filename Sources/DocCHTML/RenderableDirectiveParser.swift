@@ -22,4 +22,11 @@ package protocol RenderableDirectiveParser {
 package enum RenderableDirective {
     case small
     case image(source: String, alt: String?, caption: [any Markup] /* TODO: Support device frames*/)
+    case row(columns: [(size: Int, alignment: ColumnAlignment, content: [any Markup])])
+}
+
+package enum ColumnAlignment {
+    case leading
+    case center
+    case trailing
 }

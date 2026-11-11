@@ -361,6 +361,44 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func renderingRowAndColumnDirectives() async throws {
+        let renderableDirectiveWithCaption = RenderableDirective.row(columns: [
+            (size: 2, alignment: .leading, content: [Text("This is the first column.")]),
+            (size: 1, alignment: .center, content: [Text("This is the second column.")]),
+            (size: 1, alignment: .trailing, content: [Text("This is the third column.")]),
+        ])
+        assert(
+            rendering: """
+            @Row {
+                @Column(size: 2, alignment: "leading") {
+                    This is the first column.
+                }
+                @Column(size: 1, alignment: "center") {
+                    This is the second column.
+                }
+                @Column(size: 1, alignment: "trailing") {
+                    This is the third column.
+                }
+            }
+            """,
+            prettyFormatted: true,
+            directiveToReturn: renderableDirectiveWithCaption,
+            matches: """
+            <div class="row">
+              <div style="--column-size: 2; --alignment: start">
+                This is the first column.
+              </div>
+              <div style="--column-size: 1; --alignment: center">
+                This is the second column.
+              </div>
+              <div style="--column-size: 1; --alignment: end">
+                This is the third column.
+              </div>
+            </div>
+            """)
+    }
+    
+    @Test
     func renderingCodeBlocks() async throws {
         assert(
             rendering: """

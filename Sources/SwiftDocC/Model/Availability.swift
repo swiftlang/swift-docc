@@ -477,6 +477,9 @@ struct Availability {
     /// A page as a whole is considered to be deprecated if the API is deprecated on all the platforms that the API is available for.
     /// This can also take the form of an unconditional wildcard deprecation (for example `@available(*, deprecated)` in Swift).
     /// In this case it's possible that the page is considered to be deprecated even though _none_ of the individual platforms have any deprecation information.
+    ///
+    /// Platforms that the API isn't available for don't count against the page's deprecated status.
+    /// This includes platforms that are marked as unavailable and platforms that have a symbol graph file that the API was excluded from.
     var isDeprecated: Bool {
         if case .available(_, _, true) = knownPlatforms[.wildcard].state {
             // A symbol with wildcard unconditional availability is considered deprecated
@@ -502,7 +505,9 @@ struct Availability {
             }
         }
         
-        for platform in knownPlatforms {
+        // Filter platforms were this symbol is not available at 
+        // so it doesn't count against the page's deprecated status.
+        for platform in knownPlatforms where platform.source != .havePlatformForInSymbolGraph {
             if let earlyExitResult = checkPlatform(platform) {
                 return earlyExitResult
             }
