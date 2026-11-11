@@ -194,6 +194,7 @@ let package = Package(
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             exclude: ["CMakeLists.txt"],
+            resources: [.embedInCode("Resources")],
             swiftSettings: swiftSettings(.v6)
         ),
         .testTarget(

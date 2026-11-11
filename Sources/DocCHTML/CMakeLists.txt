@@ -38,3 +38,18 @@ target_link_libraries(DocCHTML PUBLIC
   libcmark-gfm-extensions)
 set_target_properties(DocCHTML PROPERTIES
   Swift_LANGUAGE_VERSION 6)
+
+# SwiftPM embeds these files in the code as properties of a `PackageResources` structure (`.embedInCode()`).
+# CMake doesn't support package resources, so this generates the same structure, again whenever a file changes.
+set(DocCHTML_RESOURCES
+  Resources/sidebar.svg)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${DocCHTML_RESOURCES})
+foreach(resource IN LISTS DocCHTML_RESOURCES)
+  cmake_path(GET resource FILENAME name)
+  string(MAKE_C_IDENTIFIER "${name}" name)
+  file(READ "${resource}" bytes HEX)
+  string(REGEX REPLACE "(..)" "0x\\1," bytes "${bytes}")
+  string(APPEND DocCHTML_EMBEDDED_RESOURCES "  static let ${name}: [UInt8] = [${bytes}]\n")
+endforeach()
+file(CONFIGURE OUTPUT embedded_resources.swift CONTENT "struct PackageResources {\n${DocCHTML_EMBEDDED_RESOURCES}}\n")
+target_sources(DocCHTML PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/embedded_resources.swift")
