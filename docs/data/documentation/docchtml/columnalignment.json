@@ -1,0 +1,258 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML15ColumnAlignmentO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ColumnAlignment"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ColumnAlignment"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "RenderableDirectiveParser.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L28"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "ColumnAlignment"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "Linux"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ColumnAlignment"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/SQ",
+        "doc:\/\/DocCHTML\/SH",
+        "doc:\/\/DocCHTML\/s8SendableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment\/center",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment\/leading",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment\/trailing"
+      ],
+      "title" : "Enumeration Cases"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/columnalignment"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/SH": {
+  "identifier" : "doc:\/\/DocCHTML\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://DocCHTML/SQ": {
+  "identifier" : "doc:\/\/DocCHTML\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/ColumnAlignment": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ColumnAlignment",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/columnalignment"
+},
+"doc://DocCHTML/documentation/DocCHTML/ColumnAlignment/center": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "center"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment\/center",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ColumnAlignment.center",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/columnalignment\/center"
+},
+"doc://DocCHTML/documentation/DocCHTML/ColumnAlignment/leading": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "leading"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment\/leading",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ColumnAlignment.leading",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/columnalignment\/leading"
+},
+"doc://DocCHTML/documentation/DocCHTML/ColumnAlignment/trailing": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "trailing"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment\/trailing",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ColumnAlignment.trailing",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/columnalignment\/trailing"
+},
+"doc://DocCHTML/s8SendableP": {
+  "identifier" : "doc:\/\/DocCHTML\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

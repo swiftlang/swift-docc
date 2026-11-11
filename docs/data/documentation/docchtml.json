@@ -105,6 +105,7 @@
       "anchor" : "Enumerations",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderGoal",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/StaticResources"
@@ -144,6 +145,37 @@
   "title" : "DocCHTML",
   "type" : "topic",
   "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/ColumnAlignment": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ColumnAlignment",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/columnalignment"
 },
 "doc://DocCHTML/documentation/DocCHTML/DocCCommon": {
   "abstract" : [

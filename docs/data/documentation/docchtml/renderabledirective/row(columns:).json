@@ -1,0 +1,376 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective\/row(columns:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML19RenderableDirectiveO3rowyACSaySi4size_AA15ColumnAlignmentO9alignmentSay8Markdown6Markup_pG7contenttG_tcACmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "row"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "columns"
+      },
+      {
+        "kind" : "text",
+        "text" : ": [(size"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Si",
+        "text" : "Int"
+      },
+      {
+        "kind" : "text",
+        "text" : ", alignment"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8DocCHTML15ColumnAlignmentO",
+        "text" : "ColumnAlignment"
+      },
+      {
+        "kind" : "text",
+        "text" : ", content"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "keyword",
+        "text" : "any"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8Markdown6MarkupP",
+        "text" : "Markup"
+      },
+      {
+        "kind" : "text",
+        "text" : "])])"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "RenderableDirectiveParser.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L25"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "RenderableDirective.row(columns:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "Linux"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "row"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "columns"
+            },
+            {
+              "kind" : "text",
+              "text" : ": [(size"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Si",
+              "text" : "Int"
+            },
+            {
+              "kind" : "text",
+              "text" : ", alignment"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8DocCHTML15ColumnAlignmentO",
+              "text" : "ColumnAlignment"
+            },
+            {
+              "kind" : "text",
+              "text" : ", content"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "kind" : "keyword",
+              "text" : "any"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8Markdown6MarkupP",
+              "text" : "Markup"
+            },
+            {
+              "kind" : "text",
+              "text" : "])])"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/renderabledirective\/row(columns:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/ColumnAlignment": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ColumnAlignment",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/columnalignment"
+},
+"doc://DocCHTML/documentation/DocCHTML/RenderableDirective": {
+  "abstract" : [
+    {
+      "text" : "Information about a block directive whose arguments and children the SwiftDocC module has already parsed and validated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderableDirective"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderableDirective"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderableDirective",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/renderabledirective"
+},
+"doc://DocCHTML/documentation/DocCHTML/RenderableDirective/row(columns:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "row"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "columns"
+    },
+    {
+      "kind" : "text",
+      "text" : ": [(size"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", alignment"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8DocCHTML15ColumnAlignmentO",
+      "text" : "ColumnAlignment"
+    },
+    {
+      "kind" : "text",
+      "text" : ", content"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "keyword",
+      "text" : "any"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : "])])"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/RenderableDirective\/row(columns:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderableDirective.row(columns:)",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/renderabledirective\/row(columns:)"
+}
+}
+}

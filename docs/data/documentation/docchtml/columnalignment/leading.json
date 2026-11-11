@@ -1,0 +1,164 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment\/leading"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:8DocCHTML15ColumnAlignmentO7leadingyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "leading"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "DocCHTML"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "RenderableDirectiveParser.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/RenderableDirectiveParser.swift#L29"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "ColumnAlignment.leading"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "Linux"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "leading"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/docchtml\/columnalignment\/leading"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://DocCHTML/documentation/DocCHTML": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "DocCHTML",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml"
+},
+"doc://DocCHTML/documentation/DocCHTML/ColumnAlignment": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ColumnAlignment",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/columnalignment"
+},
+"doc://DocCHTML/documentation/DocCHTML/ColumnAlignment/leading": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "leading"
+    }
+  ],
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/ColumnAlignment\/leading",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ColumnAlignment.leading",
+  "type" : "topic",
+  "url" : "\/documentation\/docchtml\/columnalignment\/leading"
+}
+}
+}

@@ -2719,7 +2719,6 @@
                         "type" : "method"
                       },
                       {
-                        "deprecated" : true,
                         "path" : "\/documentation\/docchtml\/htmlnode\/attribute\/style(_:)",
                         "title" : "static func style(String) -> Attribute",
                         "type" : "method"
@@ -4974,6 +4973,32 @@
                     "type" : "groupMarker"
                   },
                   {
+                    "path" : "\/documentation\/docchtml\/columnalignment\/center",
+                    "title" : "case center",
+                    "type" : "case"
+                  },
+                  {
+                    "path" : "\/documentation\/docchtml\/columnalignment\/leading",
+                    "title" : "case leading",
+                    "type" : "case"
+                  },
+                  {
+                    "path" : "\/documentation\/docchtml\/columnalignment\/trailing",
+                    "title" : "case trailing",
+                    "type" : "case"
+                  }
+                ],
+                "path" : "\/documentation\/docchtml\/columnalignment",
+                "title" : "ColumnAlignment",
+                "type" : "enum"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Enumeration Cases",
+                    "type" : "groupMarker"
+                  },
+                  {
                     "path" : "\/documentation\/docchtml\/rendergoal\/conciseness",
                     "title" : "case conciseness",
                     "type" : "case"
@@ -4997,6 +5022,11 @@
                   {
                     "path" : "\/documentation\/docchtml\/renderabledirective\/image(source:alt:caption:)",
                     "title" : "case image(source: String, alt: String?, caption: [any Markup])",
+                    "type" : "case"
+                  },
+                  {
+                    "path" : "\/documentation\/docchtml\/renderabledirective\/row(columns:)",
+                    "title" : "case row(columns: [(size: Int, alignment: ColumnAlignment, content: [any Markup])])",
                     "type" : "case"
                   },
                   {

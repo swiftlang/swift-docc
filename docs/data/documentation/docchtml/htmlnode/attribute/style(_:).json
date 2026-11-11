@@ -1,15 +1,4 @@
 {
-  "deprecationSummary" : [
-    {
-      "inlineContent" : [
-        {
-          "text" : "Use style sheet file to define CSS instead.",
-          "type" : "text"
-        }
-      ],
-      "type" : "paragraph"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -73,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTMLNode+Attributes.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Attributes.swift#L409"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/HTMLNode+Attributes.swift#L408"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -254,7 +243,6 @@
   "abstract" : [
 
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
