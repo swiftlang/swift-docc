@@ -59,9 +59,27 @@ package extension HTMLRenderer {
             ))
         }
         if !pageInfo.codeBlockLanguages.isEmpty {
-            headElements.append(
-                script(attributes: [.src("\(pathPrefixToArchiveRoot)\(StaticResources.highlightScript.filename)"), .type("module")], contents: []),
-            )
+            let languagesWithCustomImports = pageInfo.codeBlockLanguages.languagesWithCustomImports()
+            if !languagesWithCustomImports.isEmpty {
+                // If the page imports languages that aren't included in the "min" highlight.js package, make a custom script that imports the necessary languages.
+                
+                var scriptSource = String(decoding: StaticResources.highlightScript.data, as: UTF8.self)
+                let firstNewLineIndex = scriptSource.index(after: scriptSource.firstIndex(of: "\n")!)
+                
+                let languageNames = languagesWithCustomImports.map(\.rawValue).sorted()
+                scriptSource.replaceSubrange(firstNewLineIndex..<firstNewLineIndex, with: languageNames.map { name in """
+                    import \(name) from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.12.0/build/es/languages/\(name).min.js';
+                    hljs.registerLanguage('\(name)', \(name));
+                    
+                    """}.joined())
+                
+                headElements.append(script(attributes: [.type("module")], contents: [.text(scriptSource)]),
+                )
+            } else {
+                headElements.append(
+                    script(attributes: [.src("\(pathPrefixToArchiveRoot)\(StaticResources.highlightScript.filename)"), .type("module")], contents: []),
+                )
+            }
         }
         
         // The full page body consists of 5 elements, in order;
@@ -142,5 +160,11 @@ package extension HTMLRenderer {
             customHeader: try customHeader.flatMap(parse(contentsOf:)),
             customFooter: try customFooter.flatMap(parse(contentsOf:))
         )
+    }
+}
+
+private extension Set<HighlightLanguage> {
+    func languagesWithCustomImports() -> Self {
+        self.intersection([.llvm, .http])
     }
 }
