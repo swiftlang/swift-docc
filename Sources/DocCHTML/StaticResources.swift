@@ -860,8 +860,10 @@ body > header {
 
 .tabnavigator {
   --count: 1;
+  --tab-gutter: 30px;
   display: grid;
-  grid-template-columns: repeat(var(--count), 1fr);
+  /* Size each tab to fit its title and let a trailing column fill the remaining space */
+  grid-template-columns: repeat(var(--count), auto) minmax(0, 1fr);
   grid-template-rows: auto 1fr;
 
   /* Map the `data-tabs-count` attribute to a number (typed `attr()` isn't supported in all browsers) */
@@ -874,7 +876,12 @@ body > header {
   &[data-tabs-count="8"] { --count: 8; }
 
   &:not(:first-child) {
-    margin-block-start: var(--spacing-stacked-margin-large);
+    margin-block-start: var(--spacing-stacked-margin-xlarge);
+  }
+
+  /* Collapses with the next element's top margin so that elements with larger margins keep them */
+  &:not(:last-child) {
+    margin-block-end: var(--spacing-stacked-margin-xlarge);
   }
 
   details {
@@ -911,26 +918,59 @@ body > header {
     &::details-content {
       grid-column: 1 / -1;
       grid-row: 2;
-      padding: 1rem;
+      min-width: 0;
+      padding-block-start: 25px;
     }
 
     &:not([open])::details-content {
       display: none;
     }
+
+    &:first-child > summary {
+      --tab-gutter: 0px;
+    }
+
+    /* The tab's content is already spaced out from the titles */
+    > summary + * {
+      margin-block-start: 0;
+    }
   }
 
   summary {
-    border-bottom: 1px solid var(--color-grid);
-    cursor: pointer;
+    position: relative;
     display: grid;
     grid-column: var(--index) / span 1;
     grid-row: 1;
-    padding: 1rem;
     z-index: 1;
+    padding-block: 10px;
+    padding-inline-start: var(--tab-gutter);
+    border-bottom: 1px solid var(--color-grid);
+    color: var(--color-figure-gray-secondary);
+    font-size: 14px;
+    line-height: 14px;
+    cursor: pointer;
 
-    details[open] & {
-      border-bottom: 1px solid #000; /* FIXME: use currentColor */
-      font-weight: bold;
+    &:focus-visible {
+      outline-offset: -1px;
+    }
+
+    /* The open tab's indicator only underlines its title, not the gutter before it */
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      inset-inline-start: var(--tab-gutter);
+      inset-inline-end: 0;
+      border-bottom: 1px solid transparent;
+    }
+
+    details[open] > & {
+      color: inherit;
+      cursor: default;
+
+      &::after {
+        border-bottom-color: currentColor;
+      }
     }
   }
 }
