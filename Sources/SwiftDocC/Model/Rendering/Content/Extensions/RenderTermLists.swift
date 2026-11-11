@@ -8,143 +8,20 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-private import Markdown
-import Foundation
-
-extension Collection<RenderBlockContent.ListItem> {
-    
-    /// Returns a term list if every list item defines a term, or an unordered list with the list items otherwise.
-    ///
-    /// A list that mixes term-list items and other items is almost always an authoring mistake, like a missing "term" keyword,
-    /// so it stays an unordered list rather than splitting into several lists.
-    func termListOrUnorderedList() -> RenderBlockContent {
-        guard !isEmpty else {
-            return .unorderedList(.init(items: []))
-        }
-        var termListItems = [RenderBlockContent.TermListItem]()
-        termListItems.reserveCapacity(count)
-        for item in self {
-            guard let termListItem = RenderBlockContent.TermListItem(item) else {
-                return .unorderedList(.init(items: Array(self)))
-            }
-            termListItems.append(termListItem)
-        }
-        return .termList(.init(items: termListItems))
-    }
-}
-
-extension RenderBlockContent.TermListItem {
-    
-    /// Creates a `TermListItem` from the given `ListItem` if
-    /// the list item is deemed to be a term list item. If the
-    /// given list item is not deemed to be a term list item, this
-    /// returns `nil`.
-    init?(_ listItem: RenderBlockContent.ListItem) {
-        guard case let .paragraph(firstParagraph) = listItem.content.first else {
-            // The first child of the list item wasn't a paragraph, so
-            // don't continue checking to see if this is a term list item.
-            return nil
-        }
-        let subsequentBlockContents = listItem.content.dropFirst()
-        
-        // Collapse any contiguous text elements before checking
-        // for term indication
-        let collapsedFirstParagraphInlines = firstParagraph.inlineContent.collapsingContiguousTextElements()
-        
-        let termDefinitionSeparator = ":"
-        guard let (termInlines, firstDefinitionInlines) = collapsedFirstParagraphInlines.separatedForTermDefinition(separator: termDefinitionSeparator) else {
-            // The inline elements in the first paragraph did not
-            // contain term indicators
-            return nil
-        }
-        
-        let term = RenderBlockContent.TermListItem.Term(inlineContent: termInlines)
-        
-        // Use the definition contents from the first paragraph along
-        // with the subsequent block elements in this list item as the
-        // complete definition.
-        let definition = RenderBlockContent.TermListItem.Definition(content: [RenderBlockContent.paragraph(.init(inlineContent: firstDefinitionInlines))] + subsequentBlockContents)
-
-        self = RenderBlockContent.TermListItem(term: term, definition: definition)
-    }
-}
-
 extension Collection<RenderInlineContent> {
     
-    /// Separate the inline contents into the contents that should be used for the
-    /// term and the contents that should be used for the definition.
+    /// Returns the inline content of a term, or of the start of a term's definition, with contiguous text elements combined into one.
     ///
-    /// - Returns: A tuple contain the inline elements for the term and (first
-    ///   set of inlines for) the definition, or `nil` if the inline elements
-    ///   aren't indicated as a term definition pair.
-    func separatedForTermDefinition(separator: String) -> (termInlines: [RenderInlineContent], definitionInlines: [RenderInlineContent])? {
-        let termKeyword = "term "
-        
-        // Make sure this collection of inline contents starts with the
-        // term keyword, ignoring any extra whitespace before the keyword
-        guard case let .text(text) = first, text.lowercased().removingLeadingWhitespace().hasPrefix(termKeyword) else {
-            return nil
-        }
-        
-        var termInlines = [RenderInlineContent]()
-        var definitionInlines = [RenderInlineContent]()
-        var foundSeparator = false
-        
-        for inline in self {
-            if foundSeparator {
-                // All content after the separator should be considered
-                // part of the definition
-                definitionInlines.append(inline)
-            } else if let (termInline, definitionInline) = inline.separatedForTermDefinition(separator: separator) {
-                // Only accept the returned term and definition inline elements
-                // if they are not empty
-                if termInline != nil {
-                    termInlines.append(termInline!)
-                }
-                if definitionInline != nil {
-                    definitionInlines.append(definitionInline!)
-                }
-                foundSeparator = true
-            } else {
-                // All content before the separator and not including the
-                // separator should be part of the term
-                termInlines.append(inline)
-            }
-        }
-        
-        guard foundSeparator else {
-            // Term indicators weren't found
-            return nil
-        }
-        
-        // Remove the keyword from the term inlines and drop the first inline if
-        // removing the keyword produced an empty inline in its place
-        let termInlinesKeywordRemoved: [RenderInlineContent]
-        if let firstInlineRemovingKeyword = termInlines.first?.removingTermKeyword(termKeyword) {
-            termInlinesKeywordRemoved = [firstInlineRemovingKeyword] + termInlines.dropFirst()
-        } else {
-            if termInlines.count == 1 {
-                // Don't allow a term with no contents to have an empty
-                // array of inline elements
-                termInlinesKeywordRemoved = [RenderInlineContent.text("")]
-            } else {
-                termInlinesKeywordRemoved = Array(termInlines.dropFirst())
-            }
-        }
-        
-        if definitionInlines.isEmpty {
-            // Don't allow a definition with no contents to have an empty
-            // array of inline elements
-            definitionInlines = [RenderInlineContent.text("")]
-        }
-        
-        return (termInlines: termInlinesKeywordRemoved, definitionInlines: definitionInlines)
+    /// If there's no inline content, this returns a single empty text element instead.
+    func termListInlineContent() -> [RenderInlineContent] {
+        let inlines = collapsingContiguousTextElements()
+        return inlines.isEmpty ? [.text("")] : inlines
     }
     
     /// Collapse all inline elements that are of `text` type and are contiguous.
     /// This works around the issue of multiple inline elements in a row that are all
     /// `text` but rendered separately due to newline separation in the parsed markdown.
-    func collapsingContiguousTextElements() -> [RenderInlineContent] {
+    private func collapsingContiguousTextElements() -> [RenderInlineContent] {
         // Keep track of all inline contents which may include a combination of
         // plain text and other kinds of inline content.
         var inlines = [RenderInlineContent]()
@@ -171,68 +48,6 @@ extension Collection<RenderInlineContent> {
             inlines.append(RenderInlineContent.text(previousText))
         }
         return inlines
-    }
-}
-
-extension RenderInlineContent {
-    
-    /// Split an individual inline content into the content that should be included
-    /// in the term and the content that should be included in the definition.
-    ///
-    /// - Returns: If this inline content contained the separator, a tuple is
-    ///   returned. If there is non-empty content before the separator, the tuple
-    ///   will contain a `termInline` content. If there is non-empty content after
-    ///   the separator, the tuple will contain a `definitionInline` content. If
-    ///   the inline content doesn't contain the separator, this returns `nil` instead
-    ///   of a tuple.
-    func separatedForTermDefinition(separator: String) -> (termInline: RenderInlineContent?, definitionInline: RenderInlineContent?)? {
-        guard case .text(let text) = self, text.contains(separator) else {
-            return nil
-        }
-        let components = text.components(separatedBy: separator)
-        guard components.count > 1 else {
-            return nil
-        }
-        
-        // Use the content before the separator as part of the term, removing
-        // any whitespace between the content and the separator
-        let trimmedTermInline = RenderInlineContent.text(components.first!.removingTrailingWhitespace())
-        
-        // Use the content after the separator as part of the definition,
-        // removing any whitespace between the content and the separator
-        let trimmedDefinitionInline = RenderInlineContent.text(components.dropFirst().joined(separator: separator).removingLeadingWhitespace())
-        
-        // Only return content for the term if it is not empty
-        let termInline = trimmedTermInline.plainText.isEmpty ? nil : trimmedTermInline
-        
-        // Only return content for the definition if it is not empty
-        let definitionInline = trimmedDefinitionInline.plainText.isEmpty ? nil : trimmedDefinitionInline
-        
-        return (termInline: termInline, definitionInline: definitionInline)
-    }
-    
-    /// A non-empty result of removing the first instance of the given
-    /// keyword from the content's string, or `nil` if the result of removing the
-    /// given keyword produced an empty string.
-    func removingTermKeyword(_ keyword: String) -> Self? {
-        guard case .text(let text) = self else {
-            return self
-        }
-        guard text.trimmingCharacters(in: .whitespaces) != keyword.trimmingCharacters(in: .whitespaces) else {
-            // The inline content is just the keyword so consider the result empty
-            // so that it is ignored
-            return nil
-        }
-        guard let keywordRange = text.lowercased().range(of: keyword.lowercased()) else {
-            return self
-        }
-        // Remove the first occurrence of the keyword
-        let newText = text.replacingCharacters(in: keywordRange, with: "")
-        if newText.isEmpty {
-            return nil
-        } else {
-            return RenderInlineContent.text(newText)
-        }
     }
 }
 
