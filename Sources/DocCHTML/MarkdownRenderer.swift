@@ -758,6 +758,21 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                     figcaption(contents: caption.map { visit($0) })
                 ])
             }
+        case .row(let columns):
+            return div(attributes: [.class("row")], contents: columns.map { column in
+                let alignment = switch column.alignment {
+                case .leading:  "start"
+                case .center:   "center"
+                case .trailing: "end"
+                }
+                let attributes: [HTMLNode.Attribute] = [
+                    .style("--column-size: \(column.size); --alignment: \(alignment)")
+                ]
+                return div(
+                    attributes: attributes,
+                    contents: column.content.map { visit($0) }
+                )
+            })
         case .none:
             // If the directive cannot be parsed into a known RenderableDirective, nothing should be rendered.
             return .text("")
