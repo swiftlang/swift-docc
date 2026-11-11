@@ -865,6 +865,8 @@ body > header {
  */
 #navigator {
   --color-navigator-item-hover: rgba(0, 0, 255, 0.05);
+  /* The space between the navigator's edges and its items, and between the start of an item and its title, so that the titles line up. */
+  --navigator-inset: 20px;
   
   box-sizing: border-box;
   display: flex;
@@ -877,8 +879,9 @@ body > header {
   
   .technology-title {
     display: flex;
-    margin-inline: 20px;
-    padding: 8px 10px 8px 20px;
+    margin-inline: var(--navigator-inset);
+    padding-block: 8px;
+    padding-inline: var(--navigator-inset) 10px;
     border-radius: 4px;
     white-space: nowrap;
     text-decoration: none;
@@ -896,6 +899,50 @@ body > header {
     
     &:hover {
       background: var(--color-navigator-item-hover);
+    }
+  }
+  
+  &> ul {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0 var(--navigator-inset) 10px;
+    list-style: none;
+    
+    &> li {
+      position: relative;
+      padding: 5px var(--navigator-inset);
+      
+      a, h3 {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      a {
+        color: inherit;
+        text-decoration: none;
+        
+        /* Make the entire row a click target for the link, with a background on hover or keyboard focus */
+        &:after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 4px;
+        }
+        
+        &:is(:hover, :focus-visible):after {
+          background: var(--color-navigator-item-hover);
+        }
+      }
+      
+      h3 {
+        padding: 0;
+        color: var(--color-figure-gray-secondary);
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: 600;
+      }
     }
   }
 }
@@ -1080,17 +1127,35 @@ figcaption {
   }
   const technologyPath = rootModule.path.toLowerCase();
   
+  // Each item is a list item with a link to its page, or with a heading for a group of pages.
+  function makeRow(item) {
+    const isGroupMarker = item.type === "groupMarker";
+    
+    const title = document.createElement(isGroupMarker ? "h3" : "a");
+    if (!isGroupMarker) {
+      title.href = hrefForPath(item.path);
+    }
+    title.textContent = item.title;
+    
+    const row = document.createElement("li");
+    row.append(title);
+    return row;
+  }
+  
   const technologyTitle = document.createElement("a");
   technologyTitle.className = "technology-title";
   technologyTitle.href = hrefForPath(technologyPath);
   technologyTitle.innerHTML = `<h2></h2>`;
   technologyTitle.firstChild.textContent = rootModule.title;
   
+  const list = document.createElement("ul");
+  list.append(...rootModule.children.map(makeRow));
+  
   // The navigator goes before the page's main content, in the container below the page's header.
   const navigator = document.createElement("nav");
   navigator.id = "navigator";
   navigator.setAttribute("aria-label", "Documentation Navigator");
-  navigator.append(technologyTitle);
+  navigator.append(technologyTitle, list);
   const container = document.querySelector("body > .full-width-container");
   const main = container.querySelector(":scope > main");
   main.before(navigator);
