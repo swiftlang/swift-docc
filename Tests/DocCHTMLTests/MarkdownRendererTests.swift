@@ -301,6 +301,56 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func renderingTabNavigatorDirective() async throws {
+        func content(_ markdown: String) -> [any Markup] {
+            Array(Document(parsing: markdown).children)
+        }
+
+        assert(
+            rendering: """
+            @TabNavigator {
+                @Tab("First") {
+                    Some _formatted_ content
+                }
+                @Tab("Second") {
+                    Some content
+
+                    Some more content
+                }
+                @Tab("Third") {
+                    Even more content
+                }
+            }
+            """,
+            prettyFormatted: true,
+            directiveToReturn: .tabNavigator(tabs: [
+                (title: "First", content: content("Some _formatted_ content")),
+                (title: "Second", content: content("Some content\n\nSome more content")),
+                (title: "Third", content: content("Even more content")),
+            ]),
+            matches: """
+            <div class="tabnavigator" style="--count: 3">
+              <details name="tabnavigator-1" style="--index: 1" open>
+                <summary>First</summary>
+                <p>
+                  Some <em>formatted</em> content
+                </p>
+              </details>
+              <details name="tabnavigator-1" style="--index: 2">
+                <summary>Second</summary>
+                <p>Some content</p>
+                <p>Some more content</p>
+              </details>
+              <details name="tabnavigator-1" style="--index: 3">
+                <summary>Third</summary>
+                <p>Even more content</p>
+              </details>
+            </div>
+            """
+        )
+    }
+
+    @Test
     func renderingImageDirective() async throws {
         let linkedAsset = LinkedAsset(files: [
             .light : [2 : "test_source@2x.png"],

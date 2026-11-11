@@ -51,6 +51,12 @@ struct ContextDirectiveParser: RenderableDirectiveParser {
                 return (size: column.size, alignment: alignment, content: column.content.elements)
             }
             return .row(columns: columns)
+        case TabNavigator.directiveName:
+            guard let tabNavigator = parse(TabNavigator.self) else { return nil }
+            return .tabNavigator(tabs: tabNavigator.tabs.map { tab in (
+                title: tab.title,
+                content: tab.childMarkup
+            ) })
         default:
             return nil
         }

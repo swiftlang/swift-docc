@@ -859,6 +859,105 @@ body > header {
   }
 }
 
+.tabnavigator {
+  --count: 1;
+  --tab-gutter: 30px;
+  display: grid;
+  /* Size each tab to fit its title and let a trailing column fill the remaining space */
+  grid-template-columns: repeat(var(--count), auto) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+
+  &:not(:first-child) {
+    margin-block-start: var(--spacing-stacked-margin-xlarge);
+  }
+
+  /* Collapses with the next element's top margin so that elements with larger margins keep them */
+  &:not(:last-child) {
+    margin-block-end: var(--spacing-stacked-margin-xlarge);
+  }
+
+  details {
+    --index: 1;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / span 2;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+
+    /* Prevent closing the open tab by clicking its own title, without disabling the tab's content */
+    &[open] > summary {
+      pointer-events: none;
+    }
+
+    /* Closed tabs overlap the open tab's content in the grid, so only their titles should receive clicks */
+    &:not([open]) {
+      pointer-events: none;
+
+      > summary {
+        pointer-events: auto;
+      }
+    }
+
+    &::details-content {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      min-width: 0;
+      padding-block-start: 25px;
+    }
+
+    &:not([open])::details-content {
+      display: none;
+    }
+
+    &:first-child > summary {
+      --tab-gutter: 0px;
+    }
+
+    /* The tab's content is already spaced out from the titles */
+    > summary + * {
+      margin-block-start: 0;
+    }
+  }
+
+  summary {
+    position: relative;
+    display: grid;
+    grid-column: var(--index) / span 1;
+    grid-row: 1;
+    z-index: 1;
+    padding-block: 10px;
+    padding-inline-start: var(--tab-gutter);
+    border-bottom: 1px solid var(--color-grid);
+    color: var(--color-figure-gray-secondary);
+    font-size: 14px;
+    line-height: 14px;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline-offset: -1px;
+    }
+
+    /* The open tab's indicator only underlines its title, not the gutter before it */
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      inset-inline-start: var(--tab-gutter);
+      inset-inline-end: 0;
+      border-bottom: 1px solid transparent;
+    }
+
+    details[open] > & {
+      color: inherit;
+      cursor: default;
+
+      &::after {
+        border-bottom-color: currentColor;
+      }
+    }
+  }
+}
+
 /*
  The navigator sidebar.
  Its sizes are in pixels, computed for a 17px root font size.
