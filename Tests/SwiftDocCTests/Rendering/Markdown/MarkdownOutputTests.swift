@@ -1712,7 +1712,7 @@ struct MarkdownOutputTests {
                         .init(domainName: "iOS",
                               introduced: .init(string: "1.0.0"),
                               deprecated: .init(string: "4.0.0"),
-                              message: "Use something else instead (Taylor's Version)"
+                              message: "Use something else instead (iOS Message)"
                              ),
                         .init(domainName: "visionOS",
                               introduced: .init(string: "2.0.0"),
@@ -1775,7 +1775,6 @@ struct MarkdownOutputTests {
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct")
         #expect(node.metadata.deprecation == "Deprecated")
-        print(node.metadata)
     }
     
     @Test
@@ -1795,34 +1794,33 @@ struct MarkdownOutputTests {
     }
     
     @Test
-    func doccDeprecationIsRepresentedInMetadata() async throws {
+    func deprecationSummaryDirectiveIsRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
                 makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"]),
-                makeSymbol(id: "new-property-id", kind: .property, pathComponents: ["SomeStruct", "newProperty"], docComment: "The new version"),
+                makeSymbol(id: "new-property-id", kind: .property, pathComponents: ["SomeStruct", "newProperty"]),
                 makeSymbol(id: "old-property-id", kind: .property, pathComponents: ["SomeStruct", "oldProperty"], docComment: #"""
-                    The old version.
-                    
                     @DeprecationSummary {
-                        Use ``newProperty`` (Taylor's Version)
+                        Use ``newProperty`` (Directive Message)
                     }
                     """#,
                     availability: [
                         .init(domainName: nil,
                               introduced: nil,
                               deprecated: .init(string: "27.0.0"),
-                              message: "Use newProperty",
-                              renamed: "newProperty"
+                              message: "Use newProperty"
                              )
                 ])
             ], relationships: [
-                .init(source: "new-property-id", target: "some-struct-id", kind: .memberOf, targetFallback: nil),
-                .init(source: "old-property-id", target: "some-struct-id", kind: .memberOf, targetFallback: nil)
+                .init("new-property-id", .memberOf, "some-struct-id"),
+                .init("old-property-id", .memberOf, "some-struct-id")
             ])),
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct/oldProperty")
-        #expect(node.metadata.deprecation == "Use [`newProperty`](/documentation/SomeModule/SomeStruct/newProperty) (Taylor’s Version)")
+        // Include both contents in the test, to indicate if the in-source deprecation message is picked up
+        #expect(node.metadata.deprecation == "Use [`newProperty`](/documentation/SomeModule/SomeStruct/newProperty) (Directive Message)")
+        #expect(node.metadata.deprecation != "Use newProperty")
     }
     
     @Test
