@@ -358,7 +358,7 @@
   "kind" : "symbol",
   "navigatorTitle" : [
     {
-      "kind" : "identifier",
+      "kind" : "text",
       "text" : "KindFilterOptions"
     }
   ],
