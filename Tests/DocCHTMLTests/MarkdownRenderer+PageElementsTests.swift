@@ -1153,7 +1153,8 @@ struct MarkdownRenderer_PageElementsTests {
             pathsToReturn: pathsToReturn,
             assetsToReturn: assetsToReturn,
             fallbackLinkTextsToReturn: fallbackLinkTextsToReturn
-        ), renderableDirectiveParser: SingleValueDirectiveParser())
+        ), renderableDirectiveParser: SingleValueDirectiveParser(),
+        defaultCodeListingLanguage: nil)
     }
     
     private func parseMarkup(string: String) -> [any Markup] {

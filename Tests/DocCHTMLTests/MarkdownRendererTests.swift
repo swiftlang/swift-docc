@@ -486,6 +486,20 @@ struct MarkdownRendererTests {
             </code></pre>
             """
         )
+        
+        assert(
+            rendering: """
+            ```
+            Some block of code
+            ```
+            """,
+            prettyFormatted: true,
+            defaultCodeListingLanguage: "json",
+            matches: """
+            <pre class="json"><code>Some block of code
+            </code></pre>
+            """
+        )
     }
     
     @Test
@@ -780,6 +794,7 @@ struct MarkdownRendererTests {
         fallbackLinkTextToReturn: String? = nil,
         prettyFormatted: Bool = false,
         directiveToReturn: RenderableDirective? = nil,
+        defaultCodeListingLanguage: String? = nil,
         matches expectedHTML: String,
         sourceLocation: Testing.SourceLocation = #_sourceLocation
     ) {
@@ -791,7 +806,8 @@ struct MarkdownRendererTests {
                 assetToReturn: assetToReturn,
                 fallbackLinkTextToReturn: fallbackLinkTextToReturn
             ),
-            renderableDirectiveParser: SingleValueDirectiveParser(directiveToReturn: directiveToReturn)
+            renderableDirectiveParser: SingleValueDirectiveParser(directiveToReturn: directiveToReturn),
+            defaultCodeListingLanguage: defaultCodeListingLanguage
         )
         let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
         htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expected: expectedHTML, sourceLocation: sourceLocation)

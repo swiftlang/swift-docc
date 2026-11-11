@@ -42,14 +42,17 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     let linkProvider: Provider
     /// A type that parses on-page renderable directives and returns the information required to render the directive in HTML.
     let renderableDirectiveParser: Parser
+    /// The default syntax highlighting language for code blocks
+    let defaultHighlightLanguage: HighlightLanguage?
     /// The supported syntax highlighting languages that the renderer encountered while visiting all content.
     package var encounteredCodeBlockLanguages = Set<HighlightLanguage>()
     
-    package init(path: String, goal: RenderGoal, linkProvider: Provider, renderableDirectiveParser: Parser) {
+    package init(path: String, goal: RenderGoal, linkProvider: Provider, renderableDirectiveParser: Parser, defaultCodeListingLanguage: String?) {
         self.pathComponents = path.components(separatedBy: "/")
         self.goal = goal
         self.linkProvider = linkProvider
         self.renderableDirectiveParser = renderableDirectiveParser
+        self.defaultHighlightLanguage = defaultCodeListingLanguage.flatMap { HighlightLanguage(name: $0) }
     }
     
     /// Transforms a markdown paragraph into a `<p>` HTML element.
@@ -463,9 +466,9 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     mutating func visit(_ codeBlock: CodeBlock) -> HTMLNode {
         let attributes: [HTMLNode.Attribute]
-        if let language = codeBlock.language, let knowLanguage = HighlightLanguage(name: language) {
-            encounteredCodeBlockLanguages.insert(knowLanguage)
-            attributes = [.class(knowLanguage.rawValue)]
+        if let language = codeBlock.language.flatMap(HighlightLanguage.init(name:)) ?? defaultHighlightLanguage {
+            encounteredCodeBlockLanguages.insert(language)
+            attributes = [.class(language.rawValue)]
         } else {
             attributes = []
         }
