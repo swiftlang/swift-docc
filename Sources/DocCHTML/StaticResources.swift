@@ -535,12 +535,12 @@ p {
   margin-top: 0.8em;
 }
 
-/* Parameter and term definition lists */
+/* Parameter lists */
 
-dl {
+#Parameters > dl {
   margin-top: 0.85em;
   
-  dt {
+  &> dt {
     font-weight: 600;
     font-size: 17px;
     line-height: 25px;
@@ -557,7 +557,7 @@ dl {
     }
   }
   
-  dd {
+  &> dd {
     padding-left: 34px;
     
     p {
@@ -567,6 +567,29 @@ dl {
     
     @media only screen and (max-width: 735px) {
       padding-left: 0;
+    }
+  }
+}
+
+/* Definition lists */
+
+dl {
+  margin-top: 0.85em;
+  
+  &> dt {
+    font-size: 17px;
+    line-height: 25px;
+    
+    &:not(:first-child) {
+      padding-top: var(--spacing-stacked-margin-large);
+    }
+  }
+  
+  &> dd {
+    padding-left: 34px;
+    
+    &> p:first-child {
+      margin-top: 0;
     }
   }
 }

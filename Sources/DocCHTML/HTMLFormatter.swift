@@ -82,10 +82,7 @@ package struct HTMLFormatter {
             encoder._append("<!DOCTYPE html>\n")
         }
         
-        if node._tag == .pre {
-            // Whitespace is significant for `<pre>` elements; so format that sub-hierarchy _without_ pretty printing.
-            encoder._compactFormat(node, nextElementTag: nil)
-        } else if options.contains(.prettyPrint) {
+        if options.contains(.prettyPrint) {
             encoder._prettyFormat(node, state: .init())
         } else {
             encoder._compactFormat(node, nextElementTag: nil)
@@ -139,6 +136,13 @@ package struct HTMLFormatter {
             
         case .voidElement(let tag, let attributes):
             _format(voidElement: tag, attributes: attributes)
+            
+        case .fragment(let nodes):
+            // A fragment only reaches the formatter when it's the node passed to `format(_:options:)`.
+            for index in nodes.indices {
+                let nextIndex = index &+ 1 // The index will exceed `nodes.endIndex` long before it overflows.
+                _compactFormat(nodes[index], nextElementTag: nextIndex < nodes.endIndex ? nodes[nextIndex]._tag : nextElementTag)
+            }
         }
     }
     
@@ -186,6 +190,12 @@ package struct HTMLFormatter {
         
         if !state.presentOnCurrentLine {
             appendLineBreakAndIndentation()
+        }
+        
+        // Whitespace is significant inside `<pre>` elements; so we switch to formatting that sub-hierarchy _without_ pretty printing.
+        if element._tag == .pre {
+            _compactFormat(element, nextElementTag: state.nextElementTag)
+            return
         }
         
         switch element._storage {
@@ -280,6 +290,8 @@ package struct HTMLFormatter {
                     case .element(    let tag, let attributes, _),
                          .voidElement(let tag, let attributes):
                         tag.isTextLevelSemantic && attributes.isEmpty
+                    case .fragment:
+                        false
                 }
             }
             if shouldPresentContentsOnSeparateLine, shouldPresentInline(for: firstContents) {
@@ -300,14 +312,7 @@ package struct HTMLFormatter {
                 }
                 childState.presentOnCurrentLine = presentOnCurrentLine
                 
-                // Whitespace is significant inside `<pre>` elements; so we switch to formatting that sub-hierarchy _without_ pretty printing.
-                if child._tag == .pre {
-                    // However, first we add a new line and indentation so that the `<pre>` element starts appropriately indented on a new line.
-                    appendLineBreakAndIndentation(depth: childState.depth)
-                    _compactFormat(child, nextElementTag: childState.nextElementTag)
-                } else {
-                    _prettyFormat(child, state: childState)
-                }
+                _prettyFormat(child, state: childState)
             }
             
             // End tag
@@ -321,6 +326,18 @@ package struct HTMLFormatter {
             
         case .voidElement(let voidTag, let attributes):
             _format(voidElement: voidTag, attributes: attributes)
+            
+        case .fragment(let nodes):
+            // Format the nodes at the current depth, the first on the current line and the rest on new lines.
+            var siblingState = state
+            siblingState.presentOnCurrentLine = true
+            for index in nodes.indices {
+                let nextIndex = index &+ 1 // The index will exceed `nodes.endIndex` long before it overflows.
+                siblingState.nextElementTag = nextIndex < nodes.endIndex ? nodes[nextIndex]._tag : state.nextElementTag
+                
+                _prettyFormat(nodes[index], state: siblingState)
+                siblingState.presentOnCurrentLine = false
+            }
         }
     }
     

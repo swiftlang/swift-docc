@@ -459,6 +459,61 @@ struct HTMLFormatterTests {
         <\(tag.rawValue)></\(tag.rawValue)>
         """)
     }
+    
+    @Test
+    func formatsFragmentAsSiblings() {
+        let fragment = HTMLNode._fragment([p(contents: [.text("a")]), p(contents: [.text("b")])])
+        
+        #expect(htmlString(for: fragment) == "<p>a</p><p>b</p>")
+        #expect(htmlString(for: fragment, options: .prettyPrint) == "<p>a</p>\n<p>b</p>")
+    }
+    
+    @Test
+    func flattensFragmentIntoContainingElement() {
+        let html = div(contents: [
+            p(contents: [.text("a")]),
+            ._fragment([span(contents: [.text("b")]), p(contents: [.text("c")])]),
+        ])
+        
+        #expect(htmlString(for: html, options: .omitOptionalEndTags) == "<div><p>a</p><span>b</span><p>c</div>")
+    }
+    
+    @Test
+    func omitsEndTagsBasedOnNextSiblingInFragment() {
+        let paragraphs = HTMLNode._fragment([p(contents: [.text("a")]), p(contents: [.text("b")])])
+        let paragraphAndSpan = HTMLNode._fragment([p(contents: [.text("a")]), span(contents: [.text("b")])])
+        
+        #expect(htmlString(for: paragraphs, options: .omitOptionalEndTags) == "<p>a<p>b")
+        #expect(htmlString(for: paragraphs, options: [.prettyPrint, .omitOptionalEndTags]) == """
+        <p>a
+        <p>b
+        """)
+        #expect(htmlString(for: paragraphAndSpan, options: .omitOptionalEndTags) == "<p>a</p><span>b</span>")
+    }
+    
+    @Test
+    func addsAttributesToEachFragmentChild() {
+        var node = HTMLNode._fragment([p(contents: [.text("a")]), p(contents: [.text("b")])])
+        node._addAttributes([.class("x")])
+        
+        #expect(htmlString(for: node) == #"<p class="x">a</p><p class="x">b</p>"#)
+    }
+    
+    @Test
+    func preservesWhitespaceInPreElementInPrettyPrintedFragment() {
+        let preTag = pre(contents: [
+            code(contents: [.text("  first")]),
+            .text(" "),
+            code(contents: [.text("second\n  third")]),
+        ])
+        let fragment = HTMLNode._fragment([p(contents: [.text("a")]), preTag])
+        
+        #expect(htmlString(for: fragment, options: .prettyPrint) == """
+        <p>a</p>
+        <pre><code>  first</code> <code>second
+          third</code></pre>
+        """)
+    }
 }
 
 private func htmlString(for element: HTMLNode, options: HTMLFormatter.Options = []) -> String {

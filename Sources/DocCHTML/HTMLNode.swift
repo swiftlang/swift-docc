@@ -8,6 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+private import DocCCommon
+
 package struct HTMLNode: Sendable {
     // This type should be though of as opaque with a file-private implementation.
     // However, to avoid needing to define the formatting and parsing of HTML all in this file,
@@ -18,6 +20,8 @@ package struct HTMLNode: Sendable {
         // We intentionally don't model comments because we don't want them to appear in the output.
         case element(    _Tag, attributes: [Attribute], contents: [HTMLNode])
         case voidElement(_Tag, attributes: [Attribute])
+        // Several sibling nodes without a containing element. See `_fragment(_:)`.
+        case fragment([HTMLNode])
     }
     var _storage: _Storage
     
@@ -35,7 +39,34 @@ package struct HTMLNode: Sendable {
             }
             return "All attribute names has to be case insensitively unique. This wasn't true for \(duplicateAttributes)."
         }())
-        return .init(_storage: .element(tag, attributes: attributes, contents: contents))
+        return .init(_storage: .element(tag, attributes: attributes, contents: _flatteningFragments(contents)))
+    }
+    
+    /// Creates a fragment of several sibling nodes.
+    ///
+    /// Creating an element replaces the fragment in its contents with these nodes.
+    /// Don't put a fragment directly in the contents of `ul`, `ol`, `dl`, `tr`, or other helpers that assert which tags their contents have.
+    /// Those helpers check the tags before the fragment is flattened.
+    static func _fragment(_ nodes: [HTMLNode]) -> HTMLNode {
+        .init(_storage: .fragment(_flatteningFragments(nodes)))
+    }
+    
+    /// Returns the given nodes with each fragment replaced by the fragment's nodes.
+    private static func _flatteningFragments(_ nodes: [HTMLNode]) -> [HTMLNode] {
+        // Fragments are rare. Avoid allocating a new array when there are none.
+        guard nodes.contains(where: \._isFragment) else {
+            return nodes
+        }
+        var flattened: [HTMLNode] = []
+        flattened.reserveCapacity(nodes.count)
+        for node in nodes {
+            if case .fragment(let children) = node._storage {
+                flattened.append(contentsOf: children) // Already flattened when the fragment was created.
+            } else {
+                flattened.append(node)
+            }
+        }
+        return flattened
     }
     
     static func _voidElement(_ tag: _Tag, attributes: [Attribute] = []) -> HTMLNode {
@@ -47,14 +78,21 @@ package struct HTMLNode: Sendable {
         switch _storage {
             case .element(    let tag, _, _),
                  .voidElement(let tag, _): tag
-            case .text:                    nil
+            case .text, .fragment:         nil
         }
     }
     
     var _isText: Bool {
         switch _storage {
-            case .text:                  true
-            case .element, .voidElement: false
+            case .text:                             true
+            case .element, .voidElement, .fragment: false
+        }
+    }
+    
+    var _isFragment: Bool {
+        switch _storage {
+            case .fragment:                     true
+            case .text, .element, .voidElement: false
         }
     }
     
@@ -66,6 +104,11 @@ package struct HTMLNode: Sendable {
             _storage = .element(tag, attributes: attributes + newAttributes, contents: contents)
         case .voidElement(let tag, let attributes):
             _storage = .voidElement(tag, attributes: attributes + newAttributes)
+        case .fragment(var nodes):
+            for index in nodes.indices {
+                nodes[index]._addAttributes(newAttributes)
+            }
+            _storage = .fragment(nodes)
         }
     }
 }
@@ -82,5 +125,15 @@ extension HTMLNode._Tag {
                      true
             default: false
         }
+    }
+}
+
+extension HTMLNode: TermListDetectableInline {
+    var termListPlainText: String? {
+        if case .text(let text) = _storage { text } else { nil }
+    }
+    
+    init(termListPlainText: String) {
+        self = .text(termListPlainText)
     }
 }
