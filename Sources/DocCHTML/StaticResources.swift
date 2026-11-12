@@ -377,16 +377,18 @@ section:first-of-type > hgroup > p {
   }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  padding-inline-end: 23px; /* for the hover icon */
+main {
+  h1, h2, h3, h4, h5, h6 {
+    padding-inline-end: 23px; /* for the hover icon */
   
-  &> a {
-    text-decoration: none;
-    color: black; /* TODO: dark mode */
-    &:hover {
-      &:after {
-        margin-left: 7px;
-        content: url(anchor.svg)
+    &> a {
+      text-decoration: none;
+      color: black; /* TODO: dark mode */
+      &:hover {
+        &:after {
+          margin-left: 7px;
+          content: url(anchor.svg)
+        }
       }
     }
   }
@@ -970,26 +972,22 @@ body > header {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding-top: 10px;
   border-inline-end: 1px solid var(--color-grid);
   background: white;
   font-size: 17px;
   line-height: 25px;
   
-  .technology-title {
-    display: flex;
-    margin-inline: var(--navigator-inset);
+  &> h2 {
+    margin: 10px var(--navigator-inset) 0;
     padding-block: 8px;
-    padding-inline: var(--navigator-inset) 10px;
+    padding: 0 10px 8px var(--navigator-inset);
     border-radius: 4px;
-    white-space: nowrap;
-    text-decoration: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
     
-    h2 {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin: 0;
-      padding: 0;
+    &> a {
+      white-space: nowrap;
+      text-decoration: none;
       color: black;
       font-size: 19px;
       line-height: 23px;
@@ -1241,11 +1239,11 @@ figcaption {
     return row;
   }
   
-  const technologyTitle = document.createElement("a");
-  technologyTitle.className = "technology-title";
-  technologyTitle.href = hrefForPath(technologyPath);
-  technologyTitle.innerHTML = `<h2></h2>`;
-  technologyTitle.firstChild.textContent = rootModule.title;
+  const technologyLink = document.createElement("a");
+  technologyLink.href = hrefForPath(rootModule.path);
+  technologyLink.textContent = rootModule.title;
+  const technologyTitle = document.createElement("h2");
+  technologyTitle.append(technologyLink);
   
   const list = document.createElement("ul");
   list.append(...rootModule.children.map(makeRow));
@@ -1259,7 +1257,6 @@ figcaption {
   const main = container.querySelector(":scope > main");
   main.before(navigator);
 })();
-
 """.utf8))
     
     // MARK: Icons
