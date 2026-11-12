@@ -368,11 +368,14 @@ struct MarkdownRendererTests {
             directiveToReturn: renderableDirectiveWithCaption,
             matches: """
             <figure>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
-                <img alt="This is some alt text" decoding="async" loading="lazy">
-              </picture>
+              <span class="color-scheme-variants">
+                <picture class="light-only">
+                  <img alt="This is some alt text" decoding="async" loading="lazy" src="../../../test_source@2x.png">
+                </picture>
+                <picture class="dark-only">
+                  <img alt="This is some alt text" decoding="async" loading="lazy" src="../../../test_source~dark@2x.png">
+                </picture>
+              </span>
               <figcaption>
                 This is the <strong>caption</strong>.
               </figcaption>
@@ -387,11 +390,14 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             directiveToReturn: RenderableDirective.image(source: "test_source", alt: "This is some alt text", caption: []),
             matches: """
-            <picture>
-              <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
-              <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
-              <img alt="This is some alt text" decoding="async" loading="lazy">
-            </picture>
+            <span class="color-scheme-variants">
+              <picture class="light-only">
+                <img alt="This is some alt text" decoding="async" loading="lazy" src="../../../test_source@2x.png">
+              </picture>
+              <picture class="dark-only">
+                <img alt="This is some alt text" decoding="async" loading="lazy" src="../../../test_source~dark@2x.png">
+              </picture>
+            </span>
             """)
         
         assert(
@@ -402,11 +408,14 @@ struct MarkdownRendererTests {
             prettyFormatted: true,
             directiveToReturn: .image(source: "test_source", alt: "This is some alt text", caption: [Paragraph([])]),
             matches: """
-            <picture>
-              <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
-              <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
-              <img alt="This is some alt text" decoding="async" loading="lazy">
-            </picture>
+            <span class="color-scheme-variants">
+              <picture class="light-only">
+                <img alt="This is some alt text" decoding="async" loading="lazy" src="../../../test_source@2x.png">
+              </picture>
+              <picture class="dark-only">
+                <img alt="This is some alt text" decoding="async" loading="lazy" src="../../../test_source~dark@2x.png">
+              </picture>
+            </span>
             """)
     }
     
@@ -682,11 +691,14 @@ struct MarkdownRendererTests {
             ]),
             prettyFormatted: true,
             matches: """
-            <picture>
-              <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image.png">
-              <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark.png">
-              <img alt="Some alt text" decoding="async" loading="lazy">
-            </picture>
+            <span class="color-scheme-variants">
+              <picture class="light-only">
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../images/com.test.example/some-image.png">
+              </picture>
+              <picture class="dark-only">
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../images/com.test.example/some-image~dark.png">
+              </picture>
+            </span>
             """
         )
         
@@ -705,11 +717,14 @@ struct MarkdownRendererTests {
             ]),
             prettyFormatted: true,
             matches: """
-            <picture>
-              <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
-              <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
-              <img alt="Some alt text" decoding="async" loading="lazy">
-            </picture>
+            <span class="color-scheme-variants">
+              <picture class="light-only">
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
+              </picture>
+              <picture class="dark-only">
+                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
+              </picture>
+            </span>
             """
         )
     }

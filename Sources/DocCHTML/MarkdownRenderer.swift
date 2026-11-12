@@ -368,20 +368,23 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         return relativeComponents.joined(separator: "/")
     }
     
-    /// Transforms a markdown image into a`<picture>` HTML element that wraps an `<img>` element and zero or more `<source>` elements.
+    /// Transforms a markdown image into a`<picture>` HTML element that wraps an `<img>` element.
     ///
     /// The renderer uses its configured ``LinkProvider`` to find information about the referenced asset.
     /// For example, if the link provider returns an asset with both light and dark image representations from the ``LinkProvider/assetNamed(_:)`` call, the renderer transforms this markdown
     /// ```md
     /// ![Some alt text](some-image.png)
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into XML nodes representing this HTML structure, with a `<picture>` element for each variant so that the style sheet can display the variant that matches the page's color scheme
     /// ```
-    /// <picture>
-    ///   <source media="(prefers-color-scheme: light)" srcset="relative/path/to/some-image.png"/>
-    ///   <source media="(prefers-color-scheme: dark)" srcset="relative/path/some-image~dark.png"/>
-    ///   <img alt="Some alt text" decoding="async" loading="lazy"/>
-    /// </picture>
+    /// <span class="color-scheme-variants">
+    ///   <picture class="light-only">
+    ///     <img alt="Some alt text" decoding="async" loading="lazy" src="relative/path/to/some-image.png"/>
+    ///   </picture>
+    ///   <picture class="dark-only">
+    ///     <img alt="Some alt text" decoding="async" loading="lazy" src="relative/path/to/some-image~dark.png"/>
+    ///   </picture>
+    /// </span>
     /// ```
     func visit(_ image: Image) -> HTMLNode {
         guard let source = image.source else {
@@ -413,35 +416,29 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         func srcAttributes(for images: [Int: String]) -> [HTMLNode.Attribute] {
             switch images.count {
                 case 0: []
-                case 1: [.srcSet([path(to: images.first!.value)])] // No need to specify a scale factor when there's only one source.
+                // Prefer a "src" attribute over a "srcSet" attribute when there's only one image. There's no need to specify a scale factor.
+                case 1: [.src(path(to: images.first!.value))]
                 default: [.srcSet(images.sorted(by: { $0.key > $1.key }) // Order by large scale factors first
                     .map { scale, imagePath in "\(path(to: imagePath)) \(scale)x" }
                 )]
             }
         }
-        
-        var content = [HTMLNode]()
+
         if asset.files.count == 1 {
             // When all image are either dark/light mode, add them directly on the "img" element
-            let scaleVariants = asset.files.first!.value
-            if scaleVariants.count == 1 {
-                // Prefer a "src" attribute over a "srcSet" attribute for the "img" element itself.
-                imgAttributes.append(.src(path(to: scaleVariants.first!.value)))
-            } else {
-                imgAttributes.append(contentsOf: srcAttributes(for: scaleVariants))
-            }
-        } else {
-            // Define a "source" element for each dark/light style
-            for (style, images) in asset.files.sorted(by: { $0.key.rawValue > $1.key.rawValue }) { // Order light images before dark images
-                var attributes = srcAttributes(for: images)
-                attributes.insert(.media("(prefers-color-scheme: \(style.rawValue))"), at: 0)
-                content.append(source(attributes: attributes))
-            }
+            return picture(contents: [img(attributes: imgAttributes + srcAttributes(for: asset.files.first!.value))])
         }
-        
-        content.append(img(attributes: imgAttributes))
-        
-        return picture(contents: content)
+
+        // When the image has both light and dark variants, define a "picture" element for each variant, so that the style sheet can display the variant that matches the page's color scheme.
+        // A "source" element with a "prefers-color-scheme" media query would only match the reader's system appearance, not the color scheme that the reader picked for the page.
+        return span(attributes: [.class("color-scheme-variants")], contents: asset.files
+            .sorted(by: { $0.key.rawValue > $1.key.rawValue }) // Order light images before dark images
+            .map { style, images in
+                picture(attributes: [.class("\(style.rawValue)-only")], contents: [
+                    img(attributes: imgAttributes + srcAttributes(for: images))
+                ])
+            }
+        )
     }
     
     /// Transforms a markdown code block (either fenced or indented) into a `<pre>` HTML element that wraps a `<code>` HTML element containing the code block's code.
