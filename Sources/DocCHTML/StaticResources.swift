@@ -1158,6 +1158,11 @@ body > header {
   #navigator > ul {
     overscroll-behavior: contain;
   }
+  
+  /* The page behind the open panel doesn't scroll, even when the panel's items don't fill it. */
+  body.navigator-open {
+    overflow: hidden;
+  }
 }
 
 /* The navigator and the page's main content display next to each other. */
