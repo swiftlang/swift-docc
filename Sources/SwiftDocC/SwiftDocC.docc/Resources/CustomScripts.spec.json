@@ -1,0 +1,79 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Custom Scripts",
+        "description": "This spec describes the permissible contents of a custom-scripts.json file in a documentation catalog, which is used to add custom scripts to a DocC-generated website.",
+        "version": "0.0.1"
+    },
+    "paths": {},
+    "components": {
+        "schemas": {
+            "CustomScripts": {
+                "type": "array",
+                "description": "An array of custom scripts, which is the top-level container in a custom-scripts.json file.",
+                "items": {
+                    "oneOf": [
+                        { "$ref": "#/components/schemas/ExternalScript" },
+                        { "$ref": "#/components/schemas/LocalScript" }
+                    ]
+                }
+            },
+            "Script": {
+                "type": "object",
+                "description": "An abstract schema representing any script, from which both script types inherit.",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "The `type` attribute of the HTML script element."
+                    },
+                    "run": {
+                        "type": "string",
+                        "enum": ["on-load", "on-navigate", "on-load-and-navigate"],
+                        "default": "on-load",
+                        "description": "Whether the custom script should be run only on the initial page load, each time the reader navigates after the initial page load, or both."
+                    },
+                    "async": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "The `async` attribute of the HTML script element. Scripts that aren't `async` run in the order in which they're listed."
+                    },
+                    "integrity": {
+                        "type": "string",
+                        "description": "The `integrity` attribute of the HTML script element: a hash that the browser uses to verify that the script hasn't been unexpectedly modified. External scripts with an integrity hash are loaded using CORS."
+                    }
+                }
+            },
+            "ExternalScript": {
+                "description": "A script at an external URL.",
+                "allOf": [
+                    { "$ref": "#/components/schemas/Script" },
+                    {
+                        "required": ["url"],
+                        "properties": {
+                            "url": {
+                                "type": "string",
+                                "description": "The absolute URL of the external script.",
+                                "format": "uri"
+                            }
+                        }
+                    }
+                ]
+            },
+            "LocalScript": {
+                "description": "A script from a local file.",
+                "allOf": [
+                    { "$ref": "#/components/schemas/Script" },
+                    {
+                        "required": ["name"],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the local script file, optionally including the '.js' extension."
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -253,6 +253,12 @@ Most notably:
 - ``PageImage`` allows you to set a header image of a page.
 - ``PageColor`` allows you to set an accent color of a page.
 
+@Comment {
+    TODO: Add user-facing documentation for custom scripts (`custom-scripts.json`),
+    either here or in a new article, once the feature has been tested by early
+    adopters.
+}
+
 [1]: https://github.com/swiftlang/swift-docc/blob/main/Sources/SwiftDocC/SwiftDocC.docc/Resources/ThemeSettings.spec.json
 [2]: https://drafts.csswg.org/css-variables/
 [3]: https://mportiz08.github.io/swift-docc/documentation/docc

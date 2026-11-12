@@ -92,6 +92,14 @@ public enum DocumentationCatalogFileTypes {
     public static func isCustomFavicon(_ url: URL) -> Bool {
         return url.lastPathComponent.lowercased() == customFaviconFileName
     }
+    
+    private static let customScriptsFileName = "custom-scripts.json"
+    /// Checks if a file is `custom-scripts.json`.
+    /// - Parameter url: The file to check.
+    /// - Returns: Whether or not the file at `url` is `custom-scripts.json`.
+    public static func isCustomScriptsFile(_ url: URL) -> Bool {
+        return url.lastPathComponent == customScriptsFileName
+    }
 }
 
 @available(*, deprecated, renamed: "DocumentationCatalogFileTypes", message: "Use 'DocumentationCatalogFileTypes' instead. This deprecated API will be removed after 6.5 is released.")

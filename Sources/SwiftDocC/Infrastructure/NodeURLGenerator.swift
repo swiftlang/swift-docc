@@ -43,6 +43,7 @@ public struct NodeURLGenerator {
         public static let documentationFolderName = "documentation"
         public static let dataFolderName = "data"
         public static let indexFolderName = "index"
+        package static let customScriptsFolderName = "custom-scripts"
         
         public static let tutorialsFolder = "/\(tutorialsFolderName)"
         public static let documentationFolder = "/\(documentationFolderName)"

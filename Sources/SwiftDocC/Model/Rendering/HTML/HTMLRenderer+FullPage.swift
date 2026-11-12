@@ -16,6 +16,7 @@ private import FoundationXML
 package import class Foundation.XMLElement
 #endif
 package import struct Foundation.URL
+private import class Foundation.JSONDecoder
 
 package import DocCHTML
 
@@ -28,13 +29,15 @@ package extension HTMLRenderer {
     ///   - reference: The reference that the content and metadata is associated with.
     ///   - customHeader: A custom HTML header that the renderer will include in the full-page output.
     ///   - customFooter: A custom HTML footer that the renderer will include in the full-page output.
+    ///   - customScripts: Custom scripts that the renderer will include, in order, in the full-page output.
     /// - Returns: A full-page static HTML document.
     static func makeFullPage(
         mainContent: HTMLNode,
         metadata: (title: String, description: String?),
         for reference: ResolvedTopicReference,
         customHeader: HTMLNode? = nil,
-        customFooter: HTMLNode? = nil
+        customFooter: HTMLNode? = nil,
+        customScripts: [CustomScript] = []
     ) -> HTMLNode {
         // Use relative paths to shared assets like a style sheet or favicon.
         let pathPrefixToArchiveRoot = String(repeating: "../", count: reference.url.pathComponents.count - 1)
@@ -61,7 +64,7 @@ package extension HTMLRenderer {
             ))
         }
         
-        // The full page body consists of 5 elements, in order;
+        // The full page body consists of 6 elements, in order;
         var bodyElements: [HTMLNode] = []
         // 1. An optional custom header
         if let customHeader {
@@ -111,33 +114,50 @@ package extension HTMLRenderer {
             bodyElements.append(customFooter)
         }
         
+        // 6. Any custom scripts, which go at the end of the <body> so the documentation content exists (and can be manipulated by the scripts) by the time they run
+        for customScript in customScripts {
+            bodyElements.append(HTMLNode(
+                from: customScript,
+                localScriptsPath: "\(pathPrefixToArchiveRoot)\(NodeURLGenerator.Path.customScriptsFolderName)/"
+            ))
+        }
+        
         return html(attributes: [.lang("en-US")], contents: [
             head(contents: consume headElements),
             body(contents: consume bodyElements),
         ])
     }
     
-    /// Prepares the provided custom header and footer files to be included in the full-page structure.
+    /// Prepares the provided custom header, footer, and scripts files to be included in the full-page structure.
     ///
     /// - Parameters:
     ///   - customHeader: A custom HTML file that the renderer will include as a header in the full-page output.
     ///   - customFooter: A custom HTML file that the renderer will include as a footer in the full-page output.
-    ///   - fileManager: The file manager that the HTML renderer uses to read the custom header and footer files.
-    /// - Returns: The parsed custom header and parsed custom footer, ready to be included in the full-page output.
+    ///   - customScripts: A `custom-scripts.json` file that declares custom scripts to include in the full-page output.
+    ///     Custom scripts that don't have exactly one of a `url` or a `name` are skipped.
+    ///   - fileManager: The file manager that the HTML renderer uses to read the custom files.
+    /// - Returns: The parsed custom header, parsed custom footer, and valid custom scripts in the order in which they're declared, ready to be included in the full-page output.
     static func prepareForFullPage(
         customHeader: URL?,
         customFooter: URL?,
+        customScripts: URL? = nil,
         fileManager: some ReadOnlyFileManagerProtocol
-    ) throws -> (customHeader: HTMLNode?, customFooter: HTMLNode?) {
+    ) throws -> (customHeader: HTMLNode?, customFooter: HTMLNode?, customScripts: [CustomScript]) {
         func parse(contentsOf url: URL) throws -> HTMLNode? {
             let content = String(decoding: try fileManager.contents(of: url), as: UTF8.self)
             let xmlElement = try XMLElement(xmlString: content)
             return HTMLNode(from: xmlElement)
         }
         
+        func parseCustomScripts(contentsOf url: URL) throws -> [CustomScript] {
+            try JSONDecoder().decode([CustomScript].self, from: try fileManager.contents(of: url))
+                .filter { ($0.url == nil) != ($0.name == nil) }
+        }
+        
         return (
             customHeader: try customHeader.flatMap(parse(contentsOf:)),
-            customFooter: try customFooter.flatMap(parse(contentsOf:))
+            customFooter: try customFooter.flatMap(parse(contentsOf:)),
+            customScripts: try customScripts.map(parseCustomScripts(contentsOf:)) ?? []
         )
     }
 }

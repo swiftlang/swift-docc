@@ -82,6 +82,7 @@ extension ConvertAction {
             diagnosticIDsWithWarningSeverity: Set(convert.diagnosticOptions.warningGroupsWithWarningSeverity),
             diagnosticIDsWithErrorSeverity: Set(convert.diagnosticOptions.warningGroupsWithErrorSeverity),
             experimentalEnableCustomTemplates: convert.featureFlags.experimentalEnableCustomTemplates,
+            enableCustomScripts: convert.featureFlags.enableCustomScripts,
             experimentalModifyCatalogWithGeneratedCuration: convert.featureFlags.experimentalModifyCatalogWithGeneratedCuration,
             featureFlags: featureFlags,
             transformForStaticHostingOptions: convert.hostingOptions.transformForStaticHostingOptions,
