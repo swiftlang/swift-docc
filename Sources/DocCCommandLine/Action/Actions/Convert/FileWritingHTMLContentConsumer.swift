@@ -133,15 +133,12 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         )
     }
     
-    func consume(
-        mainContent: HTMLNode?,
-        metadata: (title: String, description: String?),
-        forPage reference: ResolvedTopicReference
-    ) throws {
+    
+    func consume(pageInfo: HTMLRenderer.RenderedPageInfo, forPage reference: ResolvedTopicReference) throws {
         let htmlString = htmlTemplate.makeContent(
-            content: mainContent,
-            title: metadata.title,
-            plainDescription: metadata.description,
+            content: pageInfo.content,
+            title: pageInfo.metadata.title,
+            plainDescription: pageInfo.metadata.plainDescription,
             prettyPrint: prettyPrintOutput
         )
         

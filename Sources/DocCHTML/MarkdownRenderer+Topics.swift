@@ -34,7 +34,7 @@ package extension MarkdownRenderer {
     ///
     /// If the API has the _same_ task groups in all language representations, only pass the task groups for one language.
     /// This produces a named section that doesn't hide any task groups for any of the languages (the same as if the symbol only had one language representation).
-    func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> [HTMLNode] {
+    mutating func groupedSection(named sectionName: String, groups taskGroups: [SourceLanguage: [TaskGroupInfo]]) -> [HTMLNode] {
         let taskGroups = RenderHelpers.sortedLanguageSpecificValues(taskGroups)
         
         let items: [HTMLNode] = if taskGroups.count == 1 {
@@ -57,7 +57,7 @@ package extension MarkdownRenderer {
         return selfReferencingSection(named: sectionName, content: items)
     }
     
-    private func _singleTaskGroupElements(for taskGroup: TaskGroupInfo) -> [HTMLNode] {
+    private mutating func _singleTaskGroupElements(for taskGroup: TaskGroupInfo) -> [HTMLNode] {
         let listItems = taskGroup.references.compactMap { reference in
             linkProvider.element(for: reference).map { _taskGroupItem(for: $0) }
         }
@@ -85,7 +85,7 @@ package extension MarkdownRenderer {
         return items
     }
     
-    private func _taskGroupItem(for element: LinkedElement) -> HTMLNode {
+    private mutating func _taskGroupItem(for element: LinkedElement) -> HTMLNode {
         let items: [HTMLNode]
         switch element.subheadings {
         case .single(.conceptual(let title)):

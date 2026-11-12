@@ -118,7 +118,7 @@ package enum ConvertActionConverter {
                                 pageInfo = .init(content: nil, metadata: .init(
                                     title: entity.name.plainText,
                                     plainDescription: (entity.semantic as? (any Abstracted))?.abstract?.plainText
-                                ))
+                                ), codeBlockLanguages: [])
                             }
                             try htmlContentConsumer.consume(pageInfo: pageInfo, forPage: identifier)
                             
@@ -268,17 +268,4 @@ private struct SupplementaryRenderInformation {
     var coverageInfo = [CoverageDataEntry]()
     var markdownManifestDocuments = Set<MarkdownOutputManifest.Document>()
     var markdownManifestRelationships = Set<MarkdownOutputManifest.Relationship>()
-}
-
-private extension HTMLContentConsumer {
-    func consume(pageInfo: HTMLRenderer.RenderedPageInfo, forPage reference: ResolvedTopicReference) throws {
-        try consume(
-            mainContent: pageInfo.content,
-            metadata: (
-                title: pageInfo.metadata.title,
-                description: pageInfo.metadata.plainDescription
-            ),
-            forPage: reference
-        )
-    }
 }
