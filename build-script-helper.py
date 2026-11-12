@@ -102,6 +102,10 @@ def run(args):
     # Use local dependencies (i.e. checked out next to swift-docc).
     if not args.no_local_deps:
         env['SWIFTCI_USE_LOCAL_DEPS'] = "1"
+        # SwiftPM fetches the remote pins in Package.resolved before it
+        # evaluates the manifest's local path dependencies. Remove it so that
+        # building with local dependencies doesn't access the network.
+        remove_package_resolved(args.package_path)
 
     if args.update:
         print("** Updating dependencies of %s **" % package_name)
@@ -185,6 +189,14 @@ def should_run_action(action_name, selected_actions):
         return True
     else:
         return False
+
+
+def remove_package_resolved(package_path):
+    resolved_path = os.path.join(package_path, 'Package.resolved')
+    if not os.path.exists(resolved_path):
+        return
+    print("-- note: removing %s to use local dependencies" % resolved_path)
+    os.remove(resolved_path)
 
 
 def update_swiftpm_dependencies(package_path, swift_exec, build_path, env,
