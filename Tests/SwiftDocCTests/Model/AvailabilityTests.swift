@@ -2565,6 +2565,41 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced ==  "7.1")
     }
     
+    @Test(arguments: [true, false])
+    func symbolMissingFromSpecificPlatformWithDefaultAvailabilityForThatPlatformDoesNotImpactDeprecation(isAlsoInMacOSSymbolGraph: Bool) async throws {
+        let deprecatedVersion = SymbolGraph.SemanticVersion(major: 13, minor: 0, patch: 0)
+        let catalog = Folder(name: "unit-test.docc") {
+            // The symbol is deprecated for all the platforms that it's available for.
+            JSONFile(name: "ModuleName-ios.symbols.json", symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "iOS", introduced: .init(major: 7, minor: 0, patch: 0), deprecated: deprecatedVersion),
+                ])
+            ]))
+            // The macOS symbol graph either includes this symbol without any availability annotations (so it's available on macOS)
+            // or it excludes this symbol so the symbol isn't available on macOS.
+            JSONFile(name: "ModuleName-macos.symbols.json", symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "macosx")), symbols: [
+                isAlsoInMacOSSymbolGraph
+                    ? makeSymbol(id: "some-symbol-id",  kind: .class, pathComponents: ["SomeClass"])
+                    : makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["OtherClass"])
+            ]))
+            
+            // The Info.plist specifies default availability for both platforms.
+            InfoPlist(defaultAvailability: [
+                .init(platformName: .iOS,   platformVersion: "2.0"),
+                .init(platformName: .macOS, platformVersion: "10.0"),
+            ])
+        }
+        let context = try await load(catalog: catalog)
+        let reference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        let (renderNode, topicReference) = try makeRenderNodeAndRenderReference(for: reference, in: context)
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name).contains("macOS") == isAlsoInMacOSSymbolGraph)
+        
+        // A page that's referenced from other pages is only considered deprecated if it's deprecated for all the platforms that it's available for.
+        // Platforms that the symbol was excluded from in the symbol graph, don't count against the page's deprecation status.
+        #expect(topicReference.isDeprecated == !isAlsoInMacOSSymbolGraph)
+    }
+    
     private static let allMainPlatforms: [SymbolGraph.Platform] = [
         .init(operatingSystem: .init(name: "ios")),
         .init(operatingSystem: .init(name: "ios"), environment: "macabi"), // Mac Catalyst

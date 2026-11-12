@@ -407,8 +407,8 @@ main {
     
     position: absolute;
     top: 0;
-    left: -50%;
-    width: 200%;
+    left: calc(50% - 50cqw);
+    width: 100cqw;
     height: 100%;
     z-index: -2;
   }
@@ -433,8 +433,9 @@ main {
   --icon-size: 250px;
   
   position: absolute;
-  top: calc(50% - var(--icon-size) / 2);
-  right: 25px;
+  top: 10px;
+  /* 25px inset from the right edge of the 'main' container */
+  right: calc(50% - 50cqw + 25px);
   opacity: 0.15;
   z-index: -1;
   
@@ -860,12 +861,113 @@ body > header {
   }
 }
 
+.tabnavigator {
+  --count: 1;
+  --tab-gutter: 30px;
+  display: grid;
+  /* Size each tab to fit its title and let a trailing column fill the remaining space */
+  grid-template-columns: repeat(var(--count), auto) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+
+  &:not(:first-child) {
+    margin-block-start: var(--spacing-stacked-margin-xlarge);
+  }
+
+  /* Collapses with the next element's top margin so that elements with larger margins keep them */
+  &:not(:last-child) {
+    margin-block-end: var(--spacing-stacked-margin-xlarge);
+  }
+
+  details {
+    --index: 1;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / span 2;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+
+    /* Prevent closing the open tab by clicking its own title, without disabling the tab's content */
+    &[open] > summary {
+      pointer-events: none;
+    }
+
+    /* Closed tabs overlap the open tab's content in the grid, so only their titles should receive clicks */
+    &:not([open]) {
+      pointer-events: none;
+
+      > summary {
+        pointer-events: auto;
+      }
+    }
+
+    &::details-content {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      min-width: 0;
+      padding-block-start: 25px;
+    }
+
+    &:not([open])::details-content {
+      display: none;
+    }
+
+    &:first-child > summary {
+      --tab-gutter: 0px;
+    }
+
+    /* The tab's content is already spaced out from the titles */
+    > summary + * {
+      margin-block-start: 0;
+    }
+  }
+
+  summary {
+    position: relative;
+    display: grid;
+    grid-column: var(--index) / span 1;
+    grid-row: 1;
+    z-index: 1;
+    padding-block: 10px;
+    padding-inline-start: var(--tab-gutter);
+    border-bottom: 1px solid var(--color-grid);
+    color: var(--color-figure-gray-secondary);
+    font-size: 14px;
+    line-height: 14px;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline-offset: -1px;
+    }
+
+    /* The open tab's indicator only underlines its title, not the gutter before it */
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      inset-inline-start: var(--tab-gutter);
+      inset-inline-end: 0;
+      border-bottom: 1px solid transparent;
+    }
+
+    details[open] > & {
+      color: inherit;
+      cursor: default;
+
+      &::after {
+        border-bottom-color: currentColor;
+      }
+    }
+  }
+}
+
 /*
  The navigator sidebar.
  Its sizes are in pixels, computed for a 17px root font size.
  */
 #navigator {
   --color-navigator-item-hover: rgba(0, 0, 255, 0.05);
+  /* The space between the navigator's edges and its items, and between the start of an item and its title, so that the titles line up. */
+  --navigator-inset: 20px;
   
   box-sizing: border-box;
   display: flex;
@@ -876,8 +978,9 @@ body > header {
   line-height: 25px;
   
   &> h2 {
-    margin: 10px 20px 0;
-    padding: 0 10px 8px 20px;
+    margin: 10px var(--navigator-inset) 0;
+    padding-block: 8px;
+    padding: 0 10px 8px var(--navigator-inset);
     border-radius: 4px;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -895,6 +998,50 @@ body > header {
       background: var(--color-navigator-item-hover);
     }
   }
+  
+  &> ul {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0 var(--navigator-inset) 10px;
+    list-style: none;
+    
+    &> li {
+      position: relative;
+      padding: 5px var(--navigator-inset);
+      
+      a, h3 {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      a {
+        color: inherit;
+        text-decoration: none;
+        
+        /* Make the entire row a click target for the link, with a background on hover or keyboard focus */
+        &:after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 4px;
+        }
+        
+        &:is(:hover, :focus-visible):after {
+          background: var(--color-navigator-item-hover);
+        }
+      }
+      
+      h3 {
+        padding: 0;
+        color: var(--color-figure-gray-secondary);
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: 600;
+      }
+    }
+  }
 }
 
 /* On narrow screens, the navigator is hidden. */
@@ -907,12 +1054,20 @@ body > header {
 /* The navigator and the page's main content display next to each other. */
 .full-width-container {
   display: flex;
+  max-width: 1920px;
+  margin-inline: auto;
   
   > main {
     flex: 1;
     min-width: 0;
-    /* Keep full-width backgrounds, like the hero section's, from drawing over the navigator */
-    overflow-x: clip;
+    container-type: inline-size;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .full-width-container {
+    box-sizing: border-box;
+    border-inline: 1px solid var(--color-grid);
   }
 }
 
@@ -1005,6 +1160,24 @@ figcaption {
       font-size: 0.82rem;
     }
 }
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: var(--spacing-stacked-margin-xlarge);
+}
+
+.row > div {
+    /* column-size acts as a proportion; */
+    flex: var(--column-size, 1) 1 0;
+    text-align: var(--alignment, center);
+    min-width: 0; /* lets long columns shrink below their content's width and scroll */
+    
+    @media only screen and (max-width: 735px) {
+        flex-basis: 100%;
+    }
+}
 """.utf8))
     
     // MARK: Scripts
@@ -1049,6 +1222,22 @@ figcaption {
   if (!rootModule?.path || !rootModule.children?.length) {
     return;
   }
+  const technologyPath = rootModule.path.toLowerCase();
+  
+  // Each item is a list item with a link to its page, or with a heading for a group of pages.
+  function makeRow(item) {
+    const isGroupMarker = item.type === "groupMarker";
+    
+    const title = document.createElement(isGroupMarker ? "h3" : "a");
+    if (!isGroupMarker) {
+      title.href = hrefForPath(item.path);
+    }
+    title.textContent = item.title;
+    
+    const row = document.createElement("li");
+    row.append(title);
+    return row;
+  }
   
   const technologyLink = document.createElement("a");
   technologyLink.href = hrefForPath(rootModule.path);
@@ -1056,11 +1245,14 @@ figcaption {
   const technologyTitle = document.createElement("h2");
   technologyTitle.append(technologyLink);
   
+  const list = document.createElement("ul");
+  list.append(...rootModule.children.map(makeRow));
+  
   // The navigator goes before the page's main content, in the container below the page's header.
   const navigator = document.createElement("nav");
   navigator.id = "navigator";
   navigator.setAttribute("aria-label", "Documentation Navigator");
-  navigator.append(technologyTitle);
+  navigator.append(technologyTitle, list);
   const container = document.querySelector("body > .full-width-container");
   const main = container.querySelector(":scope > main");
   main.before(navigator);
