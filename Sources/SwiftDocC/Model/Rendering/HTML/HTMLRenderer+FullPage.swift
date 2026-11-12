@@ -45,6 +45,13 @@ package extension HTMLRenderer {
                 .content("width=device-width,initial-scale=1,viewport-fit=cover"),
                 .name("viewport"),
             ),
+            // The page supports both light and dark appearances. By default, it displays with the reader's system appearance.
+            meta(
+                .content("light dark"),
+                .name("color-scheme"),
+            ),
+            // Directly after the meta tag, without `defer`, apply the reader's saved color scheme preference, so that the page doesn't render with the wrong color scheme first.
+            script(attributes: [.src("\(pathPrefixToArchiveRoot)\(StaticResources.colorSchemeScript.filename)")], contents: []),
             // FIXME: Add relative favicon links (rdar://177705447 (Include favicon images in the static HTML output))
             link(
                 .href("\(pathPrefixToArchiveRoot)reference.css"),
@@ -87,7 +94,7 @@ package extension HTMLRenderer {
         
         // 4. The default footer
         bodyElements.append(footer(contents: [
-            // FIXME: Interacting with this radio group doesn't change the page's color scheme (rdar://177705056)
+            // The checked radio button determines the page's color scheme. The color scheme script checks the radio button for the reader's saved preference and saves the reader's choice.
             fieldSet(attributes: [.role(.radioGroup)], contents: [
                 legend(contents: [.text("Select a color scheme preference")]),
                 

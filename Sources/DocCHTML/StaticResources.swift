@@ -42,6 +42,7 @@ package enum StaticResources {
         referenceStyleSheet,
         // Scripts
         navigatorScript,
+        colorSchemeScript,
         // Page kind icons
         apiCollectionIcon,
         articleIcon,
@@ -59,19 +60,63 @@ package enum StaticResources {
     /// The style sheet that DocC uses to define the layout and appearance of "reference" documentation (symbols and articles).
     static let referenceStyleSheet = File(filename: "reference.css", data: Data("""
 :root {
-  --color-header-text: #1d1d1f;
-  --color-code-background: #f7f7f7;
-  --color-secondary-label: #6e6e73;
-  
-  --color-grid: rgb(204, 204, 204);
-  
-  --color-fill-gray: #ccc;
-  --color-fill-gray-quaternary: #f0f0f0;
-  --color-fill-gray-secondary: #f5f5f5;
-  --color-fill-gray-tertiary: #f0f0f0;
-  
-  --color-badge-deprecated: #bf4800;
-  
+  /*
+   By default, pages follow the reader's system appearance.
+   If the reader picks a "Light" or "Dark" appearance in the page's footer, that choice overrides the system appearance:
+   - The checked radio button in the page's footer applies the reader's choice to the current page, even without JavaScript.
+   - The page's "color-scheme" meta tag applies the reader's saved choice, which the color scheme script sets before the page renders.
+   */
+  color-scheme: light dark;
+  /* How much to invert the colors of the icons, which are designed for a light background: 0 with a light color scheme and 1 with a dark color scheme. */
+  --icon-invert: 0;
+  /* How to display the light and dark variants of an image, so that only the variant that matches the page's color scheme displays. */
+  --light-image-display: block;
+  --dark-image-display: none;
+
+  @media screen and (prefers-color-scheme: dark) {
+    --icon-invert: 1;
+    --light-image-display: none;
+    --dark-image-display: block;
+  }
+  @media screen {
+    &:has(> head > meta[name="color-scheme"][content="light"]),
+    &:has(> body > footer input[name="color-scheme"][value="light"]:checked) {
+      color-scheme: light;
+      --icon-invert: 0;
+      --light-image-display: block;
+      --dark-image-display: none;
+    }
+    &:has(> head > meta[name="color-scheme"][content="dark"]),
+    &:has(> body > footer input[name="color-scheme"][value="dark"]:checked) {
+      color-scheme: dark;
+      --icon-invert: 1;
+      --light-image-display: none;
+      --dark-image-display: block;
+    }
+  }
+  /* Like Swift-DocC-Render, always print pages with a light appearance. */
+  @media print {
+    color-scheme: light;
+  }
+
+  /* Each color is a pair of light and dark values that follows the page's color scheme. */
+  --color-text: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
+  --color-text-background: light-dark(rgb(255, 255, 255), rgb(0, 0, 0));
+  --color-header-text: light-dark(#1d1d1f, rgb(255, 255, 255));
+  --color-code-background: light-dark(#f7f7f7, rgb(22, 22, 22));
+  --color-secondary-label: light-dark(#6e6e73, rgb(204, 204, 204));
+
+  --color-grid: light-dark(rgb(204, 204, 204), rgb(87, 87, 87));
+
+  --color-fill-blue: light-dark(rgb(0, 0, 255), rgb(0, 102, 255));
+  --color-fill-gray: light-dark(#ccc, rgb(87, 87, 87));
+  --color-fill-gray-quaternary: light-dark(#f0f0f0, rgb(66, 66, 66));
+  --color-fill-gray-secondary: light-dark(#f5f5f5, rgb(34, 34, 34));
+  --color-fill-gray-tertiary: light-dark(#f0f0f0, rgb(66, 66, 66));
+  --color-fill-tertiary: light-dark(#f0f0f0, rgb(42, 42, 42));
+
+  --color-badge-deprecated: light-dark(#bf4800, rgb(255, 102, 0));
+
   --color-standard-blue: #06c;
   --color-standard-gray: #afafaf;
   --color-standard-green: #509ca3;
@@ -80,9 +125,11 @@ package enum StaticResources {
   --color-standard-red: #d82797;
   --color-standard-yellow: #ff9f2c;
   
-  --color-figure-gray-secondary: rgb(102, 102, 102);
-  --color-figure-blue: rgb(51, 102, 255);
-  
+  --color-figure-gray-secondary: light-dark(rgb(102, 102, 102), rgb(204, 204, 204));
+  --color-figure-light-gray: light-dark(rgb(102, 102, 102), rgb(176, 176, 176));
+  --color-figure-blue: light-dark(rgb(51, 102, 255), rgb(0, 153, 255));
+  --color-figure-red: light-dark(rgb(255, 0, 0), rgb(255, 51, 51));
+
   --font-default: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: Menlo, monospace;
 }
@@ -101,7 +148,9 @@ package enum StaticResources {
 
 body {
   font-family: var(--font-default);
-  
+  color: var(--color-text);
+  background-color: var(--color-text-background);
+
   font-synthesis: none;
   -moz-font-feature-settings: 'kern';
   -webkit-font-smoothing: antialiased;
@@ -337,7 +386,7 @@ section:first-of-type > hgroup > p {
     font-size: 14px;
     line-height: 20px;
     a {
-      color: #000;
+      color: var(--color-text);
     }
     
     &:not(:first-child):before {
@@ -373,7 +422,7 @@ section:first-of-type > hgroup > p {
       top: 2px;
       margin-left: 10px;
       
-      background-color: black; /* TODO: dark mode */
+      background-color: var(--color-text);
     }
   }
 }
@@ -383,7 +432,7 @@ h1, h2, h3, h4, h5, h6 {
   
   &> a {
     text-decoration: none;
-    color: black; /* TODO: dark mode */
+    color: var(--color-text);
     &:hover {
       &:after {
         margin-left: 7px;
@@ -402,7 +451,7 @@ h1, h2, h3, h4, h5, h6 {
   /* Draw the background in a pseudo element so that it can move behind the icon */
   &:before {
     content: "";
-    background: #f0f0f0;
+    background: var(--color-fill-tertiary);
     
     position: absolute;
     top: 0;
@@ -472,36 +521,36 @@ section:first-of-type > p {
   line-height: 25px;
   
   /* We probably don't need most of these colors because they don't appear in declarations */
-  --color-syntax-attributes: rgb(148, 113, 0);
-  --color-syntax-characters: rgb(39, 42, 216);
-  --color-syntax-comments: rgb(112, 127, 140);
+  --color-syntax-attributes: light-dark(rgb(148, 113, 0), rgb(204, 151, 104));
+  --color-syntax-characters: light-dark(rgb(39, 42, 216), rgb(217, 201, 124));
+  --color-syntax-comments: light-dark(rgb(112, 127, 140), rgb(127, 140, 152));
   --color-syntax-deletion: var(--color-figure-red);
-  --color-syntax-documentation-markup: rgb(80, 99, 117);
-  --color-syntax-documentation-markup-keywords: rgb(80, 99, 117);
+  --color-syntax-documentation-markup: light-dark(rgb(80, 99, 117), rgb(127, 140, 152));
+  --color-syntax-documentation-markup-keywords: light-dark(rgb(80, 99, 117), rgb(163, 177, 191));
   --color-syntax-heading: rgb(186, 45, 162);
-  --color-syntax-highlighted: rgba(0, 113, 227, 0.2);
-  --color-syntax-keywords: rgb(173, 61, 164);
-  --color-syntax-marks: rgb(0, 0, 0);
-  --color-syntax-numbers: rgb(39, 42, 216);
-  --color-syntax-other-class-names: rgb(112, 61, 170);
-  --color-syntax-other-constants: rgb(75, 33, 176);
-  --color-syntax-other-declarations: rgb(4, 124, 176);
-  --color-syntax-other-function-and-method-names: rgb(75, 33, 176);
-  --color-syntax-other-instance-variables-and-globals: rgb(112, 61, 170);
-  --color-syntax-other-preprocessor-macros: rgb(120, 73, 42);
-  --color-syntax-other-type-names: rgb(112, 61, 170);
-  --color-syntax-param-internal-name: rgb(64, 64, 64);
-  --color-syntax-plain-text: rgb(0, 0, 0);
-  --color-syntax-preprocessor-statements: rgb(120, 73, 42);
-  --color-syntax-project-class-names: rgb(62, 128, 135);
-  --color-syntax-project-constants: rgb(45, 100, 105);
-  --color-syntax-project-function-and-method-names: rgb(45, 100, 105);
-  --color-syntax-project-instance-variables-and-globals: rgb(62, 128, 135);
-  --color-syntax-project-preprocessor-macros: rgb(120, 73, 42);
-  --color-syntax-project-type-names: rgb(62, 128, 135);
-  --color-syntax-strings: rgb(209, 47, 27);
-  --color-syntax-type-declarations: rgb(3, 99, 140);
-  --color-syntax-urls: rgb(19, 55, 255);
+  --color-syntax-highlighted: light-dark(rgba(0, 113, 227, 0.2), rgba(0, 113, 227, 0.6));
+  --color-syntax-keywords: light-dark(rgb(173, 61, 164), rgb(255, 122, 178));
+  --color-syntax-marks: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
+  --color-syntax-numbers: light-dark(rgb(39, 42, 216), rgb(217, 201, 124));
+  --color-syntax-other-class-names: light-dark(rgb(112, 61, 170), rgb(218, 186, 255));
+  --color-syntax-other-constants: light-dark(rgb(75, 33, 176), rgb(167, 235, 221));
+  --color-syntax-other-declarations: light-dark(rgb(4, 124, 176), rgb(78, 176, 204));
+  --color-syntax-other-function-and-method-names: light-dark(rgb(75, 33, 176), rgb(178, 129, 235));
+  --color-syntax-other-instance-variables-and-globals: light-dark(rgb(112, 61, 170), rgb(178, 129, 235));
+  --color-syntax-other-preprocessor-macros: light-dark(rgb(120, 73, 42), rgb(255, 161, 79));
+  --color-syntax-other-type-names: light-dark(rgb(112, 61, 170), rgb(218, 186, 255));
+  --color-syntax-param-internal-name: light-dark(rgb(64, 64, 64), rgb(191, 191, 191));
+  --color-syntax-plain-text: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));
+  --color-syntax-preprocessor-statements: light-dark(rgb(120, 73, 42), rgb(255, 161, 79));
+  --color-syntax-project-class-names: light-dark(rgb(62, 128, 135), rgb(172, 242, 228));
+  --color-syntax-project-constants: light-dark(rgb(45, 100, 105), rgb(120, 194, 179));
+  --color-syntax-project-function-and-method-names: light-dark(rgb(45, 100, 105), rgb(120, 194, 179));
+  --color-syntax-project-instance-variables-and-globals: light-dark(rgb(62, 128, 135), rgb(120, 194, 179));
+  --color-syntax-project-preprocessor-macros: light-dark(rgb(120, 73, 42), rgb(255, 161, 79));
+  --color-syntax-project-type-names: light-dark(rgb(62, 128, 135), rgb(172, 242, 228));
+  --color-syntax-strings: light-dark(rgb(209, 47, 27), rgb(255, 129, 112));
+  --color-syntax-type-declarations: light-dark(rgb(3, 99, 140), rgb(107, 223, 255));
+  --color-syntax-urls: light-dark(rgb(19, 55, 255), rgb(102, 153, 255));
   
   &> code {
     display: block;
@@ -591,7 +640,7 @@ dl {
         &> code {
           font-size: 17px;
           line-height: 24px;
-          color: rgb(102, 102, 102);
+          color: var(--color-figure-gray-secondary);
           
           &>b {
             color: var(--color-figure-blue);
@@ -672,7 +721,7 @@ table {
     text-align: start;
     padding: 10px;
     
-    border: 1px solid #f0f0f0;
+    border: 1px solid var(--color-fill-gray-tertiary);
   }
   
   /* No border on the outside of the table */
@@ -736,8 +785,8 @@ table {
 /* Asides */
 
 aside {
-  background-color: rgb(245, 245, 245);
-  border: 0px solid rgb(102, 102, 102);
+  background-color: var(--color-fill-gray-secondary);
+  border: 0px solid var(--color-figure-light-gray);
   border-inline-start-width: 6px;
   
   border-radius: 4px;
@@ -832,7 +881,7 @@ body > header {
   
   /* Aim for a light visual effects appearance */
   backdrop-filter: saturate(1.8) blur(20px);
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: light-dark(rgba(255, 255, 255, 0.7), rgba(42, 42, 42, 0.7));
   
   h2 {
     float: left;
@@ -964,7 +1013,7 @@ body > header {
  Its sizes are in pixels, computed for a 17px root font size.
  */
 #navigator {
-  --color-navigator-item-hover: rgba(0, 0, 255, 0.05);
+  --color-navigator-item-hover: light-dark(rgba(0, 0, 255, 0.05), rgba(0, 102, 255, 0.5));
   /* The space between the navigator's edges and its items, and between the start of an item and its title, so that the titles line up. */
   --navigator-inset: 20px;
   
@@ -973,7 +1022,7 @@ body > header {
   flex-direction: column;
   padding-top: 10px;
   border-inline-end: 1px solid var(--color-grid);
-  background: white;
+  background: var(--color-text-background);
   font-size: 17px;
   line-height: 25px;
   
@@ -991,7 +1040,7 @@ body > header {
       text-overflow: ellipsis;
       margin: 0;
       padding: 0;
-      color: black;
+      color: var(--color-text);
       font-size: 19px;
       line-height: 23px;
       font-weight: 600;
@@ -1059,11 +1108,14 @@ body > header {
       a {
         color: inherit;
         text-decoration: none;
-        
+        /* Paint the row's background behind the link's text, not on top of it */
+        isolation: isolate;
+
         /* Make the entire row a click target for the link, with a background on hover or keyboard focus */
         &:after {
           content: "";
           position: absolute;
+          z-index: -1;
           inset: 0;
           border-radius: 4px;
         }
@@ -1151,7 +1203,7 @@ body > footer {
     }
     
     display: inline-flex;
-    --color: rgb(0, 0, 255);
+    --color: var(--color-fill-blue);
     
     border: 1px solid var(--color);
     border-radius: 4px;
@@ -1161,13 +1213,14 @@ body > footer {
     right: 15%; /* FIXME: Position this properly */
     
     label {
+      position: relative;
       margin: 0;
       cursor: pointer;
       
       width: 42px;
       text-align: center;
       
-      color: var(--color);
+      color: light-dark(var(--color), rgb(0, 153, 255));
       font-size: 12px;
       padding: 2px 6px;
       line-height: 15px;
@@ -1179,9 +1232,19 @@ body > footer {
         color: white;
         background-color: var(--color);
       }
+
+      &:has(input:focus-visible) {
+        outline: 2px solid var(--color-figure-blue);
+        outline-offset: 1px;
+      }
       
+      /* Hide the radio button itself, but keep it focusable so that keyboard users can change the color scheme. */
       input {
-        display: none;
+        position: absolute;
+        inset: 0;
+        margin: 0;
+        opacity: 0;
+        pointer-events: none;
       }
     }
   }
@@ -1190,6 +1253,22 @@ body > footer {
 figure, picture {
     display: block;
     margin-top: var(--spacing-stacked-margin-xlarge);
+}
+
+/*
+ An image with both light and dark variants has a picture element for each variant, inside a wrapper that doesn't affect the layout.
+ Only the variant that matches the page's color scheme displays. Because the images load lazily, the browser doesn't load the other variant until it displays.
+ */
+.color-scheme-variants {
+    display: contents;
+}
+
+picture.light-only {
+    display: var(--light-image-display);
+}
+
+picture.dark-only {
+    display: var(--dark-image-display);
 }
 
 figcaption {
@@ -1217,10 +1296,103 @@ figcaption {
         flex-basis: 100%;
     }
 }
+
+/*
+ This is a temporary solution for the current implementation of the icons, not an ideal way to adapt icons to the color scheme.
+ The icons are images with fixed colors that are designed for a light background, so CSS can't change their colors.
+ With a dark color scheme, invert their colors so that they're visible on the dark background.
+ */
+:is(h1, h2, h3, h4, h5, h6) > a:hover:after,
+#hero:after,
+li :is(.api-collection, .article):before,
+#Mentioned-in > ul > li:before,
+body > header h2:before,
+#navigator summary:before {
+  filter: invert(var(--icon-invert));
+}
 """.utf8))
     
     // MARK: Scripts
-    
+
+    /// The script that applies the reader's saved color scheme preference to each page, and saves the reader's choice from the color scheme radio buttons in each page's footer, so that it persists across pages and sessions.
+    ///
+    /// Each page loads this script, without `defer`, directly after its "color-scheme" meta tag, so that the browser applies the reader's saved preference before it renders the page.
+    /// This avoids a flash of the wrong color scheme when the reader's preference is different from their system appearance.
+    package static let colorSchemeScript = File(filename: "color-scheme.js", data: Data("""
+// Applies the reader's saved color scheme preference---"light", "dark", or "auto"---to the page, and saves the reader's choice from the radio buttons in the page's footer.
+//
+// The style sheet displays the page with the color scheme of the checked radio button, so that the radio buttons work for the current page even without JavaScript.
+// This script makes the reader's choice persist across pages and sessions:
+// - It sets the page's "color-scheme" meta tag to the saved preference before the page renders. "light dark" follows the reader's system appearance.
+// - It checks the radio button for the saved preference, once the browser has parsed the page's footer.
+// - It saves the reader's choice when they check a different radio button.
+(() => {
+  // The same key as Swift-DocC-Render, so that both renderers share the reader's preference.
+  const storageKey = "developer.setting.preferredColorScheme";
+  // The same radio buttons that the style sheet uses to determine the page's color scheme.
+  const radioButtonSelector = 'body > footer input[name="color-scheme"]';
+
+  function savedPreference() {
+    try {
+      return localStorage.getItem(storageKey);
+    } catch {
+      // Accessing local storage throws if the browser blocks data for this website.
+      return null;
+    }
+  }
+
+  function apply(preference) {
+    if (preference !== "light" && preference !== "dark") {
+      preference = "auto";
+    }
+    document.querySelector('meta[name="color-scheme"]').content = preference === "auto" ? "light dark" : preference;
+    // The radio buttons don't exist yet when the script first runs, before the browser has parsed the page's footer.
+    const radioButton = document.querySelector(`${radioButtonSelector}[value="${preference}"]`);
+    if (radioButton) {
+      radioButton.checked = true;
+    }
+  }
+
+  apply(savedPreference());
+  document.addEventListener("DOMContentLoaded", () => {
+    apply(savedPreference());
+  });
+
+  document.addEventListener("change", (event) => {
+    const radioButton = event.target;
+    if (!radioButton.matches(radioButtonSelector)) {
+      return;
+    }
+    // Update the meta tag so that it doesn't override the reader's new choice with their previously saved preference.
+    apply(radioButton.value);
+    try {
+      // "auto" is the default, so there's no preference to save.
+      if (radioButton.value === "auto") {
+        localStorage.removeItem(storageKey);
+      } else {
+        localStorage.setItem(storageKey, radioButton.value);
+      }
+    } catch {
+      // The page still displays with the reader's choice, even if the browser can't save it.
+    }
+  });
+
+  // Stay in sync if the reader changes their preference in another tab or window...
+  addEventListener("storage", (event) => {
+    if (event.key === storageKey || event.key === null) {
+      apply(event.newValue);
+    }
+  });
+  // ... or on another page before navigating back to this page.
+  addEventListener("pageshow", (event) => {
+    if (event.persisted) {
+      apply(savedPreference());
+    }
+  });
+})();
+
+""".utf8))
+
     /// The script that renders the navigator sidebar from the navigator index.
     package static let navigatorScript = File(filename: "navigator.js", data: Data("""
 // Renders the navigator sidebar from the navigator index in the output's "index/index.json" file.
