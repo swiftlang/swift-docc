@@ -1134,9 +1134,10 @@ body > header {
   #navigator {
     position: fixed;
     inset: 0;
+    /* The panel's edge is just past the window's edge, so that it only shows while the panel slides. */
+    margin-inline-end: -1px;
     z-index: 6;
     padding-top: 0;
-    border-inline-end: none;
     visibility: hidden;
     transform: translateX(-100%);
     /* The panel stays visible while it slides out, because `visibility` transitions as visible until it ends. */
