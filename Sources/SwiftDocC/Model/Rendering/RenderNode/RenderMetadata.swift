@@ -250,6 +250,42 @@ extension RenderMetadata: Codable {
         public static let hasNoExpandedDocumentation = CodingKeys(stringValue: "hasNoExpandedDocumentation")
     }
     
+    enum KnownCodingKeys: String, CodingKey {
+        case category
+        case categoryPathComponent
+        case estimatedTime
+        case modules
+        case extendedModule
+        case platforms
+        case required
+        case roleHeading
+        case role
+        case title
+        case externalID
+        case symbolKind
+        case symbolAccessLevel
+        case conformance
+        case fragments
+        case navigatorTitle
+        case sourceFileURI
+        case remoteSource
+        case tags
+        case images
+        case color
+        case customMetadata
+        case hasNoExpandedDocumentation
+    }
+    
+    public struct UnknownCodingKeys: CodingKey, Hashable, Equatable {
+        public var stringValue: String
+        public init(stringValue: String) {
+            self.stringValue = stringValue
+        }
+        
+        public init?(intValue: Int) { nil }
+        public var intValue: Int? { nil }
+    }
+    
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         

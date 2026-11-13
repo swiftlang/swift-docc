@@ -128,6 +128,7 @@ func renderNode(atPath path: String, fromOnDiskTestCatalogNamed catalogName: Str
 }
 
 extension RenderNode {
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.6 is released")
     func applying(variant: String) throws -> RenderNode {
         let variantData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(
             in: RenderJSONEncoder.makeEncoder().encode(self),

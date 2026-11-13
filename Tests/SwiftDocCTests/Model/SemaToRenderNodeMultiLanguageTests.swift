@@ -988,6 +988,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         }
     }
 
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.6 is released")
     func renderNodeApplyingObjectiveCVariantOverrides(to renderNode: RenderNode) throws -> RenderNode {
         return try renderNodeApplying(variant: "occ", to: renderNode)
     }
