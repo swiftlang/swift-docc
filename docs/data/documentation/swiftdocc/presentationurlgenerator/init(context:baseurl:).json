@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Creates a new URL generator.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'init(baseURL:)' instead. This deprecated API will be removed after 6.6 is released.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -103,6 +108,14 @@
             },
             {
               "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
               "text" : ": "
             },
             {
@@ -136,39 +149,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The documentation context the URL generator will queries for external reference resolvers.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "context"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The base URL for local references.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "baseURL"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
@@ -277,11 +257,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PresentationURLGenerator/init(context:baseURL:)": {
   "abstract" : [
-    {
-      "text" : "Creates a new URL generator.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

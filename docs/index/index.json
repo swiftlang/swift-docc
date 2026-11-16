@@ -10644,6 +10644,12 @@
                         "type" : "groupMarker"
                       },
                       {
+                        "path" : "\/documentation\/swiftdocc\/presentationurlgenerator\/init(baseurl:)",
+                        "title" : "init(baseURL: URL)",
+                        "type" : "init"
+                      },
+                      {
+                        "deprecated" : true,
                         "path" : "\/documentation\/swiftdocc\/presentationurlgenerator\/init(context:baseurl:)",
                         "title" : "init(context: DocumentationContext, baseURL: URL)",
                         "type" : "init"

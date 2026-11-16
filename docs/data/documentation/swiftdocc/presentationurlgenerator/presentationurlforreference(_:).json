@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PresentationURLGenerator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L43"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L42"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

@@ -3,7 +3,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'presentationURLForReference(_:)' instead. This dep...",
+          "text" : "Use 'presentationURLForReference(_:)' instead. This deprecated API will be removed after 6.6 is released.",
           "type" : "text"
         }
       ],
@@ -81,7 +81,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PresentationURLGenerator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L34"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L33"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

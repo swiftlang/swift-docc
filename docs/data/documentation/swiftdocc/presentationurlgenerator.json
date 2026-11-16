@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PresentationURLGenerator.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -80,35 +80,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "overview",
-          "level" : 2,
-          "text" : "Overview",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "Compared to a ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : ", this type also supports resolving presentation URLs via external resolvers.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -124,6 +95,7 @@
       "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PresentationURLGenerator\/init(baseURL:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PresentationURLGenerator\/init(context:baseURL:)"
       ],
       "title" : "Initializers"
@@ -166,37 +138,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "NodeURLGenerator"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "NodeURLGenerator"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "NodeURLGenerator",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/PresentationURLGenerator": {
   "abstract" : [
     {
@@ -231,13 +172,52 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/presentationurlgenerator"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/PresentationURLGenerator/init(context:baseURL:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/PresentationURLGenerator/init(baseURL:)": {
   "abstract" : [
     {
       "text" : "Creates a new URL generator.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "baseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:20FoundationEssentials3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PresentationURLGenerator\/init(baseURL:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(baseURL:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/presentationurlgenerator\/init(baseurl:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PresentationURLGenerator/init(context:baseURL:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
