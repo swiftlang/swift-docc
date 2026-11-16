@@ -427,7 +427,7 @@ public extension DocumentationNode {
             // Don't return anything for external references in the local context.
             return []
         }
-        let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
+        let urlGenerator = PresentationURLGenerator(baseURL: context.inputs.baseURL)
         let relativePresentationURL = urlGenerator.presentationURLForReference(reference).withoutHostAndPortAndScheme()
         
         var compiler = RenderContentCompiler(context: context, identifier: reference)
