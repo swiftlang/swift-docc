@@ -1269,7 +1269,7 @@ class AutomaticCurationTests: XCTestCase {
              // Verify that the merged section under `SideClass`'s "Topics" is correctly marked as containing manual content
              XCTAssertFalse(renderNode.topicSections.first?.generated ?? false)
          }
-     }
+    }
 
     func testAutomaticallyCuratedArticlesAreSortedByTitle() async throws {
         // Test catalog with articles where file names and titles are in different orders
@@ -1419,5 +1419,38 @@ struct AutomaticCurationTests_new {
         let moduleReference = try #require(context.soleRootModuleReference)
         let memberNode = try #require(context.topicGraph.nodes[moduleReference.appendingPath("Bar/someMethod()")])
         #expect(!memberNode.shouldAutoCurateInCanonicalLocation, "someMethod() is already curated under its canonical container Bar via the API collection, so it must not also be auto-curated under Bar")
+    }
+    
+    @Test(arguments: ["Classes", "classes", "CLASSES", "ClASsEs"])
+    func testMergesManualAndAutomaticTopicSectionsCaseInsensitively(topicTitle: String) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "first-id",  kind: .class, pathComponents: ["First"]),
+                makeSymbol(id: "second-id", kind: .class, pathComponents: ["Second"]),
+            ]))
+            
+            TextFile(name: "ModuleName.md", utf8Content: """
+                # ``ModuleName``
+                
+                Curate only of of the classes so that the authored section can be merged with the automatic one.
+                
+                ## Topics
+                ### \(topicTitle)
+                - ``First``
+                """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.soleRootModuleReference)
+        let node = try context.entity(with: reference)
+        let converter = DocumentationNodeConverter(context: context)
+        let renderNode = converter.convert(node)
+        
+        #expect(renderNode.topicSections.map { $0.title } == [topicTitle], "There shouldn't be any duplicate sections")
+        #expect(renderNode.topicSections.first?.identifiers == [
+            "doc://unit-test/documentation/ModuleName/First",
+            "doc://unit-test/documentation/ModuleName/Second",
+        ], "Both classes should be in the group")
     }
 }
