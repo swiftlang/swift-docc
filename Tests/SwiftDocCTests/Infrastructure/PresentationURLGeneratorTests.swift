@@ -8,31 +8,31 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
 import Foundation
 @testable import SwiftDocC
 import DocCCommon
 
-class PresentationURLGeneratorTests: XCTestCase {
-    func testInternalURLs() async throws {
-        let context = try await makeEmptyContext()
-        let bundleID = context.inputs.id
-        let generator = PresentationURLGenerator(context: context, baseURL: URL(string: "https://host:1024/webPrefix")!)
+struct PresentationURLGeneratorTests {
+    @Test
+    func generateInternalURLs() {
+        let inputsID: DocumentationContext.Inputs.Identifier = "com.example.tests"
+        let generator = PresentationURLGenerator(baseURL: URL(string: "https://host:1024/webPrefix")!)
         
         // Test resolved tutorial reference
-        let reference = ResolvedTopicReference(bundleID: bundleID, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
-        XCTAssertEqual(generator.presentationURLForReference(reference).absoluteString, "https://host:1024/webPrefix/tutorials/test-bundle/testtutorial")
+        let reference = ResolvedTopicReference(bundleID: inputsID, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        #expect(generator.presentationURLForReference(reference).absoluteString == "https://host:1024/webPrefix/tutorials/test-bundle/testtutorial")
         
         // Test resolved symbol reference
-        let symbol = ResolvedTopicReference(bundleID: bundleID, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
-        XCTAssertEqual(generator.presentationURLForReference(symbol).absoluteString, "https://host:1024/webPrefix/documentation/mykit/myclass")
+        let symbol = ResolvedTopicReference(bundleID: inputsID, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+        #expect(generator.presentationURLForReference(symbol).absoluteString == "https://host:1024/webPrefix/documentation/mykit/myclass")
         
         // Test root
-        let root = ResolvedTopicReference(bundleID: bundleID, path: "/", sourceLanguage: .swift)
-        XCTAssertEqual(generator.presentationURLForReference(root).absoluteString, "https://host:1024/webPrefix/documentation")
+        let root = ResolvedTopicReference(bundleID: inputsID, path: "/", sourceLanguage: .swift)
+        #expect(generator.presentationURLForReference(root).absoluteString == "https://host:1024/webPrefix/documentation")
         
         // Fragment
-        let fragment = ResolvedTopicReference(bundleID: bundleID, path: "/path", fragment: "test URL! FRAGMENT", sourceLanguage: .swift)
-        XCTAssertEqual(generator.presentationURLForReference(fragment).absoluteString, "https://host:1024/webPrefix/path#test-URL-FRAGMENT")
+        let fragment = ResolvedTopicReference(bundleID: inputsID, path: "/path", fragment: "test URL! FRAGMENT", sourceLanguage: .swift)
+        #expect(generator.presentationURLForReference(fragment).absoluteString == "https://host:1024/webPrefix/path#test-URL-FRAGMENT")
     }
 }
