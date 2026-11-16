@@ -1890,7 +1890,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
-        let generator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
+        let generator = PresentationURLGenerator(baseURL: context.inputs.baseURL)
         
         var allVariants: [SourceLanguage: ResolvedTopicReference] = documentationNode.availableSourceLanguages.reduce(into: [:]) { partialResult, language in
             partialResult[language] = identifier

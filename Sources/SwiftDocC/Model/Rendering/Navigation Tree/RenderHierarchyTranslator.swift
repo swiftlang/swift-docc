@@ -162,7 +162,7 @@ struct RenderHierarchyTranslator {
             let assessmentReference = ResolvedTopicReference(bundleID: tutorialReference.bundleID, path: tutorialReference.path, fragment: RenderHierarchyTranslator.assessmentsAnchor, sourceLanguage: .swift)
             renderHierarchyTutorial.landmarks.append(RenderHierarchyLandmark(reference: RenderReferenceIdentifier(assessmentReference.absoluteString), kind: .assessment))
             
-            let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
+            let urlGenerator = PresentationURLGenerator(baseURL: context.inputs.baseURL)
             let assessmentLinkReference = LinkReference(
                 identifier: RenderReferenceIdentifier(assessmentReference.absoluteString),
                 title: "Check your understanding",
