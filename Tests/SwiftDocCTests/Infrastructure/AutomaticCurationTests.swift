@@ -1432,7 +1432,7 @@ struct AutomaticCurationTests_new {
             TextFile(name: "ModuleName.md", utf8Content: """
                 # ``ModuleName``
                 
-                Curate only of of the classes so that the authored section can be merged with the automatic one.
+                Curate only one of the classes so that the authored section can be merged with the automatic one.
                 
                 ## Topics
                 ### \(topicTitle)
