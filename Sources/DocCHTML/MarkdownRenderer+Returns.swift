@@ -18,7 +18,7 @@ package extension MarkdownRenderer {
     ///
     /// If all language representations of the symbol have the _same_ return value, only pass the return value content for one language.
     /// This produces a "returns" section that doesn't hide the return value content for any of the languages (same as if the symbol only had one language representation)
-    func returns(_ languageSpecificSections: [SourceLanguage: [any Markup]]) -> [HTMLNode] {
+    mutating func returns(_ languageSpecificSections: [SourceLanguage: [any Markup]]) -> [HTMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(languageSpecificSections)
         let items: [HTMLNode] = if info.count == 1 {
             info.first!.value.map { visit($0) }

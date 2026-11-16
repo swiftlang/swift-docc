@@ -42,6 +42,7 @@ package enum StaticResources {
         referenceStyleSheet,
         // Scripts
         navigatorScript,
+        highlightScript,
         // Page kind icons
         apiCollectionIcon,
         articleIcon,
@@ -471,37 +472,15 @@ section:first-of-type > p {
   padding: var(--code-block-style-elements-padding);
   line-height: 25px;
   
-  /* We probably don't need most of these colors because they don't appear in declarations */
-  --color-syntax-attributes: rgb(148, 113, 0);
-  --color-syntax-characters: rgb(39, 42, 216);
-  --color-syntax-comments: rgb(112, 127, 140);
-  --color-syntax-deletion: var(--color-figure-red);
-  --color-syntax-documentation-markup: rgb(80, 99, 117);
-  --color-syntax-documentation-markup-keywords: rgb(80, 99, 117);
-  --color-syntax-heading: rgb(186, 45, 162);
-  --color-syntax-highlighted: rgba(0, 113, 227, 0.2);
-  --color-syntax-keywords: rgb(173, 61, 164);
-  --color-syntax-marks: rgb(0, 0, 0);
-  --color-syntax-numbers: rgb(39, 42, 216);
-  --color-syntax-other-class-names: rgb(112, 61, 170);
-  --color-syntax-other-constants: rgb(75, 33, 176);
-  --color-syntax-other-declarations: rgb(4, 124, 176);
-  --color-syntax-other-function-and-method-names: rgb(75, 33, 176);
-  --color-syntax-other-instance-variables-and-globals: rgb(112, 61, 170);
-  --color-syntax-other-preprocessor-macros: rgb(120, 73, 42);
-  --color-syntax-other-type-names: rgb(112, 61, 170);
-  --color-syntax-param-internal-name: rgb(64, 64, 64);
-  --color-syntax-plain-text: rgb(0, 0, 0);
-  --color-syntax-preprocessor-statements: rgb(120, 73, 42);
-  --color-syntax-project-class-names: rgb(62, 128, 135);
-  --color-syntax-project-constants: rgb(45, 100, 105);
-  --color-syntax-project-function-and-method-names: rgb(45, 100, 105);
-  --color-syntax-project-instance-variables-and-globals: rgb(62, 128, 135);
-  --color-syntax-project-preprocessor-macros: rgb(120, 73, 42);
-  --color-syntax-project-type-names: rgb(62, 128, 135);
-  --color-syntax-strings: rgb(209, 47, 27);
-  --color-syntax-type-declarations: rgb(3, 99, 140);
-  --color-syntax-urls: rgb(19, 55, 255);
+  --color-comment: rgb(112, 127, 140);
+  --color-keyword: rgb(173, 61, 164);
+  --color-number: rgb(39, 42, 216);
+  --color-type-name: rgb(112, 61, 170);
+  --color-param-name: rgb(64, 64, 64);
+  --color-meta: var(--color-number);
+  --color-string: rgb(209, 47, 27);
+  --color-addition: rgb(0, 128, 0);
+  --color-deletion: rgb(255, 0, 0);
   
   &> code {
     display: block;
@@ -509,19 +488,50 @@ section:first-of-type > p {
     font-size: 15px;
     line-height: 25px;
     
-    .keyword, .attribute {
-      color: var(--color-syntax-keywords);
-    }
-    .internalParam {
-      color: var(--color-syntax-param-internal-name);
-    }
-    .typeIdentifier {
-      color: var(--color-syntax-other-type-names);
-      &:not(:hover) {
-        text-decoration: none;
-      }
-    }
+    .keyword, .attributem, .literal { color: var(--color-keyword); }
+    .internalParam { color: var(--color-param-name); }
+    .typeIdentifier, .type, .built_in, .title { color: var(--color-type-name); }
+    .comment { color: var(--color-comment); }
+    .number { color: var(--color-number); }
+    .string { color: var(--color-string); }
+    .meta, .meta>.keyword { color: var(--color-meta); }
   }
+}
+
+pre.css {
+  .attribute { color: var(--color-type-name); }
+  .selector-tag, .selector-id { color: var(--color-keyword); }
+}
+pre.diff {
+  .addition { color: var(--color-addition); }
+  .deletion { color: var(--color-deletion); }
+}
+pre.java, pre.javascript {
+  .attr, .params { color: var(--color-type-name); }
+}
+pre.json {
+  .attr { color: var(--color-string); }
+}
+pre.http {
+  .attribute { color: var(--color-type-name); }
+}
+pre.scss {
+  .attribute { color: var(--color-keyword); }
+}
+pre.xml {
+  .attr { color: var(--color-type-name); }
+  .tag { color: var(--color-number); }
+}
+pre.markdown {
+  .section { color: var(--color-type-name); }
+  .bullet { color: var(--color-number); }
+  .string { color: var(--color-string); }
+  .strong { font-weight: bold; }
+  .emphasis, .link { font-style: italic; }
+}
+
+#declaration > code >.typeIdentifier:not(:hover) {
+  text-decoration: none;
 }
 
 pre {
@@ -1318,6 +1328,18 @@ figcaption {
 })();
 
 """.utf8))
+    
+    package static let highlightScript = File(filename: "highlight.mjs", data: Data(#"""
+    import hljs from 'https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.12.0/build/es/highlight.min.js';
+    hljs.configure({
+      languageDetectRe: /\b([\w-]+)\b/i, // no language name prefix
+      classPrefix: '',
+      cssSelector: 'main pre:not(#declaration) > code'
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+        hljs.highlightAll();
+    });
+    """#.utf8))
     
     // MARK: Icons
 
