@@ -43,6 +43,38 @@ struct TermListRenderingTests {
     }
 
     @Test
+    func detectsTermAfterLineBreakAndTermWithoutDefinition() async throws {
+        let content = try await renderedContent("""
+        - Term
+          Second term
+          item: Second definition.
+        - term without definition:
+        """)
+        #expect(content == [
+            .termList(.init(items: [
+                termItem([.text("Second term item")], [paragraph([.text("Second definition.")])]),
+                termItem([.text("without definition")], [paragraph([.text("")])]),
+            ])),
+        ])
+    }
+
+    @Test
+    func rendersListThatMixesTermListItemsAndOtherItemsAsUnorderedList() async throws {
+        let content = try await renderedContent("""
+        - term A: x
+        - terminology not: a term
+        - **Final** item
+        """)
+        #expect(content == [
+            .unorderedList(.init(items: [
+                .init(content: [paragraph([.text("term A: x")])]),
+                .init(content: [paragraph([.text("terminology not: a term")])]),
+                .init(content: [paragraph([.strong(inlineContent: [.text("Final")]), .text(" item")])]),
+            ])),
+        ])
+    }
+
+    @Test
     func doesNotDetectTermsWithoutLeadingKeywordAndColon() async throws {
         let content = try await renderedContent("""
         - A term: not at the start

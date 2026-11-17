@@ -84,7 +84,7 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> [any RenderContent] {
         let renderListItems = unorderedList.listItems.reduce(into: [], { result, item in result.append(contentsOf: visitListItem(item))}) as! [RenderBlockContent.ListItem]
-        return renderListItems.unorderedAndTermLists()
+        return [renderListItems.termListOrUnorderedList()]
     }
     
     mutating func visitParagraph(_ paragraph: Paragraph) -> [any RenderContent] {

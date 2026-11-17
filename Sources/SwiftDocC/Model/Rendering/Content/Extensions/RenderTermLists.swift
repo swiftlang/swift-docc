@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,74 +11,25 @@
 private import Markdown
 import Foundation
 
-protocol ListableItem {}
-extension RenderBlockContent.ListItem: ListableItem {}
-extension RenderBlockContent.TermListItem: ListableItem {}
-
 extension Collection<RenderBlockContent.ListItem> {
     
-    /// Detects term list items in a collection of list items and converts
-    /// them to term list items for rendering while preserving non-term
-    /// list items.
+    /// Returns a term list if every list item defines a term, or an unordered list with the list items otherwise.
     ///
-    /// - Returns: An array containing either a combination of `.unorderedList`
-    ///   and `.termList` elements, entirely `.unorderedList` elements, or
-    ///   entirely `.termList` elements. The order of the list items is
-    ///   preserved from the order received.
-    ///
-    func unorderedAndTermLists() -> [any RenderContent] {
-        var contents = [any RenderContent]()
-        
-        // Keep track of the recent list items that are of the same type
-        var runningListItems = [any ListableItem]()
-        
+    /// A list that mixes term-list items and other items is almost always an authoring mistake, like a missing "term" keyword,
+    /// so it stays an unordered list rather than splitting into several lists.
+    func termListOrUnorderedList() -> RenderBlockContent {
+        guard !isEmpty else {
+            return .unorderedList(.init(items: []))
+        }
+        var termListItems = [RenderBlockContent.TermListItem]()
+        termListItems.reserveCapacity(count)
         for item in self {
-            
-            // If this is a term list item
-            if let termListItem = RenderBlockContent.TermListItem(item) {
-                
-                // If the previous list item was not a term list item
-                if let previousItem = runningListItems.last, previousItem is RenderBlockContent.ListItem {
-                    
-                    // Create an unordered list with the previous unordered list items
-                    // and clear out the list of recent items
-                    contents.append(listWithItems(runningListItems))
-                    runningListItems.removeAll()
-                }
-                runningListItems.append(termListItem)
-            } else {
-                
-                // If the previous list item was a term list item
-                if let previousItem = runningListItems.last, previousItem is RenderBlockContent.TermListItem {
-                    
-                    // Create a term list with the previous term list items
-                    // and clear out the list of recent items
-                    contents.append(listWithItems(runningListItems))
-                    runningListItems.removeAll()
-                }
-                runningListItems.append(item)
+            guard let termListItem = RenderBlockContent.TermListItem(item) else {
+                return .unorderedList(.init(items: Array(self)))
             }
+            termListItems.append(termListItem)
         }
-        
-        // Create a list with the items found at the end of the list
-        if !runningListItems.isEmpty {
-            contents.append(listWithItems(runningListItems))
-        }
-        return contents
-    }
-    
-    /// Creates an unordered or term list from the given items.
-    ///
-    /// > Important: This will `fatalError` if the given items are not
-    ///   list items.
-    private func listWithItems(_ items: [any ListableItem]) -> any RenderContent {
-        if let unorderedListItems = items as? [RenderBlockContent.ListItem] {
-            return RenderBlockContent.unorderedList(.init(items: unorderedListItems))
-        } else if let termListItems = items as? [RenderBlockContent.TermListItem] {
-            return RenderBlockContent.termList(.init(items: termListItems))
-        } else {
-            fatalError()
-        }
+        return .termList(.init(items: termListItems))
     }
 }
 
