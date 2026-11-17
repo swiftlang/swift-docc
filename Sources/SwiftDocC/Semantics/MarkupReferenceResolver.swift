@@ -11,6 +11,7 @@
 import Foundation
 import Markdown
 private import SymbolKit
+private import DocCCommon
 
 private func invalidLinkDestinationDiagnostic(destination: String, range: SourceRange?, severity: DiagnosticSeverity) -> Diagnostic {
     Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.invalidLinkDestination", summary: "Link destination \(destination.singleQuoted) is not a valid URL")
@@ -30,6 +31,35 @@ private func removedLinkDestinationDiagnostic(reference: ResolvedTopicReference,
         ]))
     }
     return Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.", solutions: solutions)
+}
+
+private func mixedTermListDiagnostic(for unorderedList: UnorderedList) -> Diagnostic? {
+    let itemsWithoutTerms = Array(unorderedList.listItems.filter { TermListItem($0) == nil })
+    guard let firstItemWithoutTerm = itemsWithoutTerms.first,
+          itemsWithoutTerms.count < unorderedList.childCount
+    else {
+        return nil
+    }
+    let range = firstItemWithoutTerm.range
+    let notes = itemsWithoutTerms.dropFirst().compactMap { listItem -> Diagnostic.Note? in
+        guard let range = listItem.range, let source = range.source else {
+            return nil
+        }
+        return .init(source: source, range: range, message: "This list item doesn't define a term either.")
+    }
+    return Diagnostic(
+        source: range?.source,
+        severity: .warning,
+        range: range,
+        identifier: "org.swift.docc.MixedTermList",
+        summary: "List item doesn't define a term, but other items in the same list do",
+        explanation: "A list is a term list only if every item defines a term, like '- term Name: Definition'. DocC renders this list as a bulleted list, which shows the word 'term' in the items that define a term.",
+        notes: notes,
+        solutions: [
+            Solution(summary: "Define a term in every item of the list.", replacements: []),
+            Solution(summary: "Move the items that define a term into a list of their own.", replacements: []),
+        ]
+    )
 }
 
 /**
@@ -80,6 +110,15 @@ struct MarkupReferenceResolver: MarkupRewriter {
         }
     }
 
+    mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> (any Markup)? {
+        // This runs on each page's content after asides and tags like "- Note:" or "- Parameter x:" are extracted from it,
+        // so it checks the same lists that the renderers render.
+        if let diagnostic = mixedTermListDiagnostic(for: unorderedList) {
+            diagnostics.append(diagnostic)
+        }
+        return defaultVisit(unorderedList)
+    }
+    
     mutating func visitImage(_ image: Image) -> (any Markup)? {
         if let reference = image.reference(in: context.inputs), !context.resourceExists(with: reference) {
             diagnostics.append(unresolvedResourceDiagnostic(resource: reference, source: image.range?.source, range: image.range, severity: .warning))

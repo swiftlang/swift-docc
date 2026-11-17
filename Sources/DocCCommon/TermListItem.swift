@@ -36,7 +36,7 @@ package struct TermListItem {
     private static let keyword = "term"
     
     /// Creates a term-list item from a markdown list item, or returns `nil` if the list item doesn't define a term.
-    init?(_ listItem: ListItem) {
+    package init?(_ listItem: ListItem) {
         guard let paragraph = listItem.child(at: 0) as? Paragraph,
               let firstText = paragraph.child(at: 0) as? Text
         else {
