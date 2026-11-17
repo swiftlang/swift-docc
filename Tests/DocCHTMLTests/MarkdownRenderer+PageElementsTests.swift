@@ -328,6 +328,67 @@ struct MarkdownRenderer_PageElementsTests {
         }
     }
 
+    @Test
+    func renderingParameterWithMixedTermList() {
+        let parameters = makeRenderer(goal: .conciseness).parameters([
+            .swift: [
+                .init(name: "Value", content: parseMarkup(string: """
+                - term A: B.
+                - plain
+                """)),
+            ]
+        ])
+        
+        parameters.assertMatches(prettyFormatted: true, expected: """
+        <h2>Parameters</h2>
+        <dl>
+          <dt>Value</dt>
+          <dd>
+            <dl>
+              <dt>A</dt>
+              <dd>
+                <p>B.</p>
+              </dd>
+            </dl>
+            <ul>
+              <li>
+                <p>plain</p>
+              </li>
+            </ul>
+          </dd>
+        </dl>
+        """)
+    }
+    
+    @Test
+    func renderingLanguageSpecificReturnSectionWithMixedTermList() {
+        let returns = makeRenderer(goal: .conciseness).returns([
+            .swift:      parseMarkup(string: """
+                - term A: B.
+                - plain
+                """),
+            .objectiveC: parseMarkup(string: "Other"),
+        ])
+        
+        returns.assertMatches(prettyFormatted: true, expected: """
+        <h2>Return value</h2>
+        <dl class="swift-only">
+          <dt>A</dt>
+          <dd>
+            <p>B.</p>
+          </dd>
+        </dl>
+        <ul class="swift-only">
+          <li>
+            <p>plain</p>
+          </li>
+        </ul>
+        <p class="occ-only">
+          Other
+        </p>
+        """)
+    }
+
     @Test(arguments: RenderGoal.allCases)
     func renderingSwiftDeclaration(goal: RenderGoal) {
         let symbolPaths = [
