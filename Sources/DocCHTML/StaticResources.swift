@@ -50,6 +50,7 @@ package enum StaticResources {
         anchorIcon,
         sidebarIcon,
         chevronIcon,
+        closeIcon,
     ]
     
     // MARK: Stylesheets
@@ -816,11 +817,15 @@ pre {
 }
 
 body > header {
+  /* The width of the sidebar icon before the header's title */
+  --header-icon-width: 30px;
+  
   position: sticky;
   top: 0;
   box-sizing: border-box;
   width: 100%;
   height: 52px;
+  padding-inline: 22px;
   z-index: 5;
   
   display: flex;
@@ -842,12 +847,28 @@ body > header {
     margin-top: 0;
     
     &:before {
-      width: 30px;
+      width: var(--header-icon-width);
       display: inline-block;
       content: url(sidebar.svg)
     }
+  }
+  
+  /* When the page has a navigator, the button that shows and hides it displays the sidebar icon before the title instead. */
+  #navigator-toggle {
+    width: var(--header-icon-width);
+    height: 25px;
+    padding: 0;
+    border: none;
+    background: url(sidebar.svg) no-repeat left center;
+    cursor: pointer;
     
-    margin-left: 22px;
+    + h2 {
+      margin-right: auto;
+      
+      &:before {
+        content: none;
+      }
+    }
   }
   
   span {
@@ -855,8 +876,6 @@ body > header {
     line-height: 18px;
     font-size: 14px;
     display: inline-block;
-    
-    margin-right: 22px;
   }
 }
 
@@ -977,6 +996,37 @@ body > header {
   font-size: 17px;
   line-height: 25px;
   
+  /* The panel's title and the module's title. */
+  h2 {
+    margin: 0;
+    padding: 0;
+    color: black;
+    font-weight: 600;
+  }
+  
+  &> header {
+    display: none;
+    flex: none;
+    align-items: center;
+    height: 48px;
+    margin-inline: var(--navigator-inset);
+    
+    h2 {
+      flex: 1;
+      font-size: 17px;
+      line-height: 17px;
+    }
+    
+    button {
+      width: 19px;
+      height: 19px;
+      padding: 0;
+      border: none;
+      background: url(close.svg);
+      cursor: pointer;
+    }
+  }
+  
   .technology-title {
     display: flex;
     margin-inline: var(--navigator-inset);
@@ -989,12 +1039,8 @@ body > header {
     h2 {
       overflow: hidden;
       text-overflow: ellipsis;
-      margin: 0;
-      padding: 0;
-      color: black;
       font-size: 19px;
       line-height: 23px;
-      font-weight: 600;
     }
     
     &:hover {
@@ -1083,10 +1129,40 @@ body > header {
   }
 }
 
-/* On narrow screens, the navigator is hidden. */
+/* On narrow screens, the navigator is a panel that slides in over the page's content when the reader opens it, and hides after it slides out. */
 @media only screen and (max-width: 1023px) {
   #navigator {
-    display: none;
+    position: fixed;
+    inset: 0;
+    /* The panel's edge is just past the window's edge, so that it only shows while the panel slides. */
+    margin-inline-end: -1px;
+    z-index: 6;
+    padding-top: 0;
+    visibility: hidden;
+    transform: translateX(-100%);
+    /* The panel stays visible while it slides out, because `visibility` transitions as visible until it ends. */
+    transition: transform 0.15s ease-in, visibility 0.15s;
+  }
+  
+  body.navigator-open #navigator {
+    visibility: visible;
+    transform: none;
+    /* The panel is visible as soon as it opens, so that its close button can have the focus. */
+    transition-property: transform;
+  }
+  
+  #navigator > header {
+    display: flex;
+  }
+  
+  /* Scrolling past the end of the panel's items doesn't scroll the page behind it. */
+  #navigator > ul {
+    overscroll-behavior: contain;
+  }
+  
+  /* The page behind the open panel doesn't scroll, even when the panel's items don't fill it. */
+  body.navigator-open {
+    overflow: hidden;
   }
 }
 
@@ -1110,7 +1186,7 @@ body > header {
   }
 }
 
-/* On wider screens, the navigator displays in a column next to the page's content. */
+/* On wider screens, the navigator displays in a column next to the page's content, unless the reader hides it. */
 @media only screen and (min-width: 1024px) {
   #navigator {
     /* A default width of 400px, but between 30% and 40% of the window width, up to a 1521px wide window. */
@@ -1119,12 +1195,28 @@ body > header {
     position: sticky;
     top: 52px;
     height: calc(100vh - 52px);
+    /* The column stays visible while it narrows or widens, because `visibility` transitions as visible until it ends. */
+    transition: width 0.3s ease-in, visibility 0.3s;
   }
   
   @media (min-width: 1521px) {
     #navigator {
       width: 543px;
     }
+  }
+  
+  /* The navigator narrows to nothing when the reader hides it, and hides after that. */
+  body.navigator-collapsed #navigator {
+    width: 0;
+    /* The navigator's border doesn't take up space either. */
+    margin-inline-end: -1px;
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #navigator {
+    transition: none;
   }
 }
 
@@ -1221,7 +1313,7 @@ figcaption {
     
     // MARK: Scripts
     
-    /// The script that renders the navigator sidebar from the navigator index.
+    /// The script that renders the navigator sidebar from the navigator index and lets the reader show and hide it.
     package static let navigatorScript = File(filename: "navigator.js", data: Data("""
 // Renders the navigator sidebar from the navigator index in the output's "index/index.json" file.
 (async () => {
@@ -1249,6 +1341,13 @@ figcaption {
   function hrefForPath(path) {
     const components = path.split("/").filter(Boolean).map((component) => encodeURI(component).replace(/[#?]/g, encodeURIComponent));
     return pathToRoot + components.join("/") + "/index.html";
+  }
+  
+  // Accessing storage throws when the browser or the reader disables it. Then the navigator's state only lasts for the page.
+  function withStorage(body) {
+    try {
+      return body();
+    } catch {}
   }
   
   // MARK: Navigator data
@@ -1307,14 +1406,79 @@ figcaption {
   
   const list = makeList(rootModule.children, 0);
   
-  // The navigator goes before the page's main content, in the container below the page's header.
+  // On narrow screens, the navigator has a title and a button that closes it.
+  const head = document.createElement("header");
+  head.innerHTML = `<h2>Documentation</h2><button type="button" aria-label="Close Documentation Navigator"></button>`;
+  const closeButton = head.lastChild;
+  
+  // The navigator goes before the page's main content, in the container below the page's header, and the button that shows and hides the navigator goes in the header.
   const navigator = document.createElement("nav");
   navigator.id = "navigator";
   navigator.setAttribute("aria-label", "Documentation Navigator");
-  navigator.append(technologyTitle, list);
+  navigator.append(head, technologyTitle, list);
   const container = document.querySelector("body > .full-width-container");
   const main = container.querySelector(":scope > main");
   main.before(navigator);
+  // The page's default header is right before the container, after any custom header. The button goes before its title, so that it isn't part of the heading.
+  const headerTitle = container.previousElementSibling.querySelector("h2");
+  headerTitle.insertAdjacentHTML("beforebegin", `<button type="button" id="navigator-toggle" aria-controls="navigator" aria-label="Documentation Navigator"></button>`);
+  const toggle = headerTitle.previousElementSibling;
+  
+  // On wide screens the navigator is visible unless the reader hides it. On narrow screens it's hidden unless the reader opens it.
+  const wideScreen = matchMedia("(min-width: 1024px)");
+  const collapsedStorageKey = "docc.navigator.collapsed";
+  
+  function updateToggle() {
+    const isVisible = wideScreen.matches
+      ? !document.body.classList.contains("navigator-collapsed")
+      : document.body.classList.contains("navigator-open");
+    toggle.setAttribute("aria-expanded", isVisible);
+  }
+  
+  document.body.classList.toggle("navigator-collapsed", withStorage(() => localStorage.getItem(collapsedStorageKey)) === "true");
+  
+  // On narrow screens the navigator is a panel over the page, so the rest of the page is inert while the panel is open,
+  // the panel's close button has the focus when it opens, and the button that opened it has the focus when it closes.
+  function setPanelOpen(isOpen) {
+    const isChanging = document.body.classList.contains("navigator-open") !== isOpen;
+    document.body.classList.toggle("navigator-open", isOpen);
+    for (const element of [...document.body.children, main]) {
+      element.inert = isOpen && element !== container;
+    }
+    updateToggle();
+    if (isChanging) {
+      (isOpen ? closeButton : toggle).focus();
+    }
+  }
+  
+  wideScreen.addEventListener("change", () => {
+    // The navigator switches between the column and the panel without a transition.
+    navigator.style.transition = "none";
+    setPanelOpen(false);
+    // Reading a layout value applies the new styles while the transition is off.
+    navigator.offsetWidth;
+    navigator.style.transition = "";
+  });
+  
+  toggle.addEventListener("click", () => {
+    if (wideScreen.matches) {
+      const isCollapsed = document.body.classList.toggle("navigator-collapsed");
+      withStorage(() => localStorage.setItem(collapsedStorageKey, isCollapsed));
+      updateToggle();
+    } else {
+      setPanelOpen(!document.body.classList.contains("navigator-open"));
+    }
+  });
+  
+  closeButton.addEventListener("click", () => setPanelOpen(false));
+  
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && document.body.classList.contains("navigator-open")) {
+      setPanelOpen(false);
+    }
+  });
+  
+  updateToggle();
 })();
 
 """.utf8))
@@ -1368,6 +1532,13 @@ figcaption {
     static let chevronIcon = File(filename: "chevron.svg", data: Data("""
 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10px" height="10px" viewBox="0 0 14 14" fill="#666">
   <path d="M2.964 1.366l0.649-0.76 7.426 6.343-7.423 6.445-0.655-0.755 6.545-5.683-6.542-5.59z"/>
+</svg>
+""".utf8))
+
+    /// The icon that DocC uses for the button to close the navigator sidebar on narrow screens.
+    static let closeIcon = File(filename: "close.svg", data: Data("""
+<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19px" height="19px" viewBox="0 0 14 14">
+  <path d="M11.91 1l1.090 1.090-4.917 4.915 4.906 4.905-1.090 1.090-4.906-4.905-4.892 4.894-1.090-1.090 4.892-4.894-4.903-4.904 1.090-1.090 4.903 4.904z"/>
 </svg>
 """.utf8))
 
