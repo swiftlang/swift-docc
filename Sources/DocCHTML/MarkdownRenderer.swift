@@ -61,7 +61,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```html
     /// <p>Some <em>formatted</em> text</p>
     /// ```
-    func visit(_ paragraph: Paragraph) -> HTMLNode {
+    func visitParagraph(_ paragraph: Paragraph) -> HTMLNode {
         if paragraph.childCount == 1, let image = paragraph.child(at: 0) as? Image {
             visit(image)
         } else {
@@ -83,7 +83,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   <p>Something noteworthy</p>
     /// </aside>
     /// ```
-    func visit(_ blockQuote: BlockQuote) -> HTMLNode {
+    func visitBlockQuote(_ blockQuote: BlockQuote) -> HTMLNode {
         let aside = Aside(blockQuote)
         
         var children: [HTMLNode] = [
@@ -113,7 +113,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't wrap the heading's content in an anchor.
-    package func visit(_ heading: Heading) -> HTMLNode {
+    package func visitHeading(_ heading: Heading) -> HTMLNode {
         selfReferencingHeading(level: heading.level, content: visit(heading.children), plainTextTitle: heading.plainText)
     }
     
@@ -159,42 +159,42 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     }
     
     /// Transforms a markdown emphasis into a`<em>` HTML element.
-    func visit(_ emphasis: Emphasis) -> HTMLNode {
+    func visitEmphasis(_ emphasis: Emphasis) -> HTMLNode {
         em(contents: visit(emphasis.children))
     }
     
     /// Transforms a markdown strong into a`<strong>` HTML element.
-    func visit(_ strong: Strong) -> HTMLNode {
+    func visitStrong(_ strong: Strong) -> HTMLNode {
         DocCHTML.strong(contents: visit(strong.children))
     }
     
     /// Transforms a markdown strikethrough into a`<s>` HTML element.
-    func visit(_ strikethrough: Strikethrough) -> HTMLNode {
+    func visitStrikethrough(_ strikethrough: Strikethrough) -> HTMLNode {
         s(contents: visit(strikethrough.children))
     }
     
     /// Transforms a markdown inline code into a`<code>` HTML element.
-    func visit(_ inlineCode: InlineCode) -> HTMLNode {
+    func visitInlineCode(_ inlineCode: InlineCode) -> HTMLNode {
         code(contents: [.text(inlineCode.code)])
     }
     
     /// Transforms a markdown text into an HTML escaped text node.
-    func visit(_ text: Text) -> HTMLNode {
+    func visitText(_ text: Text) -> HTMLNode {
         .text(text.string)
     }
     
     /// Transforms a markdown line break into an empty`<br>` HTML element.
-    func visit(_: LineBreak) -> HTMLNode {
+    func visitLineBreak(_: LineBreak) -> HTMLNode {
         br
     }
     
     /// Transforms a markdown line break into a single space.
-    func visit(_: SoftBreak) -> HTMLNode {
+    func visitSoftBreak(_: SoftBreak) -> HTMLNode {
         .text(" ") // A soft line break doesn't actually break the content
     }
     
     /// Transforms a markdown line break into an empty`<hr>` HTML element.
-    func visit(_: ThematicBreak) -> HTMLNode {
+    func visitThematicBreak(_: ThematicBreak) -> HTMLNode {
         hr
     }
     
@@ -214,7 +214,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     }
     
     /// Transforms a block of HTML in the source markdown into XML nodes representing the same structure with all the comments removed.
-    func visit(_ html: HTMLBlock) -> HTMLNode {
+    func visitHTMLBlock(_ html: HTMLBlock) -> HTMLNode {
         do {
             let parsed = try XMLElement(xmlString: html.rawHTML)
             _removeComments(from: parsed)
@@ -225,7 +225,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     }
     
     /// Transforms an inline HTML tag in the source markdown into XML nodes representing the same structure with all the comments removed.
-    func visit(_ html: InlineHTML) -> HTMLNode {
+    func visitInlineHTML(_ html: InlineHTML) -> HTMLNode {
         // Inline HTML is one tag at a time, meaning that the closing and opening tags are parsed separately
         // Because of this, we can't parse it with `XMLElement` or `XMLParser`.
         
@@ -263,7 +263,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// If the link provider returns `nil`, the renderer instead transforms the link into an HTML version of the provider's ``LinkProvider/fallbackLinkText(linkString:)`` text.
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr>` HTML elements in the symbol name.
-    func visit(_ link: Link) -> HTMLNode {
+    func visitLink(_ link: Link) -> HTMLNode {
         guard let destination = link.destination else {
             return .text("")
         }
@@ -333,7 +333,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// If the link provider returns `nil`, the renderer instead transforms the symbol link into a `<code>` HTML element that wraps the provider's ``LinkProvider/fallbackLinkText(linkString:)`` text.
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr>` HTML elements in the symbol name.
-    func visit(_ symbolLink: SymbolLink) -> HTMLNode {
+    func visitSymbolLink(_ symbolLink: SymbolLink) -> HTMLNode {
         guard let destination = symbolLink.destination,
               let linkedElement = linkProvider.element(for: destination)
         else {
@@ -383,7 +383,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   <img alt="Some alt text" decoding="async" loading="lazy"/>
     /// </picture>
     /// ```
-    func visit(_ image: Image) -> HTMLNode {
+    func visitImage(_ image: Image) -> HTMLNode {
         guard let source = image.source else {
             // ???: What do we return for images that won't display anything?
             return .text("")
@@ -459,7 +459,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   <code>Some block of code</code>
     /// </pre>
     /// ```
-    func visit(_ codeBlock: CodeBlock) -> HTMLNode {
+    func visitCodeBlock(_ codeBlock: CodeBlock) -> HTMLNode {
         pre(
             attributes: codeBlock.language.map { [.class($0)] } ?? [],
             contents: [code(contents: [.text(codeBlock.code)])]
@@ -497,7 +497,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </li>
     /// </ul>
     /// ```
-    func visit(_ unorderedList: UnorderedList) -> HTMLNode {
+    func visitUnorderedList(_ unorderedList: UnorderedList) -> HTMLNode {
         ul(contents: visit(unorderedList.children))
     }
     
@@ -520,14 +520,14 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </li>
     /// </ol>
     /// ```
-    func visit(_ orderedList: OrderedList) -> HTMLNode {
+    func visitOrderedList(_ orderedList: OrderedList) -> HTMLNode {
         ol(contents: visit(orderedList.children))
     }
     
     /// Transforms a markdown list item into a`<li>` HTML element.
     ///
     /// See ``visit(_:)-(UnorderedList)`` or ``visit(_:)-(OrderedList)`` for examples.
-    func visit(_ listItem: ListItem) -> HTMLNode {
+    func visitListItem(_ listItem: ListItem) -> HTMLNode {
         li(contents: visit(listItem.children))
     }
     
@@ -569,7 +569,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </tbody>
     /// </table>
     /// ```
-    func visit(_ table: Table) -> HTMLNode {
+    func visitTable(_ table: Table) -> HTMLNode {
         var content: [HTMLNode] = []
                 
         if !table.head.isEmpty {
@@ -729,7 +729,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: Directives
     
-    func visit(_ directive: BlockDirective) -> HTMLNode {
+    func visitBlockDirective(_ directive: BlockDirective) -> HTMLNode {
         let parsed = self.renderableDirectiveParser.parse(blockDirective: directive)
         
         switch parsed {
@@ -806,19 +806,35 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     // TODO: Support rendering Doxygen tags. (rdar://165755750)
     // It would be nice if DocC processed in the model, so that all renderers could have just one code path for parameters, returns, etc.
     
-    func visit(_: DoxygenNote) -> HTMLNode {
+    func visitDoxygenNote(_: DoxygenNote) -> HTMLNode {
         .text("")
     }
-    func visit(_: DoxygenReturns) -> HTMLNode {
+    func visitDoxygenReturns(_: DoxygenReturns) -> HTMLNode {
         .text("")
     }
-    func visit(_: DoxygenAbstract) -> HTMLNode {
+    func visitDoxygenAbstract(_: DoxygenAbstract) -> HTMLNode {
         .text("")
     }
-    func visit(_: DoxygenParameter) -> HTMLNode {
+    func visitDoxygenParameter(_: DoxygenParameter) -> HTMLNode {
         .text("")
     }
-    func visit(_: DoxygenDiscussion) -> HTMLNode {
+    func visitDoxygenDiscussion(_: DoxygenDiscussion) -> HTMLNode {
+        .text("")
+    }
+    
+    private func visitCustomBlock(_ : CustomBlock) -> HTMLNode {
+        .text("")
+    }
+    
+    private func visitDocument(_ : Document) -> HTMLNode {
+        .text("")
+    }
+    
+    private func visitCustomInline(_ : CustomInline) -> HTMLNode {
+        .text("")
+    }
+    
+    private func visitInlineAttributes(_ : InlineAttributes) -> HTMLNode {
         .text("")
     }
     
@@ -828,67 +844,67 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     package func visit(_ markup: some Markup) -> HTMLNode {
         // Check common markup types first
         if let paragraph = markup as? Paragraph {
-            return visit(paragraph)
+            return visitParagraph(paragraph)
         } else if let text = markup as? Text {
-            return visit(text)
+            return visitText(text)
         } else if let strong = markup as? Strong {
-            return visit(strong)
+            return visitStrong(strong)
         } else if let emphasis = markup as? Emphasis {
-            return visit(emphasis)
+            return visitEmphasis(emphasis)
         } else if let symbolLink = markup as? SymbolLink {
-            return visit(symbolLink)
+            return visitSymbolLink(symbolLink)
         } else if let link = markup as? Link {
-            return visit(link)
+            return visitLink(link)
         } else if let inlineCode = markup as? InlineCode {
-            return visit(inlineCode)
+            return visitInlineCode(inlineCode)
         } else if let image = markup as? Image {
-            return visit(image)
+            return visitImage(image)
         } else if let listItem = markup as? ListItem {
-            return visit(listItem)
+            return visitListItem(listItem)
         } else if let heading = markup as? Heading {
-            return visit(heading)
+            return visitHeading(heading)
         } else if let orderedList = markup as? OrderedList {
-            return visit(orderedList)
+            return visitOrderedList(orderedList)
         } else if let unorderedList = markup as? UnorderedList {
-            return visit(unorderedList)
+            return visitUnorderedList(unorderedList)
         } else if let codeBlock = markup as? CodeBlock {
-            return visit(codeBlock)
+            return visitCodeBlock(codeBlock)
         } else if let blockQuote = markup as? BlockQuote {
-            return visit(blockQuote)
+            return visitBlockQuote(blockQuote)
         } else if let table = markup as? Table {
-            return visit(table)
+            return visitTable(table)
         } else if let lineBreak = markup as? LineBreak {
-            return visit(lineBreak)
+            return visitLineBreak(lineBreak)
         } else if let softBreak = markup as? SoftBreak {
-            return visit(softBreak)
+            return visitSoftBreak(softBreak)
         } else if let thematicBreak = markup as? ThematicBreak {
-            return visit(thematicBreak)
+            return visitThematicBreak(thematicBreak)
         } else if let blockDirective = markup as? BlockDirective {
-            return visit(blockDirective)
+            return visitBlockDirective(blockDirective)
         } else if let inlineHTML = markup as? InlineHTML {
-            return visit(inlineHTML)
+            return visitInlineHTML(inlineHTML)
         } else if let html = markup as? HTMLBlock {
-            return visit(html)
+            return visitHTMLBlock(html)
         } else if let strikethrough = markup as? Strikethrough {
-            return visit(strikethrough)
+            return visitStrikethrough(strikethrough)
         } else if let customBlock = markup as? CustomBlock {
-            return visit(customBlock)
+            return visitCustomBlock(customBlock)
         } else if let document = markup as? Document {
-            return visit(document)
+            return visitDocument(document)
         } else if let customInline = markup as? CustomInline {
-            return visit(customInline)
+            return visitCustomInline(customInline)
         } else if let attributes = markup as? InlineAttributes {
-            return visit(attributes)
+            return visitInlineAttributes(attributes)
         } else if let doxygenDiscussion = markup as? DoxygenDiscussion {
-            return visit(doxygenDiscussion)
+            return visitDoxygenDiscussion(doxygenDiscussion)
         } else if let doxygenNote = markup as? DoxygenNote {
-            return visit(doxygenNote)
+            return visitDoxygenNote(doxygenNote)
         } else if let doxygenAbstract = markup as? DoxygenAbstract {
-            return visit(doxygenAbstract)
+            return visitDoxygenAbstract(doxygenAbstract)
         } else if let doxygenParam = markup as? DoxygenParameter {
-            return visit(doxygenParam)
+            return visitDoxygenParameter(doxygenParam)
         } else if let doxygenReturns = markup as? DoxygenReturns {
-            return visit(doxygenReturns)
+            return visitDoxygenReturns(doxygenReturns)
         } else if markup is Table.Head || markup is Table.Body || markup is Table.Row || markup is Table.Cell {
             fatalError("This renderer is expected to visit the `Table` element, not it's member. It's a programming error to pass one of its member type directly.")
         } else {
