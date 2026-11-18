@@ -56,6 +56,115 @@ extension PathHierarchy {
 }
 
 extension PathHierarchy.PathParser {
+    typealias LinkAndArchiveID = (link: Substring, archiveID: Substring?)
+    
+    /// Extracts the link" and optional "archive ID" components from a verified documentation link string with a "doc:" prefix.
+    ///
+    /// For example, an absolute link string like `"doc://com.example/ModuleName/SymbolName#HeaderName"` will return:
+    /// ```
+    /// (
+    ///   link:      "/ModuleName/SymbolName#HeaderName",
+    ///   archiveID: "com.example"
+    /// )
+    /// ```
+    /// and and link string without an archiveID like `"doc:ModuleName/SymbolName#HeaderName"` will return:
+    /// ```
+    /// (
+    ///   link:      "/ModuleName/SymbolName#HeaderName",
+    ///   archiveID: nil
+    /// )
+    /// ```
+    ///
+    /// If you want to parser the extracted link into its components you can pass it to ``PathParser/parse(path:)``
+    ///
+    /// - Parameters:
+    ///   - verifiedDocumentationLink: The verified documentation link string with a "doc:" prefix.
+    /// - Returns: The extracted link and archive ID substrings
+    /// - Precondition: The verified documentation link string has a `"doc:"` prefix.
+    static func extractLinkFromVerifiedDocumentationLink(_ verifiedDocumentationLink: String) -> LinkAndArchiveID {
+        // Check if the string already has contiguous UTF8 storage and run a faster, more low-level implementation.
+        let fastPath: LinkAndArchiveID? = verifiedDocumentationLink.utf8.withContiguousStorageIfAvailable {
+            let buffer = UnsafeRawBufferPointer($0)
+            let count = buffer.count
+            
+            guard count > 4 /* "doc:" */, let pointer = buffer.baseAddress, pointer.hasASCIIPrefix("doc:") else {
+                // If the string doesn't start with "doc:" it isn't a documentation link.
+                preconditionFailure("'\(verifiedDocumentationLink)' doesn't have the required 'doc:' prefix. It's the callers responsibility to check this before calling passing a string to this function")
+            }
+            var offset = 4
+            
+            guard count > 6, pointer.hasASCIIPrefix("//", byteOffset: offset) else {
+                // If the string doesn't start with "doc://" it doesn't contain an archive ID and the rest of the string is the link.
+                let index = verifiedDocumentationLink.utf8.index(verifiedDocumentationLink.startIndex, offsetBy: offset)
+                return (link: verifiedDocumentationLink[index...], archiveID: nil)
+            }
+            offset &+= 2
+            
+            // We know that this is an absolute documentation link; with an archive ID, a "/" character, and a link:
+            //
+            //    doc://?????????/??????
+            //          ╰───┬───╯╰──┬╌╌╌
+            //         archiveID   link
+            let archiveIDStartIndex = verifiedDocumentationLink.utf8.index(verifiedDocumentationLink.startIndex, offsetBy: offset)
+                        // To try to find the next "/" character---that separates the "archive ID" from the "link"---as fast as possible, we check 8 bytes at a time as long as we can.
+            let slashSearchPattern: UInt64 = 0x01_01_01_01_01_01_01_01 &* UInt64( UInt8(ascii: "/") )
+            while count &- 8 >= offset {
+                let bytes = pointer.loadUnaligned(fromByteOffset: offset, as: UInt64.self)
+                let isSlash = ByteMatches(bytes, slashSearchPattern)
+                
+                guard isSlash.hasMatches else {
+                    offset &+= 8
+                    continue
+                }
+                
+                offset &+= isSlash.numberOfLeadingNonMatches
+                
+                // We found the separator between the archive ID and the link
+                let index = verifiedDocumentationLink.utf8.index(verifiedDocumentationLink.startIndex, offsetBy: offset)
+                return (link: verifiedDocumentationLink[index...], archiveID: verifiedDocumentationLink[archiveIDStartIndex..<index])
+            }
+            
+            // If haven't found the "/" yet, we have to check the last few bytes one-by-one to avoid reading out-of-bounds.
+            while count >= offset {
+                guard pointer.load(fromByteOffset: offset, as: UInt8.self) == .init(ascii: "/") else {
+                    offset &+= 1
+                    continue
+                }
+                
+                // We found the separator between the archive ID and the link
+                let index = verifiedDocumentationLink.utf8.index(verifiedDocumentationLink.startIndex, offsetBy: offset)
+                return (link: verifiedDocumentationLink[index...], archiveID: verifiedDocumentationLink[archiveIDStartIndex..<index])
+            }
+            
+            // We reached the end of the text without finding the separator. This link is only an archive ID (with an empty link text).
+            let index = verifiedDocumentationLink.endIndex
+            return (link: verifiedDocumentationLink[index...], archiveID: verifiedDocumentationLink[archiveIDStartIndex..<index])
+        }
+        if let fastPath {
+            return fastPath
+        }
+        
+        // If the string didn't have contiguous UTF8 storage for some reason we fallback to a slower implementation.
+        
+        guard verifiedDocumentationLink.hasPrefix("doc:") else {
+            // If the string doesn't start with "doc:" it isn't a documentation link
+            preconditionFailure("'\(verifiedDocumentationLink)' doesn't have the required 'doc:' prefix. It's the callers responsibility to check this before calling passing a string to this function")
+        }
+        
+        var remaining = verifiedDocumentationLink.dropFirst(4 /* "doc:" */)
+        guard remaining.hasPrefix("//") else {
+            // If the string doesn't start with "doc://" it doesn't contain an archive ID and the rest of the string is the link
+            return (link: remaining, archiveID: nil)
+        }
+        
+        remaining = remaining.dropFirst(2)
+        let index = remaining.firstIndex(of: "/") ?? remaining.endIndex
+        
+        return (link: remaining[index...], archiveID: remaining[..<index])
+    }
+}
+
+extension PathHierarchy.PathParser {
     /// Parses a documentation link path (and optional fragment) string into structured path component values.
     ///
     /// For example, a link string like `"/ModuleName/SymbolName-class//=(_:_:)-abc123#HeaderName"` will be parsed into:
