@@ -183,7 +183,10 @@ struct Availability {
                         continue
                     }
                     knownPlatforms[platform] = makeInformation(for: availability, currentIntroducedVersion: knownPlatforms[platform].state.introduced)
-                } else if let domainName = availability.domain?.rawValue {
+                } else if var domainName = availability.domain?.rawValue {
+                    if let uncommonPlatformName = Self.additionalPlatformDisplayNamesByCaseInsensitiveAlias[domainName.lowercased()] {
+                        domainName = uncommonPlatformName
+                    }
                     customPlatformsByName[domainName] = makeInformation(for: availability, currentIntroducedVersion: customPlatformsByName[domainName]?.state.introduced)
                 }
             }
@@ -520,6 +523,21 @@ struct Availability {
         
         return foundDeprecatedPlatforms
     }
+    
+    /// A map of known `PlatformName` display names keyed by all their lowercased name aliases.
+    ///
+    /// The availability container uses this to treat uncommon platform names as "known" with a sparser per-symbol storage.
+    private static let additionalPlatformDisplayNamesByCaseInsensitiveAlias: [String: String] = {
+        var result = [String: String]()
+        for platformName in PlatformName.sortedPlatforms where KnownPlatform(platformName) == nil {
+            result[platformName.rawValue.lowercased()] = platformName.displayName
+            result[platformName.displayName.lowercased()] = platformName.displayName
+            for alias in platformName.aliases {
+                result[alias.lowercased()] = platformName.displayName
+            }
+        }
+        return result
+    }()
 }
 
 // MARK: Known platform
