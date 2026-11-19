@@ -441,6 +441,12 @@ li.beta-badge::after {
 li.deprecated-badge::after {
   content: "Deprecated";
 }
+/* Strike through the name (the code link) of a deprecated item. */
+.deprecated-badge > a > code {
+  text-decoration: line-through;
+  text-decoration-color: var(--color-figure-blue);
+  color: var(--color-figure-gray-secondary);
+}
 
 h1, h2, h3, h4, h5, h6 {
   padding-inline-end: 23px; /* for the hover icon */
@@ -702,6 +708,14 @@ dl {
   }
   &> p {
     margin-top: 15px;
+  }
+  /* Item with a summary: badge on its own line, aligned with the summary */
+  li.deprecated-badge:has(> p)::after,
+  li.beta-badge:has(> p)::after {
+    display: block;
+    width: fit-content;
+    margin-inline-start: 2.294rem;
+    margin-top: 4px;
   }
 }
 

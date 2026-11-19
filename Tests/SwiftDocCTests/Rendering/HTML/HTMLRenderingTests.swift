@@ -848,6 +848,61 @@ struct HTMLRenderingTests {
         #expect(html.contains(expectedTabs), "\(html)")
     }
 
+    @Test
+    func displaysStatusBadgesForBetaSymbols() async throws {
+        let version1 = SymbolGraph.SemanticVersion(major: 1, minor: 0, patch: 0)
+        let version2 = SymbolGraph.SemanticVersion(major: 2, minor: 0, patch: 0)
+
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                // Not beta
+                makeSymbol(id: "class-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    makeAvailabilityItem(domainName: "macOS", introduced: version1),
+                ]),
+                // Beta because it's introduced in a platform version that's currently in beta
+                makeSymbol(id: "beta-id", kind: .method, pathComponents: ["SomeClass", "betaMethod()"], availability: [
+                    makeAvailabilityItem(domainName: "macOS", introduced: version2),
+                ]),
+            ], relationships: [
+                .init("beta-id", .memberOf, "class-id"),
+            ]))
+        }
+
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = ["macOS": .init(.init(2, 0, 0), beta: true)]
+
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        func renderedHTML(symbolID: String) throws -> String {
+            let reference = try #require(context.documentationCache.reference(symbolID: symbolID))
+            let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
+            return try #require(renderer.renderSymbol(symbol).prettyHTMLString)
+        }
+
+        // The breadcrumbs and the Topics section use the same badge class, so check each of them separately.
+        func breadcrumbs(in html: String) throws -> Substring {
+            let start = try #require(html.firstRange(of: #"<nav id="breadcrumbs">"#))
+            let end = try #require(html[start.upperBound...].firstRange(of: "</nav>"))
+            return html[start.upperBound..<end.lowerBound]
+        }
+        // The Topics item for the beta method is a badged list item that contains a link to the method.
+        let betaTopicsItem = #/<li class="beta-badge">\s*<a href="betamethod\(\)/index\.html">/#
+
+        // A page that isn't beta doesn't display a tag or a breadcrumb badge, but its beta Topics item displays a badge.
+        let classHTML = try renderedHTML(symbolID: "class-id")
+        #expect(!classHTML.contains(#"<p class="beta-tag">"#), "\(classHTML)")
+        #expect(try !breadcrumbs(in: classHTML).contains("beta-badge"), "\(classHTML)")
+        #expect(classHTML.contains(betaTopicsItem), "\(classHTML)")
+
+        // A beta page displays a beta tag and a beta breadcrumb badge.
+        let betaHTML = try renderedHTML(symbolID: "beta-id")
+        #expect(betaHTML.contains(#"<p class="beta-tag">"#), "\(betaHTML)")
+        #expect(try breadcrumbs(in: betaHTML).contains(#"<li class="beta-badge">"#), "\(betaHTML)")
+        #expect(!betaHTML.contains(betaTopicsItem), "\(betaHTML)")
+    }
+
     // MARK: Status tag agrees with the availability list
 
     /// Renders the page for `SomeClass` in a catalog with a single symbol that has the given in-source availability and doc comment.
