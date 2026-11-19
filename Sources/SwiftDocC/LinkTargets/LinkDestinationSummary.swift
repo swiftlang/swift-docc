@@ -434,7 +434,7 @@ public extension DocumentationNode {
 
         let isBeta, isDeprecated: Bool
         if let symbol = semantic as? Symbol {
-            isBeta       = symbol.consolidatedAvailability.allValues.contains { $1.isBeta(context.currentBetaPlatforms) }
+            isBeta       = symbol.isDisplayedAsBeta(context.currentBetaPlatforms)
             isDeprecated = symbol.deprecatedSummary != nil
                         || renderNode.metadata.platforms.map { LinkDestinationSummary._computeLegacyFallbackIsDeprecated(for: $0) } ?? false
         } else {

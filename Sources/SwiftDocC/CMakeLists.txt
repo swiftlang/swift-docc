@@ -251,6 +251,7 @@ add_library(SwiftDocC
   Model/Rendering/Symbol/RESTResponseRenderSection.swift
   Model/Rendering/Symbol/RelationshipsRenderSection.swift
   Model/Rendering/Symbol/SampleDownloadSection.swift
+  Model/Rendering/Symbol/Symbol+AvailabilityDisplayStatus.swift
   Model/Rendering/Symbol/TaskGroupRenderSection.swift
   Model/Rendering/TopicsSectionStyle.swift
   "Model/Rendering/Tutorial Article/TutorialArticleSection.swift"
