@@ -368,7 +368,7 @@ section:first-of-type > hgroup {
       color: #000;
     }
     
-    &:not(:first-child):before {
+    &:not(:first-child)::before {
       content: "/";
       width: 5px;
       margin-inline: 5px;

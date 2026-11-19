@@ -254,7 +254,9 @@ package struct HTMLRenderer {
             // Breadcrumbs
             heroElements.append(renderer.breadcrumbs(
                 references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.absoluteString },
-                currentPageNames: node.makeNames(goal: goal)
+                currentPageNames: node.makeNames(goal: goal),
+                isDeprecated: isDeprecated,
+                isBeta: isBeta
             ))
         }
         

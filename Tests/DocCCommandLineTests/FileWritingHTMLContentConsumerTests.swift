@@ -343,7 +343,9 @@ struct FileWritingHTMLContentConsumerTests {
               <li>
                 <a href="../index.html">SomeClass</a>
               </li>
-              <li>someMethod(with:and:)</li>
+              <li class="deprecated-badge">
+                someMethod(with:and:)
+              </li>
             </ul>
             <hgroup>
               <p>Instance Method</p>

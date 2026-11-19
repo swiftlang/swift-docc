@@ -12,7 +12,7 @@ private import DocCCommon
 
 package extension MarkdownRenderer {
     /// Creates an HTML element for the breadcrumbs that lead to the renderer's current page.
-    func breadcrumbs(references: [String], currentPageNames: LinkedElement.Names) -> HTMLNode {
+    func breadcrumbs(references: [String], currentPageNames: LinkedElement.Names, isDeprecated: Bool = false, isBeta: Bool = false) -> HTMLNode {
         // Breadcrumbs handle symbols differently than most elements in that everything uses a default style (no "code voice")
         func nameElements(for names: LinkedElement.Names) -> [HTMLNode] {
             switch names {
@@ -47,9 +47,16 @@ package extension MarkdownRenderer {
             }
         }
         
+        // Display an availability status badge after the page name.
+        var currentPageAttributes: [HTMLNode.Attribute] = []
+        if isDeprecated {
+            currentPageAttributes.append(.class("deprecated-badge"))
+        } else if isBeta {
+            currentPageAttributes.append(.class("beta-badge"))
+        }
         // Add the name of the current page. It doesn't display as a link because it would refer to the current page.
         items.append(
-            li(contents: nameElements(for: currentPageNames))
+            li(attributes: currentPageAttributes, contents: nameElements(for: currentPageNames))
         )
         let list = ul(contents: items)
         
