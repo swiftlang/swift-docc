@@ -7,7 +7,7 @@ Licensed under Apache License v2.0 with Runtime Library Exception
 See https://swift.org/LICENSE.txt for license information
 #]]
 
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.29)
 
 # FIXME: The C language is enabled as `GNUInstallDirs` requires the language to
 # function properly.  We must further enable the language in the initial set to
