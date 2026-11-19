@@ -423,6 +423,9 @@ struct FileWritingHTMLContentConsumerTests {
             <hgroup>
               <p>Article</p>
               <h1>Some article</h1>
+              <p class="deprecated-tag">
+                Deprecated
+              </p>
             </hgroup>
             <p>
               This is a <em>formatted</em> article.

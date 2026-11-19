@@ -176,7 +176,16 @@ package struct HTMLRenderer {
     
     mutating func renderArticle(_ article: Article) -> RenderedPageInfo {
         let node = context.documentationCache[reference]!
-        
+        let isDeprecated = article.isDisplayedAsDeprecated()
+        var hgroupElements: [HTMLNode] = [
+            p(contents: [.text(article.topics == nil ? "Article": "API collection")]),
+            h1(contents: [.text(node.name.plainText)]),
+        ]
+        if isDeprecated {
+            hgroupElements.append(
+                p(attributes: [.class("deprecated-tag")], contents: [.text("Deprecated")])
+            )
+        }
         var heroElements = [
             // Breadcrumbs
             renderer.breadcrumbs(
@@ -184,10 +193,7 @@ package struct HTMLRenderer {
                 currentPageNames: .single(.conceptual(node.name.plainText))
             ),
             // Eyebrow and title
-            hgroup(contents: [
-                p(contents: [.text(article.topics == nil ? "Article": "API collection")]),
-                h1(contents: [.text(node.name.plainText)]),
-            ]),
+            hgroup(contents: consume hgroupElements),
         ]
         
         // Abstract
@@ -652,5 +658,16 @@ private extension DocumentationDataVariants where Variant: Equatable {
 private extension ImplementationsGroup {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.heading == rhs.heading && lhs.references == rhs.references
+    }
+}
+
+private extension Article {
+    /// Whether the output displays this article as deprecated.
+    ///
+    /// An article is only deprecated if it has a deprecation summary.
+    func isDisplayedAsDeprecated() -> Bool {
+        // Its availability doesn't count because `@Available` directives don't mark pages as deprecated (rdar://173761647).
+        // For the same reason, articles are never displayed as beta (rdar://173773442).
+        deprecationSummary != nil
     }
 }
