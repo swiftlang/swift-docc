@@ -245,7 +245,8 @@ package struct HTMLRenderer {
     
     mutating func renderSymbol(_ symbol: Symbol) -> RenderedPageInfo {
         let node = context.documentationCache[reference]!
-        
+        let isDeprecated = symbol.isDisplayedAsDeprecated()
+        let isBeta = symbol.isDisplayedAsBeta(context.currentBetaPlatforms)
         let isModule = symbol.kind.identifier == .module
         var heroElements: [HTMLNode] = []
         
@@ -277,6 +278,17 @@ package struct HTMLRenderer {
                 hgroupElements.append(
                     h1(contents: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
                 )
+        }
+        // Display if the symbol is deprecated or in beta.
+        // Deprecated takes precedence over beta.
+        if isDeprecated {
+            hgroupElements.append(
+                p(attributes: [.class("deprecated-tag")], contents: [.text("Deprecated")])
+            )
+        } else if isBeta {
+            hgroupElements.append(
+                p(attributes: [.class("beta-tag")], contents: [.text("Beta")])
+            )
         }
         heroElements.append(hgroup(contents: consume hgroupElements))
         
