@@ -74,11 +74,25 @@ private struct ContextLinkProvider: LinkProvider {
             .single(.conceptual(node.name.plainText))
         }
         
+        // Render links with a deprecated/beta status when applicable
+        let isDeprecated: Bool
+        let isBeta: Bool
+        switch node.semantic {
+        case let symbol as Symbol:
+            isDeprecated = symbol.isDisplayedAsDeprecated()
+            isBeta       = symbol.isDisplayedAsBeta(context.currentBetaPlatforms)
+        default:
+            isDeprecated = false
+            isBeta       = false
+        }
+        
         return .init(
             path: Self.filePath(for: node.reference),
             names: node.makeNames(goal: goal),
             subheadings: subheadings,
-            abstract: (node.semantic as? (any Abstracted))?.abstract
+            abstract: (node.semantic as? (any Abstracted))?.abstract,
+            isDeprecated: isDeprecated,
+            isBeta: isBeta
         )
     }
     

@@ -703,6 +703,14 @@ dl {
   &> p {
     margin-top: 15px;
   }
+  /* Item with a summary: badge on its own line, aligned with the summary */
+  li.deprecated-badge:has(> p)::after,
+  li.beta-badge:has(> p)::after {
+    display: block;
+    width: fit-content;
+    margin-inline-start: 2.294rem;
+    margin-top: 4px;
+  }
 }
 
 #Relationships > ul {

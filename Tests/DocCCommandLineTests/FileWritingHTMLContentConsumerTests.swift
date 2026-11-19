@@ -291,7 +291,7 @@ struct FileWritingHTMLContentConsumerTests {
           <h2>Topics</h2>
           <h3>Instance methods</h3>
           <ul>
-            <li>
+            <li class="deprecated-badge">
               <a href="somemethod(with:and:)/index.html">
                 <code>func someMethod(with first: Int, and second: String) -> Bool</code>
               </a>
