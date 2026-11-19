@@ -489,6 +489,16 @@ struct Availability {
         return foundBetaPlatforms
     }
     
+    /// A Boolean value that indicates whether the API is unconditionally deprecated for all platforms (for example `@available(*, deprecated)` in Swift).
+    ///
+    /// This state isn't represented in the output of ``makePlatforms(_:)``, because that output doesn't include the wildcard.
+    var isUnconditionallyDeprecatedOnAllPlatforms: Bool {
+        if case .available(_, _, true) = knownPlatforms[.wildcard].state {
+            return true
+        }
+        return false
+    }
+
     /// Determines whether or not a page as a whole is considered to be deprecated.
     ///
     /// A page as a whole is considered to be deprecated if the API is deprecated on all the platforms that the API is available for.
