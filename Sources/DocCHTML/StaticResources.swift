@@ -72,6 +72,8 @@ package enum StaticResources {
   
   --color-badge-deprecated: rgb(204, 51, 0);
   --color-badge-beta: rgb(102, 102, 102);
+
+  --color-badge-text: rgb(255, 255, 255);
   
   --color-standard-blue: #06c;
   --color-standard-gray: #afafaf;
@@ -392,19 +394,52 @@ section:first-of-type > hgroup {
     font-size: 14px;
     line-height: 20px;
     height: 20px;
-    
-    &:not(:last-child):after {
+
+    /* The bar between items. It uses ::before so that ::after is free for status badges. */
+    &:not(:first-child)::before {
       content: "";
       display: inline-block;
       height: 14px;
       width: 1px;
       position: relative;
       top: 2px;
-      margin-left: 10px;
-      
+      margin-inline-end: 10px;
+
       background-color: black; /* TODO: dark mode */
     }
   }
+}
+
+/* Status badges.
+   Either a "badge beta" or "badge deprecated" element,
+   or a "beta-badge" or "deprecated-badge" class that displays a badge after an element's content. */
+.badge,
+.deprecated-badge::after,
+.beta-badge::after {
+  --badge-color: var(--color-badge-deprecated);
+
+  display: inline-block;
+  margin-inline-start: 5px;
+  padding: 0 4px;
+  border-radius: 3px;
+
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  vertical-align: 1px;   /* center the badge on the 14px text of breadcrumbs and availability items */
+  color: var(--color-badge-text);
+  background-color: var(--badge-color);
+}
+.badge.beta,
+.beta-badge::after {
+  --badge-color: var(--color-badge-beta);
+}
+.beta-badge::after {
+  content: "Beta";
+}
+.deprecated-badge::after {
+  content: "Deprecated";
 }
 
 h1, h2, h3, h4, h5, h6 {

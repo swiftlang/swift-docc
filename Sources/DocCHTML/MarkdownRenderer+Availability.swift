@@ -50,22 +50,45 @@ package extension MarkdownRenderer {
                 description = "\(availablePhrase) on \($0.name)"
             }
             
-            var attributes: [HTMLNode.Attribute] = [
-                .init(name: "aria-label", value: "\(text), \(description)"),
+            let status: Badge? = if $0.isUnconditionallyDeprecated || $0.deprecated != nil {
+                .deprecated
+            } else if $0.isBeta {
+                .beta
+            } else {
+                nil
+            }
+
+            // Include the status in the accessibility label because screen readers announce the label instead of the item's contents.
+            let statusPhrase = switch status {
+                case .beta?:       ", Beta"
+                case .deprecated?: ", Deprecated"
+                case nil:          ""
+            }
+            let attributes: [HTMLNode.Attribute] = [
+                .init(name: "aria-label", value: "\(text)\(statusPhrase), \(description)"),
                 .title(description),
             ]
-            if $0.isBeta {
-                attributes.insert(.class("beta"),       at: 1)
-            } else if $0.isUnconditionallyDeprecated || $0.deprecated != nil {
-                attributes.insert(.class("deprecated"), at: 1)
-            }
             
             return li(
                 attributes: goal == .richness ? attributes : [],
-                contents: [.text(text)]
+                contents: [.text(text)] + (status.map { [badge($0)] } ?? [])
             )
         }
-        
+
         return ul(attributes: [.id("availability")], contents: items)
+    }
+
+    /// An availability state that the renderer can display as a badge.
+    enum Badge {
+        case beta
+        case deprecated
+    }
+
+    /// Creates a small inline element that the style sheet displays as a status badge.
+    func badge(_ badge: Badge) -> HTMLNode {
+        switch badge {
+            case .beta:       span(attributes: [.class("badge", "beta")],       contents: [.text("Beta")])
+            case .deprecated: span(attributes: [.class("badge", "deprecated")], contents: [.text("Deprecated")])
+        }
     }
 }
