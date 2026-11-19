@@ -81,6 +81,9 @@ private struct ContextLinkProvider: LinkProvider {
         case let symbol as Symbol:
             isDeprecated = symbol.isDisplayedAsDeprecated()
             isBeta       = symbol.isDisplayedAsBeta(context.currentBetaPlatforms)
+        case let article as Article:
+            isDeprecated = article.isDisplayedAsDeprecated()
+            isBeta       = false // Articles are never displayed as beta (rdar://173773442)
         default:
             isDeprecated = false
             isBeta       = false
@@ -190,7 +193,8 @@ package struct HTMLRenderer {
             // Breadcrumbs
             renderer.breadcrumbs(
                 references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.absoluteString },
-                currentPageNames: .single(.conceptual(node.name.plainText))
+                currentPageNames: .single(.conceptual(node.name.plainText)),
+                isDeprecated: isDeprecated
             ),
             // Eyebrow and title
             hgroup(contents: consume hgroupElements),
