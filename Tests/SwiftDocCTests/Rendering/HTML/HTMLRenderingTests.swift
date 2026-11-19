@@ -848,6 +848,91 @@ struct HTMLRenderingTests {
         #expect(html.contains(expectedTabs), "\(html)")
     }
 
+    // MARK: Status tag agrees with the availability list
+
+    /// Renders the page for `SomeClass` in a catalog with a single symbol that has the given in-source availability and doc comment.
+    private func renderSomeClass(
+        availability: [SymbolGraph.Symbol.Availability.AvailabilityItem] = [],
+        docComment: String? = nil,
+        infoPlist: InfoPlist? = nil,
+        betaPlatforms: [String: PlatformVersion] = [:]
+    ) async throws -> String {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "class-id", kind: .class, pathComponents: ["SomeClass"], docComment: docComment, availability: availability),
+            ]))
+            if let infoPlist {
+                infoPlist
+            }
+        }
+
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = betaPlatforms.isEmpty ? nil : betaPlatforms
+
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        let reference = try #require(context.documentationCache.reference(symbolID: "class-id"))
+        let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
+        return try #require(renderer.renderSymbol(symbol).prettyHTMLString)
+    }
+
+    @Test
+    func displaysDeprecatedTagForDeprecationFromDirective() async throws {
+        // The directive is the only source of availability and it deprecates the symbol on every platform that it displays.
+        let html = try await renderSomeClass(docComment: """
+        A symbol that's deprecated by a directive.
+
+        @Metadata {
+          @Available(macOS, introduced: 1.0, deprecated: 2.0)
+        }
+        """)
+        #expect(html.contains(#"<span class="deprecated-badge">"#), "The availability list shows the deprecated badge next to the platform\n\(html)")
+        #expect(html.contains(#"<p class="deprecated-tag">"#), "The tag next to the title agrees with the list\n\(html)")
+    }
+
+    @Test
+    func displaysBetaTagForBetaFromInfoPlistDefaultAvailability() async throws {
+        // The symbol has no in-source availability. Its introduced version comes from the Info.plist default availability.
+        let html = try await renderSomeClass(
+            availability: [makeAvailabilityItem(domainName: "macOS")],
+            infoPlist: InfoPlist(defaultAvailability: [
+                .init(platformName: .macOS, platformVersion: "2.0"),
+            ]),
+            betaPlatforms: ["macOS": .init(.init(2, 0, 0), beta: true)]
+        )
+        #expect(html.contains(#"<span class="beta-badge">"#), "The availability list shows the badge\n\(html)")
+        #expect(html.contains(#"<p class="beta-tag">"#), "The tag agrees with the list\n\(html)")
+    }
+
+    @Test
+    func displaysDeprecatedTagForUnconditionalWildcardDeprecation() async throws {
+        // `@available(*, deprecated)` without a message.
+        let wildcardDeprecation = SymbolGraph.Symbol.Availability.AvailabilityItem(
+            domain: nil, introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil,
+            isUnconditionallyDeprecated: true, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false
+        )
+        let html = try await renderSomeClass(availability: [wildcardDeprecation])
+        #expect(html.contains(#"<p class="deprecated-tag">"#), "\(html)")
+    }
+
+    @Test
+    func doesntDisplayDeprecatedTagWhenOnlySomePlatformsAreDeprecated() async throws {
+        let html = try await renderSomeClass(availability: [
+            makeAvailabilityItem(domainName: "macOS", introduced: .init(major: 1, minor: 0, patch: 0), deprecated: .init(major: 2, minor: 0, patch: 0)),
+            makeAvailabilityItem(domainName: "iOS",   introduced: .init(major: 1, minor: 0, patch: 0)),
+        ])
+        #expect(html.contains(#"<span class="deprecated-badge">"#), "The macOS item in the availability list shows the badge\n\(html)")
+        #expect(!html.contains(#"deprecated-tag"#), "The page as a whole isn't deprecated\n\(html)")
+    }
+
+    @Test
+    func doesntDisplayTagForSymbolWithOnlyVersionlessPlatforms() async throws {
+        let html = try await renderSomeClass(availability: [makeAvailabilityItem(domainName: "macOS")])
+        #expect(!html.contains("deprecated-tag") && !html.contains("beta-tag"), "\(html)")
+    }
+
     private func makeHTMLRenderer(for reference: ResolvedTopicReference, in context: DocumentationContext) -> HTMLRenderer {
         HTMLRenderer(reference: reference, context: context, jsonRenderContext: .init(documentationContext: context), goal: .richness, featureFlags: context.configuration.featureFlags)
     }

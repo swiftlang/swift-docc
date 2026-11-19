@@ -92,31 +92,47 @@ struct MarkdownRenderer_PageElementsTests {
         case .richness:
             availability.assertMatches(prettyFormatted: true, expected: """
             <ul id="availability">
-              <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" class="deprecated" title="Introduced in First 1.2 and deprecated in First 3.4">
+              <li aria-label="First 1.2–3.4, Introduced in First 1.2 and deprecated in First 3.4" title="Introduced in First 1.2 and deprecated in First 3.4">
                 First 1.2–3.4
+                <span class="deprecated-badge">Deprecated</span>
               </li>
               <li aria-label="Second 1.2.3+, Available on Second 1.2.3 and later" title="Available on Second 1.2.3 and later">
                 Second 1.2.3+
               </li>
-              <li aria-label="Third 4.5+, Available on Third 4.5 and later" class="beta" title="Available on Third 4.5 and later">
+              <li aria-label="Third 4.5+, Available on Third 4.5 as beta" title="Available on Third 4.5 as beta">
                 Third 4.5+
+                <span class="beta-badge">Beta</span>
               </li>
-              <li aria-label="Fourth 5.6+, Unconditionally deprecated on Fourth 5.6 and later" class="deprecated" title="Unconditionally deprecated on Fourth 5.6 and later">
+              <li aria-label="Fourth 5.6+, Unconditionally deprecated on Fourth 5.6 and later" title="Unconditionally deprecated on Fourth 5.6 and later">
                 Fourth 5.6+
+                <span class="deprecated-badge">Deprecated</span>
               </li>
-              <li aria-label="Fifth, Unconditionally deprecated on Fifth" class="deprecated" title="Unconditionally deprecated on Fifth">
+              <li aria-label="Fifth, Unconditionally deprecated on Fifth" title="Unconditionally deprecated on Fifth">
                 Fifth
+                <span class="deprecated-badge">Deprecated</span>
               </li>
             </ul>
             """)
         case .conciseness:
             availability.assertMatches(prettyFormatted: true, expected: """
             <ul id="availability">
-              <li>First 1.2–3.4</li>
+              <li>
+                First 1.2–3.4
+                <span class="deprecated-badge">Deprecated</span>
+              </li>
               <li>Second 1.2.3+</li>
-              <li>Third 4.5+</li>
-              <li>Fourth 5.6+</li>
-              <li>Fifth</li>
+              <li>
+                Third 4.5+
+                <span class="beta-badge">Beta</span>
+              </li>
+              <li>
+                Fourth 5.6+
+                <span class="deprecated-badge">Deprecated</span>
+              </li>
+              <li>
+                Fifth
+                <span class="deprecated-badge">Deprecated</span>
+              </li>
             </ul>
             """)
         }

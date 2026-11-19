@@ -37,35 +37,57 @@ package extension MarkdownRenderer {
             var text = $0.name
             
             let availablePhrase = $0.isUnconditionallyDeprecated ? "Unconditionally deprecated" : "Available"
-            let description: String
+            var description: String
             if let introduced = $0.introduced {
                 if let deprecated  = $0.deprecated {
                     text += " \(introduced)–\(deprecated)"
                     description = "Introduced in \($0.name) \(introduced) and deprecated in \($0.name) \(deprecated)"
-                } else {
+                }
+                else {
                     text += " \(introduced)+"
-                    description = "\(availablePhrase) on \($0.name) \(introduced) and later"
+                    description = "\(availablePhrase) on \($0.name) \(introduced)"
+                    if $0.isBeta {
+                        description += " as beta"
+                    } else {
+                        description += " and later"
+                    }
                 }
             } else {
                 description = "\(availablePhrase) on \($0.name)"
             }
             
-            var attributes: [HTMLNode.Attribute] = [
+            let status: Badge? = if $0.isUnconditionallyDeprecated || $0.deprecated != nil {
+                .deprecated
+            } else if $0.isBeta {
+                .beta
+            } else {
+                nil
+            }
+            let attributes: [HTMLNode.Attribute] = [
                 .init(name: "aria-label", value: "\(text), \(description)"),
                 .title(description),
             ]
-            if $0.isBeta {
-                attributes.insert(.class("beta"),       at: 1)
-            } else if $0.isUnconditionallyDeprecated || $0.deprecated != nil {
-                attributes.insert(.class("deprecated"), at: 1)
-            }
             
             return li(
                 attributes: goal == .richness ? attributes : [],
-                contents: [.text(text)]
+                contents: [.text(text)] + (status.map { [badge($0)] } ?? [])
             )
         }
-        
+
         return ul(attributes: [.id("availability")], contents: items)
+    }
+
+    /// An availability state that the renderer can display as a badge.
+    enum Badge {
+        case beta
+        case deprecated
+    }
+
+    /// Creates a small inline element that the style sheet displays as a status badge.
+    func badge(_ badge: Badge) -> HTMLNode {
+        switch badge {
+            case .beta:       span(attributes: [.class("beta-badge")],       contents: [.text("Beta")])
+            case .deprecated: span(attributes: [.class("deprecated-badge")], contents: [.text("Deprecated")])
+        }
     }
 }
