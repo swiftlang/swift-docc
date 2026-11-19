@@ -228,7 +228,7 @@ struct FileWritingHTMLContentConsumerTests {
             A custom <em>formatted</em> description of this topic section
           </p>
           <ul>
-            <li>
+            <li class="deprecated-badge">
               <a href="somearticle/index.html">
                 <p>Some article</p>
               </a>
@@ -310,7 +310,7 @@ struct FileWritingHTMLContentConsumerTests {
           <h2>See also</h2>
           <h3>Something custom</h3>
           <ul>
-            <li>
+            <li class="deprecated-badge">
               <a href="../somearticle/index.html">
                 <p>Some article</p>
               </a>
@@ -388,7 +388,7 @@ struct FileWritingHTMLContentConsumerTests {
           <h2>See also</h2>
           <h3>Related documentation</h3>
           <ul>
-            <li>
+            <li class="deprecated-badge">
               <a href="../../somearticle/index.html">
                 <p>Some article</p>
               </a>
@@ -418,7 +418,9 @@ struct FileWritingHTMLContentConsumerTests {
               <li>
                 <a href="../index.html">ModuleName</a>
               </li>
-              <li>Some article</li>
+              <li class="deprecated-badge">
+                Some article
+              </li>
             </ul>
             <hgroup>
               <p>Article</p>
