@@ -242,10 +242,10 @@ if useLocalDependencies {
     // Building standalone, so fetch all dependencies remotely.
     package.dependencies += [
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.92.2"),
-        .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
-        .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "release/6.5.x"),
+        .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "release/6.5.x"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),
-        .package(url: "https://github.com/swiftlang/swift-docc-symbolkit.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-docc-symbolkit.git", branch: "release/6.5.x"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
         .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.2.0"),
     ]
