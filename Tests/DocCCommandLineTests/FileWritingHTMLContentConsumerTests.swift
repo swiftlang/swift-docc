@@ -348,6 +348,9 @@ struct FileWritingHTMLContentConsumerTests {
             <hgroup>
               <p>Instance Method</p>
               <h1>someMethod(with:and:)</h1>
+              <p class="deprecated-tag">
+                Deprecated
+              </p>
             </hgroup>
             <p>Some in-source description of this method.</p>
             <pre><code>func someMethod(with first: Int, and second: String) -> Bool</code></pre>

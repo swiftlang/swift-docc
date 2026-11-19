@@ -71,7 +71,8 @@ package enum StaticResources {
   --color-fill-gray-secondary: #f5f5f5;
   --color-fill-gray-tertiary: #f0f0f0;
   
-  --color-badge-deprecated: #bf4800;
+  --color-badge-deprecated: rgb(204, 51, 0);
+  --color-badge-beta: rgb(102, 102, 102);
   
   --color-standard-blue: #06c;
   --color-standard-gray: #afafaf;
@@ -310,12 +311,13 @@ picture > img {
 }
 
 /* The "eyebrow" subheading */
-section:first-of-type > hgroup > p {
+section:first-of-type > hgroup > p:first-child {
   font-size: 21px;
   line-height: 25px;
   margin: 0;
   margin-bottom: 15px;
   color: var(--color-figure-gray-secondary);
+  flex-basis: 100%;         /* the eyebrow takes up its own row, above the title */
   
   @media only screen and (max-width: 1250px) {
     font-size: 19px;
@@ -326,6 +328,29 @@ section:first-of-type > hgroup > p {
   &+ h1 {
     margin-top: 0;
   }
+}
+
+/* Display the page title and, if there is one, its availability status tag on one line, below the eyebrow. */
+section:first-of-type > hgroup {
+  display: flex;
+  flex-wrap: wrap;          /* the tag moves under the title when there isn't room */
+  align-items: baseline;    /* line up the tag's text with the title's (first) line */
+  column-gap: 12px;
+  /* The title doesn't have an anchor link, so it doesn't need the space for the anchor's hover icon */
+  &> h1 {
+    padding-inline-end: 0;
+  }
+}
+
+.deprecated-tag,
+.beta-tag {
+  color: var(--color-badge-deprecated);
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: 400;
+}
+.beta-tag {
+  --tag-color: var(--color-badge-beta);
 }
 
 #breadcrumbs > ul {
