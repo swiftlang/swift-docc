@@ -1318,6 +1318,9 @@ public class DocumentationContext {
                     
                     documentationCache.reference(symbolID: moduleName).map { moduleReference in
                         var moduleAvailability = symbolBaseAvailability
+                        if let directiveAvailability = documentationCache[moduleReference]?.metadata?.availability {
+                            moduleAvailability.addDirectiveAvailability(directiveAvailability, preservingBugOfFirstResettingAvailabilityTo: moduleAvailability)
+                        }
                         moduleAvailability.finalizePlatformFallbacks()
                         (documentationCache[moduleReference]?.semantic as! Symbol).consolidatedAvailability = .init(defaultVariantValue: moduleAvailability)
                     }
