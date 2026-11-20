@@ -57,7 +57,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```md
     /// Some _formatted_ text
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```html
     /// <p>Some <em>formatted</em> text</p>
     /// ```
@@ -76,7 +76,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```md
     /// > Note: Something noteworthy
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <aside class="note">
     ///   <p class="label">Note</p>
@@ -103,7 +103,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```md
     /// # Some _Formatted_ text
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <h1 id="some-formatted-text">
     ///   <a href="#some-formatted-text">
@@ -213,7 +213,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         }
     }
     
-    /// Transforms a block of HTML in the source markdown into XML nodes representing the same structure with all the comments removed.
+    /// Transforms a block of HTML in the source markdown into nodes representing the same structure with all the comments removed.
     func visitHTMLBlock(_ html: HTMLBlock, into output: inout [HTMLNode]) {
         do {
             let parsed = try XMLElement(xmlString: html.rawHTML)
@@ -226,7 +226,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         }
     }
     
-    /// Transforms an inline HTML tag in the source markdown into XML nodes representing the same structure with all the comments removed.
+    /// Transforms an inline HTML tag in the source markdown into nodes representing the same structure with all the comments removed.
     func visitInlineHTML(_ html: InlineHTML, into output: inout [HTMLNode]) {
         // Inline HTML is one tag at a time, meaning that the closing and opening tags are parsed separately
         // Because of this, we can't parse it with `XMLElement` or `XMLParser`.
@@ -255,7 +255,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```md
     /// <doc://com.example.test/documentation/Something/SomeArticle>
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <a href="../somearticle/index.html">
     ///   Some Article Title
@@ -330,7 +330,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```md
     /// ``doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)``
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <a href="../somemethod(with:and:)/index.html">
     ///   <code>some<wbr>Method(<wbr>with:<wbr>and:)</code>
@@ -383,7 +383,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// ```md
     /// ![Some alt text](some-image.png)
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <picture>
     ///   <source media="(prefers-color-scheme: light)" srcset="relative/path/to/some-image.png"/>
@@ -463,7 +463,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// Some block of code
     /// ~~~
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <pre class="lang">
     ///   <code>Some block of code</code>
@@ -488,7 +488,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   + A
     ///   + B
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <ul>
     ///   <li>
@@ -519,7 +519,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// 1. One
     /// 2. Two
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <ol>
     ///   <li>
@@ -554,7 +554,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// | Three | Four          ||
     /// | Five                 |||
     /// ```
-    /// into XML nodes representing this HTML structure
+    /// into nodes representing this HTML structure
     /// ```
     /// <table>
     ///   <thead>
