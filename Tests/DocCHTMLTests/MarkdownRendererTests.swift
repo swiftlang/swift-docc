@@ -676,6 +676,24 @@ struct MarkdownRendererTests {
         )
     }
     
+    @Test(arguments: [
+        "http://example.com/",
+        "http://example.com/path/to/something",
+        "http://example.com/path/to/something#fragment",
+        "http://example.com/path/to/something?query=value",
+    ])
+    func autolinkWithAbsoluteWebDestinationRendersThatDestinationAsTheLinkText(destination: String) {
+        assert(
+            rendering: "<\(destination)>",
+            prettyFormatted: true,
+            matches: """
+            <p>
+              <a href="\(destination)">\(destination)</a>
+            </p>
+            """
+        )
+    }
+    
     @Test
     func renderingFallbackLinkTextForUnresolvedSymbolLinks() {
         assert(
