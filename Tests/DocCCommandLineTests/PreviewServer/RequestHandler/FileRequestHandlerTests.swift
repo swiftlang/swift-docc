@@ -30,6 +30,9 @@ struct FileRequestHandlerTests {
             Folder(name: "js", content: [
                 TextFile(name: "test.js", utf8Content: "js"),
             ]),
+            Folder(name: "custom-scripts", content: [
+                TextFile(name: "test.js", utf8Content: "custom script"),
+            ]),
             Folder(name: "fonts", content: [
                 TextFile(name: "test.otf", utf8Content: "font"),
                 TextFile(name: "test.ttf", utf8Content: "ttf"),
@@ -71,6 +74,7 @@ struct FileRequestHandlerTests {
         try verifyAsset(path: "/data/test.json", body: "data", type: "application/json")
         try verifyAsset(path: "/css/test.css", body: "css", type: "text/css")
         try verifyAsset(path: "/js/test.js", body: "js", type: "text/javascript")
+        try verifyAsset(path: "/custom-scripts/test.js", body: "custom script", type: "text/javascript")
         try verifyAsset(path: "/fonts/test.otf", body: "font", type: "font/otf")
         // default font type
         try verifyAsset(path: "/fonts/test.ttf", body: "ttf", type: "application/octet-stream")

@@ -94,6 +94,9 @@ extension DocumentationContext {
         /// A custom JSON settings file used to theme renderer output.
         public let themeSettings: URL?
 
+        /// A custom JSON settings file used to add custom scripts to the renderer output.
+        public let customScripts: URL?
+
         /// A custom favicon file to use for rendered output.
         public let customFavicon: URL?
 
@@ -114,6 +117,7 @@ extension DocumentationContext {
         ///   - customFooter: A custom HTML file to use as the footer for rendered output.
         ///   - themeSettings: A custom JSON settings file used to theme renderer output.
         ///   - customFavicon: A custom favicon file to use for rendered output.
+        ///   - customScripts: A custom JSON settings file used to add custom scripts to the renderer output.
         public init(
             info: Info,
             baseURL: URL = URL(string: "/")!,
@@ -123,7 +127,8 @@ extension DocumentationContext {
             customHeader: URL? = nil,
             customFooter: URL? = nil,
             themeSettings: URL? = nil,
-            customFavicon: URL? = nil
+            customFavicon: URL? = nil,
+            customScripts: URL? = nil
         ) {
             self.info = info
             self.baseURL = baseURL
@@ -134,6 +139,7 @@ extension DocumentationContext {
             self.customFooter = customFooter
             self.themeSettings = themeSettings
             self.customFavicon = customFavicon
+            self.customScripts = customScripts
             self.rootReference = ResolvedTopicReference(bundleID: info.id, path: "/", sourceLanguage: .swift)
             self.documentationRootReference = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
             self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
