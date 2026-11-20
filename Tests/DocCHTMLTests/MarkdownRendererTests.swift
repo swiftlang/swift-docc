@@ -212,6 +212,36 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func tablesRepresentColumnAlignmentAsClassNames() {
+        assert(
+            rendering: """
+            Leading  | Center   | Trailing 
+            :------- | :------: | --------: |
+            First    | Second   | Third
+            """,
+            prettyFormatted: true,
+            matches: """
+            <table>
+              <thead>
+                <tr>
+                  <th class="left">Leading</th>
+                  <th class="center">Center</th>
+                  <th class="right">Trailing</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="left">First</td>
+                  <td class="center">Second</td>
+                  <td class="right">Third</td>
+                </tr>
+              </tbody>
+            </table>
+            """
+        )
+    }
+    
+    @Test
     func renderingLists() {
         assert(
             rendering: """
@@ -449,6 +479,19 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func unknownDirectiveRendersNothing() async throws {
+        assert(
+            rendering: """
+            @SomethingUnknown {
+                Some inner markup that's part of the unknown directive
+            }
+            """,
+            prettyFormatted: true,
+            directiveToReturn: nil,
+            matches: "")
+    }
+    
+    @Test
     func renderingCodeBlocks() async throws {
         assert(
             rendering: """
@@ -505,6 +548,38 @@ struct MarkdownRendererTests {
             -------
             """,
             matches: "<hr>"
+        )
+    }
+    
+    @Test
+    func emptyLinkRendersNothing() throws {
+        assert(
+            rendering: "[]()",
+            prettyFormatted: true,
+            matches: """
+            <p></p>
+            """
+        )
+    }
+    
+    @Test
+    func linkWithoutDestinationRendersItLinkText() throws {
+        assert(
+            rendering: "[link text]()",
+            prettyFormatted: true,
+            matches: """
+            <p>link text</p>
+            """
+        )
+        
+        assert(
+            rendering: "[some _emphasized_ text]()",
+            prettyFormatted: true,
+            matches: """
+            <p>
+              some <em>emphasized</em> text
+            </p>
+            """
         )
     }
     
@@ -628,6 +703,24 @@ struct MarkdownRendererTests {
             rendering: markup,
             fallbackLinkTextToReturn: "FallbackLinkText",
             matches: "<p>FallbackLinkText</p>"
+        )
+    }
+    
+    @Test(arguments: [
+        "http://example.com/",
+        "http://example.com/path/to/something",
+        "http://example.com/path/to/something#fragment",
+        "http://example.com/path/to/something?query=value",
+    ])
+    func autolinkWithAbsoluteWebDestinationRendersThatDestinationAsTheLinkText(destination: String) {
+        assert(
+            rendering: "<\(destination)>",
+            prettyFormatted: true,
+            matches: """
+            <p>
+              <a href="\(destination)">\(destination)</a>
+            </p>
+            """
         )
     }
     
@@ -793,7 +886,10 @@ struct MarkdownRendererTests {
             ),
             renderableDirectiveParser: SingleValueDirectiveParser(directiveToReturn: directiveToReturn)
         )
-        let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
+        var htmlNodes = [HTMLNode]()
+        for markup in Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children {
+            renderer.visit(markup, into: &htmlNodes)
+        }
         htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expected: expectedHTML, sourceLocation: sourceLocation)
     }
     
