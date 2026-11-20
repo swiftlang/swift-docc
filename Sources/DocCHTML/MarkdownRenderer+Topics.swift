@@ -126,7 +126,14 @@ package extension MarkdownRenderer {
             content.append(visit(abstract))
         }
         
-        return li(contents: content)
+        // The style sheet displays a status badge for the linked element. Deprecated takes precedence over beta.
+        var attributes = [HTMLNode.Attribute]()
+        if element.isDeprecated {
+            attributes.append(.class("deprecated-badge"))
+        } else if element.isBeta {
+            attributes.append(.class("beta-badge"))
+        }
+        return li(attributes: attributes, contents: content)
     }
     
     /// Transforms the symbol name fragments into a `<code>` HTML element that represents a symbol's subheading.

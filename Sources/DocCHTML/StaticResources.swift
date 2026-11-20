@@ -70,7 +70,10 @@ package enum StaticResources {
   --color-fill-gray-secondary: #f5f5f5;
   --color-fill-gray-tertiary: #f0f0f0;
   
-  --color-badge-deprecated: #bf4800;
+  --color-badge-deprecated: rgb(204, 51, 0);
+  --color-badge-beta: rgb(102, 102, 102);
+
+  --color-badge-text: rgb(255, 255, 255);
   
   --color-standard-blue: #06c;
   --color-standard-gray: #afafaf;
@@ -309,7 +312,7 @@ picture > img {
 }
 
 /* The "eyebrow" subheading */
-section:first-of-type > hgroup > p {
+section:first-of-type > hgroup > p:first-child {
   font-size: 21px;
   line-height: 25px;
   margin: 0;
@@ -327,6 +330,34 @@ section:first-of-type > hgroup > p {
   }
 }
 
+/* Display the page title and its availability status tag on one line, below the eyebrow */
+section:first-of-type > hgroup {
+  display: flex;
+  flex-wrap: wrap;          /* the tag moves under the title when there isn't room */
+  align-items: baseline;    /* line up the tag's text with the title's (first) line */
+  column-gap: 12px;
+  /* The eyebrow takes up its own row */
+  &> p:first-child {
+    flex-basis: 100%;
+  }
+  /* The title doesn't have an anchor link, so it doesn't need the space for the anchor's hover icon */
+  &> h1 {
+    padding-inline-end: 0;
+  }
+}
+
+.deprecated-tag,
+.beta-tag {
+  --tag-color: var(--color-badge-deprecated);
+  color: var(--tag-color);
+  font-size: 1.4117647059rem;
+  line-height: 1.1666666667;
+  font-weight: 600;
+}
+.beta-tag {
+  --tag-color: var(--color-badge-beta);
+}
+
 #breadcrumbs > ul {
   padding: 0;
   margin-bottom: 20px;
@@ -340,7 +371,7 @@ section:first-of-type > hgroup > p {
       color: #000;
     }
     
-    &:not(:first-child):before {
+    &:not(:first-child)::before {
       content: "/";
       width: 5px;
       margin-inline: 5px;
@@ -363,19 +394,52 @@ section:first-of-type > hgroup > p {
     font-size: 14px;
     line-height: 20px;
     height: 20px;
-    
-    &:not(:last-child):after {
+
+    /* The bar between items. It uses ::before so that ::after is free for status badges. */
+    &:not(:first-child)::before {
       content: "";
       display: inline-block;
       height: 14px;
       width: 1px;
       position: relative;
       top: 2px;
-      margin-left: 10px;
-      
+      margin-inline-end: 10px;
+
       background-color: black; /* TODO: dark mode */
     }
   }
+}
+
+/* Status badges.
+   Either a "badge beta" or "badge deprecated" element,
+   or a "beta-badge" or "deprecated-badge" class that displays a badge after an element's content. */
+.badge,
+.deprecated-badge::after,
+.beta-badge::after {
+  --badge-color: var(--color-badge-deprecated);
+
+  display: inline-block;
+  margin-inline-start: 5px;
+  padding: 0 4px;
+  border-radius: 3px;
+
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  vertical-align: 1px;   /* center the badge on the 14px text of breadcrumbs and availability items */
+  color: var(--color-badge-text);
+  background-color: var(--badge-color);
+}
+.badge.beta,
+.beta-badge::after {
+  --badge-color: var(--color-badge-beta);
+}
+.beta-badge::after {
+  content: "Beta";
+}
+.deprecated-badge::after {
+  content: "Deprecated";
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -638,6 +702,14 @@ dl {
   }
   &> p {
     margin-top: 15px;
+  }
+  /* Item with a summary: badge on its own line, aligned with the summary */
+  li.deprecated-badge:has(> p)::after,
+  li.beta-badge:has(> p)::after {
+    display: block;
+    width: fit-content;
+    margin-inline-start: 2.294rem;
+    margin-top: 4px;
   }
 }
 

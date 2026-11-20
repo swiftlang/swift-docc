@@ -216,9 +216,7 @@ public class DocumentationContentRenderer {
             // !!!: Preserve the bug that articles aren't considered "in-beta" even when all platforms they display availability for are in beta (rdar://189415274)
             return false
         }
-        return symbol.consolidatedAvailability.allValues.contains(where: { _, availability in
-            availability.isBeta(context.currentBetaPlatforms)
-        })
+        return symbol.isDisplayedAsBeta(context.currentBetaPlatforms)
     }
 
     static func renderKindAndRole(_ kind: DocumentationNode.Kind?, semantic: Semantic?) -> (RenderNode.Kind, String) {
@@ -417,7 +415,7 @@ public class DocumentationContentRenderer {
         
         // If the topic is deprecated
         if let node, let symbol = node.semantic as? Symbol,
-           symbol.deprecatedSummary != nil || symbol.consolidatedAvailability.allValues.contains(where: { $0.variant.isDeprecated })
+           symbol.isDisplayedAsDeprecated()
         {
             renderReference.isDeprecated = true
         }
