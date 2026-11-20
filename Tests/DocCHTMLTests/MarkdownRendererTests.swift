@@ -449,6 +449,19 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func unknownDirectiveRendersNothing() async throws {
+        assert(
+            rendering: """
+            @SomethingUnknown {
+                Some inner markup that's part of the unknown directive
+            }
+            """,
+            prettyFormatted: true,
+            directiveToReturn: nil,
+            matches: "")
+    }
+    
+    @Test
     func renderingCodeBlocks() async throws {
         assert(
             rendering: """
