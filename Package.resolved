@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-cmark.git",
       "state" : {
-        "branch" : "gfm",
-        "revision" : "2c47322cb32cbed555f13bf5cbfaa488cc30a785"
+        "branch" : "release/6.5.x",
+        "revision" : "437611671145d47e6d9679761b8a5987766f4ae5"
       }
     },
     {
@@ -88,7 +88,7 @@
       "location" : "https://github.com/swiftlang/swift-markdown.git",
       "state" : {
         "branch" : "release/6.5.x",
-        "revision" : "ea1d88be47afe8a731b3971d7b3fb7a3a6db1a5a"
+        "revision" : "e35bbb1ef0edeedaaba136db768d556ea9c22d9a"
       }
     },
     {
