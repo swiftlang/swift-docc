@@ -183,7 +183,10 @@ struct Availability {
                         continue
                     }
                     knownPlatforms[platform] = makeInformation(for: availability, currentIntroducedVersion: knownPlatforms[platform].state.introduced)
-                } else if let domainName = availability.domain?.rawValue {
+                } else if var domainName = availability.domain?.rawValue {
+                    if let uncommonPlatformName = Self.additionalPlatformDisplayNamesByCaseInsensitiveAlias[domainName.lowercased()] {
+                        domainName = uncommonPlatformName
+                    }
                     customPlatformsByName[domainName] = makeInformation(for: availability, currentIntroducedVersion: customPlatformsByName[domainName]?.state.introduced)
                 }
             }
@@ -402,9 +405,19 @@ struct Availability {
                     addPlatformIfInBeta(for: info.state , name: Self.knownPlatformNames[offset], betaVersion: currentPlatform.knownBetaPlatforms[offset])
             }
         }
-        
+                
+        var needsToIntersperseExtensionPlatforms = false
         for (name, info) in customPlatformsByName.sorted(by: \.key) {
+            // The known platforms are already sorted and in the common case the truly custom platforms are all ordered later, alphabetically.
+            // However, some uncommon known platforms should intersperse with the known platforms which requires resorting the list of platforms (a few lines below).
+            needsToIntersperseExtensionPlatforms = needsToIntersperseExtensionPlatforms || Self.additionalPlatformDisplayNamesByCaseInsensitiveAlias[name.lowercased()] != nil
+            
             addPlatformIfInBeta(for: info.state, name: name, betaVersion: currentPlatform.customBetaPlatforms[name])
+        }
+        if needsToIntersperseExtensionPlatforms {
+            platforms.sort(by: { lhs, rhs in
+                PlatformName.areInIncreasingOrder(lhs.name, rhs.name)
+            })
         }
         
         guard !platforms.isEmpty else {
@@ -415,13 +428,13 @@ struct Availability {
     
     /// The display names of all the known platforms, in order.
     private static let knownPlatformNames = [
-        "iOS",          "iOS App Extension",
+        "iOS",
         "iPadOS",
-        "Mac Catalyst", "Mac Catalyst App Extension",
-        "macOS",        "macOS App Extension",
-        "tvOS",         "tvOS App Extension",
-        "visionOS",     "visionOS App Extension",
-        "watchOS",      "watchOS App Extension",
+        "Mac Catalyst",
+        "macOS",
+        "tvOS",
+        "visionOS",
+        "watchOS",
     ]
     
     
@@ -520,6 +533,21 @@ struct Availability {
         
         return foundDeprecatedPlatforms
     }
+    
+    /// A map of known `PlatformName` display names keyed by all their lowercased name aliases.
+    ///
+    /// The availability container uses this to treat uncommon platform names as "known" with a sparser per-symbol storage.
+    private static let additionalPlatformDisplayNamesByCaseInsensitiveAlias: [String: String] = {
+        var result = [String: String]()
+        for platformName in PlatformName.sortedPlatforms where KnownPlatform(platformName) == nil {
+            result[platformName.rawValue.lowercased()] = platformName.displayName
+            result[platformName.displayName.lowercased()] = platformName.displayName
+            for alias in platformName.aliases {
+                result[alias.lowercased()] = platformName.displayName
+            }
+        }
+        return result
+    }()
 }
 
 // MARK: Known platform
@@ -532,13 +560,13 @@ private extension Availability {
         
         // For future consideration: App extension platforms are fairly uncommon in practice but we currently always allocate space for them.
         // It might be worth investigating treating the app extension platforms as "custom" and adding extra logic in `makePlatforms(...)` to intersperse them with the main known platforms.
-        case iOS,         iOSExtension
+        case iOS
         case iPadOS
-        case macCatalyst, macCatalystExtension
-        case macOS,       macOSExtension
-        case tvOS,        tvOSExtension
-        case visionOS,    visionOSExtension
-        case watchOS,     watchOSExtension
+        case macCatalyst
+        case macOS
+        case tvOS
+        case visionOS
+        case watchOS
          
         case wildcard // Not included in the `makePlatforms(...)` output but used in the preceding calculations.
         
@@ -579,12 +607,6 @@ private extension Availability {
                 case .tvOS:     self = .tvOS
                 case .watchOS:  self = .watchOS
                 case .visionOS: self = .visionOS
-                case .iOSAppExtension:        self = .iOSExtension
-                case .macOSAppExtension:      self = .macOSExtension
-                case .catalystOSAppExtension: self = .macCatalystExtension
-                case .tvOSAppExtension:       self = .tvOSExtension
-                case .watchOSAppExtension:    self = .watchOSExtension
-                case .visionOSAppExtension:   self = .visionOSExtension
                 
                 default: return nil
             }
@@ -602,13 +624,6 @@ private extension Availability {
                 case "visionos":    self = .visionOS
                 // "*" is represented as a `nil` domain in SymbolKit.
                 case nil:           self = .wildcard
-                
-                case "iosappextension":         self = .iOSExtension
-                case "macosappextension":       self = .macOSExtension
-                case "maccatalystappextension": self = .macCatalystExtension
-                case "tvosappextension":        self = .tvOSExtension
-                case "watchosappextension":     self = .watchOSExtension
-                case "visionosappextension":    self = .visionOSExtension
                 
                 default: return nil
             }

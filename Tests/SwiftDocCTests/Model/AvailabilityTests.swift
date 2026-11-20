@@ -1160,6 +1160,25 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "visionOS App Extension"     })?.introduced == "6.6")
     }
     
+    @Test(arguments: ["swift", "SWIFT", "SwIfT"])
+    func capitalizesRecognizedPlatformNamesForInSourceAvailabilityAttribute(_ swiftPlatformSpelling: String) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: swiftPlatformSpelling, introduced: .init(major: 6, minor: 4, patch: 1), deprecated: nil),
+                ]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "symbol-id"))
+        let moduleRenderNode = try makeRenderNode(for: reference, in: context)
+        #expect(moduleRenderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+            "Swift 6.4.1"
+        ])
+    }
+    
     // MARK: Deprecations
     
     @Test(arguments: Self.allMainPlatforms)
