@@ -1339,6 +1339,43 @@ struct AvailabilityTests {
         #expect(try makeRenderNode(for: symbolReference, in: context).metadata.platforms == nil)
     }
     
+    @Test(arguments: [true, false])
+    func moduleDisplaysDirectiveAvailability(alsoHasDefaultAvailability: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+            if alsoHasDefaultAvailability {
+                InfoPlist(defaultAvailability: [
+                    .init(platformName: .iOS,   platformVersion: nil),
+                    .init(platformName: .macOS, platformVersion: "1.2.3"),
+                ])
+            }
+            TextFile(name: "ModuleName.md", utf8Content: """
+            # ``ModuleName``
+            
+            @Metadata {
+                @Available(CustomPlatform, introduced: "1.2.4")
+                @Available(iOS, introduced: "4.5.6")
+                @Available(iPadOS, introduced: "4.5")
+                @Available(macOS, introduced: "6.7.8")
+            }
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let moduleReference = try #require(context.soleRootModuleReference)
+        let moduleRenderNode = try makeRenderNode(for: moduleReference, in: context)
+        #expect(moduleRenderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+            "iOS 4.5.6",
+            "iPadOS 4.5", // Specifies its own availability in a directive
+            "Mac Catalyst 4.5.6", // Derived from iOS
+            "macOS 6.7.8",
+            "CustomPlatform 1.2.4",
+        ])
+    }
+    
     @Test(arguments: ["9.2", nil])
     func symbolAvailableOnOnePlatformIsNotConsideredDeprecatedWhenDefaultAvailable(defaultIntroducedVersion: String?) async throws {
         let catalog = Folder(name: "unit-test.docc") {
