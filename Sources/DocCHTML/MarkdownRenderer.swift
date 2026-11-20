@@ -267,7 +267,11 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't insert `<wbr>` HTML elements in the symbol name.
     func visitLink(_ link: Link, into output: inout [HTMLNode]) {
         guard let destination = link.destination else {
-            return // Don't add anything to the output
+            // If the link has text, return that inline
+            for child in link.children {
+                visit(child, into: &output)
+            }
+            return
         }
         
         let linkedElement = linkProvider.element(for: destination)
