@@ -656,6 +656,10 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: Markup children
     
+    /// Visits each element in a sequence of markup and returns a new array of HTML nodes.
+    ///
+    /// - Note: For performance and efficiency reasons, only call this method if the array of HTML nodes can be directly passed along without modification.
+    ///   If the caller appends the array of HTML nodes to another array it's better to use a loop and call ``visit(_:into:)`` to avoid the intermediate array allocation.
     func _visit(_ container: some Sequence<any Markup>) -> [HTMLNode] {
         var output: [HTMLNode] = []
         output.reserveCapacity(container.underestimatedCount)
@@ -854,7 +858,6 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: Default
     
-    @_disfavoredOverload
     package func visit(_ markup: some Markup, into output: inout [HTMLNode]) {
         // Check common markup types first
         if let paragraph = markup as? Paragraph {
