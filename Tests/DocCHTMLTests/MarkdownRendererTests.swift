@@ -509,6 +509,38 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func emptyLinkRendersNothing() throws {
+        assert(
+            rendering: "[]()",
+            prettyFormatted: true,
+            matches: """
+            <p></p>
+            """
+        )
+    }
+    
+    @Test
+    func linkWithoutDestinationRendersItLinkText() throws {
+        assert(
+            rendering: "[link text]()",
+            prettyFormatted: true,
+            matches: """
+            <p>link text</p>
+            """
+        )
+        
+        assert(
+            rendering: "[some _emphasized_ text]()",
+            prettyFormatted: true,
+            matches: """
+            <p>
+              some <em>emphasized</em> text
+            </p>
+            """
+        )
+    }
+    
+    @Test
     func renderingRelativeLinksToOtherPages() throws {
         // Link to article
         assert(
