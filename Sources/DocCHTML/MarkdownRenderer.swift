@@ -536,7 +536,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     /// Transforms a markdown list item into a`<li>` HTML element.
     ///
-    /// See ``visit(_:)-(UnorderedList)`` or ``visit(_:)-(OrderedList)`` for examples.
+    /// See ``visitUnorderedList(_:into:)`` or ``visitOrderedList(_:into:)`` for examples.
     func visitListItem(_ listItem: ListItem, into output: inout [HTMLNode]) {
         output.append(li(contents: _visit(listItem.children)))
     }
