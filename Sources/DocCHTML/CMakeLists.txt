@@ -8,6 +8,7 @@ See https://swift.org/LICENSE.txt for license information
 #]]
 
 add_library(DocCHTML STATIC
+  HTMLBuilder.swift
   HTMLFormatter.swift
   HTMLNode.swift
   HTMLNode+Attributes.swift

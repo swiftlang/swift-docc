@@ -461,6 +461,6 @@ struct HTMLFormatterTests {
     }
 }
 
-private func htmlString(for element: HTMLNode, options: HTMLFormatter.Options = []) -> String {
+func htmlString(for element: HTMLNode, options: HTMLFormatter.Options = []) -> String {
     String(decoding: HTMLFormatter.format(element, options: options), as: UTF8.self)
 }
