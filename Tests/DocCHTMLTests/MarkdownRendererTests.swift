@@ -212,6 +212,36 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func tablesRepresentColumnAlignmentAsClassNames() {
+        assert(
+            rendering: """
+            Leading  | Center   | Trailing 
+            :------- | :------: | --------: |
+            First    | Second   | Third
+            """,
+            prettyFormatted: true,
+            matches: """
+            <table>
+              <thead>
+                <tr>
+                  <th class="left">Leading</th>
+                  <th class="center">Center</th>
+                  <th class="right">Trailing</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="left">First</td>
+                  <td class="center">Second</td>
+                  <td class="right">Third</td>
+                </tr>
+              </tbody>
+            </table>
+            """
+        )
+    }
+    
+    @Test
     func renderingLists() {
         assert(
             rendering: """
