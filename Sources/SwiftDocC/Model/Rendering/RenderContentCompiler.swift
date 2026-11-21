@@ -11,6 +11,7 @@
 import Foundation
 import Markdown
 private import SymbolKit
+private import DocCCommon
 
 protocol RenderContent {}
 extension RenderBlockContent: RenderContent {}
@@ -83,8 +84,23 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> [any RenderContent] {
+        if let termListItems = unorderedList.termListItems() {
+            return [RenderBlockContent.termList(.init(items: termListItems.map { visitTermListItem($0) }))]
+        }
         let renderListItems = unorderedList.listItems.reduce(into: [], { result, item in result.append(contentsOf: visitListItem(item))}) as! [RenderBlockContent.ListItem]
-        return renderListItems.unorderedAndTermLists()
+        return [RenderBlockContent.unorderedList(.init(items: renderListItems))]
+    }
+    
+    private mutating func visitTermListItem(_ termListItem: TermListItem) -> RenderBlockContent.TermListItem {
+        let term = termListItem.term.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent]
+        var definition = termListItem.definition.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]
+        if case .paragraph(let firstParagraph) = definition.first {
+            definition[0] = .paragraph(.init(inlineContent: firstParagraph.inlineContent.termListInlineContent()))
+        }
+        return RenderBlockContent.TermListItem(
+            term: .init(inlineContent: term.termListInlineContent()),
+            definition: .init(content: definition)
+        )
     }
     
     mutating func visitParagraph(_ paragraph: Paragraph) -> [any RenderContent] {

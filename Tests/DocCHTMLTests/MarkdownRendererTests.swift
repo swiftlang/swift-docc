@@ -263,6 +263,78 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func renderingTermLists() {
+        assert(
+            rendering: """
+            - term First term: Definition of the first term.
+            - term `Second`: Definition with more content.
+
+              A second paragraph in the same definition.
+            """,
+            prettyFormatted: true,
+            matches: """
+            <dl>
+              <dt>First term</dt>
+              <dd>
+                <p>Definition of the first term.</p>
+              </dd>
+              <dt>
+                <code>Second</code>
+              </dt>
+              <dd>
+                <p>Definition with more content.</p>
+                <p>A second paragraph in the same definition.</p>
+              </dd>
+            </dl>
+            """
+        )
+    }
+    
+    @Test
+    func renderingListsThatMixTermListItemsAndOtherItemsAsUnorderedLists() {
+        assert(
+            rendering: """
+            - term Ice: Thrives below freezing.
+            - A normal bullet.
+            """,
+            matches: "<ul><li><p>term Ice: Thrives below freezing.</p></li><li><p>A normal bullet.</p></li></ul>"
+        )
+    }
+    
+    @Test
+    func renderingTermsWithInlineContent() {
+        assert(
+            rendering: "- term *Fancy* [link](https://example.com) thing: Def.",
+            matches: #"<dl><dt><em>Fancy</em> <a href="https://example.com">link</a> thing</dt><dd><p>Def.</p></dd></dl>"#
+        )
+        
+        assert(
+            rendering: """
+            - term Long
+              name: Def
+              continues.
+            """,
+            matches: "<dl><dt>Long name</dt><dd><p>Def continues.</p></dd></dl>"
+        )
+        
+        assert(
+            rendering: "- term <!-- c -->Foo: Bar.",
+            matches: "<dl><dt>Foo</dt><dd><p>Bar.</p></dd></dl>"
+        )
+    }
+    
+    @Test
+    func renderingTermListsNestedInDefinitions() {
+        assert(
+            rendering: """
+            - term A: x
+              - term B: y
+            """,
+            matches: "<dl><dt>A</dt><dd><p>x</p><dl><dt>B</dt><dd><p>y</p></dd></dl></dd></dl>"
+        )
+    }
+    
+    @Test
     func renderingAsides() async throws {
         assert(
             rendering: """

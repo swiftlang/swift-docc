@@ -268,6 +268,8 @@ space, the `term` keyword, and another space. Then add a colon (`:`), a space, a
 - term Lightning: Lightning sloths thrive in stormy climates.
 ```
 
+Every item in a term list must define a term. If only some of a list's items define a term, DocC renders the list as a bulleted list and warns you.
+
 A list item's text, including terms and their definitions, can use the same
 style attributes as other text, and include links to other content, including
 symbols.

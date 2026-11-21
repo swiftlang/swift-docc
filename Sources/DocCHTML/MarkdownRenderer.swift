@@ -468,7 +468,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: List
     
-    /// Transforms a markdown unordered list into a`<ul>` HTML element.
+    /// Transforms a markdown unordered list into a `<ul>` or `<dl>` HTML element.
     ///
     /// As part of transforming the unordered list, the renderer also transforms all of its list items and their content recursively.
     /// For example, the renderer transforms this markdown
@@ -497,8 +497,37 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </li>
     /// </ul>
     /// ```
+    ///
+    /// If every list item defines a term, the renderer transforms the list into a `<dl>` HTML element instead.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// - term First: The first term's definition.
+    /// - term Second: The second term's definition.
+    /// ```
+    /// into XML nodes representing this HTML structure
+    /// ```
+    /// <dl>
+    ///   <dt>First</dt>
+    ///   <dd>
+    ///     <p>The first term's definition.</p>
+    ///   </dd>
+    ///   <dt>Second</dt>
+    ///   <dd>
+    ///     <p>The second term's definition.</p>
+    ///   </dd>
+    /// </dl>
+    /// ```
     func visit(_ unorderedList: UnorderedList) -> HTMLNode {
-        ul(contents: visit(unorderedList.children))
+        guard let termListItems = unorderedList.termListItems() else {
+            return ul(contents: visit(unorderedList.children))
+        }
+        var items: [HTMLNode] = []
+        items.reserveCapacity(termListItems.count * 2)
+        for termListItem in termListItems {
+            items.append(dt(contents: visit(termListItem.term as [any Markup])))
+            items.append(dd(contents: visit(termListItem.definition as [any Markup])))
+        }
+        return dl(contents: items)
     }
     
     /// Transforms a markdown ordered list into a`<ul>` HTML element.
@@ -646,7 +675,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: Markup children
     
-    private func visit(_ container: MarkupChildren) -> [HTMLNode] {
+    private func visit(_ container: some Sequence<any Markup>) -> [HTMLNode] {
         var children: [HTMLNode] = []
         children.reserveCapacity(container.underestimatedCount)
         
