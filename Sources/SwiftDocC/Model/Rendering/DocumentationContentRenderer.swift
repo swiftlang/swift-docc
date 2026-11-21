@@ -175,8 +175,19 @@ public class DocumentationContentRenderer {
     func conformanceSectionFor(_ reference: ResolvedTopicReference, collectedConstraints: [TopicReference: [SymbolGraph.Symbol.Swift.GenericConstraint]]) -> ConformanceSection? {
         guard let node = try? context.entity(with: reference),
             let symbol = node.symbol else {
-            // Couldn't find the node for this reference
-            return nil
+            // Couldn't find a local node for this reference. If it's an external symbol, such as a protocol from a dependency,
+            // the constraints that were collected from the conforming type's relationship can still be rendered.
+            guard let external = context.externalCache[reference],
+                  let externalConstraints = collectedConstraints[.successfullyResolved(reference)], !externalConstraints.isEmpty
+            else {
+                return nil
+            }
+            // The only external symbols that appear in a relationship with constraints are protocols and other types that can have children.
+            let options = ConformanceSection.ConstraintRenderOptions(
+                isLeaf: false,
+                parentName: nil,
+                selfName: external.title.components(separatedBy: .punctuationCharacters)[0])
+            return ConformanceSection(constraints: externalConstraints, options: options)
         }
         
         // Render references can have either availability or conformance data
