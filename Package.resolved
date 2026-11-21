@@ -1,5 +1,5 @@
 {
-  "originHash" : "0390bc171132f130124647214967f2a05fef9188ec6ea8045c01ed806eedbefd",
+  "originHash" : "9e8536854535ffa0e23c707439f8d4028288604b2c1abe8c392768441553ef74",
   "pins" : [
     {
       "identity" : "swift-argument-parser",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-cmark.git",
       "state" : {
-        "branch" : "gfm",
-        "revision" : "2c47322cb32cbed555f13bf5cbfaa488cc30a785"
+        "branch" : "release/6.5.x",
+        "revision" : "437611671145d47e6d9679761b8a5987766f4ae5"
       }
     },
     {
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-docc-symbolkit.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "c1f9484553d29afb981b95458b37c1c3d3e1bcd7"
+        "branch" : "release/6.5.x",
+        "revision" : "a3f3648bef3dd289e1f8756e77cf5610d2352f31"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-lmdb.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "a4bc87807721c1fd114bf35464457e2db0d0e6c0"
+        "branch" : "release/6.5.x",
+        "revision" : "7f4ee94510991a1dd30afe62a632bdd169e1ea70"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-markdown.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "75e3df1d7b664ef3c96595de36c243b98599b3bc"
+        "branch" : "release/6.5.x",
+        "revision" : "e35bbb1ef0edeedaaba136db768d556ea9c22d9a"
       }
     },
     {
