@@ -68,11 +68,14 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Overview">Overview</a>
             </h2>
-            <picture>
-              <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
-              <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
-              <img alt="Some alt text" decoding="async" loading="lazy">
-            </picture>
+            <span class="color-scheme-variants">
+              <picture class="light-only">
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../images/unit-test/ImageName@2x.png">
+              </picture>
+              <picture class="dark-only">
+                <img alt="Some alt text" decoding="async" loading="lazy" src="../../images/unit-test/ImageName~dark@2x.png">
+              </picture>
+            </span>
           </section>
         </article>
         """)

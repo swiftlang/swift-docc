@@ -37,6 +37,8 @@ struct HTMLRenderFullPageTests {
           <head>
             <meta charset="utf-8">
             <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport">
+            <meta content="light dark" name="color-scheme">
+            <script src="../../../../color-scheme.js"></script>
             <link href="../../../../reference.css" rel="stylesheet">
             <title>Some title</title>
             <script src="../../../../navigator.js" defer></script>
@@ -107,6 +109,8 @@ struct HTMLRenderFullPageTests {
               <head>
                 <meta charset="utf-8">
                 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport">
+                <meta content="light dark" name="color-scheme">
+                <script src="../../../../color-scheme.js"></script>
                 <link href="../../../../reference.css" rel="stylesheet">
                 <title>Some title</title>
                 <script src="../../../../navigator.js" defer></script>
