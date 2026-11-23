@@ -324,6 +324,31 @@ struct AvailabilityTests {
         }
     }
     
+    @Test(arguments: ["swift", "SWIFT", "SwIfT"])
+    func capitalizesRecognizedPlatformNamesInDirectiveAvailability(_ swiftPlatformSpelling: String) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            @Metadata {
+              @Available(\(swiftPlatformSpelling), introduced: "1.2.3")
+            }
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "symbol-id"))
+        let renderNode = try makeRenderNode(for: reference, in: context)
+        #expect(renderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+            "Swift 1.2.3"
+        ])
+    }
+    
     // This verifies determinism in previously non-deterministic behavior that cannot be reproduced reliably in a test.
     // If you suspect that your changes might affect this test,
     // you need to run it repeatedly (and relaunch for each repetition) to verify that the behavior remains deterministic.

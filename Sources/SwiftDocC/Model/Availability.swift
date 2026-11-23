@@ -233,7 +233,8 @@ struct Availability {
             if let knownPlatform = KnownPlatform(directive.platform) {
                 knownPlatforms[knownPlatform] = info
             } else {
-                customPlatformsByName[directive.platform.rawValue] = info
+                let canonicalName = Self.displayNameForCustomPlatform(directive.platform.rawValue)
+                customPlatformsByName[canonicalName] = info
             }
         }
     }
@@ -532,6 +533,10 @@ struct Availability {
         }
         
         return foundDeprecatedPlatforms
+    }
+    
+    private static func displayNameForCustomPlatform(_ name: String) -> String {
+        Self.additionalPlatformDisplayNamesByCaseInsensitiveAlias[name.lowercased()] ?? name
     }
     
     /// A map of known `PlatformName` display names keyed by all their lowercased name aliases.
