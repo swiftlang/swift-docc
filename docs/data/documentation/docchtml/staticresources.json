@@ -267,7 +267,7 @@
 "doc://DocCHTML/documentation/DocCHTML/StaticResources/navigatorScript": {
   "abstract" : [
     {
-      "text" : "The script that renders the navigator sidebar from the navigator index.",
+      "text" : "The script that renders the navigator sidebar from the navigator index and lets the reader show and hide it.",
       "type" : "text"
     }
   ],

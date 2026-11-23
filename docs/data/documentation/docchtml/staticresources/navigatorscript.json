@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The script that renders the navigator sidebar from the navigator index.",
+      "text" : "The script that renders the navigator sidebar from the navigator index and lets the reader show and hide it.",
       "type" : "text"
     }
   ],
@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "StaticResources.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/StaticResources.swift#L1225"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/StaticResources.swift#L1317"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",
@@ -232,7 +232,7 @@
 "doc://DocCHTML/documentation/DocCHTML/StaticResources/navigatorScript": {
   "abstract" : [
     {
-      "text" : "The script that renders the navigator sidebar from the navigator index.",
+      "text" : "The script that renders the navigator sidebar from the navigator index and lets the reader show and hide it.",
       "type" : "text"
     }
   ],
