@@ -82,7 +82,8 @@ struct Availability {
             if let knownPlatform = KnownPlatform(defaultInformation.platformName) {
                 knownPlatforms[knownPlatform] = info
             } else {
-                customPlatformsByName[defaultInformation.platformName.displayName] = info
+                let canonicalName = Self.displayNameForCustomPlatform(defaultInformation.platformName.displayName)
+                customPlatformsByName[canonicalName] = info
             }
         }
     }
@@ -183,11 +184,9 @@ struct Availability {
                         continue
                     }
                     knownPlatforms[platform] = makeInformation(for: availability, currentIntroducedVersion: knownPlatforms[platform].state.introduced)
-                } else if var domainName = availability.domain?.rawValue {
-                    if let uncommonPlatformName = Self.additionalPlatformDisplayNamesByCaseInsensitiveAlias[domainName.lowercased()] {
-                        domainName = uncommonPlatformName
-                    }
-                    customPlatformsByName[domainName] = makeInformation(for: availability, currentIntroducedVersion: customPlatformsByName[domainName]?.state.introduced)
+                } else if let domain = availability.domain {
+                    let canonicalName = Self.displayNameForCustomPlatform(domain.rawValue)
+                    customPlatformsByName[canonicalName] = makeInformation(for: availability, currentIntroducedVersion: customPlatformsByName[canonicalName]?.state.introduced)
                 }
             }
         }
