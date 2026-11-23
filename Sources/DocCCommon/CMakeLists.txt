@@ -1,7 +1,7 @@
 #[[
 This source file is part of the Swift open source project
 
-Copyright © 2014 - 2025 Apple Inc. and the Swift project authors
+Copyright © 2014 - 2026 Apple Inc. and the Swift project authors
 Licensed under Apache License v2.0 with Runtime Library Exception
 
 See https://swift.org/LICENSE.txt for license information
@@ -13,8 +13,14 @@ add_library(DocCCommon STATIC
   JSONDecoding/SymbolGraph+FastJSONDecodable.swift
   JSONDecoding/UnsafeRawPointer+HasASCIIPrefix.swift
   Mutex.swift
-  SourceLanguage.swift)
+  SourceLanguage.swift
+  TermListItem.swift)
 target_link_libraries(DocCCommon PRIVATE
-  DocC::SymbolKit)
+  DocC::SymbolKit
+  SwiftMarkdown::Markdown)
+# FIXME(compnerd) workaround leaking dependencies
+target_link_libraries(DocCCommon PRIVATE
+  libcmark-gfm
+  libcmark-gfm-extensions)
 set_target_properties(DocCCommon PROPERTIES
   Swift_LANGUAGE_VERSION 6)

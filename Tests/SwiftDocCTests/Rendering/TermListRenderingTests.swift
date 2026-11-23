@@ -25,6 +25,22 @@ struct TermListRenderingTests {
     }
 
     @Test
+    func removesKeywordAndFollowingWhitespaceRegardlessOfCase() async throws {
+        let content = try await renderedContent("""
+        - term : A
+        - TERM : B
+        - Term  `c`: C
+        """)
+        #expect(content == [
+            .termList(.init(items: [
+                termItem([.text("")], [paragraph([.text("A")])]),
+                termItem([.text("")], [paragraph([.text("B")])]),
+                termItem([.codeVoice(code: "c")], [paragraph([.text("C")])]),
+            ])),
+        ])
+    }
+
+    @Test
     func detectsTermListNestedInDefinition() async throws {
         let content = try await renderedContent("""
         - term A: x
@@ -83,6 +99,34 @@ struct TermListRenderingTests {
         #expect(content == [
             .termList(.init(items: [
                 termItem([.text("Foo")], [paragraph([.text("Bar.")])]),
+            ])),
+        ])
+    }
+
+    @Test
+    func doesNotSplitTermAtColonInUnresolvedLink() async throws {
+        let content = try await renderedContent("""
+        - term [Foo: Bar](doc:Missing) baz: Qux.
+        - term <doc:Missing>: Qux.
+        """)
+        #expect(content == [
+            .termList(.init(items: [
+                termItem([.text("Foo: Bar baz")], [paragraph([.text("Qux.")])]),
+                termItem([.text("doc:Missing")], [paragraph([.text("Qux.")])]),
+            ])),
+        ])
+    }
+
+    @Test
+    func doesNotDetectTermsWhereKeywordOrColonIsInUnresolvedLink() async throws {
+        let content = try await renderedContent("""
+        - [term](doc:Missing) Foo: Qux.
+        - term <doc:Missing>
+        """)
+        #expect(content == [
+            .unorderedList(.init(items: [
+                .init(content: [paragraph([.text("term"), .text(" Foo: Qux.")])]),
+                .init(content: [paragraph([.text("term "), .text("doc:Missing")])]),
             ])),
         ])
     }
