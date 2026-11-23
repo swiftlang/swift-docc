@@ -753,7 +753,7 @@ struct AvailabilityTests {
     @Test
     func prefersMoreSpecificDefaultAvailabilityWhenThereIsNoSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(name: "ModuleName-catalyst.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
             ]))
             
@@ -774,6 +774,27 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "2.3")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "4.5",
                 "The Mac Catalyst 'default' availability from the Info.plist is more specific than the 'fallback' from the 'default' iOS availability (also from the Info.plist)")
+    }
+    
+    @Test(arguments: ["swift", "SWIFT", "SwIfT"])
+    func capitalizesRecognizedPlatformNamesInDefaultAvailability(_ swiftPlatformSpelling: String) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+            
+            InfoPlist(defaultAvailability: [
+                .init(platformName: PlatformName(rawValue: swiftPlatformSpelling), platformVersion: "1.2.3")
+            ])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "symbol-id"))
+        let renderNode = try makeRenderNode(for: reference, in: context)
+        #expect(renderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+            "Swift 1.2.3"
+        ])
     }
     
     // MARK: In-Source Availability
@@ -1173,8 +1194,8 @@ struct AvailabilityTests {
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
         
         let reference = try #require(context.documentationCache.reference(symbolID: "symbol-id"))
-        let moduleRenderNode = try makeRenderNode(for: reference, in: context)
-        #expect(moduleRenderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+        let renderNode = try makeRenderNode(for: reference, in: context)
+        #expect(renderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
             "Swift 6.4.1"
         ])
     }
