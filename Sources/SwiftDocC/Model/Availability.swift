@@ -557,9 +557,6 @@ private extension Availability {
     enum KnownPlatform: Int {
         // Match the order that platforms display.
         // This removes the need to sort the known platform's availability for every page.
-        
-        // For future consideration: App extension platforms are fairly uncommon in practice but we currently always allocate space for them.
-        // It might be worth investigating treating the app extension platforms as "custom" and adding extra logic in `makePlatforms(...)` to intersperse them with the main known platforms.
         case iOS
         case iPadOS
         case macCatalyst
