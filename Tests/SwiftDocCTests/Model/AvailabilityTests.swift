@@ -1910,6 +1910,34 @@ struct AvailabilityTests {
         }
     }
     
+    // FIXME: Articles won't display default availability (rdar://173688303)
+    @Test(.bug("rdar://173688303"))
+    func articleDoesNotDisplayOnlyCustomDefaultPlatforms() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: []))
+            TextFile(name: "SomeArticle.md", utf8Content: """
+            # Some article
+            """)
+            InfoPlist(defaultAvailability: [
+                .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
+                .init(platformName: .iOS, platformVersion: "9.2"),
+            ])
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let reference = try #require(context.knownPages.first(where: { $0.lastPathComponent == "SomeArticle" }))
+        let node = try #require(context.documentationCache[reference])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+
+        // Until articles display default availability, they shouldn't display any of it.
+        // Displaying the custom "Something" platform without the known "iOS" platform (and its fallbacks) is inconsistent.
+        #expect(renderNode.metadata.platforms == nil,
+            "Unexpected article platforms: \(renderNode.metadata.platforms?.compactMap(\.name) ?? [])"
+        )
+    }
+    
     @Test
     func unconditionallyDeprecatedSymbolIsConsideredDeprecated() async throws {
         let catalog = Folder(name: "unit-test.docc") {
