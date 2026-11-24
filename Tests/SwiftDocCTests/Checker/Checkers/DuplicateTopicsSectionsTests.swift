@@ -24,14 +24,18 @@ struct DuplicateTopicsSectionsTests {
         #expect(checker.diagnostics.isEmpty)
     }
     
-    @Test
-    func doesNotWarnForSingleTopicsSection() {
+    private static let topicsHeadingSpellings = [
+        "Topics", "TOPICS", "topics", "ToPiCs",
+    ]
+    
+    @Test(arguments: Self.topicsHeadingSpellings)
+    func doesNotWarnForSingleTopicsSection(headingSpelling: String) {
         let markupSource = """
         # Title
 
         Blah
 
-        ## Topics
+        ## \(headingSpelling)
         """
         let document = Document(parsing: markupSource, options: [])
         var checker = DuplicateTopicsSections(sourceFile: sourceFileForDiagnosticMessages)
@@ -39,15 +43,15 @@ struct DuplicateTopicsSectionsTests {
         #expect(checker.diagnostics.isEmpty)
     }
     
-    @Test
-    func warnsAboutMultipleTopicsSection() throws {
+    @Test(arguments: Self.topicsHeadingSpellings, Self.topicsHeadingSpellings)
+    func warnsAboutMultipleTopicsSection(firstTopicsSectionTitle: String, secondTopicsSectionTitle: String) throws {
         let markupSource = """
         # Title
 
-        ## Topics
+        ## \(firstTopicsSectionTitle)
         ### Topic A
 
-        ## Topics
+        ## \(secondTopicsSectionTitle)
         ### Topic B
         
         ## Topics

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -162,10 +162,10 @@ struct RenderHierarchyTranslator {
             let assessmentReference = ResolvedTopicReference(bundleID: tutorialReference.bundleID, path: tutorialReference.path, fragment: RenderHierarchyTranslator.assessmentsAnchor, sourceLanguage: .swift)
             renderHierarchyTutorial.landmarks.append(RenderHierarchyLandmark(reference: RenderReferenceIdentifier(assessmentReference.absoluteString), kind: .assessment))
             
-            let urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
+            let urlGenerator = PresentationURLGenerator(baseURL: context.inputs.baseURL)
             let assessmentLinkReference = LinkReference(
                 identifier: RenderReferenceIdentifier(assessmentReference.absoluteString),
-                title: "Check Your Understanding",
+                title: "Check your understanding",
                 url: urlGenerator.presentationURLForReference(assessmentReference).relativeString
             )
             linkReferences[assessmentReference.absoluteString] = assessmentLinkReference

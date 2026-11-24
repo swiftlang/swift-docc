@@ -301,6 +301,56 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func renderingTabNavigatorDirective() async throws {
+        func content(_ markdown: String) -> [any Markup] {
+            Array(Document(parsing: markdown).children)
+        }
+
+        assert(
+            rendering: """
+            @TabNavigator {
+                @Tab("First") {
+                    Some _formatted_ content
+                }
+                @Tab("Second") {
+                    Some content
+
+                    Some more content
+                }
+                @Tab("Third") {
+                    Even more content
+                }
+            }
+            """,
+            prettyFormatted: true,
+            directiveToReturn: .tabNavigator(tabs: [
+                (title: "First", content: content("Some _formatted_ content")),
+                (title: "Second", content: content("Some content\n\nSome more content")),
+                (title: "Third", content: content("Even more content")),
+            ]),
+            matches: """
+            <div class="tabnavigator" style="--count: 3">
+              <details name="tabnavigator-1" style="--index: 1" open>
+                <summary>First</summary>
+                <p>
+                  Some <em>formatted</em> content
+                </p>
+              </details>
+              <details name="tabnavigator-1" style="--index: 2">
+                <summary>Second</summary>
+                <p>Some content</p>
+                <p>Some more content</p>
+              </details>
+              <details name="tabnavigator-1" style="--index: 3">
+                <summary>Third</summary>
+                <p>Even more content</p>
+              </details>
+            </div>
+            """
+        )
+    }
+
+    @Test
     func renderingImageDirective() async throws {
         let linkedAsset = LinkedAsset(files: [
             .light : [2 : "test_source@2x.png"],
@@ -357,6 +407,44 @@ struct MarkdownRendererTests {
               <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
               <img alt="This is some alt text" decoding="async" loading="lazy">
             </picture>
+            """)
+    }
+    
+    @Test
+    func renderingRowAndColumnDirectives() async throws {
+        let renderableDirectiveWithCaption = RenderableDirective.row(columns: [
+            (size: 2, alignment: .leading, content: [Text("This is the first column.")]),
+            (size: 1, alignment: .center, content: [Text("This is the second column.")]),
+            (size: 1, alignment: .trailing, content: [Text("This is the third column.")]),
+        ])
+        assert(
+            rendering: """
+            @Row {
+                @Column(size: 2, alignment: "leading") {
+                    This is the first column.
+                }
+                @Column(size: 1, alignment: "center") {
+                    This is the second column.
+                }
+                @Column(size: 1, alignment: "trailing") {
+                    This is the third column.
+                }
+            }
+            """,
+            prettyFormatted: true,
+            directiveToReturn: renderableDirectiveWithCaption,
+            matches: """
+            <div class="row">
+              <div style="--column-size: 2; --alignment: start">
+                This is the first column.
+              </div>
+              <div style="--column-size: 1; --alignment: center">
+                This is the second column.
+              </div>
+              <div style="--column-size: 1; --alignment: end">
+                This is the third column.
+              </div>
+            </div>
             """)
     }
     

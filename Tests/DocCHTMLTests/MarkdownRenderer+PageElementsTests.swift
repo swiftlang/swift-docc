@@ -276,16 +276,16 @@ struct MarkdownRenderer_PageElementsTests {
         switch goal {
         case .richness:
             returns.assertMatches(prettyFormatted: true, expected: """
-            <section id="Return-Value">
+            <section id="Return-value">
               <h2>
-                <a href="#Return-Value">Return Value</a>
+                <a href="#Return-value">Return value</a>
               </h2>
             \(commonHTML.indenting(depth: 1))
             </section>
             """)
         case .conciseness:
             returns.assertMatches(prettyFormatted: true, expected: """
-            <h2>Return Value</h2>
+            <h2>Return value</h2>
             \(commonHTML)
             """)
         }
@@ -313,16 +313,16 @@ struct MarkdownRenderer_PageElementsTests {
         switch goal {
         case .richness:
             returns.assertMatches(prettyFormatted: true, expected: """
-            <section id="Return-Value">
+            <section id="Return-value">
               <h2>
-                <a href="#Return-Value">Return Value</a>
+                <a href="#Return-value">Return value</a>
               </h2>
             \(commonHTML.indenting(depth: 1))
             </section>
             """)
         case .conciseness:
             returns.assertMatches(prettyFormatted: true, expected: """
-            <h2>Return Value</h2>
+            <h2>Return value</h2>
             \(commonHTML)
             """)
         }

@@ -161,6 +161,6 @@ class AutoCapitalizationTests: XCTestCase {
         let translatedReturns = returnsSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let returnsRenderSection = translatedReturns?.defaultValue?.section as! ContentRenderSection
         
-        XCTAssertEqual(returnsRenderSection.content, [SwiftDocC.RenderBlockContent.heading(SwiftDocC.RenderBlockContent.Heading(level: 2, text: "Return Value", anchor: Optional("return-value"))), SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("String, first word should have been capitalized here.")]))])
+        XCTAssertEqual(returnsRenderSection.content, [SwiftDocC.RenderBlockContent.heading(SwiftDocC.RenderBlockContent.Heading(level: 2, text: "Return value", anchor: Optional("return-value"))), SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("String, first word should have been capitalized here.")]))])
     }
 }

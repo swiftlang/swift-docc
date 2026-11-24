@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -74,13 +74,13 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         - ``myTopLevelFunction()``
 
-        ### Type Aliases
+        ### Type aliases
 
         @SupportedLanguage(swift)
 
         - ``MyTypeAlias``
 
-        ### Type Aliases
+        ### Type aliases
 
         @SupportedLanguage(objc)
 
@@ -133,7 +133,7 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         ## Topics
 
-        ### Instance Properties
+        ### Instance properties
 
         - ``someThing``
         - ``something``
@@ -298,7 +298,7 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         ## Topics
 
-        ### Instance Methods
+        ### Instance methods
 
         - ``fourthTestMemberName(test:)->Float``  <!-- func fourthTestMemberName(test: String) -> Float -->
         - ``fourthTestMemberName(test:)->Double`` <!-- func fourthTestMemberName(test: String) -> Double -->
@@ -339,7 +339,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         - ``init(exactly:)``
         - ``init(integerLiteral:)``
 
-        ### Instance Properties
+        ### Instance properties
 
         - ``magnitude``
         
@@ -404,7 +404,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         - ``init(center:radius:)``
         - ``init(string:)``
 
-        ### Instance Properties
+        ### Instance properties
 
         @SupportedLanguage(swift)
 
@@ -414,20 +414,20 @@ class GeneratedCurationWriterTests: XCTestCase {
         - ``isNull``
         - ``radius``
 
-        ### Instance Properties
+        ### Instance properties
 
         @SupportedLanguage(objc)
 
         - ``center``
         - ``radius``
 
-        ### Instance Methods
+        ### Instance methods
 
         @SupportedLanguage(swift)
 
         - ``intersects(_:)``
 
-        ### Type Properties
+        ### Type properties
 
         @SupportedLanguage(swift)
 

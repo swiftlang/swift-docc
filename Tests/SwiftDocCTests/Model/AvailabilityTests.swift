@@ -35,9 +35,9 @@ struct AvailabilityTests {
             # Some article
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: defaultIntroducedVersion)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -92,9 +92,9 @@ struct AvailabilityTests {
                     .init(domainName: "visionOS", introduced: nil, deprecated: .init(major: 1, minor: 0, patch: 0)),
                 ])
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: "1.2.3")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -212,11 +212,11 @@ struct AvailabilityTests {
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: "8.0"),
                 // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
                 .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -247,10 +247,10 @@ struct AvailabilityTests {
                 ])
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
                 .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -295,10 +295,10 @@ struct AvailabilityTests {
             \(directiveLocation == .extensionFile ? availableDirective : "")
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 // One of the two fallback platforms, but not both, is marked unavailable here so its fallback availability won't be added.
                 .init(unavailablePlatformName: unavailableDefaultPlatform.platformName),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -322,6 +322,31 @@ struct AvailabilityTests {
             #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "9.3")
             #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" }) == nil)
         }
+    }
+    
+    @Test(arguments: ["swift", "SWIFT", "SwIfT"])
+    func capitalizesRecognizedPlatformNamesInDirectiveAvailability(_ swiftPlatformSpelling: String) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            @Metadata {
+              @Available(\(swiftPlatformSpelling), introduced: "1.2.3")
+            }
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "symbol-id"))
+        let renderNode = try makeRenderNode(for: reference, in: context)
+        #expect(renderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+            "Swift 1.2.3"
+        ])
     }
     
     // This verifies determinism in previously non-deterministic behavior that cannot be reproduced reliably in a test.
@@ -406,11 +431,11 @@ struct AvailabilityTests {
                 ]))
             }
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS,      platformVersion: "8.0"),
                 .init(platformName: .iPadOS,   platformVersion: "8.0"),
                 .init(platformName: .catalyst, platformVersion: "8.0"),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -439,11 +464,11 @@ struct AvailabilityTests {
                     ])
                 ]))
             }
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -471,11 +496,11 @@ struct AvailabilityTests {
                     ])
                 ]))
             }
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -503,11 +528,11 @@ struct AvailabilityTests {
                     ])
                 ]))
             }
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: "1.2.3")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -530,11 +555,11 @@ struct AvailabilityTests {
                     .init(domainName: "ios", introduced: SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0), deprecated: nil)
                 ])
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -558,11 +583,11 @@ struct AvailabilityTests {
                     .init(domainName: "ios", introduced: SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0), deprecated: nil)
                 ])
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil),
                 .init(platformName: .iPadOS, platformVersion: nil),
                 .init(platformName: .catalyst, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -607,11 +632,11 @@ struct AvailabilityTests {
                 ])
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS,      platformVersion: "8.0"),
                 .init(platformName: .catalyst, platformVersion: "7.0"),
                 .init(platformName: .iPadOS,   platformVersion: "6.0"),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -643,11 +668,11 @@ struct AvailabilityTests {
                 ]))
             }
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(unavailablePlatformName: .iOS),      // This configuration doesn't remove the in-source "iOS" availability from above
                 .init(unavailablePlatformName: .iPadOS),
                 .init(unavailablePlatformName: .catalyst), // This configuration doesn't remove the in-source "macCatalyst" availability from above
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -675,10 +700,10 @@ struct AvailabilityTests {
                 makeSymbol(id: "second-symbol-id", kind: .class, pathComponents: ["Second"]), // No in-source availability attributes.
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .tvOS, platformVersion: nil),
                 .init(platformName: .iOS,  platformVersion: nil),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -712,11 +737,11 @@ struct AvailabilityTests {
                 ))
             }
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .macOS,   platformVersion: "10.0"),
                 .init(platformName: .iOS,     platformVersion: "10.0"),
                 .init(platformName: .watchOS, platformVersion: "10.0"),
-            ]])
+            ])
         }
 
         let context = try await load(catalog: catalog)
@@ -736,9 +761,9 @@ struct AvailabilityTests {
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No explicit availability
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .macOS, platformVersion: "10.0")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         let node = try #require(context.documentationCache["some-symbol-id"])
@@ -753,14 +778,14 @@ struct AvailabilityTests {
     @Test
     func prefersMoreSpecificDefaultAvailabilityWhenThereIsNoSourceAvailability() async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            JSONFile(name: "ModuleName-catalyst.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios"), environment: "macabi"), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]) // No in-source availability attributes.
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS,      platformVersion: "2.3"),
                 .init(platformName: .catalyst, platformVersion: "4.5"),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -774,6 +799,27 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "2.3")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "4.5",
                 "The Mac Catalyst 'default' availability from the Info.plist is more specific than the 'fallback' from the 'default' iOS availability (also from the Info.plist)")
+    }
+    
+    @Test(arguments: ["swift", "SWIFT", "SwIfT"])
+    func capitalizesRecognizedPlatformNamesInDefaultAvailability(_ swiftPlatformSpelling: String) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+            
+            InfoPlist(defaultAvailability: [
+                .init(platformName: PlatformName(rawValue: swiftPlatformSpelling), platformVersion: "1.2.3")
+            ])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "symbol-id"))
+        let renderNode = try makeRenderNode(for: reference, in: context)
+        #expect(renderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+            "Swift 1.2.3"
+        ])
     }
     
     // MARK: In-Source Availability
@@ -898,11 +944,11 @@ struct AvailabilityTests {
             ]))
             
             if withUnavailablePlatformsInInfoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(unavailablePlatformName: .iOS),
                     .init(unavailablePlatformName: .iPadOS),
                     .init(unavailablePlatformName: .catalyst),
-                ]])
+                ])
             }
         }
         let context = try await load(catalog: catalog)
@@ -951,9 +997,9 @@ struct AvailabilityTests {
                 ]),
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .catalyst, platformVersion: "1.0")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -978,9 +1024,9 @@ struct AvailabilityTests {
                 ]),
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .catalyst, platformVersion: "5.5")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1160,6 +1206,25 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "visionOS App Extension"     })?.introduced == "6.6")
     }
     
+    @Test(arguments: ["swift", "SWIFT", "SwIfT"])
+    func capitalizesRecognizedPlatformNamesForInSourceAvailabilityAttribute(_ swiftPlatformSpelling: String) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: swiftPlatformSpelling, introduced: .init(major: 6, minor: 4, patch: 1), deprecated: nil),
+                ]),
+            ]))
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let reference = try #require(context.documentationCache.reference(symbolID: "symbol-id"))
+        let renderNode = try makeRenderNode(for: reference, in: context)
+        #expect(renderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+            "Swift 6.4.1"
+        ])
+    }
+    
     // MARK: Deprecations
     
     @Test(arguments: Self.allMainPlatforms)
@@ -1276,9 +1341,9 @@ struct AvailabilityTests {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: "8.0")
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1302,9 +1367,9 @@ struct AvailabilityTests {
             JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
             ]))
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: nil)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1320,6 +1385,43 @@ struct AvailabilityTests {
         #expect(try makeRenderNode(for: symbolReference, in: context).metadata.platforms == nil)
     }
     
+    @Test(arguments: [true, false])
+    func moduleDisplaysDirectiveAvailability(alsoHasDefaultAvailability: Bool) async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"]),
+            ]))
+            if alsoHasDefaultAvailability {
+                InfoPlist(defaultAvailability: [
+                    .init(platformName: .iOS,   platformVersion: nil),
+                    .init(platformName: .macOS, platformVersion: "1.2.3"),
+                ])
+            }
+            TextFile(name: "ModuleName.md", utf8Content: """
+            # ``ModuleName``
+            
+            @Metadata {
+                @Available(CustomPlatform, introduced: "1.2.4")
+                @Available(iOS, introduced: "4.5.6")
+                @Available(iPadOS, introduced: "4.5")
+                @Available(macOS, introduced: "6.7.8")
+            }
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        let moduleReference = try #require(context.soleRootModuleReference)
+        let moduleRenderNode = try makeRenderNode(for: moduleReference, in: context)
+        #expect(moduleRenderNode.metadata.platforms?.compactMap { "\($0.name ?? "<no-name>") \($0.introduced ?? "<no-version>")" } == [
+            "iOS 4.5.6",
+            "iPadOS 4.5", // Specifies its own availability in a directive
+            "Mac Catalyst 4.5.6", // Derived from iOS
+            "macOS 6.7.8",
+            "CustomPlatform 1.2.4",
+        ])
+    }
+    
     @Test(arguments: ["9.2", nil])
     func symbolAvailableOnOnePlatformIsNotConsideredDeprecatedWhenDefaultAvailable(defaultIntroducedVersion: String?) async throws {
         let catalog = Folder(name: "unit-test.docc") {
@@ -1329,9 +1431,9 @@ struct AvailabilityTests {
                 ]),
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: defaultIntroducedVersion)
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -1603,9 +1705,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         let context = try await load(catalog: catalog)
@@ -1776,9 +1878,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         let context = try await load(catalog: catalog)
@@ -1928,9 +2030,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         
@@ -1979,9 +2081,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         
@@ -2040,9 +2142,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         
@@ -2088,9 +2190,9 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14")
-                ]])
+                ])
             }
         }
         
@@ -2151,10 +2253,10 @@ struct AvailabilityTests {
             """)
             
             if availabilitySource == .infoPlist {
-                InfoPlist(defaultAvailability: ["ModuleName": [
+                InfoPlist(defaultAvailability: [
                     .init(platformName: .macOS, platformVersion: "10.14"),
                     .init(platformName: .iOS,   platformVersion:  "9.2"),
-                ]])
+                ])
             }
         }
         
@@ -2201,10 +2303,10 @@ struct AvailabilityTests {
                     ])
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
-            ]])
+            ])
         }
         
         var configuration = DocumentationContext.Configuration()
@@ -2301,10 +2403,10 @@ struct AvailabilityTests {
             # Some article    
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
-            ]])
+            ])
         }
         
         var configuration = DocumentationContext.Configuration()
@@ -2347,10 +2449,10 @@ struct AvailabilityTests {
             }
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .init(rawValue: "Something"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS, platformVersion: "9.2"),
-            ]])
+            ])
         }
         
         var configuration = DocumentationContext.Configuration()
@@ -2383,13 +2485,13 @@ struct AvailabilityTests {
                 makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"])
             ]))
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .init(rawValue: "CCC"), platformVersion: "1.2.3"),
                 .init(platformName: .init(rawValue: "AAA"), platformVersion: "1.2.3"),
                 .init(platformName: .init(rawValue: "BBB"), platformVersion: "1.2.3"),
                 .init(platformName: .iOS,   platformVersion:  "9.2"),
                 .init(platformName: .macOS, platformVersion: "10.14"),
-            ]])
+            ])
             
             TextFile(name: "SomeArticle.md", utf8Content: "# Some article")
         }
@@ -2442,9 +2544,9 @@ struct AvailabilityTests {
                 ]))
             }
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion: defaultIntroducedVersion),
-            ]])
+            ])
         }
         
         let context = try await load(catalog: catalog)
@@ -2542,9 +2644,9 @@ struct AvailabilityTests {
             \(directiveLocation == .extensionFile ? availableDirective : "")
             """)
             
-            InfoPlist(defaultAvailability: ["ModuleName": [
+            InfoPlist(defaultAvailability: [
                 .init(platformName: .iOS, platformVersion:  "9.2"),
-            ]])
+            ])
         }
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
@@ -2563,6 +2665,41 @@ struct AvailabilityTests {
         #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced ==  "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced ==  "9.2")
         #expect(renderPlatforms.first(where: { $0.name == "tvOS"         })?.introduced ==  "7.1")
+    }
+    
+    @Test(arguments: [true, false])
+    func symbolMissingFromSpecificPlatformWithDefaultAvailabilityForThatPlatformDoesNotImpactDeprecation(isAlsoInMacOSSymbolGraph: Bool) async throws {
+        let deprecatedVersion = SymbolGraph.SemanticVersion(major: 13, minor: 0, patch: 0)
+        let catalog = Folder(name: "unit-test.docc") {
+            // The symbol is deprecated for all the platforms that it's available for.
+            JSONFile(name: "ModuleName-ios.symbols.json", symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "ios")), symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "iOS", introduced: .init(major: 7, minor: 0, patch: 0), deprecated: deprecatedVersion),
+                ])
+            ]))
+            // The macOS symbol graph either includes this symbol without any availability annotations (so it's available on macOS)
+            // or it excludes this symbol so the symbol isn't available on macOS.
+            JSONFile(name: "ModuleName-macos.symbols.json", symbolGraph: makeSymbolGraph(moduleName: "ModuleName", platform: .init(operatingSystem: .init(name: "macosx")), symbols: [
+                isAlsoInMacOSSymbolGraph
+                    ? makeSymbol(id: "some-symbol-id",  kind: .class, pathComponents: ["SomeClass"])
+                    : makeSymbol(id: "other-symbol-id", kind: .class, pathComponents: ["OtherClass"])
+            ]))
+            
+            // The Info.plist specifies default availability for both platforms.
+            InfoPlist(defaultAvailability: [
+                .init(platformName: .iOS,   platformVersion: "2.0"),
+                .init(platformName: .macOS, platformVersion: "10.0"),
+            ])
+        }
+        let context = try await load(catalog: catalog)
+        let reference = try #require(context.documentationCache.reference(symbolID: "some-symbol-id"))
+        let (renderNode, topicReference) = try makeRenderNodeAndRenderReference(for: reference, in: context)
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name).contains("macOS") == isAlsoInMacOSSymbolGraph)
+        
+        // A page that's referenced from other pages is only considered deprecated if it's deprecated for all the platforms that it's available for.
+        // Platforms that the symbol was excluded from in the symbol graph, don't count against the page's deprecation status.
+        #expect(topicReference.isDeprecated == !isAlsoInMacOSSymbolGraph)
     }
     
     private static let allMainPlatforms: [SymbolGraph.Platform] = [

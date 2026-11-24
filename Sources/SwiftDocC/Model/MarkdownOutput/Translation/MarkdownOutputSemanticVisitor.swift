@@ -197,7 +197,7 @@ extension MarkdownOutputSemanticVisitor {
         )
 
         markdownWalker.withRenderingLinkList {
-            $0.visit(section: article.seeAlso, addingHeading: "See Also")
+            $0.visit(section: article.seeAlso, addingHeading: "See also")
         }
 
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)
@@ -320,7 +320,7 @@ extension MarkdownOutputSemanticVisitor {
         )
 
         markdownWalker.withRenderingLinkList {
-            $0.visit(section: symbol.seeAlso, addingHeading: "See Also")
+            $0.visit(section: symbol.seeAlso, addingHeading: "See also")
         }
         
         manifest?.relationships.formUnion(markdownWalker.outgoingReferences)

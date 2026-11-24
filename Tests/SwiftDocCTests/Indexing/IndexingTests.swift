@@ -214,9 +214,13 @@ class IndexingTests: XCTestCase {
             let plistURL = url.appendingPathComponent("Info.plist")
             let plistData = try Data(contentsOf: plistURL)
             var plist = try DocumentationContext.Inputs.Info(from: plistData)
-            let existingAvailability = plist.defaultAvailability?.modules["FillIntroduced"]
-            plist.defaultAvailability?.modules["MyKit"] = existingAvailability
-            XCTAssertNotNil(plist.defaultAvailability?.modules["MyKit"])
+            if case .deprecated(let deprecatedDefaultAvailabilityByModule) = plist.defaultAvailability?.info,
+               let existingAvailability = deprecatedDefaultAvailabilityByModule["FillIntroduced"]
+            {
+                plist.defaultAvailability?.info = .current(existingAvailability)
+            } else {
+                XCTFail("Unexpectedly decoded the current default availability format from the deprecated legacy inputs")
+            }
             
             let updatedPlistData = try PropertyListEncoder().encode(plist)
             try updatedPlistData.write(to: plistURL)
@@ -237,8 +241,8 @@ class IndexingTests: XCTestCase {
                                       location: .topLevelPage(articleReference),
                                       title: "MyProtocol",
                                       summary: "An abstract of a protocol using a String id value.",
-                                      headings: ["Return Value", "Discussion"],
-                                      rawIndexableTextContent: "An abstract of a protocol using a String id value.  A name of the item to find. Return Value A String id value. Discussion Further discussion. Exercise links to symbols: relative MyClass and absolute MyClass. Exercise unresolved symbols: unresolved MyUnresolvedSymbol. Exercise known unresolvable symbols: know unresolvable NSCodable. Exercise external references: doc://com.test.external/ExternalPage One ordered Two ordered Three ordered One unordered Two unordered Three unordered Two ordered with custom start Three ordered with custom start Four ordered with custom start",
+                                      headings: ["Return value", "Discussion"],
+                                      rawIndexableTextContent: "An abstract of a protocol using a String id value.  A name of the item to find. Return value A String id value. Discussion Further discussion. Exercise links to symbols: relative MyClass and absolute MyClass. Exercise unresolved symbols: unresolved MyUnresolvedSymbol. Exercise known unresolvable symbols: know unresolvable NSCodable. Exercise external references: doc://com.test.external/ExternalPage One ordered Two ordered Three ordered One unordered Two unordered Three unordered Two ordered with custom start Three ordered with custom start Four ordered with custom start",
                                      platforms: expectedPlatformInformation),
                        indexingRecords[0])
     }

@@ -57,12 +57,13 @@ public struct NonOverviewHeadingChecker: Checker {
     }
 
     public mutating func visitHeading(_ heading: Heading) {
+        let title = heading.title.lowercased()
         // We don't want to flag the Topics H2 and the See Also H2.
-        guard heading.level == 2, !heading.isTopicsSection, heading.title != "See Also" else {
+        guard heading.level == 2, title != "topics", title != "see also" else {
             return
         }
 
-        if heading.plainText == "Overview", overviewHeading == nil {
+        if title == "overview", overviewHeading == nil {
             overviewHeading = heading
             return
         }

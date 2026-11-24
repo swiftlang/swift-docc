@@ -283,7 +283,7 @@ func dd(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<div>` element.
-func div(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func div(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
     ._element(.div, attributes: attributes, contents: contents)
 }
 
@@ -1353,7 +1353,7 @@ func noScript(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HT
 ///   - attributes: The list of attributes for the new element.
 ///   - contents: The inner contents for the new element.
 /// - Returns: A new `<script>` element.
-func script(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
+package func script(attributes: [HTMLNode.Attribute] = [], contents: [HTMLNode]) -> HTMLNode {
     ._element(.script, attributes: attributes, contents: contents)
 }
 

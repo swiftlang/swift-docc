@@ -36,7 +36,7 @@ public struct PropertyListPossibleValuesSection {
         }
     }
     
-    public static let title = "Possible Values"
+    public static let title = "Possible values"
     
     /// The list of possible values.
     public let possibleValues: [PossibleValue]

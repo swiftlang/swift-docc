@@ -84,37 +84,3 @@ public struct CursorRange: Hashable, CustomDebugStringConvertible {
         return "\(start)-\(end)"
     }
 }
-
-// A new-line character.
-fileprivate let newLineASCII = UInt8(UTF8.CodeUnit(ascii: "\n"))
-
-extension Int {
-    /**
-     Initialize an absolute source offset using a line and column.
-     
-     The `SourceRange`'s offset and length are calculated by scanning through `source` and tallying a running line and column along the way.
-     
-     - Throws: `SourceRange.Error`
-     */
-    init?(cursor: PrintCursor, in source: some StringProtocol) {
-        var line = 1
-        var column = 1
-        var index = source.utf8.startIndex
-        while line < cursor.line || column < cursor.column {
-            guard index != source.utf8.endIndex else {
-                return nil
-            }
-
-            let c = source.utf8[index]
-            if c == newLineASCII {
-                line += 1
-                column = 1
-            } else {
-                column += 1
-            }
-            index = source.utf8.index(after: index)
-        }
-        
-        self = source.utf8.distance(from: source.utf8.startIndex, to: index)
-    }
-}

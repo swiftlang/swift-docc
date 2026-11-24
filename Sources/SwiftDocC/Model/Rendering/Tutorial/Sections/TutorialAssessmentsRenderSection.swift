@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,7 +21,7 @@ public struct TutorialAssessmentsRenderSection: RenderSection, Equatable {
     public var anchor: String
     
     /// The display title for an assessments section.
-    public static let title = "Check Your Understanding"
+    public static let title = "Check your understanding"
     
     /// A render-friendly representation of an assessment question.
     public struct Assessment: Codable, TextIndexing, Equatable {

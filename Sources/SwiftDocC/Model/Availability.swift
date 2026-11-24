@@ -82,7 +82,8 @@ struct Availability {
             if let knownPlatform = KnownPlatform(defaultInformation.platformName) {
                 knownPlatforms[knownPlatform] = info
             } else {
-                customPlatformsByName[defaultInformation.platformName.displayName] = info
+                let canonicalName = Self.displayNameForCustomPlatform(defaultInformation.platformName.displayName)
+                customPlatformsByName[canonicalName] = info
             }
         }
     }
@@ -183,8 +184,9 @@ struct Availability {
                         continue
                     }
                     knownPlatforms[platform] = makeInformation(for: availability, currentIntroducedVersion: knownPlatforms[platform].state.introduced)
-                } else if let domainName = availability.domain?.rawValue {
-                    customPlatformsByName[domainName] = makeInformation(for: availability, currentIntroducedVersion: customPlatformsByName[domainName]?.state.introduced)
+                } else if let domain = availability.domain {
+                    let canonicalName = Self.displayNameForCustomPlatform(domain.rawValue)
+                    customPlatformsByName[canonicalName] = makeInformation(for: availability, currentIntroducedVersion: customPlatformsByName[canonicalName]?.state.introduced)
                 }
             }
         }
@@ -230,7 +232,8 @@ struct Availability {
             if let knownPlatform = KnownPlatform(directive.platform) {
                 knownPlatforms[knownPlatform] = info
             } else {
-                customPlatformsByName[directive.platform.rawValue] = info
+                let canonicalName = Self.displayNameForCustomPlatform(directive.platform.rawValue)
+                customPlatformsByName[canonicalName] = info
             }
         }
     }
@@ -402,9 +405,19 @@ struct Availability {
                     addPlatformIfInBeta(for: info.state , name: Self.knownPlatformNames[offset], betaVersion: currentPlatform.knownBetaPlatforms[offset])
             }
         }
-        
+                
+        var needsToIntersperseExtensionPlatforms = false
         for (name, info) in customPlatformsByName.sorted(by: \.key) {
+            // The known platforms are already sorted and in the common case the truly custom platforms are all ordered later, alphabetically.
+            // However, some uncommon known platforms should intersperse with the known platforms which requires resorting the list of platforms (a few lines below).
+            needsToIntersperseExtensionPlatforms = needsToIntersperseExtensionPlatforms || Self.additionalPlatformDisplayNamesByCaseInsensitiveAlias[name.lowercased()] != nil
+            
             addPlatformIfInBeta(for: info.state, name: name, betaVersion: currentPlatform.customBetaPlatforms[name])
+        }
+        if needsToIntersperseExtensionPlatforms {
+            platforms.sort(by: { lhs, rhs in
+                PlatformName.areInIncreasingOrder(lhs.name, rhs.name)
+            })
         }
         
         guard !platforms.isEmpty else {
@@ -415,13 +428,13 @@ struct Availability {
     
     /// The display names of all the known platforms, in order.
     private static let knownPlatformNames = [
-        "iOS",          "iOS App Extension",
+        "iOS",
         "iPadOS",
-        "Mac Catalyst", "Mac Catalyst App Extension",
-        "macOS",        "macOS App Extension",
-        "tvOS",         "tvOS App Extension",
-        "visionOS",     "visionOS App Extension",
-        "watchOS",      "watchOS App Extension",
+        "Mac Catalyst",
+        "macOS",
+        "tvOS",
+        "visionOS",
+        "watchOS",
     ]
     
     
@@ -477,6 +490,9 @@ struct Availability {
     /// A page as a whole is considered to be deprecated if the API is deprecated on all the platforms that the API is available for.
     /// This can also take the form of an unconditional wildcard deprecation (for example `@available(*, deprecated)` in Swift).
     /// In this case it's possible that the page is considered to be deprecated even though _none_ of the individual platforms have any deprecation information.
+    ///
+    /// Platforms that the API isn't available for don't count against the page's deprecated status.
+    /// This includes platforms that are marked as unavailable and platforms that have a symbol graph file that the API was excluded from.
     var isDeprecated: Bool {
         if case .available(_, _, true) = knownPlatforms[.wildcard].state {
             // A symbol with wildcard unconditional availability is considered deprecated
@@ -502,7 +518,9 @@ struct Availability {
             }
         }
         
-        for platform in knownPlatforms {
+        // Filter platforms were this symbol is not available at 
+        // so it doesn't count against the page's deprecated status.
+        for platform in knownPlatforms where platform.source != .havePlatformForInSymbolGraph {
             if let earlyExitResult = checkPlatform(platform) {
                 return earlyExitResult
             }
@@ -515,6 +533,25 @@ struct Availability {
         
         return foundDeprecatedPlatforms
     }
+    
+    private static func displayNameForCustomPlatform(_ name: String) -> String {
+        Self.additionalPlatformDisplayNamesByCaseInsensitiveAlias[name.lowercased()] ?? name
+    }
+    
+    /// A map of known `PlatformName` display names keyed by all their lowercased name aliases.
+    ///
+    /// The availability container uses this to treat uncommon platform names as "known" with a sparser per-symbol storage.
+    private static let additionalPlatformDisplayNamesByCaseInsensitiveAlias: [String: String] = {
+        var result = [String: String]()
+        for platformName in PlatformName.sortedPlatforms where KnownPlatform(platformName) == nil {
+            result[platformName.rawValue.lowercased()] = platformName.displayName
+            result[platformName.displayName.lowercased()] = platformName.displayName
+            for alias in platformName.aliases {
+                result[alias.lowercased()] = platformName.displayName
+            }
+        }
+        return result
+    }()
 }
 
 // MARK: Known platform
@@ -524,16 +561,13 @@ private extension Availability {
     enum KnownPlatform: Int {
         // Match the order that platforms display.
         // This removes the need to sort the known platform's availability for every page.
-        
-        // For future consideration: App extension platforms are fairly uncommon in practice but we currently always allocate space for them.
-        // It might be worth investigating treating the app extension platforms as "custom" and adding extra logic in `makePlatforms(...)` to intersperse them with the main known platforms.
-        case iOS,         iOSExtension
+        case iOS
         case iPadOS
-        case macCatalyst, macCatalystExtension
-        case macOS,       macOSExtension
-        case tvOS,        tvOSExtension
-        case visionOS,    visionOSExtension
-        case watchOS,     watchOSExtension
+        case macCatalyst
+        case macOS
+        case tvOS
+        case visionOS
+        case watchOS
          
         case wildcard // Not included in the `makePlatforms(...)` output but used in the preceding calculations.
         
@@ -574,12 +608,6 @@ private extension Availability {
                 case .tvOS:     self = .tvOS
                 case .watchOS:  self = .watchOS
                 case .visionOS: self = .visionOS
-                case .iOSAppExtension:        self = .iOSExtension
-                case .macOSAppExtension:      self = .macOSExtension
-                case .catalystOSAppExtension: self = .macCatalystExtension
-                case .tvOSAppExtension:       self = .tvOSExtension
-                case .watchOSAppExtension:    self = .watchOSExtension
-                case .visionOSAppExtension:   self = .visionOSExtension
                 
                 default: return nil
             }
@@ -597,13 +625,6 @@ private extension Availability {
                 case "visionos":    self = .visionOS
                 // "*" is represented as a `nil` domain in SymbolKit.
                 case nil:           self = .wildcard
-                
-                case "iosappextension":         self = .iOSExtension
-                case "macosappextension":       self = .macOSExtension
-                case "maccatalystappextension": self = .macCatalystExtension
-                case "tvosappextension":        self = .tvOSExtension
-                case "watchosappextension":     self = .watchOSExtension
-                case "visionosappextension":    self = .visionOSExtension
                 
                 default: return nil
             }
@@ -811,14 +832,25 @@ extension Availability {
     /// - Parameter info: Metadata information about the documentation inputs.
     /// - Returns: A new base availability value that article pages can customize with their page-specific information.
     static func makeNewArticleBaseAvailability(info: DocumentationContext.Inputs.Info) -> Availability {
-        // FIXME: It's not supported to mix different modules in one catalog. The default availability shouldn't support this either. (rdar://188797956)
-        let soleModuleName: String? = switch info.defaultAvailability?.modules.count {
-            case 1:  info.defaultAvailability!.modules.keys.first!
-            default: info.displayName
+        let defaultAvailability: [DefaultAvailability.ModuleAvailability]?
+        switch info.defaultAvailability?.info {
+            case .current(let modules):
+                defaultAvailability = modules
+            case .deprecated(let modulesByName):
+                // It's not supported to mix different modules in one catalog. The default availability shouldn't support this either.
+                // We should remove this fallback logic after 6.6 is released.
+                let soleModuleName: String? = switch modulesByName.count {
+                    case 1:  modulesByName.keys.first!
+                    default: info.displayName
+                }
+                defaultAvailability = soleModuleName.flatMap { modulesByName[$0] }
+            case nil:
+                defaultAvailability = nil
         }
+        
         // Even though articles don't _display_ "default" availability they need to be initialized with it to know if a platform has been marked as "unavailable";
         // meaning that it shouldn't inherit its "fallback" availability from another platform.
-        return Availability(defaultAvailability: soleModuleName.flatMap { info.defaultAvailability?.modules[$0] })
+        return Availability(defaultAvailability: defaultAvailability)
             // !!!: Preserve the bug that articles don't display default availability (rdar://173688303)
             .preservingBugThatArticlesDoNotDisplayDefaultAvailability()
     }

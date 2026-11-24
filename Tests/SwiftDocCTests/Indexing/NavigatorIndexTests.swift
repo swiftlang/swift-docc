@@ -725,7 +725,7 @@ Root
             ┃ ┃ ┗╸second()
             ┃ ┃   ┣╸Manual curation
             ┃ ┃   ┗╸first()
-            ┃ ┣╸Instance Methods
+            ┃ ┣╸Instance methods
             ┃ ┗╸second()
             ┃   ┣╸Manual curation
             ┃   ┗╸first()
@@ -772,7 +772,7 @@ Root
         ┃ ┗╸GeometricalShapes
         ┃   ┣╸Structures
         ┃   ┣╸TLACircle
-        ┃   ┃ ┣╸Instance Properties
+        ┃   ┃ ┣╸Instance properties
         ┃   ┃ ┣╸center
         ┃   ┃ ┗╸radius
         ┃   ┣╸Variables
@@ -794,15 +794,15 @@ Root
               ┣╸init()
               ┣╸init(center: CGPoint, radius: CGFloat)
               ┣╸init(string: String)
-              ┣╸Instance Properties
+              ┣╸Instance properties
               ┣╸var center: CGPoint
               ┣╸var debugDescription: String
               ┣╸var isEmpty: Bool
               ┣╸var isNull: Bool
               ┣╸var radius: CGFloat
-              ┣╸Instance Methods
+              ┣╸Instance methods
               ┣╸func intersects(Circle) -> Bool
-              ┣╸Type Properties
+              ┣╸Type properties
               ┣╸static let defaultRadius: CGFloat
               ┣╸static let null: Circle
               ┗╸static let zero: Circle
@@ -983,7 +983,7 @@ Root
                 ┃ ┗╸MultiCuratedStruct
                 ┃   ┣╸Enumerations
                 ┃   ┗╸MultiCuratedStruct.MultiCuratedEnum
-                ┃     ┣╸Enumeration Cases
+                ┃     ┣╸Enumeration cases
                 ┃     ┣╸MultiCuratedStruct.MultiCuratedEnum.firstCase
                 ┃     ┗╸MultiCuratedStruct.MultiCuratedEnum.secondCase
                 ┗╸SecondCurationRoot
@@ -991,7 +991,7 @@ Root
                   ┗╸MultiCuratedStruct
                     ┣╸Enumerations
                     ┗╸MultiCuratedStruct.MultiCuratedEnum
-                      ┣╸Enumeration Cases
+                      ┣╸Enumeration cases
                       ┣╸MultiCuratedStruct.MultiCuratedEnum.firstCase
                       ┗╸MultiCuratedStruct.MultiCuratedEnum.secondCase
             """
@@ -2111,40 +2111,40 @@ Root
               ┗╸ShapeKit
                 ┣╸Protocols
                 ┣╸OverloadedProtocol
-                ┃ ┣╸Instance Methods
+                ┃ ┣╸Instance methods
                 ┃ ┗╸func fourthTestMemberName(test:)
                 ┣╸Structures
                 ┣╸OverloadedByCaseStruct
-                ┃ ┣╸Instance Properties
+                ┃ ┣╸Instance properties
                 ┃ ┣╸let ThirdTestMemberName: Int
                 ┃ ┣╸let thirdTestMemberNamE: Int
                 ┃ ┣╸let thirdTestMemberName: Int
                 ┃ ┗╸let thirdtestMemberName: Int
                 ┣╸OverloadedParentStruct
-                ┃ ┣╸Type Properties
+                ┃ ┣╸Type properties
                 ┃ ┗╸static let fifthTestMember: Int
                 ┣╸OverloadedStruct
-                ┃ ┣╸Instance Properties
+                ┃ ┣╸Instance properties
                 ┃ ┣╸let secondTestMemberName: Int
-                ┃ ┣╸Type Properties
+                ┃ ┣╸Type properties
                 ┃ ┗╸static let secondTestMemberName: Int
                 ┣╸RegularParent
-                ┃ ┣╸Instance Properties
+                ┃ ┣╸Instance properties
                 ┃ ┣╸let firstMember: Int
-                ┃ ┣╸Instance Methods
+                ┃ ┣╸Instance methods
                 ┃ ┣╸func secondMember(first: Int, second: String)
-                ┃ ┣╸Type Properties
+                ┃ ┣╸Type properties
                 ┃ ┣╸static let thirdMember: Int
                 ┃ ┣╸Enumerations
                 ┃ ┗╸RegularParent.FourthMember
                 ┣╸overloadedparentstruct
-                ┃ ┣╸Instance Properties
+                ┃ ┣╸Instance properties
                 ┃ ┗╸let fifthTestMember: Int
                 ┣╸Enumerations
                 ┗╸OverloadedEnum
-                  ┣╸Enumeration Cases
+                  ┣╸Enumeration cases
                   ┣╸case firstTestMemberName(String)
-                  ┣╸Instance Methods
+                  ┣╸Instance methods
                   ┗╸func firstTestMemberName(_:)
             """
         )

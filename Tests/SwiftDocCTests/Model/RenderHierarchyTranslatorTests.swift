@@ -49,9 +49,9 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         // Verify that the hierarchy translator has collected all "fake" references
         // & their titles that need to be added to the node
         XCTAssertEqual(pending, [
-            "Check Your Understanding, /tutorials/test-bundle/testtutorial#Check-Your-Understanding",
-            "Check Your Understanding, /tutorials/test-bundle/testtutorial2#Check-Your-Understanding",
-            "Check Your Understanding, /tutorials/test-bundle/tutorialmediawithspaces#Check-Your-Understanding",
+            "Check your understanding, /tutorials/test-bundle/testtutorial#Check-your-understanding",
+            "Check your understanding, /tutorials/test-bundle/testtutorial2#Check-your-understanding",
+            "Check your understanding, /tutorials/test-bundle/tutorialmediawithspaces#Check-your-understanding",
         ])
         
         guard case .tutorials(let technologyHierarchy)? = renderHierarchy else {
@@ -85,7 +85,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         XCTAssertEqual(section1.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         XCTAssertEqual(section2.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection")
         XCTAssertEqual(section3.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate")
-        XCTAssertEqual(assessments.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Check-Your-Understanding")
+        XCTAssertEqual(assessments.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Check-your-understanding")
     }
     
     func testMultiplePaths() async throws {
