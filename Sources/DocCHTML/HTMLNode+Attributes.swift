@@ -126,7 +126,7 @@ extension HTMLNode {
         package static func csp(_ policy: String) -> Attribute { .init(name: "csp", value: policy) }
 
         /// The URL of an `<object>` element's resource.
-        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) } 
+        package static func data(_ value: String) -> Attribute { .init(name: "data", value: value) }
 
         /// Either the machine-readable representation of a `<time>` element's date-time value or the date-time value associated with an `<ins>` or `<del>` element's change.
         package static func datetime(_ machineReadableRepresentation: String) -> Attribute { .init(name: "datetime", value: machineReadableRepresentation) }
@@ -405,7 +405,22 @@ extension HTMLNode {
         /// The stepping interval for the `<input>` element with a numeric input type ("date", "month", "week", "time", "number", "range", or "datetime-local").
         package static func step(_ interval: Int) -> Attribute { .init(name: "step", value: interval.description) }
 
-        package static func style(_ value: String) -> Attribute { .init(name: "style", value: value) } 
+        @available(*, deprecated, message: "Use a style sheet file to define CSS or `cssCustomProperties` to  pass variables to the CSS instead.")
+        package static func style(_ value: String) -> Attribute { .init(name: "style", value: value) }
+
+        /// An inline `style` attribute that only defines CSS custom properties for the style sheet to use.
+        ///
+        /// Use this to pass per-element values—like an item's position or the number of items—to rules in the style sheet.
+        ///
+        /// - Parameter properties: The names, without the `--` prefix, and values of the CSS custom properties.
+        ///   Each name must be non-empty and only contain lowercase ASCII letters, digits, `-`, or `_`.
+        package static func cssCustomProperties(_ properties: KeyValuePairs<String, String>) -> Attribute {
+            assert(
+                properties.allSatisfy { name, _ in !name.isEmpty && name.utf8.allSatisfy { ($0 >= UInt8(ascii: "a") && $0 <= UInt8(ascii: "z")) || ($0 >= UInt8(ascii: "0") && $0 <= UInt8(ascii: "9")) || $0 == UInt8(ascii: "-") || $0 == UInt8(ascii: "_") } },
+                "CSS custom property names must be non-empty and only contain lowercase ASCII letters, digits, '-', or '_'."
+            )
+            return .init(name: "style", value: properties.map { name, value in "--\(name): \(value)" }.joined(separator: "; "))
+        }
 
         @available(*, deprecated, message: "Us a `<caption>` element to describe this `<table>` element instead.")
         package static func summary(_ value: String) -> Attribute { .init(name: "summary", value: value) } 

@@ -16,6 +16,7 @@
 from __future__ import print_function
 
 import argparse
+import contextlib
 import json
 import os
 import platform
@@ -29,7 +30,8 @@ def printerr(message):
 
 def main(argv_prefix=[]):
     args = parse_args(argv_prefix + sys.argv[1:])
-    run(args)
+    with package_resolved_moved_aside(args):
+        run(args)
 
 
 def parse_args(args):
@@ -185,6 +187,36 @@ def should_run_action(action_name, selected_actions):
         return True
     else:
         return False
+
+
+@contextlib.contextmanager
+def package_resolved_moved_aside(args):
+    """Moves Package.resolved aside while SwiftPM runs with local dependencies.
+
+    SwiftPM fetches the remote pins in Package.resolved before it evaluates the
+    manifest's local path dependencies. Moving it aside avoids accessing the
+    network for dependencies that are never used. The file is restored
+    afterwards so the source tree is left unmodified.
+    """
+    resolved_path = os.path.join(args.package_path, 'Package.resolved')
+    moved_path = resolved_path + '.moved-aside'
+    if args.no_local_deps or not os.path.exists(resolved_path):
+        yield
+        return
+    try:
+        os.rename(resolved_path, moved_path)
+    except OSError as e:
+        # e.g. a read-only source tree. SwiftPM still works, it just fetches
+        # the pinned remote dependencies.
+        print("-- warning: could not move %s aside: %s" % (resolved_path, e))
+        yield
+        return
+    print("-- note: moved %s aside to use local dependencies" % resolved_path)
+    try:
+        yield
+    finally:
+        # Overwrite any Package.resolved that SwiftPM wrote in the meantime.
+        os.replace(moved_path, resolved_path)
 
 
 def update_swiftpm_dependencies(package_path, swift_exec, build_path, env,

@@ -38,6 +38,13 @@ struct HTMLFormatterTests {
     }
     
     @Test
+    func formatsCSSCustomPropertiesAsStyleAttribute() {
+        let html = p(attributes: [.cssCustomProperties(["index": "2", "count": "3"])], contents: [.text("Some text")])
+
+        #expect(htmlString(for: html) == #"<p style="--index: 2; --count: 3">Some text</p>"#)
+    }
+
+    @Test
     func formatsAttributesInOrder() {
         do {
             let html = input(.type("radio"), .name("color-scheme"), .value("light"), .checked, .hidden(.hidden))
