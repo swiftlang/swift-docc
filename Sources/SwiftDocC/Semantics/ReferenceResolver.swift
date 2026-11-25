@@ -12,33 +12,60 @@ import Foundation
 import Markdown
 private import SymbolKit
 
-func unresolvedReferenceDiagnostic(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Diagnostic {
+private func unresolvedReferenceDiagnostic(
+    source: URL?,
+    range: SourceRange?,
+    severity: DiagnosticSeverity,
+    errorInfo: TopicReferenceResolutionErrorInfo
+) -> Diagnostic {
     let referenceSourceRange: SourceRange? = range.map { range in
         // FIXME: Finding the range for the link's destination is better suited for Swift-Markdown
         // https://github.com/apple/swift-markdown/issues/109
-        if fromSymbolLink {
-            // Inset the range by 2 at the start and end to skip both "``".
-            return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+2, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-2, source: range.upperBound.source)
-        } else {
-            // FIXME: This assumes that the link uses the `<doc:my/reference>` syntax.
-            // Links that use the [link text](doc:my/reference) syntax will have incorrect suggestion replacements.
-            // https://github.com/swiftlang/swift-docc/issues/470
-            
-            // Inset the range by 5 at the start and by 1 at the end to skip "<doc:" at the start and ">" at the end.
-            return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
-        }
+        // Inset the range by 5 at the start and by 1 at the end to skip "<doc:" at the start and ">" at the end.
+        return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
     }
     
+    return unresolvedReferenceDiagnostic(
+        source: source,
+        range: range,
+        referenceSourceRange: referenceSourceRange,
+        severity: severity,
+        errorInfo: errorInfo
+    )
+}
+
+func unresolvedReferenceDiagnostic(
+    source: URL?,
+    link: any AnyLink,
+    severity: DiagnosticSeverity,
+    errorInfo: TopicReferenceResolutionErrorInfo
+) -> Diagnostic {
+    return unresolvedReferenceDiagnostic(
+        source: source,
+        range: link.range,
+        referenceSourceRange: link.referenceBodySourceRange,
+        severity: severity,
+        errorInfo: errorInfo
+    )
+}
+
+private func unresolvedReferenceDiagnostic(
+    source: URL?,
+    range: SourceRange?,
+    referenceSourceRange: SourceRange?,
+    severity: DiagnosticSeverity,
+    errorInfo: TopicReferenceResolutionErrorInfo
+) -> Diagnostic {
     var solutions: [Solution] = []
     var notes: [Diagnostic.Note] = []
     if let referenceSourceRange {
         if let note = errorInfo.note, let source {
             notes.append(.init(source: source, range: referenceSourceRange, message: note))
         }
-        
+
         solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: referenceSourceRange))
     }
-    
+
     let diagnosticRange: SourceRange?
     if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange {
         rangeAdjustment.offsetWithRange(referenceSourceRange)
@@ -52,7 +79,7 @@ func unresolvedReferenceDiagnostic(source: URL?, range: SourceRange?, severity: 
     } else {
         diagnosticRange = referenceSourceRange
     }
-    
+
     return Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: errorInfo.message, notes: notes, solutions: solutions)
 }
 
@@ -114,7 +141,7 @@ struct ReferenceResolver: SemanticVisitor {
             if let articleNotInHierarchy = context.uncuratedArticles[context.inputs.documentationRootReference.appendingPathOfReference(unresolved)] {
                 diagnostics.append(makeUnfindableArticleDiagnostic(source: range?.source, severity: severity, range: range, articleNotInHierarchy: articleNotInHierarchy, rootPageNames: context.sortedRootPageNames()))
             } else {
-                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, range: range, severity: severity, errorInfo: error, fromSymbolLink: false))
+                diagnostics.append(unresolvedReferenceDiagnostic(source: range?.source, range: range, severity: severity, errorInfo: error))
             }
             return .failure(unresolved, error)
         }
