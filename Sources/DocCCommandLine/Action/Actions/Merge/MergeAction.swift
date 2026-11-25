@@ -76,6 +76,7 @@ struct MergeAction: AsyncAction {
                     try fileManager._copyItem(at: from, to: toDirectory.appendingPathComponent(from.lastPathComponent))
                 }
             }
+            try copyOrCombineMarkdownManifests(from: archive, into: targetURL)
             guard let jsonIndexData = fileManager.contents(atPath: archive.appendingPathComponent("index/index.json").path) else {
                 throw CocoaError.error(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: archive.appendingPathComponent("index/index.json").path])
             }
@@ -96,6 +97,28 @@ struct MergeAction: AsyncAction {
         try Self.moveOutput(from: targetURL, to: outputURL, fileManager: fileManager)
         
         return ActionResult(didEncounterError: false, outputs: [outputURL])
+    }
+    
+    /// Copies the Markdown output manifests from the root of the given archive into the combined archive.
+    ///
+    /// Each manifest is named after its archive's display name. Different archives can have the same display name,
+    /// so this combines a manifest with the manifest that's already in the combined archive under the same name.
+    private func copyOrCombineMarkdownManifests(from archive: URL, into targetURL: URL) throws {
+        let manifestURLs = ((try? fileManager.contentsOfDirectory(at: archive, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [])
+            .filter { $0.lastPathComponent.hasSuffix("-markdown-manifest.json") }
+        
+        for manifestURL in manifestURLs {
+            let destination = targetURL.appendingPathComponent(manifestURL.lastPathComponent)
+            guard fileManager.fileExists(atPath: destination.path) else {
+                try fileManager._copyItem(at: manifestURL, to: destination)
+                continue
+            }
+            
+            let decoder = JSONDecoder()
+            var combinedManifest = try decoder.decode(MarkdownOutputManifest.self, from: fileManager.contents(of: destination))
+            combinedManifest.formUnion(try decoder.decode(MarkdownOutputManifest.self, from: fileManager.contents(of: manifestURL)))
+            try fileManager.createFile(at: destination, contents: MarkdownOutputManifest.makeEncoder().encode(combinedManifest))
+        }
     }
     
     private func synthesizeLandingPage(
