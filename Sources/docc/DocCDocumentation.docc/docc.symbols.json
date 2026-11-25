@@ -3480,7 +3480,7 @@
       "docComment" : {
         "lines" : [
           {
-            "text" : "A directive for authoring authoring embedded"
+            "text" : "A directive for authoring embedded"
           },
           {
             "text" : "previews of documentation links (similar to how links are currently"
@@ -6564,7 +6564,7 @@
             "text" : ""
           },
           {
-            "text" : "The `@TitleHeading` directive accepts an unnamed parameter containing containing the page's title heading."
+            "text" : "The `@TitleHeading` directive accepts an unnamed parameter containing the page's title heading."
           },
           {
             "text" : ""
@@ -6591,7 +6591,7 @@
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - heading: An unnamed parameter containing containing the page-title’s heading text."
+            "text" : "  - heading: An unnamed parameter containing the page-title’s heading text."
           },
           {
             "text" : "     **(required)**"

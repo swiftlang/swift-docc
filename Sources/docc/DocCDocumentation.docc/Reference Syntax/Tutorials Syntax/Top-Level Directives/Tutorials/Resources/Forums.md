@@ -13,7 +13,7 @@ Displays a set of forum links in the resources section of a tutorial's table of 
 
 Use the `Forums` directive to add links to related forums in the Resources section at the bottom of your tutorial's table of contents page.
 
-DocC renders the URL you specify in the `destination` parameter as a "View forums" link at the bottom of the forums section. Within the directive, add descriptive text and, optionally, use standard Markdown syntax to provide links to one or more more specific forums.
+DocC renders the URL you specify in the `destination` parameter as a "View forums" link at the bottom of the forums section. Within the directive, add descriptive text and, optionally, use standard Markdown syntax to provide links to one or more specific forums.
 
 A single "View forums" link:
 

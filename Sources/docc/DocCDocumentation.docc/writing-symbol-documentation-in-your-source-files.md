@@ -144,7 +144,7 @@ Some parameters can benefit from more than one paragraph of documentation.
 For example:
 - Additional documentation for a boolean parameter can describe the effects of passing either a `true` or `false` value if its not already clear from the parameter's name.     
 - Additional documentation for an enumeration parameter can describe the effects of passing each case if its not already clear from combination of the parameter's name and the case's name.     
-- Additional documentation for an closure parameter can describe the inputs and of that closure that closure if its not already clear from the parameter's name.       
+- Additional documentation for a closure parameter can describe the inputs and outputs of that closure if it's not already clear from the parameter's name.       
 
 If the parameter description spans more than one paragraph you need to indent the second paragraph as far as the start of the containing list item.
 In parameter _sections_ you need to indent the second paragraph by four spaces so that the first character of the paragraph lines up with the first letter of the parameter name.
@@ -156,18 +156,18 @@ Like other multi-paragraph list items, this indentation can sometimes be more cl
     @Tab("First paragraph on the same line as the tag") {
         ```
         /// - Parameters:
-        ///   - someParameterName: This is first paragraph of the the parameter descriptions.
+        ///   - someParameterName: This is the first paragraph of the parameter descriptions.
         ///     
-        ///     This is a another paragraph of the parameter's description.
+        ///     This is another paragraph of the parameter's description.
         ```
     }
     @Tab("First paragraph on a new line") {
         ```
         /// - Parameters:
         ///   - someParameterName: 
-        ///     This is first paragraph of the the parameter descriptions.
+        ///     This is the first paragraph of the parameter descriptions.
         ///     
-        ///     This is a another paragraph of the parameter's description.
+        ///     This is another paragraph of the parameter's description.
         ```
     }
 }
