@@ -60,6 +60,7 @@ struct MergeAction: AsyncAction {
         // Ensure that the destination has a data directory in case the first archive didn't have any pages.
         try? fileManager.createDirectory(at: targetURL.appendingPathComponent("data", isDirectory: true), withIntermediateDirectories: false, attributes: nil)
         
+        // Later archives' custom-scripts.json files aren't copied into the combined archive, so don't copy their custom-scripts directories either.
         let directoriesToCopy = ["data/documentation", "data/tutorials", "images", "videos", "downloads"] + (supportsStaticHosting ? ["documentation", "tutorials"] : [])
         for archive in archives.dropFirst() {
             for directoryToCopy in directoriesToCopy {
