@@ -293,7 +293,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingAsides() async throws {
+    func renderingAsides() {
         assert(
             rendering: """
             > Note: Something noteworthy
@@ -319,7 +319,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingSmallDirective() async throws {
+    func renderingSmallDirective() {
         assert(
             rendering: """
             @Small {
@@ -331,7 +331,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingTabNavigatorDirective() async throws {
+    func renderingTabNavigatorDirective() {
         func content(_ markdown: String) -> [any Markup] {
             Array(Document(parsing: markdown).children)
         }
@@ -381,7 +381,7 @@ struct MarkdownRendererTests {
     }
 
     @Test
-    func renderingImageDirective() async throws {
+    func renderingImageDirective() {
         let linkedAsset = LinkedAsset(files: [
             .light : [2 : "test_source@2x.png"],
             .dark : [2 : "test_source~dark@2x.png"],
@@ -441,7 +441,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingRowAndColumnDirectives() async throws {
+    func renderingRowAndColumnDirectives() {
         let renderableDirectiveWithCaption = RenderableDirective.row(columns: [
             (size: 2, alignment: .leading, content: [Text("This is the first column.")]),
             (size: 1, alignment: .center, content: [Text("This is the second column.")]),
@@ -479,7 +479,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func unknownDirectiveRendersNothing() async throws {
+    func unknownDirectiveRendersNothing() {
         assert(
             rendering: """
             @SomethingUnknown {
@@ -492,7 +492,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingCodeBlocks() async throws {
+    func renderingCodeBlocks() {
         assert(
             rendering: """
             ~~~
@@ -552,7 +552,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func emptyLinkRendersNothing() throws {
+    func emptyLinkRendersNothing() {
         assert(
             rendering: "[]()",
             prettyFormatted: true,
@@ -563,7 +563,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func linkWithoutDestinationRendersItLinkText() throws {
+    func linkWithoutDestinationRendersItLinkText() {
         assert(
             rendering: "[link text]()",
             prettyFormatted: true,
@@ -584,7 +584,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingRelativeLinksToOtherPages() throws {
+    func renderingRelativeLinksToOtherPages() {
         // Link to article
         assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
@@ -734,7 +734,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingRelativeLinksToLocalImages() throws {
+    func renderingRelativeLinksToLocalImages() {
         // Only a single image representation
         assert(
             rendering: "![Some alt text](some-image.png)",
@@ -808,7 +808,7 @@ struct MarkdownRendererTests {
     }
     
     @Test(arguments: ["http", "https", "HTTP", "hTtPs"])
-    func renderingAbsoluteWebLinksToImages(scheme: String) throws {
+    func renderingAbsoluteWebLinksToImages(scheme: String) {
         // Absolute web URL
         assert(
             rendering: "![Some alt text](\(scheme)://example.com/path/to/some-image.png)",
