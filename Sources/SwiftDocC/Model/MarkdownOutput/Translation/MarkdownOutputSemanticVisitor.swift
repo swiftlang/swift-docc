@@ -405,9 +405,10 @@ private extension MarkdownOutputNode.Metadata.Availability {
         } else {
             deprecated = nil
         }
+        let introduced: Version = platform.introduced.map { .versioned($0.stringRepresentation(precisionUpToNonsignificant: .minor)) } ?? .unversioned
         self.init(
             platform: platform.name,
-            introduced: .init(string: platform.introduced?.stringRepresentation(precisionUpToNonsignificant: .minor)),
+            introduced: introduced,
             deprecated: deprecated
         )
     }

@@ -37,18 +37,9 @@ extension MarkdownOutputNode {
         // It only has to deal with introduced and deprecated versions.
         struct Availability: Codable, Equatable, Sendable {
             
-            enum Version: Codable, Equatable, Sendable {
+            enum Version: Equatable, Sendable {
                 case unversioned
                 case versioned(String)
-                
-                init(string: String?) {
-                    switch string?.trimmingCharacters(in: .whitespacesAndNewlines) {
-                    case nil, "", Availability.availableToken, Availability.deprecatedToken:
-                        self = .unversioned
-                    case .some(let value):
-                        self = .versioned(value)
-                    }
-                }
             }
             
             let platform: String
@@ -127,9 +118,19 @@ extension MarkdownOutputNode {
                     self.introduced = .unversioned
                     self.deprecated = .unversioned
                 } else {
-                    self.introduced = Version(string: available.first)
+                    
+                    func version(from component: String) -> Version {
+                        switch component {
+                        case Self.availableToken, Self.deprecatedToken:
+                            return .unversioned
+                        default:
+                            return .versioned(component)
+                        }
+                    }
+                    
+                    self.introduced = available.first.map(version(from:)) ?? .unversioned
                     if available.count > 1 {
-                        self.deprecated = Version(string: available[1])
+                        self.deprecated = version(from: available[1])
                     } else {
                         self.deprecated = nil
                     }
