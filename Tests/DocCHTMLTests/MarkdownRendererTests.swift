@@ -563,7 +563,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func linkWithoutDestinationRendersItLinkText() {
+    func linkWithoutDestinationRendersItsLinkText() {
         assert(
             rendering: "[link text]()",
             prettyFormatted: true,
