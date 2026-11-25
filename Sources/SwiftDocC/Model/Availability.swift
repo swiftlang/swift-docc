@@ -96,6 +96,10 @@ struct Availability {
                 copy.knownPlatforms[offset] = .init(state: .unavailable, source: .initialValue)
             }
         }
+        // Drop the custom platforms defined in the Info.plist
+        copy.customPlatformsByName = copy.customPlatformsByName.filter { _, info in
+            if case .available = info.state { false } else { true }
+        }
         return copy
     }
     
