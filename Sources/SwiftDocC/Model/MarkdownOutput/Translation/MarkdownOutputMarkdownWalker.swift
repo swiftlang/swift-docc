@@ -446,6 +446,30 @@ extension MarkdownOutputMarkupWalker {
     mutating func visitInlineHTML(_ inlineHTML: InlineHTML)  {
         return
     }
+    
+    // Walk the children of the block quote with this walker's own handling (so links and other elements are processed), then prefix each line of the result with the block quote marker.
+    mutating func visitBlockQuote(_ blockQuote: BlockQuote) {
+        var innerWalker = self
+        innerWalker.markdown = ""
+
+        for child in blockQuote.children {
+            innerWalker.startNewParagraphIfRequired()
+            // format() on a node that is still inside the block quote includes the quote's own "> " prefix, so detach it.
+            innerWalker.visit(child.detachedFromParent)
+        }
+        outgoingReferences.formUnion(innerWalker.outgoingReferences)
+
+        let quoted = innerWalker.markdown
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .splitByNewlines
+            .map { $0.trimmingCharacters(in: .whitespaces).isEmpty ? ">" : "> \($0)" }
+            .joined(separator: "\n")
+
+        guard quoted.isEmpty == false else { return }
+
+        startNewParagraphIfRequired()
+        markdown.append(quoted)
+    }
 
 }
 

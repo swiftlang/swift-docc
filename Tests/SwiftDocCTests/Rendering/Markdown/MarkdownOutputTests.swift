@@ -1694,7 +1694,7 @@ struct MarkdownOutputTests {
     }
      
     @Test
-    func symbolDeprecationRepresentedInMetadata() async throws {
+    func symbolDeprecationRepresentedInMetadataAndContent() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
                 makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output"),
@@ -1733,8 +1733,13 @@ struct MarkdownOutputTests {
         #expect(macAvailability.deprecated == .versioned("4.0"))
                         
         #expect(node.metadata.availability(for: "visionOS") == nil)
-        // Note that the first non-nil deprecation message, from any platform, forms the summary
-        #expect(node.metadata.deprecation == "Use something else instead")
+        // Note that the first non-nil deprecation message, from any platform, forms the message
+        let expected = """
+        > Deprecated
+        >
+        > Use something else instead
+        """
+        #expect(node.markdown.contains(expected))
     }
     
     @Test
@@ -1758,11 +1763,16 @@ struct MarkdownOutputTests {
         #expect(iOSAvailability.introduced == .versioned("13.0")) // Left from platform-specific
         let macOSAvailability = try #require(node.metadata.availability(for: "macOS"))
         #expect(macOSAvailability.deprecated == .versioned("14.0")) // Not overwritten
-        #expect(node.metadata.deprecation == "Use something else instead")
+        let expected = """
+        > Deprecated
+        >
+        > Use something else instead
+        """
+        #expect(node.markdown.contains(expected))
     }
     
     @Test
-    func unconditionalUniversalDeprecationWithNoMessagePopulatesMetadata() async throws {
+    func unconditionalUniversalDeprecationWithNoMessagePopulatesMetadataAndContent() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
                 makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"],
@@ -1774,9 +1784,10 @@ struct MarkdownOutputTests {
         ])
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct")
-        #expect(node.metadata.deprecation == "Deprecated")
+        #expect(node.metadata.isDeprecated == true)
+        #expect(node.markdown.contains("> Deprecated"), "Expected a symbol deprecated as a whole with no message to be called out in the text.")
     }
-    
+
     @Test
     func unconditionalDeprecationIsRepresentedInMetadata() async throws {
         let catalog = catalog(files: [
@@ -1819,8 +1830,13 @@ struct MarkdownOutputTests {
         
         let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct/oldProperty")
         // Include both contents in the test, to indicate if the in-source deprecation message is picked up
-        #expect(node.metadata.deprecation == "Use [`newProperty`](/documentation/SomeModule/SomeStruct/newProperty) (Directive Message)")
-        #expect(node.metadata.deprecation != "Use newProperty")
+        let expected = """
+        > Deprecated
+        >
+        > Use [`newProperty`](/documentation/SomeModule/SomeStruct/newProperty) (Directive Message)
+        """
+        #expect(node.markdown.contains(expected))
+        #expect(node.markdown.contains("Use newProperty") == false)
     }
     
     @Test

@@ -165,7 +165,8 @@ extension MarkdownOutputNode {
         let framework: String
         var symbol: Symbol?
         var availability: [Availability]?
-        var deprecation: String?
+        /// `true` if the page as whole is deprecated. For platform-level deprecation, see `availability`
+        var isDeprecated: Bool?
            
         init(documentType: DocumentType, identifier: String, title: String, framework: String) {
             self.documentType = documentType

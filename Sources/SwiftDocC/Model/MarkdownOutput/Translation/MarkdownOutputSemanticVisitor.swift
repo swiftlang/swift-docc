@@ -229,24 +229,9 @@ extension MarkdownOutputSemanticVisitor {
         if let platforms = symbol.consolidatedAvailability.firstValue?.makePlatforms(context.currentBetaPlatforms) {
             metadata.availability = platforms.map { .init($0) }
         }
-         
-        if let deprecated = symbol.deprecatedSummaryVariants[.swift], deprecated.content.isEmpty == false {
-            var deprecatedWalker = markdownWalker
-            deprecatedWalker.markdown = ""
-            
-            deprecatedWalker.withRemoveIndentation(from: deprecated.content[0]) { walker in
-                for element in deprecated.content {
-                    walker.visit(element)
-                }
-            }
-            
-            metadata.deprecation = deprecatedWalker.markdown.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-        
-        // If a symbol as a whole is deprecated (either if all platforms are deprecated, or the wildcard platform is deprecated), but with no message, populate the message.
-        // This matches the rendered page output where a symbol with universal deprecation is marked as deprecated, but the individual platforms are not.
-        if symbol.consolidatedAvailability.firstValue?.isDeprecated == true && metadata.deprecation == nil {
-            metadata.deprecation = "Deprecated"
+                 
+        if symbol.consolidatedAvailability.firstValue?.isDeprecated == true  {
+            metadata.isDeprecated = true
         }
         
         // Content
@@ -288,6 +273,15 @@ extension MarkdownOutputSemanticVisitor {
             }
         }
         
+        // Deprecation message
+        // Call out deprecated symbols in the text, with the message if there is one.
+        let deprecationMessage = symbol.deprecatedSummaryVariants[.swift]?.content
+        if deprecationMessage != nil || metadata.isDeprecated == true {
+            var blocks: [any BlockMarkup] = [Paragraph([Text("Deprecated")])]
+            blocks.append(contentsOf: (deprecationMessage ?? []).compactMap { $0 as? any BlockMarkup })
+            markdownWalker.visit(BlockQuote(blocks))
+        }
+                
         // Parameters
         
         if let parametersSection = symbol.parametersSection, parametersSection.parameters.isEmpty == false {
