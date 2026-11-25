@@ -24,7 +24,7 @@ package extension MarkdownRenderer {
         var items = [HTMLNode]()
         
         if info.count == 1 {
-            items = _visit(info.first!.value)
+            items = _visitSequenceIntoNewAllocation(info.first!.value)
         } else {
             for (language, content) in info {
                 let attributes = [language.filterAttribute]

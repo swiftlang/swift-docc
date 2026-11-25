@@ -862,6 +862,58 @@ struct MarkdownRendererTests {
             <details><summary>Some summary</summary><p>Some longer description</p></details>
             """
         )
+        
+        assert(
+            rendering: """
+            @Small {
+              This is a <!-- inline comment --><strong>formatted</strong> paragraph.
+            }
+            """,
+            directiveToReturn: .small,
+            matches: """
+            <p>
+              <small>
+                This is a <strong>formatted</strong> paragraph.
+              </small>
+            </p>
+            """
+        )
+        
+        assert(
+            rendering: "~This is a <!-- inline comment --><strong>formatted</strong> paragraph.~",
+            directiveToReturn: .small,
+            matches: """
+            <p>
+              <s>
+                This is a <strong>formatted</strong> paragraph.
+              </s>
+            </p>
+            """
+        )
+        
+        assert(
+            rendering: "*This is a <!-- inline comment --><strong>formatted</strong> paragraph.*",
+            directiveToReturn: .small,
+            matches: """
+            <p>
+              <em>
+                This is a <strong>formatted</strong> paragraph.
+              </em>
+            </p>
+            """
+        )
+        
+        assert(
+            rendering: "**This is a <!-- inline comment --><em>formatted</em> paragraph.**",
+            directiveToReturn: .small,
+            matches: """
+            <p>
+              <strong>
+                This is a <em>formatted</em> paragraph.
+              </strong>
+            </p>
+            """
+        )
     }
     
     private func assert(

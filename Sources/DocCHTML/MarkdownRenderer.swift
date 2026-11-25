@@ -65,7 +65,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         if paragraph.childCount == 1, let image = paragraph.child(at: 0) as? Image {
             visitImage(image, into: &output)
         } else {
-            output.append(p(contents: _visit(paragraph.children)))
+            output.append(p(contents: _visitSequenceIntoNewAllocation(paragraph.children)))
         }
     }
     
@@ -89,9 +89,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
         var children: [HTMLNode] = [
             p(attributes: [.class("label")], contents: [.text(aside.kind.displayName)])
         ]
-        for child in aside.content {
-            visit(child, into: &children)
-        }
+        visitSequence(aside.content, into: &children)
         
         output.append(DocCHTML.aside(attributes: [.class(aside.kind.rawValue.lowercased())], contents: children))
     }
@@ -114,7 +112,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///
     /// - Note: When the renderer has a ``RenderGoal/conciseness`` goal, it doesn't wrap the heading's content in an anchor.
     func visitHeading(_ heading: Heading, into output: inout [HTMLNode]) {
-        output.append(selfReferencingHeading(level: heading.level, content: _visit(heading.children), plainTextTitle: heading.plainText))
+        output.append(selfReferencingHeading(level: heading.level, content: _visitSequenceIntoNewAllocation(heading.children), plainTextTitle: heading.plainText))
     }
     
     /// Returns a `<h[1...6]>` HTML element whose content is wrapped in an `<a>` HTML element that references the heading itself.
@@ -160,17 +158,17 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     /// Transforms a markdown emphasis into a`<em>` HTML element.
     func visitEmphasis(_ emphasis: Emphasis, into output: inout [HTMLNode]) {
-        output.append(em(contents: _visit(emphasis.children)))
+        output.append(em(contents: _visitSequenceIntoNewAllocation(emphasis.children)))
     }
     
     /// Transforms a markdown strong into a`<strong>` HTML element.
     func visitStrong(_ strong: Strong, into output: inout [HTMLNode]) {
-        output.append(DocCHTML.strong(contents: _visit(strong.children)))
+        output.append(DocCHTML.strong(contents: _visitSequenceIntoNewAllocation(strong.children)))
     }
     
     /// Transforms a markdown strikethrough into a`<s>` HTML element.
     func visitStrikethrough(_ strikethrough: Strikethrough, into output: inout [HTMLNode]) {
-        output.append(s(contents: _visit(strikethrough.children)))
+        output.append(s(contents: _visitSequenceIntoNewAllocation(strikethrough.children)))
     }
     
     /// Transforms a markdown inline code into a`<code>` HTML element.
@@ -268,9 +266,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     func visitLink(_ link: Link, into output: inout [HTMLNode]) {
         guard let destination = link.destination else {
             // If the link has text, return that inline
-            for child in link.children {
-                visit(child, into: &output)
-            }
+            visitSequence(link.children, into: &output)
             return
         }
         
@@ -508,7 +504,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// </ul>
     /// ```
     func visitUnorderedList(_ unorderedList: UnorderedList, into output: inout [HTMLNode]) {
-        output.append(ul(contents: _visit(unorderedList.children)))
+        output.append(ul(contents: _visitSequenceIntoNewAllocation(unorderedList.children)))
     }
     
     /// Transforms a markdown ordered list into a`<ul>` HTML element.
@@ -531,14 +527,14 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     /// </ol>
     /// ```
     func visitOrderedList(_ orderedList: OrderedList, into output: inout [HTMLNode]) {
-        output.append(ol(contents: _visit(orderedList.children)))
+        output.append(ol(contents: _visitSequenceIntoNewAllocation(orderedList.children)))
     }
     
     /// Transforms a markdown list item into a`<li>` HTML element.
     ///
     /// See ``visitUnorderedList(_:into:)`` or ``visitOrderedList(_:into:)`` for examples.
     func visitListItem(_ listItem: ListItem, into output: inout [HTMLNode]) {
-        output.append(li(contents: _visit(listItem.children)))
+        output.append(li(contents: _visitSequenceIntoNewAllocation(listItem.children)))
     }
     
     // MARK: Tables
@@ -611,7 +607,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                             attributes.append(.class(className))
                         }
                         
-                        return th(attributes: attributes, contents: _visit(cell.children))
+                        return th(attributes: attributes, contents: _visitSequenceIntoNewAllocation(cell.children))
                     })
                 ])
             )
@@ -645,7 +641,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                             attributes.append(.class(className))
                         }
                         
-                        return td(attributes: attributes, contents: _visit(cell.children))
+                        return td(attributes: attributes, contents: _visitSequenceIntoNewAllocation(cell.children))
                     })
                 })
             )
@@ -660,16 +656,23 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///
     /// - Note: For performance and efficiency reasons, only call this method if the array of HTML nodes can be directly passed along without modification.
     ///   If the caller appends the array of HTML nodes to another array it's better to use a loop and call ``visit(_:into:)`` to avoid the intermediate array allocation.
-    func _visit(_ container: some Sequence<any Markup>) -> [HTMLNode] {
+    func _visitSequenceIntoNewAllocation(_ container: some Sequence<any Markup>) -> [HTMLNode] {
         var output: [HTMLNode] = []
         output.reserveCapacity(container.underestimatedCount)
         
+        visitSequence(container, into: &output)
+        
+        return output
+    }
+    
+    /// Visits each element in a sequence of markup and transforms it into HTML nodes.
+    func visitSequence(_ container: some Sequence<any Markup>, into output: inout [HTMLNode])  {
         // Check if the markup contains _any_ inline HTML. If it doesn't, then we can simply visit each child.
         guard container.contains(where: { $0 is InlineHTML }) else {
             for element in container {
                 visit(element, into: &output)
             }
-            return output
+            return
         }
         
         // The markup contains at least _some_ inline HTML. This could be either:
@@ -698,16 +701,14 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             
             // On non-Darwin platforms, `XMLElement(xmlString:)` sometimes crashes for certain invalid / incomplete XML strings.
             // To minimize the risk of this happening, don't try to parse the XML string as an empty HTML element unless it ends with "/>"
-            if rawHTML.hasSuffix("/>"), let parsed = try? XMLElement(xmlString: rawHTML) {
-                output.append(HTMLNode(from: parsed) ?? .text(""))
+            if rawHTML.hasSuffix("/>"), let parsed = try? XMLElement(xmlString: rawHTML), let node = HTMLNode(from: parsed) {
+                output.append(node)
             }
             // Lastly, check if this is the start of an HTML element that needs to be constructed out of more than one markup element
             else if let parsed = _findMultiMarkupHTMLElement(in: &remainder, openingRawHTML: rawHTML) {
                 output.append(parsed)
             }
         }
-        
-        return output
     }
     
     private func _findMultiMarkupHTMLElement(in remainder: inout ArraySlice<any Markup>, openingRawHTML: String) -> HTMLNode? {
@@ -729,12 +730,12 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             }
             
             // If this wasn't a comment, accumulate more raw HTML to try and parse
-            rawHTML += next.format()
+            rawHTML += next.detachedFromParent.format()
             // On non-Darwin platforms, `XMLElement(xmlString:)` sometimes crashes for certain invalid / incomplete XML strings.
             // To minimize the risk of this happening, don't try to parse the XML string as an empty HTML element unless it ends with "/>"
             if html?.rawHTML == expectedClosingTag, let parsed = try? XMLElement(xmlString: rawHTML) {
                 remainder = copy // Skip over all the elements that were used to create that HTML element.
-                return HTMLNode(from: parsed) ?? .text("") // Include the valid HTML element in the output.
+                return HTMLNode(from: parsed) // Include the valid HTML element in the output.
             }
         }
         // If we reached the end of the _inline_ markup without parsing a valid HTML element, skip just that opening markup without updating `remainder`
@@ -753,9 +754,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             var smallContents = [HTMLNode]()
             for child in directive.children {
                 if let paragraph = child as? Paragraph {
-                    for markup in paragraph.children {
-                        visit(markup, into: &smallContents)
-                    }
+                    visitSequence(paragraph.children, into: &smallContents)
                 } else {
                     visit(child, into: &smallContents)
                 }
@@ -778,7 +777,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
             else {
                 figure(contents: [
                     picture,
-                    figcaption(contents: _visit(caption))
+                    figcaption(contents: _visitSequenceIntoNewAllocation(caption))
                 ])
             }
             output.append(element)
@@ -794,7 +793,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                 ]
                 return div(
                     attributes: attributes,
-                    contents: _visit(column.content)
+                    contents: _visitSequenceIntoNewAllocation(column.content)
                 )
             }))
         case .tabNavigator(tabs: let tabs):
@@ -815,7 +814,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                         ] + (i == 0 ? ([.open]) : ([])),
                         contents: [
                             summary(contents: [.text(tab.title)]),
-                        ] + _visit(tab.content)
+                        ] + _visitSequenceIntoNewAllocation(tab.content)
                     )
                 }
             ))
