@@ -16,7 +16,7 @@ import DocCCommon
 
 struct MarkdownRendererTests {
     @Test
-    func renderingParagraphsWithFormattedText() {
+    func paragraphsSupportFormattedText() {
         assert(
             rendering: "This is a paragraph with _emphasized_ and **important** text.",
             prettyFormatted: false,
@@ -37,7 +37,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingHeadings() {
+    func headingsLinkToThemselves() {
         assert(
             rendering: """
             # One
@@ -76,7 +76,10 @@ struct MarkdownRendererTests {
             </h2>
             """
         )
-        
+    }
+    
+    @Test
+    func headingsSupportFormattedText() {
         assert(
             rendering: """
             # _One_
@@ -106,7 +109,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingTables() {
+    func tablesSupportFormattedText() {
         assert(
             rendering: """
             First   | Second  | 
@@ -134,7 +137,10 @@ struct MarkdownRendererTests {
             </table>
             """
         )
-        
+    }
+    
+    @Test
+    func spanningCellsInTablesHaveColSpanAttributes() {
         assert(
             rendering: """
             First | Second | Third |
@@ -168,7 +174,10 @@ struct MarkdownRendererTests {
             </table>
             """
         )
-        
+    }
+     
+    @Test
+    func spanningCellsInTablesHaveRowSpanAttributes() {
         assert(
             rendering: """
             First | Second | Third | Fourth 
@@ -238,7 +247,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingLists() {
+    func nestedOrderedAndUnorderedListsRenderAsSemanticElements() {
         assert(
             rendering: """
             - First
@@ -288,7 +297,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingAsides() {
+    func nestedAsidesRenderAsSemanticElements() {
         assert(
             rendering: """
             > Note: Something noteworthy
@@ -313,19 +322,23 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingSmallDirective() {
+    func smallDirectiveCorrectsTheDirectivesSemanticMismatch() {
         assert(
+            // Because `@Small` is a defined as a block directive with blocks of content
+            // its Markdown representation is a Paragraph inside the Small directive ...
             rendering: """
             @Small {
                 Licensed under Apache License v2.0
             }
             """,
             directiveToReturn: .small,
+            // .. however, in HTML `<small>` is phrasing content that should exist within the `<p>`
             matches: """
             <p>
               <small>Licensed under Apache License v2.0</small>
             </p>
-            """)
+            """
+        )
     }
     
     @Test
@@ -435,7 +448,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingRowAndColumnDirectives() {
+    func columnDirectivesRepresentSizeAndAlignmentAsCustomStyleVariables() {
         let renderableDirectiveWithCaption = RenderableDirective.row(columns: [
             (size: 2, alignment: .leading, content: [Text("This is the first column.")]),
             (size: 1, alignment: .center, content: [Text("This is the second column.")]),
@@ -484,7 +497,7 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingCodeBlocks() {
+    func codeBlocksRenderAsSemanticElements() {
         assert(
             rendering: """
             ~~~
@@ -506,7 +519,10 @@ struct MarkdownRendererTests {
             </code></pre>
             """
         )
-        
+    }
+    
+    @Test
+    func codeBlockRepresentSyntaxHighlightingAsClassName() {
         assert(
             rendering: """
             ```lang
