@@ -10,13 +10,6 @@
 
 public import Foundation
 
-/// An environmental variable to control the output formatting of the encoded render JSON.
-///
-/// If this environment variable is set to "YES", DocC will format render node JSON with spacing and indentation,
-/// and sort the keys (on supported platforms), to make it deterministic and easy to read.
-let jsonFormattingKey = "DOCC_JSON_PRETTYPRINT"
-public internal(set) var shouldPrettyPrintOutputJSON = NSString(string: ProcessInfo.processInfo.environment[jsonFormattingKey] ?? "NO").boolValue
-
 extension CodingUserInfoKey {
     /// A user info key to indicate that Render JSON references should not be encoded.
     static let skipsEncodingReferences = CodingUserInfoKey(rawValue: "skipsEncodingReferences")!

@@ -1582,18 +1582,6 @@ class ConvertActionTests: XCTestCase {
     }
     
     func testConvertActionProducesDeterministicOutput() async throws {
-        // Pretty printing the output JSON also enables sorting keys during encoding
-        // which is required for testing if the conversion output is deterministic.
-        let priorPrettyPrintValue = shouldPrettyPrintOutputJSON
-        shouldPrettyPrintOutputJSON = true
-        defer {
-            // Because this value is being modified in-process (not in the environment)
-            // it will not affect the outcome of other tests, even when running tests in parallel.
-            // Even when tests are run in parallel,
-            // there is only one test being executed per process at a time.
-            shouldPrettyPrintOutputJSON = priorPrettyPrintValue
-        }
-        
         let testCatalogURL = try XCTUnwrap(
             Bundle.module.url(
                 forResource: "LegacyBundle_DoNotUseInNewTests",

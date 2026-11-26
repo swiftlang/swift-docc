@@ -467,6 +467,7 @@ add_library(SwiftDocC
   Utility/MarkupExtensions/MarkupChildrenExtensions.swift
   Utility/MarkupExtensions/SourceRangeExtensions.swift
   Utility/NearMiss.swift
+  Utility/PrettyPrintOutputConfiguration.swift
   Utility/RenderNodeDataExtractor.swift
   Utility/SemanticVersion+Comparable.swift
   Utility/SymbolGraphAvailability+Filter.swift
