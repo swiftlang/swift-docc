@@ -84,11 +84,11 @@ package struct HTMLFormatter {
         
         if node._tag == .pre {
             // Whitespace is significant for `<pre>` elements; so format that sub-hierarchy _without_ pretty printing.
-            encoder._compactFormat(node, nextElementTag: nil)
+            encoder._compactFormat(node, nextElementTag: nil, containerElementTag: nil)
         } else if options.contains(.prettyPrint) {
             encoder._prettyFormat(node, state: .init())
         } else {
-            encoder._compactFormat(node, nextElementTag: nil)
+            encoder._compactFormat(node, nextElementTag: nil, containerElementTag: nil)
         }
         
         return Data(encoder.buffer)
@@ -115,7 +115,8 @@ package struct HTMLFormatter {
     /// - Parameters:
     ///   - element: The HTML element to format compactly.
     ///   - nextElementTag: The tag of the next element in the element's container, or `nil` if there are no more elements in the element's container.
-    private mutating func _compactFormat(_ element: HTMLNode, nextElementTag: HTMLNode._Tag?) {
+    ///   - containerElementTag: The tag of the element's container, or `nil` if the element is a top-level element.
+    private mutating func _compactFormat(_ element: HTMLNode, nextElementTag: HTMLNode._Tag?, containerElementTag: HTMLNode._Tag?) {
         switch element._storage {
         case .text(let text):
             _format(text: text)
@@ -128,11 +129,11 @@ package struct HTMLFormatter {
             for index in contents.indices {
                 let node = contents[index]
                 let nextIndex = index &+ 1 // The index will exceed `contents.endIndex` long before it overflows.
-                _compactFormat(node, nextElementTag: nextIndex < contents.endIndex ? contents[nextIndex]._tag : nil)
+                _compactFormat(node, nextElementTag: nextIndex < contents.endIndex ? contents[nextIndex]._tag : nil, containerElementTag: tag)
             }
                 
             // End tag
-            if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: nextElementTag) {
+            if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: nextElementTag, within: containerElementTag) {
                 return
             }
             _formatEndTag(tag)
@@ -160,6 +161,8 @@ package struct HTMLFormatter {
         var presentOnCurrentLine: Bool = true
         /// The tag of the next element in the element's container, or `nil` if there are no more elements in the element's container.
         var nextElementTag: HTMLNode._Tag? = nil
+        /// The tag the current element's container, or `nil` if the current element is a top-level element.
+        var containerElementTag: HTMLNode._Tag? = nil
     }
     
     /// Compactly formats the given HTML element hierarchy.
@@ -196,7 +199,7 @@ package struct HTMLFormatter {
             // Start tag
             _formatStartTag(tag, attributes: attributes)
             guard !contents.isEmpty else {
-                if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: state.nextElementTag) {
+                if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: state.nextElementTag, within: state.containerElementTag) {
                     return
                 }
                 _formatEndTag(tag)
@@ -271,7 +274,7 @@ package struct HTMLFormatter {
             let firstContents = contents.first! // verified to be non-empty above
             let shouldPresentContentsOnSeparateLine = contents.count > 1 || !firstContents._isText || hasAttributeReasonToPresentOnSeparateLine
             
-            var childState = PrettyPrintingState(depth: state.depth &+ 1)
+            var childState = PrettyPrintingState(depth: state.depth &+ 1, containerElementTag: tag)
             
             func shouldPresentInline(for contents: HTMLNode) -> Bool {
                 switch contents._storage {
@@ -304,14 +307,14 @@ package struct HTMLFormatter {
                 if child._tag == .pre {
                     // However, first we add a new line and indentation so that the `<pre>` element starts appropriately indented on a new line.
                     appendLineBreakAndIndentation(depth: childState.depth)
-                    _compactFormat(child, nextElementTag: childState.nextElementTag)
+                    _compactFormat(child, nextElementTag: childState.nextElementTag, containerElementTag: state.containerElementTag)
                 } else {
                     _prettyFormat(child, state: childState)
                 }
             }
             
             // End tag
-            if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: state.nextElementTag) {
+            if options.contains(.omitOptionalEndTags), tag.canOmitEndTag(whenFollowedBy: state.nextElementTag, within: state.containerElementTag) {
                 return
             }
             if shouldPresentContentsOnSeparateLine {
@@ -481,12 +484,19 @@ private extension HTMLNode._Tag {
     ///
     /// Which end tags can be omitted is defined in the [HTML specification](https://html.spec.whatwg.org/#semantics) for each type of element,
     /// and is summarized in the [Optional tags section](https://html.spec.whatwg.org/#optional-tags) of the specification.
-    func canOmitEndTag(whenFollowedBy next: Self?) -> Bool {
+    func canOmitEndTag(whenFollowedBy next: Self?, within container: Self?) -> Bool {
         switch self {
         case .p:
             switch next {
-            case .address, .article, .aside, .blockquote, .details, .dialog, .div, .dl, .fieldset, .figcaption, .figure, .footer, .form, .h1, .h2, .h3, .h4, .h5, .h6, .hgroup, .hr, .main, .menu, .nav, .ol, .p, .pre, .search, .section, .table, .ul, nil:
+            case .address, .article, .aside, .blockquote, .details, .dialog, .div, .dl, .fieldset, .figcaption, .figure, .footer, .form, .h1, .h2, .h3, .h4, .h5, .h6, .header, .hgroup, .hr, .main, .menu, .nav, .ol, .p, .pre, .search, .section, .table, .ul:
                 true
+            case nil:
+                switch container {
+                case .a, .audio, .del, .ins, .map, .noscript, .video:
+                    false
+                default:
+                    true
+                }
             default:
                 false
             }
