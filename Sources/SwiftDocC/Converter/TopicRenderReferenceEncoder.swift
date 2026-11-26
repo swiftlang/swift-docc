@@ -24,7 +24,6 @@ enum TopicRenderReferenceEncoder {
     static func addRenderReferences(
         to renderNodeData: inout Data,
         references: [String: any RenderReference],
-        encodeAccumulatedVariantOverrides: Bool = false,
         encoder: JSONEncoder,
         renderReferenceCache referenceCache: RenderReferenceCache
     ) throws {
@@ -155,7 +154,7 @@ enum TopicRenderReferenceEncoder {
         // Append closing "}"
         renderNodeData.append(fragments.closingBrace)
         
-        if encodeAccumulatedVariantOverrides, !variantOverrides.isEmpty {
+        if !variantOverrides.isEmpty {
             // Insert the "variantOverrides" key
             renderNodeData.append(fragments.variantOverridesKey)
             let variantOverrideData = try encoder.encode(VariantOverrides(values: variantOverrides))
