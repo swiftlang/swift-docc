@@ -71,7 +71,7 @@ package extension MarkdownRenderer {
             )
             // description
             items.append(
-                dd(contents: parameter.content.map { visit($0) })
+                dd(contents: _visitSequenceIntoNewAllocation(parameter.content))
             )
         }
         
@@ -122,7 +122,7 @@ package extension MarkdownRenderer {
                 // Name
                 dt(attributes: secondaryLanguageFilter, contents: [.text(parameter.name)]),
                 // Description
-                dd(attributes: secondaryLanguageFilter, contents: parameter.content.map { visit($0) })
+                dd(attributes: secondaryLanguageFilter, contents: _visitSequenceIntoNewAllocation(parameter.content))
             ], at: index)
         }
         

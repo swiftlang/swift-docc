@@ -181,7 +181,7 @@ package struct HTMLRenderer {
         
         // Abstract
         if let abstract = article.abstract {
-            heroElements.append(renderer.visit(abstract))
+            renderer.visit(abstract, into: &heroElements)
         }
         
         // Availability
@@ -286,7 +286,7 @@ package struct HTMLRenderer {
         
         // Abstract
         if let abstract = symbol.abstract {
-            heroElements.append(renderer.visit(abstract))
+            renderer.visit(abstract, into: &heroElements)
         }
         
         // Availability
@@ -478,7 +478,7 @@ package struct HTMLRenderer {
         ]
         content.reserveCapacity(1 + markup.count)
         for child in markup {
-            content.append(renderer.visit(child))
+            renderer.visit(child, into: &content)
         }
         
         return aside(attributes: [.class("deprecated")], contents: content)

@@ -20,22 +20,22 @@ package extension MarkdownRenderer {
     /// This produces a "returns" section that doesn't hide the return value content for any of the languages (same as if the symbol only had one language representation)
     mutating func returns(_ languageSpecificSections: [SourceLanguage: [any Markup]]) -> [HTMLNode] {
         let info = RenderHelpers.sortedLanguageSpecificValues(languageSpecificSections)
-        let items: [HTMLNode] = if info.count == 1 {
-            info.first!.value.map { visit($0) }
+        
+        var items = [HTMLNode]()
+        
+        if info.count == 1 {
+            items = _visitSequenceIntoNewAllocation(info.first!.value)
         } else {
-            info.flatMap { language, content in
+            for (language, content) in info {
                 let attributes = [language.filterAttribute]
                 // Most return sections only have 1 paragraph of content with 2 and 3 paragraphs being increasingly uncommon.
                 // Avoid wrapping that content in a `<div>` or other container element and instead add the language specific class attribute to each paragraph.
-                return content.map { markup in
-                    var node = visit(markup)
-                    
-                    guard !node._isText else {
-                        // Any text _should_ already be contained in a markdown paragraph, but if the input is unexpected, wrap the raw text in a paragraph here.
-                        return p(attributes: attributes, contents: [node])
-                    }
-                    node._addAttributes(attributes)
-                    return node
+                let endIndexBefore = items.endIndex
+                for markup in content {
+                    visit(markup, into: &items)
+                }
+                for index in endIndexBefore ..< items.endIndex {
+                    items[index]._addAttributes(attributes)
                 }
             }
         }

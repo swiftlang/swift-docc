@@ -1629,7 +1629,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 contentCompiler.collectedTopicReferences.append(contentsOf: newReferences)
 
                 // If the section has been manually curated, merge the references of both the automatic curation and the manual curation into one section (rdar://61899214).
-                if let duplicateSectionIndex = sections.firstIndex(where: { $0.title == group.title }) {
+                if let duplicateSectionIndex = sections.firstIndex(where: { $0.title?.lowercased() == group.title?.lowercased() }) {
                     let originalSection = sections[duplicateSectionIndex]
                     // Combining all references here without checking for duplicates should be safe,
                     // because the automatic curation of topics only returns symbols that haven't already been manually curated.
@@ -1890,7 +1890,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
-        let generator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
+        let generator = PresentationURLGenerator(baseURL: context.inputs.baseURL)
         
         var allVariants: [SourceLanguage: ResolvedTopicReference] = documentationNode.availableSourceLanguages.reduce(into: [:]) { partialResult, language in
             partialResult[language] = identifier

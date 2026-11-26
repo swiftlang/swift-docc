@@ -55,7 +55,7 @@ public class DocumentationContentRenderer {
     ///   - context: A documentation context.
     public init(context: DocumentationContext) {
         self.context = context
-        self.urlGenerator = PresentationURLGenerator(context: context, baseURL: context.inputs.baseURL)
+        self.urlGenerator = PresentationURLGenerator(baseURL: context.inputs.baseURL)
     }
     
     /// For symbol nodes, returns the declaration render section if any.
