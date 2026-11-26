@@ -1026,7 +1026,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.heading?.detachedFromParent.debugDescription(),
         """
         Heading level: 3
-        └─ Text "Related Documentation"
+        └─ Text "Related documentation"
         """)
         XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.links.count, 5)
         XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.links.first?.destination, "doc://com.example.documentation/documentation/MyKit/MyClass")
@@ -1474,7 +1474,7 @@ let expected = """
  doc://org.swift.docc.example/documentation/SideKit
  ├ doc://org.swift.docc.example/documentation/SideKit/SideClass
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element
- │ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations
+ │ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-implementations
  │ │   ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/Value(_:)
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/init()
@@ -2702,19 +2702,16 @@ let expected = """
             // Load the catalog & reference resolve symbol graph docs
             let (_, _, context) = try await loadBundle(from: targetURL)
             
-            guard context.diagnostics.count == 5 else {
-                XCTFail("Expected 5 problems during reference resolving; got \(context.diagnostics.count)")
-                return
-            }
+            XCTAssertEqual(context.diagnostics.count, 6, "Expected 6 problems during reference resolving; got \(context.diagnostics.count)")
+            let unresolvedReferenceDiagnostics = context.diagnostics.filter { $0.identifier == "org.swift.docc.unresolvedTopicReference" }
             
-            // All reported diagnostics should be about unresolved references
-            XCTAssertTrue(context.diagnostics.allSatisfy({ $0.identifier == "org.swift.docc.unresolvedTopicReference" }))
+            XCTAssertEqual(unresolvedReferenceDiagnostics.count, 5, "Expected 5 problems about unresolved links; got \(unresolvedReferenceDiagnostics.count)")
             
-            XCTAssert(context.diagnostics.allSatisfy { $0.source?.absoluteString == expectedDiagnosticSource })
+            XCTAssert(unresolvedReferenceDiagnostics.allSatisfy { $0.source?.absoluteString == expectedDiagnosticSource })
             
             // Verify the expected source ranges
             XCTAssertEqual(
-                context.diagnostics.map { "\($0.range!.lowerBound.line):\($0.range!.lowerBound.column)" }.sorted(),
+                unresolvedReferenceDiagnostics.map { "\($0.range!.lowerBound.line):\($0.range!.lowerBound.column)" }.sorted(),
                 ["17:98", "18:100", "18:25", "18:45", "18:62"].sorted()
             )
         }
@@ -4067,11 +4064,11 @@ let expected = """
             # ``SideKit/SideClass``
             Abstract.
             ## Discussion
-            This is a link to <doc:/documentation/SideKit/SideClass/Element#Protocol-Implementations>.
+            This is a link to <doc:/documentation/SideKit/SideClass/Element#Protocol-implementations>.
             ## Topics
             ### Basics
-             - <doc:documentation/SideKit/SideClass/Element#Protocol-Implementations>
-             - <doc:Element#Protocol-Implementations>
+             - <doc:documentation/SideKit/SideClass/Element#Protocol-implementations>
+             - <doc:Element#Protocol-implementations>
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
 

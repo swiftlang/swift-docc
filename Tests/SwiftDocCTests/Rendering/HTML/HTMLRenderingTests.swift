@@ -16,16 +16,25 @@ import DocCTestUtilities
 import SymbolKit
 
 struct HTMLRenderingTests {
-    @Test
-    func imageSourcesUseRelativePaths() async throws {
+    
+    enum ImageSyntax: CaseIterable {
+        case markdown, directive
+    }
+    
+    @Test(arguments: ImageSyntax.allCases)
+    func imageSourcesUseRelativePaths(_ imageSyntax: ImageSyntax) async throws {
         let catalog = Folder(name: "unit-test.docc") {
-            TextFile(name: "Root.md", utf8Content: """
-            # Root
-            
-            A root page with an image.
-            
-            ![Some alt text](ImageName)
-            """)
+            TextFile(name: "Root.md") { """
+                # Root
+                
+                A root page with an image.
+                
+                """
+                switch imageSyntax {
+                    case .markdown:  "![Some alt text](ImageName)"
+                    case .directive: "@Image(source: ImageName, alt: \"Some alt text\")"
+                }
+            }
             
             DataFile(name: "ImageName@2x.png", data: Data())
             DataFile(name: "ImageName~dark@2x.png", data: Data())
@@ -37,13 +46,11 @@ struct HTMLRenderingTests {
         let reference = try #require(context.soleRootModuleReference)
         let article = try #require(context.documentationCache[reference]?.semantic as? Article)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderArticle(article)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section id="hero" class="article">
             <nav id="breadcrumbs">
@@ -61,13 +68,11 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Overview">Overview</a>
             </h2>
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../images/unit-test/ImageName@2x.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../images/unit-test/ImageName~dark@2x.png">
+              <img alt="Some alt text" decoding="async" loading="lazy">
+            </picture>
           </section>
         </article>
         """)
@@ -93,13 +98,11 @@ struct HTMLRenderingTests {
             let reference = try #require(context.documentationCache.reference(symbolID: "struct-id"))
             let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
             
-            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -121,8 +124,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Conforms-To">
-                  <a href="#Conforms-To">Conforms To</a>
+                <h3 id="Conforms-to">
+                  <a href="#Conforms-to">Conforms to</a>
                 </h3>
                 <ul>
                   <li>
@@ -142,13 +145,11 @@ struct HTMLRenderingTests {
             let reference = try #require(context.documentationCache.reference(symbolID: "protocol-id"))
             let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
             
-            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -170,8 +171,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Conforming-Types">
-                  <a href="#Conforming-Types">Conforming Types</a>
+                <h3 id="Conforming-types">
+                  <a href="#Conforming-types">Conforming types</a>
                 </h3>
                 <ul>
                   <li>
@@ -208,13 +209,11 @@ struct HTMLRenderingTests {
             let reference = try #require(context.documentationCache.reference(symbolID: "sub-class-id"))
             let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
             
-            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -236,8 +235,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Inherits-From">
-                  <a href="#Inherits-From">Inherits From</a>
+                <h3 id="Inherits-from">
+                  <a href="#Inherits-from">Inherits from</a>
                 </h3>
                 <ul>
                   <li>
@@ -257,13 +256,11 @@ struct HTMLRenderingTests {
             let reference = try #require(context.documentationCache.reference(symbolID: "base-class-id"))
             let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
             
-            var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
             let pageInfo = renderer.renderSymbol(symbol)
             
-            let html = try #require(pageInfo.content)
-            let data = HTMLFormatter.format(html, options: .prettyPrint)
-            let formattedHTML = String(decoding: data, as: UTF8.self)
-            #expect(formattedHTML == """
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
             <article>
               <section>
                 <nav id="breadcrumbs">
@@ -285,8 +282,8 @@ struct HTMLRenderingTests {
                 <h2>
                   <a href="#Relationships">Relationships</a>
                 </h2>
-                <h3 id="Inherited-By">
-                  <a href="#Inherited-By">Inherited By</a>
+                <h3 id="Inherited-by">
+                  <a href="#Inherited-by">Inherited by</a>
                 </h3>
                 <ul>
                   <li>
@@ -322,17 +319,14 @@ struct HTMLRenderingTests {
         let context = try await load(catalog: catalog)
         #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
         
-        
         let reference = try #require(context.documentationCache.reference(symbolID: "sub-class-id"))
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section>
             <nav id="breadcrumbs">
@@ -354,8 +348,8 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Relationships">Relationships</a>
             </h2>
-            <h3 id="Inherits-From">
-              <a href="#Inherits-From">Inherits From</a>
+            <h3 id="Inherits-from">
+              <a href="#Inherits-from">Inherits from</a>
             </h3>
             <ul>
               <li>
@@ -366,8 +360,8 @@ struct HTMLRenderingTests {
                 </a>
               </li>
             </ul>
-            <h3 id="Conforms-To">
-              <a href="#Conforms-To">Conforms To</a>
+            <h3 id="Conforms-to">
+              <a href="#Conforms-to">Conforms to</a>
             </h3>
             <ul>
               <li>
@@ -402,13 +396,11 @@ struct HTMLRenderingTests {
         let reference = try #require(context.documentationCache.reference(symbolID: "requirement-id"))
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section>
             <nav id="breadcrumbs">
@@ -429,20 +421,20 @@ struct HTMLRenderingTests {
               </h1>
             </hgroup>
           </section>
-          <section id="Default-Implementations">
+          <section id="Default-implementations">
             <h2>
-              <a href="#Default-Implementations">Default Implementations</a>
+              <a href="#Default-implementations">Default implementations</a>
             </h2>
-            <h3 id="SomeProtocol-Implementations">
-              <a href="#SomeProtocol-Implementations">SomeProtocol Implementations</a>
+            <h3 id="SomeProtocol-implementations">
+              <a href="#SomeProtocol-implementations">SomeProtocol implementations</a>
             </h3>
             <ul>
               <li>
                 <a href="../dosomething()-88gib/index.html">
                   <code>
-                    <span class="identifier">
+                    <b>
                       do<wbr>Something()
-                    </span>
+                    </b>
                   </code>
                 </a>
                 <p>Some documentation</p>
@@ -485,13 +477,11 @@ struct HTMLRenderingTests {
         let reference = try #require(context.documentationCache.reference(symbolID: "struct-id"))
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section>
             <nav id="breadcrumbs">
@@ -513,14 +503,14 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Topics">Topics</a>
             </h2>
-            <h3 id="Default-Implementations">
-              <a href="#Default-Implementations">Default Implementations</a>
+            <h3 id="Default-implementations">
+              <a href="#Default-implementations">Default implementations</a>
             </h3>
             <ul>
               <li>
                 <a href="someprotocol-implementations/index.html">
                   <p class="api-collection">
-                    SomeProtocol Implementations
+                    SomeProtocol implementations
                   </p>
                 </a>
               </li>
@@ -530,8 +520,8 @@ struct HTMLRenderingTests {
             <h2>
               <a href="#Relationships">Relationships</a>
             </h2>
-            <h3 id="Conforms-To">
-              <a href="#Conforms-To">Conforms To</a>
+            <h3 id="Conforms-to">
+              <a href="#Conforms-to">Conforms to</a>
             </h3>
             <ul>
               <li>
@@ -578,13 +568,11 @@ struct HTMLRenderingTests {
         let reference = try #require(context.soleRootModuleReference)
         let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
         
-        var renderer = HTMLRenderer(reference: reference, context: context, goal: .richness, featureFlags: context.configuration.featureFlags)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
         let pageInfo = renderer.renderSymbol(symbol)
         
-        let html = try #require(pageInfo.content)
-        let data = HTMLFormatter.format(html, options: .prettyPrint)
-        let formattedHTML = String(decoding: data, as: UTF8.self)
-        #expect(formattedHTML == """
+        let html = try #require(pageInfo.prettyHTMLString)
+        #expect(html == """
         <article>
           <section id="hero" class="module">
             <hgroup>
@@ -606,9 +594,9 @@ struct HTMLRenderingTests {
               <li>
                 <a href="secondclass/index.html">
                   <code>
-                    <span class="identifier">
+                    <b>
                       Second<wbr>Class
-                    </span>
+                    </b>
                   </code>
                 </a>
               </li>
@@ -633,9 +621,9 @@ struct HTMLRenderingTests {
               <li>
                 <a href="firstclass/index.html">
                   <code>
-                    <span class="identifier">
+                    <b>
                       First<wbr>Class
-                    </span>
+                    </b>
                   </code>
                 </a>
               </li>
@@ -643,5 +631,233 @@ struct HTMLRenderingTests {
           </section>
         </article>
         """)
+    }
+    
+    @Test
+    func includesAutomaticSeeAlsoSectionsAfterAuthoredSeeAlsoSections() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "struct-id",   kind: .struct,   pathComponents: ["Something"], docComment: """
+                A structure that curates its first two members and an article
+                ## Topics
+                ### Manually curated
+                - ``first``
+                - ``second``
+                - <doc:Article>
+                """),
+                makeSymbol(id: "member-1-id", kind: .property, pathComponents: ["Something", "first"]),
+                makeSymbol(id: "member-2-id", kind: .property, pathComponents: ["Something", "second"]),
+                makeSymbol(id: "member-3-id", kind: .property, pathComponents: ["Something", "third"]),
+            ], relationships: [
+                .init("member-1-id", .memberOf, "struct-id"),
+                .init("member-2-id", .memberOf, "struct-id"),
+                .init("member-3-id", .memberOf, "struct-id"),
+            ]))
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Some article
+            An article with an explicit "See Also" section.
+            ## See Also
+            - ``Something/third``
+            """)
+        }
+        
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+        
+        do {
+            let reference = try #require(context.documentationCache.reference(symbolID: "member-1-id"))
+            let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+            
+            var renderer = makeHTMLRenderer(for: reference, in: context)
+            let pageInfo = renderer.renderSymbol(symbol)
+            
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
+            <article>
+              <section>
+                <nav id="breadcrumbs">
+                  <ul>
+                    <li>
+                      <a href="../../index.html">ModuleName</a>
+                    </li>
+                    <li>
+                      <a href="../index.html">Something</a>
+                    </li>
+                    <li>first</li>
+                  </ul>
+                </nav>
+                <hgroup>
+                  <p>Instance Property</p>
+                  <h1>first</h1>
+                </hgroup>
+              </section>
+              <section id="See-also">
+                <h2>
+                  <a href="#See-also">See also</a>
+                </h2>
+                <h3 id="Manually-curated">
+                  <a href="#Manually-curated">Manually curated</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../second/index.html">
+                      <code>
+                        <b>second</b>
+                      </code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="../../../unit-test/article/index.html">
+                      <p class="api-collection">
+                        Some article
+                      </p>
+                    </a>
+                    <p>An article with an explicit “See Also” section.</p>
+                  </li>
+                </ul>
+              </section>
+            </article>
+            """)
+        }
+        
+        do {
+            let reference = try #require(context.documentationCache.allReferences.first(where: { $0.lastPathComponent == "Article" }))
+            let article = try #require(context.documentationCache[reference]?.semantic as? Article)
+            
+            var renderer = makeHTMLRenderer(for: reference, in: context)
+            let pageInfo = renderer.renderArticle(article)
+            
+            let html = try #require(pageInfo.prettyHTMLString)
+            #expect(html == """
+            <article>
+              <section id="hero" class="article">
+                <nav id="breadcrumbs">
+                  <ul>
+                    <li>
+                      <a href="../../modulename/index.html">ModuleName</a>
+                    </li>
+                    <li>
+                      <a href="../../modulename/something/index.html">Something</a>
+                    </li>
+                    <li>Some article</li>
+                  </ul>
+                </nav>
+                <hgroup>
+                  <p>Article</p>
+                  <h1>Some article</h1>
+                </hgroup>
+                <p>An article with an explicit “See Also” section.</p>
+              </section>
+              <section id="See-also">
+                <h2>
+                  <a href="#See-also">See also</a>
+                </h2>
+                <h3 id="Related-documentation">
+                  <a href="#Related-documentation">Related documentation</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../../modulename/something/third/index.html">
+                      <code>
+                        <b>third</b>
+                      </code>
+                    </a>
+                  </li>
+                </ul>
+                <h3 id="Manually-curated">
+                  <a href="#Manually-curated">Manually curated</a>
+                </h3>
+                <ul>
+                  <li>
+                    <a href="../../modulename/something/first/index.html">
+                      <code>
+                        <b>first</b>
+                      </code>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="../../modulename/something/second/index.html">
+                      <code>
+                        <b>second</b>
+                      </code>
+                    </a>
+                  </li>
+                </ul>
+              </section>
+            </article>
+            """)
+        }
+    }
+    
+    @Test
+    func tabNavigatorRendersInHTML() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            TextFile(name: "Root.md", utf8Content: """
+            # Root
+
+            A root page with a tab navigator.
+
+            @TabNavigator {
+                @Tab("First") {
+                    Some _formatted_ content
+                }
+                @Tab("Second") {
+                    Some content
+
+                    Some more content
+                }
+            }
+
+            @TabNavigator {
+                @Tab("Other") {
+                    Other content
+                }
+            }
+            """)
+        }
+
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        let reference = try #require(context.soleRootModuleReference)
+        let article = try #require(context.documentationCache[reference]?.semantic as? Article)
+
+        var renderer = makeHTMLRenderer(for: reference, in: context)
+        let pageInfo = renderer.renderArticle(article)
+
+        let html = try #require(pageInfo.prettyHTMLString)
+        // Each tab navigator uses its own `name` so that the tabs of different navigators don't close each other.
+        #expect(html.contains(#"<details name="tabnavigator-5" style="--index: 1" open>"#), "\(html)")
+        #expect(html.contains(#"<details name="tabnavigator-16" style="--index: 1" open>"#), "\(html)")
+        let expectedTabs = """
+        <div class="tabnavigator" style="--count: 2">
+              <details name="tabnavigator-5" style="--index: 1" open>
+                <summary>First</summary>
+                <p>
+                  Some <em>formatted</em> content
+                </p>
+              </details>
+              <details name="tabnavigator-5" style="--index: 2">
+                <summary>Second</summary>
+                <p>Some content</p>
+                <p>Some more content</p>
+              </details>
+            </div>
+        """
+        #expect(html.contains(expectedTabs), "\(html)")
+    }
+
+    private func makeHTMLRenderer(for reference: ResolvedTopicReference, in context: DocumentationContext) -> HTMLRenderer {
+        HTMLRenderer(reference: reference, context: context, jsonRenderContext: .init(documentationContext: context), goal: .richness, featureFlags: context.configuration.featureFlags)
+    }
+}
+
+private extension HTMLRenderer.RenderedPageInfo {
+    var prettyHTMLString: String? {
+        content.map {
+            let data = HTMLFormatter.format($0, options: .prettyPrint)
+            return String(decoding: data, as: UTF8.self)
+        }
     }
 }

@@ -428,12 +428,3 @@ public struct CompositeChecker: Checker {
         descendInto(text)
     }
 }
-
-/*
- A collection of `Heading` properties utilized by `Checker`s.
- */
-extension Heading {
-    var isTopicsSection: Bool {
-        return level == 2 && title == "Topics"
-    }
-}

@@ -508,6 +508,11 @@ struct MarkdownOutputTests {
             TextFile(name: "Tabs.md", utf8Content: """
                 # Tabs
 
+                @Metadata {
+                    @SupportedLanguage(objc)
+                    @SupportedLanguage(swift)
+                }
+
                 Showing how language tabs only render the primary language
 
                 ## Overview
@@ -527,9 +532,12 @@ struct MarkdownOutputTests {
                 """)
         ])
 
-        let (node, _) = try await markdownOutput(catalog: catalog, path: "Tabs")
-        #expect(node.markdown.contains("I am an Objective-C code block") == false)
-        #expect(node.markdown.contains("I am a Swift code block"))
+        // The page has multiple source languages, so repeat the conversion to catch any dependence on set iteration order.
+        for _ in 0..<10 {
+            let (node, _) = try await markdownOutput(catalog: catalog, path: "Tabs")
+            #expect(node.markdown.contains("I am an Objective-C code block") == false)
+            #expect(node.markdown.contains("I am a Swift code block"))
+        }
     }
     
     @Test
@@ -1314,11 +1322,11 @@ struct MarkdownOutputTests {
 
         // The conforming type links to the generated collection under a "Default Implementations" group.
         let (conformerNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer")
-        #expect(conformerNode.markdown.contains("### Default Implementations"))
-        #expect(conformerNode.markdown.contains("/documentation/MarkdownOutput/Conformer/SomeProtocol-Implementations"))
+        #expect(conformerNode.markdown.contains("### Default implementations"))
+        #expect(conformerNode.markdown.contains("/documentation/MarkdownOutput/Conformer/SomeProtocol-implementations"))
 
         // The generated collection page lists the inherited member.
-        let (collectionNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer/SomeProtocol-Implementations")
+        let (collectionNode, _) = try await markdownOutput(catalog: catalog, path: "Conformer/SomeProtocol-implementations")
         #expect(collectionNode.markdown.contains("## Topics"))
         #expect(collectionNode.markdown.contains("### \(AutomaticCuration.groupTitle(for: .method))"))
         #expect(collectionNode.markdown.contains("/documentation/MarkdownOutput/Conformer/someMethod()"))
@@ -1346,7 +1354,7 @@ struct MarkdownOutputTests {
         let expected = MarkdownOutputManifest.Relationship(
             sourceIdentifier: "/documentation/MarkdownOutput/SomeClass/someMethod()",
             relationshipType: .belongsToTopic,
-            targetIdentifier: "/documentation/MarkdownOutput/SomeClass#Instance-Methods"
+            targetIdentifier: "/documentation/MarkdownOutput/SomeClass#Instance-methods"
         )
         #expect(manifest.relationships.contains(expected))
     }
@@ -1580,7 +1588,7 @@ struct MarkdownOutputTests {
                 makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                .init(platformName: .iOS, platformVersion: "1.0.0")
             ])
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
@@ -1595,7 +1603,7 @@ struct MarkdownOutputTests {
                 makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output", availability: [.init(domainName: "iOS", introduced: .init(string: "2.0.0"), deprecated: nil)])
             ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                .init(platformName: .iOS, platformVersion: "1.0.0")
             ])
         ])
         let (node, _) = try await markdownOutput(catalog: catalog, path: "MarkdownSymbol")
@@ -1610,7 +1618,7 @@ struct MarkdownOutputTests {
                 makeSymbol(id: "markdown-symbol-id", kind: .struct, pathComponents: ["MarkdownSymbol"], docComment: "A basic symbol to test markdown output")
             ])),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [.init(platformName: .iOS, platformVersion: "1.0.0")]
+                .init(platformName: .iOS, platformVersion: "1.0.0")
             ]),
             TextFile(name: "MarkdownSymbol.md", utf8Content: """
                 # ``MarkdownSymbol``
@@ -1658,10 +1666,8 @@ struct MarkdownOutputTests {
                     symbols: []
                 )),
             InfoPlist(defaultAvailability: [
-                "MarkdownOutput" : [
-                    .init(platformName: .iOS, platformVersion: "1.0.0"),
-                    .init(platformName: .macOS, platformVersion: "1.0.0"),
-                ]
+                .init(platformName: .iOS,   platformVersion: "1.0.0"),
+                .init(platformName: .macOS, platformVersion: "1.0.0"),
             ]),
         ])
         

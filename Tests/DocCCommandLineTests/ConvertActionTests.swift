@@ -1853,19 +1853,19 @@ class ConvertActionTests: XCTestCase {
             "MixedLanguageFramework",
             "Classes",
             "Bar",
-            "Type Methods",
+            "Type methods",
             "class func myStringFunction(String) throws -> String",
             "Structures",
             "Foo",
             "Initializers",
             "init(rawValue: UInt)",
-            "Type Properties",
+            "Type properties",
             "static var first: Foo",
             "static var fourth: Foo",
             "static var second: Foo",
             "static var third: Foo",
             "SwiftOnlyStruct",
-            "Instance Methods",
+            "Instance methods",
             "func tada()",
         ]
         
@@ -1894,18 +1894,18 @@ class ConvertActionTests: XCTestCase {
             "MixedLanguageFramework",
             "Classes",
             "Bar",
-            "Type Methods",
+            "Type methods",
             "myStringFunction:error: (navigator title)",
             "Custom",
             "Foo",
             "Variables",
             "_MixedLanguageFrameworkVersionNumber",
             "_MixedLanguageFrameworkVersionString",
-            "Type Aliases",
+            "Type aliases",
             "Foo",
             "Enumerations",
             "Foo",
-            "Enumeration Cases",
+            "Enumeration cases",
             "first",
             "fourth",
             "second",
@@ -2893,6 +2893,37 @@ class ConvertActionTests: XCTestCase {
             "/images/unit-test/image-name~dark.png",
             "/images/unit-test/image-name~dark@2x.png"
         ])
+    }
+    
+    func testStaticHTMLOutputCreatesSameNavigatorIndexAsJSONOutput() async throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"]),
+            ])),
+        ])
+        
+        func navigatorIndex(outputFormat: Docc.Convert.OutputFormat) async throws -> RenderIndex {
+            let fileSystem = try TestFileSystem(folders: [catalog])
+            let action = try ConvertAction(
+                documentationBundleURL: catalog.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: false,
+                outputLocation: URL(fileURLWithPath: "/output"),
+                htmlTemplateDirectory: nil,
+                emitDigest: false,
+                currentPlatforms: nil,
+                outputFileManager: fileSystem,
+                temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
+                outputFormat: outputFormat
+            )
+            _ = try await action.perform(logHandle: .none)
+            return try JSONDecoder().decode(RenderIndex.self, from: fileSystem.contentsOfURL(URL(fileURLWithPath: "/output/index/index.json")))
+        }
+        
+        let staticHTMLIndex = try await navigatorIndex(outputFormat: .experimentalHTML)
+        XCTAssertEqual(staticHTMLIndex.interfaceLanguages["swift"]?.first?.children?.map(\.title), ["Structures", "SomeStruct"])
+        let jsonIndex = try await navigatorIndex(outputFormat: .json)
+        XCTAssertEqual(staticHTMLIndex, jsonIndex)
     }
     
     #endif

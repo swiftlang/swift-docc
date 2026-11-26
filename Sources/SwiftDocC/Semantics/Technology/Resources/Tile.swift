@@ -95,7 +95,7 @@ public final class Tile: Semantic, DirectiveConvertible {
         enum Title: String, DirectiveArgument {
             static let argumentName = "title"
             case documentation = "Documentation"
-            case sampleCode = "Sample Code"
+            case sampleCode = "Sample code"
             case downloads = "Xcode and SDKs"
             case videos = "Videos"
             case forums = "Forums"

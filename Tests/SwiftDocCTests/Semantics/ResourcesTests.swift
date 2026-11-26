@@ -75,7 +75,7 @@ Resources @1:1-29:2
 ├─ MarkupContainer (1 element)
 ├─ Tile @4:4-9:5 identifier: documentation title: 'Documentation' destination: 'https://www.example.com/documentation/technology'
 │  └─ MarkupContainer (2 elements)
-├─ Tile @11:4-16:5 identifier: sampleCode title: 'Sample Code' destination: 'https://www.example.com/documentation/technology'
+├─ Tile @11:4-16:5 identifier: sampleCode title: 'Sample code' destination: 'https://www.example.com/documentation/technology'
 │  └─ MarkupContainer (2 elements)
 ├─ Tile @18:4-20:5 identifier: downloads title: 'Xcode and SDKs' destination: 'https://www.example.com/download'
 │  └─ MarkupContainer (1 element)

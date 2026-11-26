@@ -23,6 +23,7 @@ add_library(DocCHTML STATIC
   MarkdownRenderer+Returns.swift
   MarkdownRenderer+Topics.swift
   MarkdownRenderer.swift
+  RenderableDirectiveParser.swift
   StaticResources.swift
   SourceLanguage+Attribute.swift
   WordBreak.swift)

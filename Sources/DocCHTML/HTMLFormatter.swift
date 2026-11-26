@@ -235,7 +235,7 @@ package struct HTMLFormatter {
             //    or
             //    ```
             //    <p>
-            //      Some <b>bold</b> and <i>italicized</i> text.
+            //      Some <strong>important</strong> and <em>emphasized</em> text.
             //    </p>
             //    ```
             //
@@ -256,9 +256,9 @@ package struct HTMLFormatter {
             // 2. Anchors within a paragraph of plain text or other text-level semantics display on a separate line from both the run of contents before and after. For example:
             //    ```
             //    <p>
-            //      Some <b>bold</b> text before a
+            //      Some <strong>important</strong> text before a
             //      <a href="something">link</a>
-            //      and some <i>italicized</i> text after.
+            //      and some <em>emphasized</em> text after.
             //    </p>
             //    ```
             

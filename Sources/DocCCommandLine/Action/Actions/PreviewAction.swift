@@ -240,7 +240,7 @@ extension DocumentationContext {
     
     /// Finds the module and tutorial table-of-contents pages in the context and returns their paths.
     func previewPaths() throws -> [String] {
-        let urlGenerator = PresentationURLGenerator(context: self, baseURL: URL(string: "/")!)
+        let urlGenerator = PresentationURLGenerator(baseURL: URL(string: "/")!)
         
         let rootModules = try renderRootModules
         

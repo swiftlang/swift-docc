@@ -8,63 +8,68 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import XCTest
+import Testing
+import Foundation
 import Markdown
 @testable import SwiftDocC
 
-class SeeAlsoInTopicsHeadingCheckerTests: XCTestCase {
-    
-    func testSeeAlsoInTopics() throws {
+struct SeeAlsoInTopicsHeadingCheckerTests {
+    @Test(arguments: [
+        "Topics", "TOPICS", "topics", "ToPiCs",
+    ], [
+        "See Also", "SEE ALSO", "see also", "SeE aLsO",
+    ])
+    func warnsAboutSeeAlsoInTopics(topicsHeadingSpelling: String, seeAlsoHeadingSpelling: String) throws {
         let source = """
 # Title
 Abstract
 
-## Topics
+## \(topicsHeadingSpelling)
 An overview
 
 ### Discussion
 A discussion
 
-### See Also
+### \(seeAlsoHeadingSpelling)
 - ``RelatedSymbol``
 """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        var checker = SeeAlsoInTopicsHeadingChecker(sourceFile: URL(fileURLWithPath: "/dev/null"))
+        var checker = SeeAlsoInTopicsHeadingChecker(sourceFile: URL(fileURLWithPath: "/dev/null")) // A source file is needed to create diagnostic notes
         checker.visit(document)
 
         let diagnostics = checker.diagnostics
-        XCTAssertEqual(diagnostics.count, 1)
-        let diagnostic = try XCTUnwrap(diagnostics.first)
+        #expect(diagnostics.count == 1)
+        let diagnostic = try #require(diagnostics.first)
 
-        let diagnosticRange = try XCTUnwrap(diagnostic.range)
-        XCTAssertEqual(diagnosticRange.lowerBound.line, 10)
-        XCTAssertEqual(diagnosticRange.lowerBound.column, 1)
-        XCTAssertEqual(diagnosticRange.upperBound.line, 10)
-        XCTAssertEqual(diagnosticRange.upperBound.column, 13)
+        let diagnosticRange = try #require(diagnostic.range)
+        #expect(diagnosticRange.lowerBound.line == 10)
+        #expect(diagnosticRange.lowerBound.column == 1)
+        #expect(diagnosticRange.upperBound.line == 10)
+        #expect(diagnosticRange.upperBound.column == 13)
 
         let solutions = diagnostic.solutions
-        XCTAssertEqual(solutions.count, 2)
+        #expect(solutions.count == 2)
         
         let levelSolution = solutions[0]
         let levelReplacements = levelSolution.replacements
-        XCTAssertEqual(levelReplacements.count, 1)
-        let levelReplacement = try XCTUnwrap(levelReplacements.first)
-        XCTAssertEqual(levelReplacement.replacement, "## See Also")
+        #expect(levelReplacements.count == 1)
+        let levelReplacement = try #require(levelReplacements.first)
+        #expect(levelReplacement.replacement == "## See Also")
         let levelReplacementRange = levelReplacement.range
-        XCTAssertEqual(levelReplacementRange.lowerBound.line, 10)
-        XCTAssertEqual(levelReplacementRange.lowerBound.column, 1)
-        XCTAssertEqual(levelReplacementRange.upperBound.line, 10)
-        XCTAssertEqual(levelReplacementRange.upperBound.column, 13)
+        #expect(levelReplacementRange.lowerBound.line == 10)
+        #expect(levelReplacementRange.lowerBound.column == 1)
+        #expect(levelReplacementRange.upperBound.line == 10)
+        #expect(levelReplacementRange.upperBound.column == 13)
         
         let nameSolution = solutions[1]
         let nameReplacements = nameSolution.replacements
-        XCTAssertEqual(nameReplacements.count, 1)
-        let nameReplacement = try XCTUnwrap(nameReplacements.first)
-        XCTAssertEqual(nameReplacement.replacement, "### <#name#>")
+        #expect(nameReplacements.count == 1)
+        let nameReplacement = try #require(nameReplacements.first)
+        #expect(nameReplacement.replacement == "### <#name#>")
         let nameReplacementRange = nameReplacement.range
-        XCTAssertEqual(nameReplacementRange.lowerBound.line, 10)
-        XCTAssertEqual(nameReplacementRange.lowerBound.column, 1)
-        XCTAssertEqual(nameReplacementRange.upperBound.line, 10)
-        XCTAssertEqual(nameReplacementRange.upperBound.column, 13)
+        #expect(nameReplacementRange.lowerBound.line == 10)
+        #expect(nameReplacementRange.lowerBound.column == 1)
+        #expect(nameReplacementRange.upperBound.line == 10)
+        #expect(nameReplacementRange.upperBound.column == 13)
     }
 }

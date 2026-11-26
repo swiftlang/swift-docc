@@ -25,7 +25,6 @@ add_library(SwiftDocC
   Checker/Checkers/MissingAbstract.swift
   Checker/Checkers/NonInclusiveLanguageChecker.swift
   Checker/Checkers/NonOverviewHeadingChecker.swift
-  Checker/Checkers/MiscasedSectionHeading.swift
   Checker/Checkers/SeeAlsoInTopicsHeadingChecker.swift
   Converter/DocumentationContextConverter.swift
   Converter/DocumentationNodeConverter.swift
@@ -179,6 +178,7 @@ add_library(SwiftDocC
   Model/Rendering/Diffing/Differences.swift
   Model/Rendering/Diffing/RenderNode+Diffable.swift
   Model/Rendering/DocumentationContentRenderer.swift
+  Model/Rendering/HTML/ContextDirectiveParser.swift
   Model/Rendering/HTML/HTMLContentConsumer.swift
   Model/Rendering/HTML/HTMLRenderer.swift
   Model/Rendering/HTML/HTMLRenderer+FullPage.swift

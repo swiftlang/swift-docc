@@ -33,10 +33,13 @@ class DocumentationInputsInfoTests: XCTestCase {
         let infoPlistData = try Data(contentsOf: infoPlistURL)
         let info = try DocumentationContext.Inputs.Info(from: infoPlistData)
 
+        guard case .deprecated(let deprecatedDefaultAvailabilityByModule) = info.defaultAvailability?.info else {
+            XCTFail("Unexpectedly decoded the current default availability format from the deprecated legacy inputs")
+            return
+        }
         XCTAssertEqual(
-            info.defaultAvailability?
-                .modules["MyKit"]?
-                .map({ "\($0.platformName.displayName) \($0.introducedVersion ?? "")" })
+            deprecatedDefaultAvailabilityByModule["MyKit"]?
+                .map { "\($0.platformName.displayName) \($0.introducedVersion ?? "")" }
                 .sorted(),
             ["Mac Catalyst 13.5", "macOS 10.15.1"]
         )
@@ -219,16 +222,12 @@ class DocumentationInputsInfoTests: XCTestCase {
             fallbackIdentifier: "swift.org.Identifier",
             fallbackDefaultCodeListingLanguage: "swift",
             fallbackDefaultModuleKind: "Executable",
-            fallbackDefaultAvailability: DefaultAvailability(
-                with: [
-                    "MyModule": [
-                        DefaultAvailability.ModuleAvailability(
-                            platformName: .iOS,
-                            platformVersion: "7.0.0"
-                        )
-                    ]
-                ]
-            )
+            fallbackDefaultAvailability: DefaultAvailability(with: [
+                DefaultAvailability.ModuleAvailability(
+                    platformName: .iOS,
+                    platformVersion: "7.0.0"
+                )
+            ])
         )
         
         let info = try DocumentationContext.Inputs.Info(catalogDiscoveryOptions: bundleDiscoveryOptions)
@@ -239,16 +238,12 @@ class DocumentationInputsInfoTests: XCTestCase {
                 id: "swift.org.Identifier",
                 defaultCodeListingLanguage: "swift",
                 defaultModuleKind: "Executable",
-                defaultAvailability: DefaultAvailability(
-                    with: [
-                        "MyModule": [
-                            DefaultAvailability.ModuleAvailability(
-                                platformName: .iOS,
-                                platformVersion: "7.0.0"
-                            )
-                        ]
-                    ]
-                )
+                defaultAvailability: DefaultAvailability(with: [
+                    DefaultAvailability.ModuleAvailability(
+                        platformName: .iOS,
+                        platformVersion: "7.0.0"
+                    )
+                ])
             )
         )
     }
@@ -259,16 +254,12 @@ class DocumentationInputsInfoTests: XCTestCase {
             id: "swift.org.Identifier",
             defaultCodeListingLanguage: "swift",
             defaultModuleKind: "Executable",
-            defaultAvailability: DefaultAvailability(
-                with: [
-                    "MyModule": [
-                        DefaultAvailability.ModuleAvailability(
-                            platformName: .iOS,
-                            platformVersion: "7.0.0"
-                        )
-                    ]
-                ]
-            )
+            defaultAvailability: DefaultAvailability(with: [
+                DefaultAvailability.ModuleAvailability(
+                    platformName: .iOS,
+                    platformVersion: "7.0.0"
+                )
+            ])
         )
         
         let bundleDiscoveryOptions = try CatalogDiscoveryOptions(fallbackInfo: info)

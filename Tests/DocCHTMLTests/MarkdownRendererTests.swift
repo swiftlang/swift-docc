@@ -16,25 +16,28 @@ import DocCCommon
 
 struct MarkdownRendererTests {
     @Test
-    func renderingParagraphsWithFormattedText() {
+    func paragraphsSupportFormattedText() {
         assert(
-            rendering: "This is a paragraph with _emphasized_ and **strong** text.",
-            matches: "<p>This is a paragraph with <i>emphasized</i> and <b>strong</b> text.</p>"
+            rendering: "This is a paragraph with _emphasized_ and **important** text.",
+            prettyFormatted: false,
+            matches: "<p>This is a paragraph with <em>emphasized</em> and <strong>important</strong> text.</p>"
         )
         
         assert(
             rendering: "This is a paragraph with ~strikethrough~ and `pre-formatted` text.",
+            prettyFormatted: false,
             matches: "<p>This is a paragraph with <s>strikethrough</s> and <code>pre-formatted</code> text.</p>"
         )
         
         assert(
             rendering: #"This is a paragraph with "double" and 'single' quoted text."#,
+            prettyFormatted: false,
             matches: "<p>This is a paragraph with “double” and ‘single’ quoted text.</p>"
         )
     }
     
     @Test
-    func renderingHeadings() {
+    func headingsLinkToThemselves() {
         assert(
             rendering: """
             # One
@@ -43,7 +46,6 @@ struct MarkdownRendererTests {
             
             ### Three
             """,
-            prettyFormatted: true,
             matches: """
             <h1 id="One">
               <a href="#One">One</a>
@@ -65,7 +67,6 @@ struct MarkdownRendererTests {
             Two
             ---
             """,
-            prettyFormatted: true,
             matches: """
             <h1 id="One">
               <a href="#One">One</a>
@@ -75,7 +76,10 @@ struct MarkdownRendererTests {
             </h2>
             """
         )
-        
+    }
+    
+    @Test
+    func headingsSupportFormattedText() {
         assert(
             rendering: """
             # _One_
@@ -84,16 +88,15 @@ struct MarkdownRendererTests {
             
             ### `Three`
             """,
-            prettyFormatted: true,
             matches: """
             <h1 id="One">
               <a href="#One">
-                <i>One</i>
+                <em>One</em>
               </a>
             </h1>
             <h2 id="Two">
               <a href="#Two">
-                <b>Two</b>
+                <strong>Two</strong>
               </a>
             </h2>
             <h3 id="Three">
@@ -106,14 +109,13 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingTables() {
+    func tablesSupportFormattedText() {
         assert(
             rendering: """
             First   | Second  | 
             ------- | ------- |
             **One** | _Two_   | 
             """,
-            prettyFormatted: true,
             matches: """
             <table>
               <thead>
@@ -125,17 +127,20 @@ struct MarkdownRendererTests {
               <tbody>
                 <tr>
                   <td>
-                    <b>One</b>
+                    <strong>One</strong>
                   </td>
                   <td>
-                    <i>Two</i>
+                    <em>Two</em>
                   </td>
                 </tr>
               </tbody>
             </table>
             """
         )
-        
+    }
+    
+    @Test
+    func spanningCellsInTablesHaveColSpanAttributes() {
         assert(
             rendering: """
             First | Second | Third |
@@ -144,7 +149,6 @@ struct MarkdownRendererTests {
             Three | Four          ||
             Five                 |||
             """,
-            prettyFormatted: true,
             matches: """
             <table>
               <thead>
@@ -170,7 +174,10 @@ struct MarkdownRendererTests {
             </table>
             """
         )
-        
+    }
+     
+    @Test
+    func spanningCellsInTablesHaveRowSpanAttributes() {
         assert(
             rendering: """
             First | Second | Third | Fourth 
@@ -179,7 +186,6 @@ struct MarkdownRendererTests {
             ^     | Five   | ^     | Six
             Seven | ^      | ^     | Eight
             """,
-            prettyFormatted: true,
             matches: """
             <table>
               <thead>
@@ -212,7 +218,36 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingLists() {
+    func tablesRepresentColumnAlignmentAsClassNames() {
+        assert(
+            rendering: """
+            Leading  | Center   | Trailing 
+            :------- | :------: | --------: |
+            First    | Second   | Third
+            """,
+            matches: """
+            <table>
+              <thead>
+                <tr>
+                  <th class="left">Leading</th>
+                  <th class="center">Center</th>
+                  <th class="right">Trailing</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="left">First</td>
+                  <td class="center">Second</td>
+                  <td class="right">Third</td>
+                </tr>
+              </tbody>
+            </table>
+            """
+        )
+    }
+    
+    @Test
+    func nestedOrderedAndUnorderedListsRenderAsSemanticElements() {
         assert(
             rendering: """
             - First
@@ -224,7 +259,6 @@ struct MarkdownRendererTests {
               2. Two
                  * Inner
             """,
-            prettyFormatted: true,
             matches: """
             <ul>
               <li>
@@ -263,14 +297,13 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingAsides() async throws {
+    func nestedAsidesRenderAsSemanticElements() {
         assert(
             rendering: """
             > Note: Something noteworthy
             >
             > > Important: Something important
             """,
-            prettyFormatted: true,
             matches: """
             <aside class="note">
               <p class="label">
@@ -289,25 +322,188 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingSmallDirective() async throws {
+    func smallDirectiveCorrectsTheDirectivesSemanticMismatch() {
         assert(
+            // Because `@Small` is a defined as a block directive with blocks of content
+            // its Markdown representation is a Paragraph inside the Small directive ...
             rendering: """
             @Small {
                 Licensed under Apache License v2.0
             }
             """,
-            matches: "<p><small>Licensed under Apache License v2.0</small></p>")
+            directiveToReturn: .small,
+            // .. however, in HTML `<small>` is phrasing content that should exist within the `<p>`
+            matches: """
+            <p>
+              <small>Licensed under Apache License v2.0</small>
+            </p>
+            """
+        )
     }
     
     @Test
-    func renderingCodeBlocks() async throws {
+    func renderingTabNavigatorDirective() {
+        func content(_ markdown: String) -> [any Markup] {
+            Array(Document(parsing: markdown).children)
+        }
+
+        assert(
+            rendering: """
+            @TabNavigator {
+                @Tab("First") {
+                    Some _formatted_ content
+                }
+                @Tab("Second") {
+                    Some content
+
+                    Some more content
+                }
+                @Tab("Third") {
+                    Even more content
+                }
+            }
+            """,
+            directiveToReturn: .tabNavigator(tabs: [
+                (title: "First", content: content("Some _formatted_ content")),
+                (title: "Second", content: content("Some content\n\nSome more content")),
+                (title: "Third", content: content("Even more content")),
+            ]),
+            matches: """
+            <div class="tabnavigator" style="--count: 3">
+              <details name="tabnavigator-1" style="--index: 1" open>
+                <summary>First</summary>
+                <p>
+                  Some <em>formatted</em> content
+                </p>
+              </details>
+              <details name="tabnavigator-1" style="--index: 2">
+                <summary>Second</summary>
+                <p>Some content</p>
+                <p>Some more content</p>
+              </details>
+              <details name="tabnavigator-1" style="--index: 3">
+                <summary>Third</summary>
+                <p>Even more content</p>
+              </details>
+            </div>
+            """
+        )
+    }
+
+    @Test
+    func renderingImageDirective() {
+        let linkedAsset = LinkedAsset(files: [
+            .light : [2 : "test_source@2x.png"],
+            .dark : [2 : "test_source~dark@2x.png"],
+        ])
+        let renderableDirectiveWithCaption = RenderableDirective.image(source: "test_source", alt: "This is some alt text", caption: [ Text("This is the "), Strong([Text("caption")]), Text(".")])
+        assert(
+            rendering: """
+            @Image(source: test_source, alt: "This is some alt text") {
+                This is the **caption**.
+            }
+            """,
+            assetToReturn: linkedAsset,
+            directiveToReturn: renderableDirectiveWithCaption,
+            matches: """
+            <figure>
+              <picture>
+                <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
+                <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
+                <img alt="This is some alt text" decoding="async" loading="lazy">
+              </picture>
+              <figcaption>
+                This is the <strong>caption</strong>.
+              </figcaption>
+            </figure>
+            """)
+        
+        assert(
+            rendering: """
+            @Image(source: test_source, alt: "This is some alt text")
+            """,
+            assetToReturn: linkedAsset,
+            directiveToReturn: RenderableDirective.image(source: "test_source", alt: "This is some alt text", caption: []),
+            matches: """
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
+              <img alt="This is some alt text" decoding="async" loading="lazy">
+            </picture>
+            """)
+        
+        assert(
+            rendering: """
+            @Image(source: test_source, alt: "This is some alt text") { }
+            """,
+            assetToReturn: linkedAsset,
+            directiveToReturn: .image(source: "test_source", alt: "This is some alt text", caption: [Paragraph([])]),
+            matches: """
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../../test_source@2x.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../../test_source~dark@2x.png">
+              <img alt="This is some alt text" decoding="async" loading="lazy">
+            </picture>
+            """)
+    }
+    
+    @Test
+    func columnDirectivesRepresentSizeAndAlignmentAsCustomStyleVariables() {
+        let renderableDirectiveWithCaption = RenderableDirective.row(columns: [
+            (size: 2, alignment: .leading, content: [Text("This is the first column.")]),
+            (size: 1, alignment: .center, content: [Text("This is the second column.")]),
+            (size: 1, alignment: .trailing, content: [Text("This is the third column.")]),
+        ])
+        assert(
+            rendering: """
+            @Row {
+                @Column(size: 2, alignment: "leading") {
+                    This is the first column.
+                }
+                @Column(size: 1, alignment: "center") {
+                    This is the second column.
+                }
+                @Column(size: 1, alignment: "trailing") {
+                    This is the third column.
+                }
+            }
+            """,
+            directiveToReturn: renderableDirectiveWithCaption,
+            matches: """
+            <div class="row">
+              <div style="--column-size: 2; --alignment: start">
+                This is the first column.
+              </div>
+              <div style="--column-size: 1; --alignment: center">
+                This is the second column.
+              </div>
+              <div style="--column-size: 1; --alignment: end">
+                This is the third column.
+              </div>
+            </div>
+            """)
+    }
+    
+    @Test
+    func unknownDirectiveRendersNothing() {
+        assert(
+            rendering: """
+            @SomethingUnknown {
+                Some inner markup that's part of the unknown directive
+            }
+            """,
+            directiveToReturn: nil,
+            matches: "")
+    }
+    
+    @Test
+    func codeBlocksRenderAsSemanticElements() {
         assert(
             rendering: """
             ~~~
             Some block of code
             ~~~
             """,
-            prettyFormatted: true,
             matches: """
             <pre><code>Some block of code
             </code></pre>
@@ -318,20 +514,21 @@ struct MarkdownRendererTests {
             rendering: """
                 Some block of code
             """,
-            prettyFormatted: true,
             matches: """
             <pre><code>Some block of code
             </code></pre>
             """
         )
-        
+    }
+    
+    @Test
+    func codeBlockRepresentSyntaxHighlightingAsClassName() {
         assert(
             rendering: """
             ```lang
             Some block of code
             ```
             """,
-            prettyFormatted: true,
             matches: """
             <pre class="lang"><code>Some block of code
             </code></pre>
@@ -343,11 +540,13 @@ struct MarkdownRendererTests {
     func renderingMiscellaneousElements() {
         assert(
             rendering: "First\nSecond", // new lines usually have no special meaning in markdown...
+            prettyFormatted: false,
             matches: "<p>First Second</p>"
         )
         
         assert(
             rendering: "First  \nSecond", // ... but with two trailing spaces they are treated as line breaks
+            prettyFormatted: false,
             matches: "<p>First<br>Second</p>"
         )
         
@@ -360,7 +559,36 @@ struct MarkdownRendererTests {
     }
     
     @Test
-    func renderingRelativeLinksToOtherPages() throws {
+    func emptyLinkRendersNothing() {
+        assert(
+            rendering: "[]()",
+            matches: """
+            <p></p>
+            """
+        )
+    }
+    
+    @Test
+    func linkWithoutDestinationRendersItsLinkText() {
+        assert(
+            rendering: "[link text]()",
+            matches: """
+            <p>link text</p>
+            """
+        )
+        
+        assert(
+            rendering: "[some _emphasized_ text]()",
+            matches: """
+            <p>
+              some <em>emphasized</em> text
+            </p>
+            """
+        )
+    }
+    
+    @Test
+    func renderingRelativeLinksToOtherPages() {
         // Link to article
         assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeArticle>", // Simulate a link that's been locally resolved already
@@ -370,7 +598,6 @@ struct MarkdownRendererTests {
                 subheadings: .single(.conceptual("Some Article Title")), // Not relevant for inline links
                 abstract: nil // Not relevant for inline links
             ),
-            prettyFormatted: true,
             matches: """
             <p>
               <a href="../somearticle/index.html">Some Article Title</a>
@@ -391,7 +618,6 @@ struct MarkdownRendererTests {
                 ])),
                 abstract: nil // Not relevant for inline links
             ),
-            prettyFormatted: true,
             matches: """
             <p>
               <a href="../someclass/somemethod(_:_:)/index.html">
@@ -407,7 +633,6 @@ struct MarkdownRendererTests {
         assert(
             rendering: "<doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:)>", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
-            prettyFormatted: true,
             matches: """
             <p>
               <a href="../someclass/somemethod(_:_:)/index.html">
@@ -426,11 +651,10 @@ struct MarkdownRendererTests {
         assert(
             rendering: "[Custom _formatted_ title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
-            prettyFormatted: true,
             matches: """
             <p>
               <a href="../someclass/somemethod(_:_:)/index.html">
-                Custom <i>formatted</i> title
+                Custom <em>formatted</em> title
               </a>
             </p>
             """
@@ -440,9 +664,8 @@ struct MarkdownRendererTests {
         assert(
             rendering: "[Some `CustomSymbolName` title](doc://com.example.test/documentation/Something/SomeClass/someMethod(_:_:))", // Simulate a link that's been locally resolved already
             elementToReturn: makeExampleMethodWithDifferentLanguageRepresentations(),
-            matches: """
-            <p><a href="../someclass/somemethod(_:_:)/index.html">Some <code>Custom<wbr>Symbol<wbr>Name</code> title</a></p>
-            """
+            prettyFormatted: false,
+            matches: #"<p><a href="../someclass/somemethod(_:_:)/index.html">Some <code>Custom<wbr>Symbol<wbr>Name</code> title</a></p>"#
         )
         
         // Unresolved documentation link with fallback link text
@@ -450,7 +673,6 @@ struct MarkdownRendererTests {
             rendering: "<doc://com.example.test/documentation/Something/NotFound>", // Simulate a link that's unresolved
             elementToReturn: nil,
             fallbackLinkTextToReturn: "Some fallback link text",
-            prettyFormatted: true,
             matches: """
             <p>Some fallback link text</p>
             """
@@ -460,7 +682,6 @@ struct MarkdownRendererTests {
             rendering: "``ModuleName/NotFoundClass/someMethod(_:)-h1a2s3h``", // Simulate a symbol link that's unresolved
             elementToReturn: nil,
             fallbackLinkTextToReturn: "Some fallback link text",
-            prettyFormatted: true,
             matches: """
             <p>
               <code>Some fallback link text</code>
@@ -482,30 +703,45 @@ struct MarkdownRendererTests {
         )
     }
     
+    @Test(arguments: [
+        "http://example.com/",
+        "http://example.com/path/to/something",
+        "http://example.com/path/to/something#fragment",
+        "http://example.com/path/to/something?query=value",
+    ])
+    func autolinkWithAbsoluteWebDestinationRendersThatDestinationAsTheLinkText(destination: String) {
+        assert(
+            rendering: "<\(destination)>",
+            matches: """
+            <p>
+              <a href="\(destination)">\(destination)</a>
+            </p>
+            """
+        )
+    }
+    
     @Test
     func renderingFallbackLinkTextForUnresolvedSymbolLinks() {
         assert(
             rendering: "``ModuleName/SomeClass``",
             fallbackLinkTextToReturn: "FallbackLinkText",
+            prettyFormatted: false,
             matches: "<p><code>FallbackLinkText</code></p>"
         )
     }
     
     @Test
-    func renderingRelativeLinksToLocalImages() throws {
+    func renderingRelativeLinksToLocalImages() {
         // Only a single image representation
         assert(
             rendering: "![Some alt text](some-image.png)",
             assetToReturn: .init(files: [
                 .light: [1: "images/com.test.example/some-image.png"]
             ]),
-            prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="../../../images/com.test.example/some-image.png">
-              </picture>
-            </p>
+            <picture>
+              <img alt="Some alt text" decoding="async" loading="lazy" src="../../../images/com.test.example/some-image.png">
+            </picture>
             """
         )
         
@@ -518,13 +754,10 @@ struct MarkdownRendererTests {
                     2: "images/com.test.example/some-image@2x.png",
                 ]
             ]),
-            prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
-              </picture>
-            </p>
+            <picture>
+              <img alt="Some alt text" decoding="async" loading="lazy" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
+            </picture>
             """
         )
         
@@ -535,15 +768,12 @@ struct MarkdownRendererTests {
                 .light: [1: "images/com.test.example/some-image.png"],
                 .dark:  [1: "images/com.test.example/some-image~dark.png"],
             ]),
-            prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image.png">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark.png">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image.png">
+              <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark.png">
+              <img alt="Some alt text" decoding="async" loading="lazy">
+            </picture>
             """
         )
         
@@ -560,31 +790,25 @@ struct MarkdownRendererTests {
                     2: "images/com.test.example/some-image~dark@2x.png",
                 ],
             ]),
-            prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
-                <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
-                <img alt="Some alt text" decoding="async" loading="lazy">
-              </picture>
-            </p>
+            <picture>
+              <source media="(prefers-color-scheme: light)" srcset="../../../images/com.test.example/some-image@2x.png 2x, ../../../images/com.test.example/some-image.png 1x">
+              <source media="(prefers-color-scheme: dark)" srcset="../../../images/com.test.example/some-image~dark@2x.png 2x, ../../../images/com.test.example/some-image~dark.png 1x">
+              <img alt="Some alt text" decoding="async" loading="lazy">
+            </picture>
             """
         )
     }
     
     @Test(arguments: ["http", "https", "HTTP", "hTtPs"])
-    func renderingAbsoluteWebLinksToImages(scheme: String) throws {
+    func renderingAbsoluteWebLinksToImages(scheme: String) {
         // Absolute web URL
         assert(
             rendering: "![Some alt text](\(scheme)://example.com/path/to/some-image.png)",
-            prettyFormatted: true,
             matches: """
-            <p>
-              <picture>
-                <img alt="Some alt text" decoding="async" loading="lazy" src="\(scheme)://example.com/path/to/some-image.png">
-              </picture>
-            </p>
+            <picture>
+              <img alt="Some alt text" decoding="async" loading="lazy" src="\(scheme)://example.com/path/to/some-image.png">
+            </picture>
             """
         )
     }
@@ -593,16 +817,19 @@ struct MarkdownRendererTests {
     func parsesAndPreservesHTMLExceptComments() {
         assert(
             rendering: "This is a <!-- inline comment --><strong>formatted</strong> paragraph.",
+            prettyFormatted: false,
             matches: "<p>This is a <strong>formatted</strong> paragraph.</p>"
         )
         
         assert(
             rendering: "This<br/> is a <em><!-- multi\n line\n comment-->formatted</em> paragraph.",
+            prettyFormatted: false,
             matches: "<p>This<br> is a <em>formatted</em> paragraph.</p>"
         )
         
         assert(
             rendering: "This is a <span style=\"color: red\"><!-- before -->custom formatted<!-- after --></span> paragraph.",
+            prettyFormatted: false,
             matches: "<p>This is a <span style=\"color: red\">custom formatted</span> paragraph.</p>"
         )
         
@@ -610,12 +837,14 @@ struct MarkdownRendererTests {
         // In this case we drop both tags but not their content in between. This matches what DocC does for inline HTML with regards to the Render JSON output.
         assert(
             rendering: "This is a <strong>custom formatted</em> paragraph.",
+            prettyFormatted: false,
             matches: "<p>This is a custom formatted paragraph.</p>"
         )
         
         // Any content _within_ HTML tags in the markdown isn't parsed as markdown content.
         assert(
             rendering: "This is a <span>custom **not** formatted</span> paragraph.",
+            prettyFormatted: false,
             matches: "<p>This is a <span>custom **not** formatted</span> paragraph.</p>"
         )
         
@@ -628,8 +857,61 @@ struct MarkdownRendererTests {
             </details>
             <!-- comment after block element -->
             """,
+            prettyFormatted: false,
             matches: """
             <details><summary>Some summary</summary><p>Some longer description</p></details>
+            """
+        )
+        
+        assert(
+            rendering: """
+            @Small {
+              This is a <!-- inline comment --><strong>formatted</strong> paragraph.
+            }
+            """,
+            directiveToReturn: .small,
+            matches: """
+            <p>
+              <small>
+                This is a <strong>formatted</strong> paragraph.
+              </small>
+            </p>
+            """
+        )
+        
+        assert(
+            rendering: "~This is a <!-- inline comment --><strong>formatted</strong> paragraph.~",
+            directiveToReturn: .small,
+            matches: """
+            <p>
+              <s>
+                This is a <strong>formatted</strong> paragraph.
+              </s>
+            </p>
+            """
+        )
+        
+        assert(
+            rendering: "*This is a <!-- inline comment --><strong>formatted</strong> paragraph.*",
+            directiveToReturn: .small,
+            matches: """
+            <p>
+              <em>
+                This is a <strong>formatted</strong> paragraph.
+              </em>
+            </p>
+            """
+        )
+        
+        assert(
+            rendering: "**This is a <!-- inline comment --><em>formatted</em> paragraph.**",
+            directiveToReturn: .small,
+            matches: """
+            <p>
+              <strong>
+                This is a <em>formatted</em> paragraph.
+              </strong>
+            </p>
             """
         )
     }
@@ -639,7 +921,8 @@ struct MarkdownRendererTests {
         elementToReturn: LinkedElement? = nil,
         assetToReturn: LinkedAsset? = nil,
         fallbackLinkTextToReturn: String? = nil,
-        prettyFormatted: Bool = false,
+        prettyFormatted: Bool = true,
+        directiveToReturn: RenderableDirective? = nil,
         matches expectedHTML: String,
         sourceLocation: Testing.SourceLocation = #_sourceLocation
     ) {
@@ -650,9 +933,13 @@ struct MarkdownRendererTests {
                 elementToReturn: elementToReturn,
                 assetToReturn: assetToReturn,
                 fallbackLinkTextToReturn: fallbackLinkTextToReturn
-            )
+            ),
+            renderableDirectiveParser: SingleValueDirectiveParser(directiveToReturn: directiveToReturn)
         )
-        let htmlNodes = Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children.map { renderer.visit($0) }
+        var htmlNodes = [HTMLNode]()
+        for markup in Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children {
+            renderer.visit(markup, into: &htmlNodes)
+        }
         htmlNodes.assertMatches(prettyFormatted: prettyFormatted, expected: expectedHTML, sourceLocation: sourceLocation)
     }
     
@@ -727,5 +1014,12 @@ struct SingleValueLinkProvider: LinkProvider {
     var fallbackLinkTextToReturn: String?
     func fallbackLinkText(linkString: String) -> String {
         fallbackLinkTextToReturn ?? linkString
+    }
+}
+
+struct SingleValueDirectiveParser: RenderableDirectiveParser {
+    var directiveToReturn: RenderableDirective?
+    func parse(blockDirective: BlockDirective) -> RenderableDirective? {
+        directiveToReturn
     }
 }

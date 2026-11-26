@@ -51,6 +51,8 @@ package extension HTMLRenderer {
                 .rel(.stylesheet),
             ),
             title(text: metadata.title),
+            // The navigator script adds a navigator sidebar to the page once the browser has parsed it.
+            script(attributes: [.src("\(pathPrefixToArchiveRoot)\(StaticResources.navigatorScript.filename)"), .defer], contents: []),
         ]
         if let description = metadata.description {
             headElements.append(meta(
@@ -68,8 +70,6 @@ package extension HTMLRenderer {
         
         // 2. The default header
         bodyElements.append(header(contents: [
-            // FIXME: Make this a button that toggles the navigator sidebar (rdar://177705101)
-            // This is blocked by the sidebar requiring RenderNode input
             h2(contents: [.text("Documentation")]),
             
             // FIXME: Support switching between language representations of the page (rdar://177705327)
@@ -78,8 +78,10 @@ package extension HTMLRenderer {
             span(contents: [.text("Language: Swift")]),
         ]))
         
-        // 3. The unique documentation content for this page
-        bodyElements.append(main(contents: [mainContent]))
+        // 3. The unique documentation content for this page, in a container that the navigator sidebar displays next to
+        bodyElements.append(div(attributes: [.class("full-width-container")], contents: [
+            main(contents: [mainContent]),
+        ]))
         
         // 4. The default footer
         bodyElements.append(footer(contents: [

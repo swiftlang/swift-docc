@@ -40,6 +40,8 @@ package enum StaticResources {
     
     package static let allFiles = [
         referenceStyleSheet,
+        // Scripts
+        navigatorScript,
         // Page kind icons
         apiCollectionIcon,
         articleIcon,
@@ -47,6 +49,8 @@ package enum StaticResources {
         // UI element icons
         anchorIcon,
         sidebarIcon,
+        chevronIcon,
+        closeIcon,
     ]
     
     // MARK: Stylesheets
@@ -147,11 +151,11 @@ section {
 /* Draw a separator between the Topics section and any non-"hero" section (with a background) before it */
 article > section:not(#hero) + #Topics,
 /* Draw a separator between the See Also section and any non-"hero" section (with a background) before it */
-article > section:not(#hero) + #See-Also,
+article > section:not(#hero) + #See-also,
 /* Draw a separator between the Relationships section and any non-"hero" section (with a background) before it */
 article > section:not(#hero) + #Relationships,
 /* Draw a separator between the Default Implementations section and any non-"hero" section (with a background) before it */
-article > section:not(#hero) + #Default-Implementations,
+article > section:not(#hero) + #Default-implementations,
 /* Draw a separator between a symbol's first and second sections */
 article > section:first-of-type:not(#hero) + section
 {
@@ -403,8 +407,8 @@ h1, h2, h3, h4, h5, h6 {
     
     position: absolute;
     top: 0;
-    left: -50%;
-    width: 200%;
+    left: calc(50% - 50cqw);
+    width: 100cqw;
     height: 100%;
     z-index: -2;
   }
@@ -429,8 +433,9 @@ h1, h2, h3, h4, h5, h6 {
   --icon-size: 250px;
   
   position: absolute;
-  top: calc(50% - var(--icon-size) / 2);
-  right: 25px;
+  top: 10px;
+  /* 25px inset from the right edge of the 'main' container */
+  right: calc(50% - 50cqw + 25px);
   opacity: 0.15;
   z-index: -1;
   
@@ -567,7 +572,7 @@ dl {
   }
 }
 
-#Topics, #See-Also, #Relationships, #Default-Implementations {
+#Topics, #See-also, #Relationships, #Default-implementations {
   &> ul {
     padding: 0;
     &> li {
@@ -589,8 +594,9 @@ dl {
           line-height: 24px;
           color: rgb(102, 102, 102);
           
-          &>.identifier {
+          &>b {
             color: var(--color-figure-blue);
+            font-weight: normal;
           }
         }
       }
@@ -694,7 +700,7 @@ table {
   }
 }
 
-#Mentioned-In > ul {
+#Mentioned-in > ul {
   padding: 0;
   &> li {
     margin-top: 10px;
@@ -811,10 +817,16 @@ pre {
 }
 
 body > header {
+  /* The width of the sidebar icon before the header's title */
+  --header-icon-width: 30px;
+  
   position: sticky;
   top: 0;
+  box-sizing: border-box;
   width: 100%;
   height: 52px;
+  /* On wide screens, center the header's content in at most 1920px, like the navigator and the page's content. */
+  padding-inline: calc(max(0px, (100% - 1920px) / 2) + 22px);
   z-index: 5;
   
   display: flex;
@@ -836,12 +848,28 @@ body > header {
     margin-top: 0;
     
     &:before {
-      width: 30px;
+      width: var(--header-icon-width);
       display: inline-block;
       content: url(sidebar.svg)
     }
+  }
+  
+  /* When the page has a navigator, the button that shows and hides it displays the sidebar icon before the title instead. */
+  #navigator-toggle {
+    width: var(--header-icon-width);
+    height: 25px;
+    padding: 0;
+    border: none;
+    background: url(sidebar.svg) no-repeat left center;
+    cursor: pointer;
     
-    margin-left: 22px;
+    + h2 {
+      margin-right: auto;
+      
+      &:before {
+        content: none;
+      }
+    }
   }
   
   span {
@@ -849,8 +877,347 @@ body > header {
     line-height: 18px;
     font-size: 14px;
     display: inline-block;
+  }
+}
+
+.tabnavigator {
+  --count: 1;
+  --tab-gutter: 30px;
+  display: grid;
+  /* Size each tab to fit its title and let a trailing column fill the remaining space */
+  grid-template-columns: repeat(var(--count), auto) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+
+  &:not(:first-child) {
+    margin-block-start: var(--spacing-stacked-margin-xlarge);
+  }
+
+  /* Collapses with the next element's top margin so that elements with larger margins keep them */
+  &:not(:last-child) {
+    margin-block-end: var(--spacing-stacked-margin-xlarge);
+  }
+
+  details {
+    --index: 1;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-row: 1 / span 2;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+
+    /* Prevent closing the open tab by clicking its own title, without disabling the tab's content */
+    &[open] > summary {
+      pointer-events: none;
+    }
+
+    /* Closed tabs overlap the open tab's content in the grid, so only their titles should receive clicks */
+    &:not([open]) {
+      pointer-events: none;
+
+      > summary {
+        pointer-events: auto;
+      }
+    }
+
+    &::details-content {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      min-width: 0;
+      padding-block-start: 25px;
+    }
+
+    &:not([open])::details-content {
+      display: none;
+    }
+
+    &:first-child > summary {
+      --tab-gutter: 0px;
+    }
+
+    /* The tab's content is already spaced out from the titles */
+    > summary + * {
+      margin-block-start: 0;
+    }
+  }
+
+  summary {
+    position: relative;
+    display: grid;
+    grid-column: var(--index) / span 1;
+    grid-row: 1;
+    z-index: 1;
+    padding-block: 10px;
+    padding-inline-start: var(--tab-gutter);
+    border-bottom: 1px solid var(--color-grid);
+    color: var(--color-figure-gray-secondary);
+    font-size: 14px;
+    line-height: 14px;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline-offset: -1px;
+    }
+
+    /* The open tab's indicator only underlines its title, not the gutter before it */
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      inset-inline-start: var(--tab-gutter);
+      inset-inline-end: 0;
+      border-bottom: 1px solid transparent;
+    }
+
+    details[open] > & {
+      color: inherit;
+      cursor: default;
+
+      &::after {
+        border-bottom-color: currentColor;
+      }
+    }
+  }
+}
+
+/*
+ The navigator sidebar.
+ Its sizes are in pixels, computed for a 17px root font size.
+ */
+#navigator {
+  --color-navigator-item-hover: rgba(0, 0, 255, 0.05);
+  /* The space between the navigator's edges and its items, and between the start of an item and its title, so that the titles line up. */
+  --navigator-inset: 20px;
+  
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+  border-inline-end: 1px solid var(--color-grid);
+  background: white;
+  font-size: 17px;
+  line-height: 25px;
+  
+  /* The panel's title and the module's title. */
+  h2 {
+    margin: 0;
+    padding: 0;
+    color: black;
+    font-weight: 600;
+  }
+  
+  &> header {
+    display: none;
+    flex: none;
+    align-items: center;
+    height: 48px;
+    margin-inline: var(--navigator-inset);
     
-    margin-right: 22px;
+    h2 {
+      flex: 1;
+      font-size: 17px;
+      line-height: 17px;
+    }
+    
+    button {
+      width: 19px;
+      height: 19px;
+      padding: 0;
+      border: none;
+      background: url(close.svg);
+      cursor: pointer;
+    }
+  }
+  
+  .technology-title {
+    display: flex;
+    margin-inline: var(--navigator-inset);
+    padding-block: 8px;
+    padding-inline: var(--navigator-inset) 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-decoration: none;
+    
+    h2 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 19px;
+      line-height: 23px;
+    }
+    
+    &:hover {
+      background: var(--color-navigator-item-hover);
+    }
+  }
+  
+  &> ul {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0 var(--navigator-inset) 10px;
+    list-style: none;
+    
+    /* The lists of an item's children, which indent their items by 15px for each level. */
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    
+    /* Each row is a link or a heading, or for an item with children, the `<summary>` of a `<details>` element. */
+    li > :is(a, h3), summary {
+      position: relative;
+      padding: 5px var(--navigator-inset);
+      padding-inline-start: calc(var(--navigator-inset) + var(--depth) * 15px);
+    }
+    
+    summary {
+      display: block;
+      cursor: pointer;
+      
+      /* The chevron opens and closes the item, so it's above the link's click target. It fills the space before the title, so that it's easy to click. */
+      &:before {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        top: calc(50% - var(--navigator-inset) / 2);
+        inset-inline-start: calc(var(--depth) * 15px);
+        width: var(--navigator-inset);
+        height: var(--navigator-inset);
+        background: url(chevron.svg) no-repeat center / 10px;
+        transition: transform 0.15s ease-in;
+      }
+      
+      details[open] > &:before {
+        transform: rotate(90deg);
+      }
+      
+      &:is(:hover, :focus-visible) > a:after {
+        background: var(--color-navigator-item-hover);
+      }
+    }
+    
+    li {
+      a, h3 {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      a {
+        color: inherit;
+        text-decoration: none;
+        
+        /* Make the entire row a click target for the link, with a background on hover or keyboard focus */
+        &:after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border-radius: 4px;
+        }
+        
+        &:is(:hover, :focus-visible):after {
+          background: var(--color-navigator-item-hover);
+        }
+      }
+      
+      h3 {
+        color: var(--color-figure-gray-secondary);
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+/* On narrow screens, the navigator is a panel that slides in over the page's content when the reader opens it, and hides after it slides out. */
+@media only screen and (max-width: 1023px) {
+  #navigator {
+    position: fixed;
+    inset: 0;
+    /* The panel's edge is just past the window's edge, so that it only shows while the panel slides. */
+    margin-inline-end: -1px;
+    z-index: 6;
+    padding-top: 0;
+    visibility: hidden;
+    transform: translateX(-100%);
+    /* The panel stays visible while it slides out, because `visibility` transitions as visible until it ends. */
+    transition: transform 0.15s ease-in, visibility 0.15s;
+  }
+  
+  body.navigator-open #navigator {
+    visibility: visible;
+    transform: none;
+    /* The panel is visible as soon as it opens, so that its close button can have the focus. */
+    transition-property: transform;
+  }
+  
+  #navigator > header {
+    display: flex;
+  }
+  
+  /* Scrolling past the end of the panel's items doesn't scroll the page behind it. */
+  #navigator > ul {
+    overscroll-behavior: contain;
+  }
+  
+  /* The page behind the open panel doesn't scroll, even when the panel's items don't fill it. */
+  body.navigator-open {
+    overflow: hidden;
+  }
+}
+
+/* The navigator and the page's main content display next to each other. */
+.full-width-container {
+  display: flex;
+  max-width: 1920px;
+  margin-inline: auto;
+  
+  > main {
+    flex: 1;
+    min-width: 0;
+    container-type: inline-size;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .full-width-container {
+    box-sizing: border-box;
+    border-inline: 1px solid var(--color-grid);
+  }
+}
+
+/* On wider screens, the navigator displays in a column next to the page's content, unless the reader hides it. */
+@media only screen and (min-width: 1024px) {
+  #navigator {
+    /* A default width of 400px, but between 30% and 40% of the window width, up to a 1521px wide window. */
+    flex: none;
+    width: clamp(calc(min(100vw, 1521px) * 0.3), 400px, calc(min(100vw, 1521px) * 0.4));
+    position: sticky;
+    top: 52px;
+    height: calc(100vh - 52px);
+    /* The column stays visible while it narrows or widens, because `visibility` transitions as visible until it ends. */
+    transition: width 0.3s ease-in, visibility 0.3s;
+  }
+  
+  @media (min-width: 1521px) {
+    #navigator {
+      width: 543px;
+    }
+  }
+  
+  /* The navigator narrows to nothing when the reader hides it, and hides after that. */
+  body.navigator-collapsed #navigator {
+    width: 0;
+    /* The navigator's border doesn't take up space either. */
+    margin-inline-end: -1px;
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #navigator {
+    transition: none;
   }
 }
 
@@ -912,6 +1279,209 @@ body > footer {
     }
   }
 }
+
+figure, picture {
+    display: block;
+    margin-top: var(--spacing-stacked-margin-xlarge);
+}
+
+figcaption {
+    text-align: center;
+    
+    p {
+      font-size: 0.82rem;
+    }
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: var(--spacing-stacked-margin-xlarge);
+}
+
+.row > div {
+    /* column-size acts as a proportion; */
+    flex: var(--column-size, 1) 1 0;
+    text-align: var(--alignment, center);
+    min-width: 0; /* lets long columns shrink below their content's width and scroll */
+    
+    @media only screen and (max-width: 735px) {
+        flex-basis: 100%;
+    }
+}
+""".utf8))
+    
+    // MARK: Scripts
+    
+    /// The script that renders the navigator sidebar from the navigator index and lets the reader show and hide it.
+    package static let navigatorScript = File(filename: "navigator.js", data: Data("""
+// Renders the navigator sidebar from the navigator index in the output's "index/index.json" file.
+(async () => {
+  // The script reads its own element before it waits for the navigator index, because `document.currentScript` is only set until then.
+  const script = document.currentScript;
+  // Browsers don't let pages from a "file://" URL fetch other files, so the navigator needs the output to be on a web server.
+  const index = await fetch(new URL("index/index.json", script.src)).then((response) => response.ok ? response.json() : null).catch(() => null);
+  if (!index) {
+    return;
+  }
+  
+  // This script is in the root of the output.
+  const rootURL = new URL(".", script.src);
+  // Like the page's own links, the navigator's links are relative to the page, for example "../../", so that the output works from any location or hosting path.
+  const pathToRoot = script.getAttribute("src").replace(/[^/]*$/, "");
+  
+  // Returns the navigator index path, for example "/documentation/mykit/myclass", of a link to a page in this output.
+  function indexPathForLink(href) {
+    const path = new URL(href, location.href).pathname.slice(rootURL.pathname.length).replace(/[/]?(index[.]html)?$/, "");
+    return "/" + decodeURIComponent(path).toLowerCase();
+  }
+  const currentPath = indexPathForLink(location.href);
+  
+  // Returns the link to a page's file, without encoding characters that are common in symbol names, like ":" or "(".
+  function hrefForPath(path) {
+    const components = path.split("/").filter(Boolean).map((component) => encodeURI(component).replace(/[#?]/g, encodeURIComponent));
+    return pathToRoot + components.join("/") + "/index.html";
+  }
+  
+  // Accessing storage throws when the browser or the reader disables it. Then the navigator's state only lasts for the page.
+  function withStorage(body) {
+    try {
+      return body();
+    } catch {}
+  }
+  
+  // MARK: Navigator data
+  
+  const languages = index.interfaceLanguages;
+  const modules = languages.swift?.length ? languages.swift : Object.values(languages).find((modules) => modules.length);
+  // In rare cases there are multiple top-level roots. Prefer the one whose path matches the current page.
+  const rootPath = currentPath.split("/").slice(0, 3).join("/");
+  const rootModule = modules?.find(({ path }) => path?.toLowerCase() === rootPath) ?? modules?.[0];
+  if (!rootModule?.path || !rootModule.children?.length) {
+    return;
+  }
+  const technologyPath = rootModule.path.toLowerCase();
+  
+  // Each item is a list item with a link to its page, or with a heading for a group of pages.
+  // An item with children holds a `<details>` element whose `<summary>` holds the link, and the script creates the item's children the first time it opens, so that large hierarchies stay fast.
+  function makeRow(item, depth) {
+    const isGroupMarker = item.type === "groupMarker";
+    
+    const title = document.createElement(isGroupMarker ? "h3" : "a");
+    if (!isGroupMarker) {
+      title.href = hrefForPath(item.path);
+    }
+    title.textContent = item.title;
+    
+    const row = document.createElement("li");
+    if (isGroupMarker || !item.children?.length) {
+      row.append(title);
+      return row;
+    }
+    
+    const summary = document.createElement("summary");
+    summary.append(title);
+    const details = document.createElement("details");
+    details.append(summary);
+    // The item starts closed, so its first "toggle" event comes after it opens.
+    details.addEventListener("toggle", () => {
+      details.append(makeList(item.children, depth + 1));
+    }, { once: true });
+    row.append(details);
+    return row;
+  }
+  
+  function makeList(items, depth) {
+    const list = document.createElement("ul");
+    list.style.setProperty("--depth", depth);
+    list.append(...items.map((item) => makeRow(item, depth)));
+    return list;
+  }
+  
+  const technologyTitle = document.createElement("a");
+  technologyTitle.className = "technology-title";
+  technologyTitle.href = hrefForPath(technologyPath);
+  technologyTitle.innerHTML = `<h2></h2>`;
+  technologyTitle.firstChild.textContent = rootModule.title;
+  
+  const list = makeList(rootModule.children, 0);
+  
+  // On narrow screens, the navigator has a title and a button that closes it.
+  const head = document.createElement("header");
+  head.innerHTML = `<h2>Documentation</h2><button type="button" aria-label="Close Documentation Navigator"></button>`;
+  const closeButton = head.lastChild;
+  
+  // The navigator goes before the page's main content, in the container below the page's header, and the button that shows and hides the navigator goes in the header.
+  const navigator = document.createElement("nav");
+  navigator.id = "navigator";
+  navigator.setAttribute("aria-label", "Documentation Navigator");
+  navigator.append(head, technologyTitle, list);
+  const container = document.querySelector("body > .full-width-container");
+  const main = container.querySelector(":scope > main");
+  main.before(navigator);
+  // The page's default header is right before the container, after any custom header. The button goes before its title, so that it isn't part of the heading.
+  const headerTitle = container.previousElementSibling.querySelector("h2");
+  headerTitle.insertAdjacentHTML("beforebegin", `<button type="button" id="navigator-toggle" aria-controls="navigator" aria-label="Documentation Navigator"></button>`);
+  const toggle = headerTitle.previousElementSibling;
+  
+  // On wide screens the navigator is visible unless the reader hides it. On narrow screens it's hidden unless the reader opens it.
+  const wideScreen = matchMedia("(min-width: 1024px)");
+  const collapsedStorageKey = "docc.navigator.collapsed";
+  
+  function updateToggle() {
+    const isVisible = wideScreen.matches
+      ? !document.body.classList.contains("navigator-collapsed")
+      : document.body.classList.contains("navigator-open");
+    toggle.setAttribute("aria-expanded", isVisible);
+  }
+  
+  document.body.classList.toggle("navigator-collapsed", withStorage(() => localStorage.getItem(collapsedStorageKey)) === "true");
+  
+  // On narrow screens the navigator is a panel over the page, so the rest of the page is inert while the panel is open,
+  // the panel's close button has the focus when it opens, and the button that opened it has the focus when it closes.
+  function setPanelOpen(isOpen) {
+    const isChanging = document.body.classList.contains("navigator-open") !== isOpen;
+    document.body.classList.toggle("navigator-open", isOpen);
+    for (const element of [...document.body.children, main]) {
+      element.inert = isOpen && element !== container;
+    }
+    updateToggle();
+    if (isChanging) {
+      (isOpen ? closeButton : toggle).focus();
+    }
+  }
+  
+  wideScreen.addEventListener("change", () => {
+    // The navigator switches between the column and the panel without a transition.
+    navigator.style.transition = "none";
+    setPanelOpen(false);
+    // Reading a layout value applies the new styles while the transition is off.
+    navigator.offsetWidth;
+    navigator.style.transition = "";
+  });
+  
+  toggle.addEventListener("click", () => {
+    if (wideScreen.matches) {
+      const isCollapsed = document.body.classList.toggle("navigator-collapsed");
+      withStorage(() => localStorage.setItem(collapsedStorageKey, isCollapsed));
+      updateToggle();
+    } else {
+      setPanelOpen(!document.body.classList.contains("navigator-open"));
+    }
+  });
+  
+  closeButton.addEventListener("click", () => setPanelOpen(false));
+  
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && document.body.classList.contains("navigator-open")) {
+      setPanelOpen(false);
+    }
+  });
+  
+  updateToggle();
+})();
+
 """.utf8))
     
     // MARK: Icons
@@ -956,6 +1526,20 @@ body > footer {
 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 20 20" fill="#666">
   <path d="M19.34,4.88L15.12,.66c-.87-.87-2.3-.87-3.17,0l-3.55,3.56-1.38,1.38-1.4,1.4c-.47,.47-.68,1.09-.64,1.7,.02,.29,.09,.58,.21,.84,.11,.23,.24,.44,.43,.63l4.22,4.22h0l.53-.53,.53-.53h0l-4.22-4.22c-.29-.29-.29-.77,0-1.06l1.4-1.4,.91-.91,.58-.58,.55-.55,2.9-2.9c.29-.29,.77-.29,1.06,0l4.22,4.22c.29,.29,.29,.77,0,1.06l-2.9,2.9c.14,.24,.24,.49,.31,.75,.08,.32,.11,.64,.09,.96l3.55-3.55c.87-.87,.87-2.3,0-3.17Z"/>
   <path d="M14.41,9.82s0,0,0,0l-4.22-4.22h0l-.53,.53-.53,.53h0l4.22,4.22c.29,.29,.29,.77,0,1.06l-1.4,1.4-.91,.91-.58,.58-.55,.55h0l-2.9,2.9c-.29,.29-.77,.29-1.06,0L1.73,14.04c-.29-.29-.29-.77,0-1.06l2.9-2.9c-.14-.24-.24-.49-.31-.75-.08-.32-.11-.64-.09-.97L.68,11.93c-.87,.87-.87,2.3,0,3.17l4.22,4.22c.87,.87,2.3,.87,3.17,0l3.55-3.55,1.38-1.38,1.4-1.4c.47-.47,.68-1.09,.64-1.7-.02-.29-.09-.58-.21-.84-.11-.22-.24-.44-.43-.62Z"/>
+</svg>
+""".utf8))
+
+    /// The icon that DocC displays next to items in the navigator sidebar that have children, which rotates when the item opens.
+    static let chevronIcon = File(filename: "chevron.svg", data: Data("""
+<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10px" height="10px" viewBox="0 0 14 14" fill="#666">
+  <path d="M2.964 1.366l0.649-0.76 7.426 6.343-7.423 6.445-0.655-0.755 6.545-5.683-6.542-5.59z"/>
+</svg>
+""".utf8))
+
+    /// The icon that DocC uses for the button to close the navigator sidebar on narrow screens.
+    static let closeIcon = File(filename: "close.svg", data: Data("""
+<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="19px" height="19px" viewBox="0 0 14 14">
+  <path d="M11.91 1l1.090 1.090-4.917 4.915 4.906 4.905-1.090 1.090-4.906-4.905-4.892 4.894-1.090-1.090 4.892-4.894-4.903-4.904 1.090-1.090 4.903 4.904z"/>
 </svg>
 """.utf8))
 

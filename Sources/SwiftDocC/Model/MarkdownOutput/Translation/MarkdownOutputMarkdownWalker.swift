@@ -379,8 +379,8 @@ extension MarkdownOutputMarkupWalker {
             guard let tabs = TabNavigator(from: blockDirective, for: inputs, featureFlags: context.configuration.featureFlags) else {
                 return
             }
-            if let defaultLanguage = context.sourceLanguages(for: identifier).first?.name,
-               let languageMatch = tabs.tabs.first(where: { $0.title.lowercased() == defaultLanguage.lowercased() })
+            let defaultLanguage = identifier.sourceLanguage
+            if let languageMatch = tabs.tabs.first(where: { $0.title.lowercased() == defaultLanguage.name.lowercased() })
             {
                 visit(container: languageMatch.content)
             } else {
