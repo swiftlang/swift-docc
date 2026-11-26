@@ -4762,13 +4762,8 @@
                     "type" : "method"
                   },
                   {
-                    "path" : "\/documentation\/docchtml\/markdownrenderer\/visit(_:)-431sn",
-                    "title" : "func visit(some Markup) -> HTMLNode",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/docchtml\/markdownrenderer\/visit(_:)-6795k",
-                    "title" : "func visit(Heading) -> HTMLNode",
+                    "path" : "\/documentation\/docchtml\/markdownrenderer\/visit(_:into:)",
+                    "title" : "func visit(some Markup, into: inout [HTMLNode])",
                     "type" : "method"
                   },
                   {

@@ -9,11 +9,11 @@
   },
   "identifier" : {
     "interfaceLanguage" : "swift",
-    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:)-431sn"
+    "url" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:into:)"
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:8DocCHTML16MarkdownRendererV5visityAA8HTMLNodeVqd__0C06MarkupRd__lF",
+    "externalID" : "s:8DocCHTML16MarkdownRendererV5visit_4intoyqd___SayAA8HTMLNodeVGzt0C06MarkupRd__lF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -46,12 +46,32 @@
       },
       {
         "kind" : "text",
-        "text" : ") -> "
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "into"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "inout"
+      },
+      {
+        "kind" : "text",
+        "text" : " ["
       },
       {
         "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
         "text" : "HTMLNode"
+      },
+      {
+        "kind" : "text",
+        "text" : "])"
       }
     ],
     "modules" : [
@@ -61,12 +81,12 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkdownRenderer.swift",
-      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer.swift#L828"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/DocCHTML\/MarkdownRenderer.swift#L860"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
     "symbolKind" : "method",
-    "title" : "visit(_:)"
+    "title" : "visit(_:into:)"
   },
   "primaryContentSections" : [
     {
@@ -126,13 +146,41 @@
             },
             {
               "kind" : "text",
-              "text" : ") -> "
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "into"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "output"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "inout"
+            },
+            {
+              "kind" : "text",
+              "text" : " ["
             },
             {
               "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/HTMLNode",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
               "text" : "HTMLNode"
+            },
+            {
+              "kind" : "text",
+              "text" : "])"
             }
           ]
         }
@@ -151,7 +199,7 @@
   "variants" : [
     {
       "paths" : [
-        "\/documentation\/docchtml\/markdownrenderer\/visit(_:)-431sn"
+        "\/documentation\/docchtml\/markdownrenderer\/visit(_:into:)"
       ],
       "traits" : [
         {
@@ -238,7 +286,7 @@
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/markdownrenderer"
 },
-"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/visit(_:)-431sn": {
+"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/visit(_:into:)": {
   "abstract" : [
 
   ],
@@ -274,20 +322,40 @@
     },
     {
       "kind" : "text",
-      "text" : ") -> "
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "into"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " ["
     },
     {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
       "text" : "HTMLNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:)-431sn",
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:into:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "visit(_:)",
+  "title" : "visit(_:into:)",
   "type" : "topic",
-  "url" : "\/documentation\/docchtml\/markdownrenderer\/visit(_:)-431sn"
+  "url" : "\/documentation\/docchtml\/markdownrenderer\/visit(_:into:)"
 }
 }
 }

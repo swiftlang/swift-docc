@@ -203,8 +203,7 @@
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/parameters(_:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/path(to:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/returns(_:)",
-        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:)-431sn",
-        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:)-6795k",
+        "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:into:)",
         "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/wordBreak(symbolName:)"
       ],
       "title" : "Instance Methods"
@@ -1800,7 +1799,7 @@
   "type" : "topic",
   "url" : "\/documentation\/docchtml\/markdownrenderer\/returns(_:)"
 },
-"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/visit(_:)-431sn": {
+"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/visit(_:into:)": {
   "abstract" : [
 
   ],
@@ -1836,82 +1835,40 @@
     },
     {
       "kind" : "text",
-      "text" : ") -> "
+      "text" : ", "
     },
     {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
-      "text" : "HTMLNode"
-    }
-  ],
-  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:)-431sn",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "visit(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/docchtml\/markdownrenderer\/visit(_:)-431sn"
-},
-"doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/visit(_:)-6795k": {
-  "abstract" : [
-    {
-      "text" : "Transforms a markdown heading into a",
-      "type" : "text"
+      "kind" : "externalParam",
+      "text" : "into"
     },
     {
-      "code" : "<h[1...6]>",
-      "type" : "codeVoice"
+      "kind" : "text",
+      "text" : ": "
     },
-    {
-      "text" : " HTML element whose content is wrapped in an ",
-      "type" : "text"
-    },
-    {
-      "code" : "<a>",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " HTML element that references the heading itself.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "func"
+      "text" : "inout"
     },
     {
       "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "visit"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown7HeadingV",
-      "text" : "Heading"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
+      "text" : " ["
     },
     {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:8DocCHTML8HTMLNodeV",
       "text" : "HTMLNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:)-6795k",
+  "identifier" : "doc:\/\/DocCHTML\/documentation\/DocCHTML\/MarkdownRenderer\/visit(_:into:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "visit(_:)",
+  "title" : "visit(_:into:)",
   "type" : "topic",
-  "url" : "\/documentation\/docchtml\/markdownrenderer\/visit(_:)-6795k"
+  "url" : "\/documentation\/docchtml\/markdownrenderer\/visit(_:into:)"
 },
 "doc://DocCHTML/documentation/DocCHTML/MarkdownRenderer/wordBreak(symbolName:)": {
   "abstract" : [
