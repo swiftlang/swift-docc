@@ -5,23 +5,66 @@ Show readers which platforms and versions support your API, and which versions d
 ## Overview
 
 When readers evaluate your API, they need to know whether it works on the platforms and versions their own projects support.
+
 DocC can list those platforms on each symbol page, with the version that introduced the symbol and, when it applies, the version that deprecated it.
 The page shows each platform as a version range, such as "iOS 16.0+" or "iOS 16.0–18.0", and adds a Deprecated or Beta badge where it applies.
 
-DocC combines availability information from four inputs:
+Whenever possible, specify availability with in-source annotations, such as the `@available` attribute in Swift or the `API_AVAILABLE` macro in Objective-C.
+In-source annotations keep your documentation aligned with the availability the compiler enforces.
+If you duplicate that information in the documentation markup, an ``Available`` directive overrides the in-source information for that platform and risks being inaccurate.
 
-- term Default availability: A baseline in your documentation catalog's `Info.plist` file that applies to every symbol in your module.
-- term In-source attributes: The availability annotations in your source code, such as `@available` in Swift.
-- term The `@Available` directive: Availability that you write in a documentation extension file, a documentation comment, or an article.
-- term The `--platform` option: A build option that describes the current release of each platform, including whether it's in beta.
+```swift
+@available(iOS 17.0, macOS 14.0, *)
+public func sleep() { }
+```
 
-Use in-source attributes whenever you can, so that your documentation matches what the compiler enforces.
-Add the other inputs to fill in what your source code doesn't say.
+The `sleep()` page lists "iOS 17.0+", "iPadOS 17.0+", and "macOS 14.0+".
+
+Use another input only for what those annotations don't say:
+
+- term Default availability: A baseline in your documentation catalog's `Info.plist` file for a platform a declaration doesn't name.
+- term The `@Available` directive: Availability for a source language that has no availability annotations, or for an article.
+- term The `--platform` option: A build option that marks the current release of a platform as beta. It doesn't replace availability annotations.
+
+### Annotate Availability in Your Source Code (Recommended)
+
+When you annotate a declaration with an availability attribute, the compiler includes the information in the symbol graph that DocC reads.
+For each platform the attribute names, DocC uses that information on the symbol's page instead of your module's default availability.
+A platform the attribute doesn't name keeps the default. DocC copies iOS availability to iPadOS and Mac Catalyst when those platforms have no availability of their own.
+The pages below use a module default of iOS 16.0 and macOS 13.0.
+The following declarations show introduced versions, and a deprecation on one platform. They also show a symbol that is unavailable on a platform, and a symbol that is obsoleted on a platform:
+
+```swift
+@available(iOS 17.0, macOS 14.0, *)
+public func sleep() { }
+
+@available(iOS, introduced: 16.0, deprecated: 18.0)
+public func climbQuietly() { }
+
+@available(macOS, unavailable)
+public func swim() { }
+
+@available(iOS, introduced: 16.0, obsoleted: 17.0)
+public func oldClimb() { }
+```
+
+The `sleep()` page lists "iOS 17.0+", "iPadOS 17.0+", and "macOS 14.0+".
+The `climbQuietly()` page lists "iOS 16.0–18.0" and "iPadOS 16.0–18.0", each with a Deprecated badge, and "macOS 13.0+" from the module default.
+DocC leaves a platform off the page when the attribute marks the symbol as unavailable or obsoleted on that platform.
+The `swim()` page lists "iOS 16.0+" and "iPadOS 16.0+" from the module default, and leaves macOS off the page.
+The `oldClimb()` page lists "macOS 13.0+" from the module default, and leaves iOS and iPadOS off the page.
+
+An attribute can deprecate a symbol without naming a platform, for example `@available(*, deprecated)`.
+In that case, DocC marks the whole page as deprecated, even when none of the listed platforms have a deprecated version.
+If the attribute includes a `message`, DocC displays the message as the page's deprecation summary, unless you provide your own text with a ``DeprecationSummary`` directive.
+
+DocC also recognizes availability domains other than operating systems.
+For example, `@available(swift, introduced: 5.9)` appears as "Swift 5.9+" on the page.
 
 ### Specify Default Availability for Your Module
 
-Most symbols in a module share the same minimum platform versions.
-Instead of repeating them in every attribute, add a `CDAppleDefaultAvailability` key to your documentation catalog's `Info.plist` file.
+For a platform you don't name in an in-source annotation, you can set a baseline that applies to every symbol in the module.
+Add a `CDAppleDefaultAvailability` key to your documentation catalog's `Info.plist` file.
 Its value is an array with one dictionary per platform.
 Each dictionary has a `name` and, optionally, either a `version` or an `unavailable` key:
 
@@ -65,44 +108,9 @@ If the attribute doesn't specify an introduced version, for example because it o
 > Note: Articles don't display your module's default availability.
 > To show availability on an article, use the ``Available`` directive.
 
-### Annotate Availability in Your Source Code
-
-When you annotate a declaration with an availability attribute, the compiler includes the information in the symbol graph that DocC reads.
-For each platform the attribute names, DocC uses that information on the symbol's page instead of your module's default availability.
-A platform the attribute doesn't name keeps the default. DocC copies iOS availability to iPadOS and Mac Catalyst when those platforms have no availability of their own.
-The pages below use the module default from the example above, iOS 16.0 and macOS 13.0.
-The following declarations show introduced versions, and a deprecation on one platform. They also show a symbol that is unavailable on a platform, and a symbol that is obsoleted on a platform:
-
-```swift
-@available(iOS 17.0, macOS 14.0, *)
-public func sleep() { }
-
-@available(iOS, introduced: 16.0, deprecated: 18.0)
-public func climbQuietly() { }
-
-@available(macOS, unavailable)
-public func swim() { }
-
-@available(iOS, introduced: 16.0, obsoleted: 17.0)
-public func oldClimb() { }
-```
-
-The `sleep()` page lists "iOS 17.0+", "iPadOS 17.0+", and "macOS 14.0+".
-The `climbQuietly()` page lists "iOS 16.0–18.0" and "iPadOS 16.0–18.0", each with a Deprecated badge, and "macOS 13.0+" from the module default.
-DocC leaves a platform off the page when the attribute marks the symbol as unavailable or obsoleted on that platform.
-The `swim()` page lists "iOS 16.0+" and "iPadOS 16.0+" from the module default, and leaves macOS off the page.
-The `oldClimb()` page lists "macOS 13.0+" from the module default, and leaves iOS and iPadOS off the page.
-
-An attribute can deprecate a symbol without naming a platform, for example `@available(*, deprecated)`.
-In that case, DocC marks the whole page as deprecated, even when none of the listed platforms have a deprecated version.
-If the attribute includes a `message`, DocC displays the message as the page's deprecation summary, unless you provide your own text with a ``DeprecationSummary`` directive.
-
-DocC also recognizes availability domains other than operating systems.
-For example, `@available(swift, introduced: 5.9)` appears as "Swift 5.9+" on the page.
-
 ### Add Availability with the Available Directive
 
-If your source language doesn't have availability annotations, or if a page needs availability that the source code doesn't provide, add an ``Available`` directive inside the page's ``Metadata`` directive.
+If your source language doesn't have a mechanism for specifying API availability, or if you're writing an article about a newly introduced or deprecated API, add an ``Available`` directive inside the page's ``Metadata`` directive.
 Each directive describes one platform, with an `introduced` version and an optional `deprecated` version:
 
 ```markdown
@@ -129,7 +137,7 @@ To describe why you deprecated the API and what to use instead, add a ``Deprecat
 
 ### Mark Platform Releases as Beta
 
-When you document an API for a platform release that's still in beta, pass the `--platform` option to `docc convert` once for each platform in beta:
+Use in-source annotations to say which version introduced an API. Pass the `--platform` option when you document that API for a release that's still in beta, once for each platform in beta:
 
 ```shell
 docc convert SlothCreator.docc \
