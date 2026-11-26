@@ -309,7 +309,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
                 // If this is an absolute link, drop the "authority" ("//" prefix and "host" component)
                 path = path.dropFirst(2).drop(while: { $0 != "/" })
             }
-            output.append(.text(linkProvider.fallbackLinkText(linkString: String(path))))
+            output.append(.text(linkProvider.fallbackLinkText(linkString: destination)))
         } else {
             // This could be a http link
             output.append(a(
