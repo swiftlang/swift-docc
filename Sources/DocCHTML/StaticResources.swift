@@ -832,6 +832,11 @@ aside {
   &> p:nth-of-type(2) {
     margin-top: 0.4em;
   }
+
+  &.deprecated {
+    background-color: rgb(255, 250, 246);
+    border-color: var(--color-badge-deprecated);
+  }
 }
 
 /* Links */
