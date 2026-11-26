@@ -379,7 +379,6 @@ struct FileWritingHTMLContentConsumerTests {
           <p>Description of the return value.</p>
           <h2>Discussion</h2>
           <p>Further description of this method and how to use it.</p>
-          
           <h2>See also</h2>
           <h3>Related documentation</h3>
           <ul>
