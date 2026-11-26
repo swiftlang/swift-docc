@@ -13,6 +13,17 @@ private import Foundation
 /// An environmental variable to control the output formatting of the encoded render JSON.
 ///
 /// If this environment variable is set to "YES", DocC will format render node JSON with spacing and indentation.
-public let shouldPrettyPrintOutputJSON = NSString(string: ProcessInfo.processInfo.environment[jsonKey] ?? "NO").boolValue
+public let shouldPrettyPrintOutputJSON = readConfiguration(formatSpecificKey: "DOCC_JSON_PRETTYPRINT")
 
-private let jsonKey = "DOCC_JSON_PRETTYPRINT"
+/// An environmental variable to control the output formatting of HTML.
+///
+/// If this environment variable is set to "YES", DocC will format its HTML output with spacing and indentation.
+public let shouldPrettyPrintOutputHTML = readConfiguration(formatSpecificKey: "DOCC_HTML_PRETTYPRINT")
+
+private func readConfiguration(formatSpecificKey: String) -> Bool {
+    let environment = ProcessInfo.processInfo.environment
+    guard let configuration = environment[formatSpecificKey] ?? environment["DOCC_PRETTYPRINT"] else {
+        return false
+    }
+    return NSString(string: configuration).boolValue
+}

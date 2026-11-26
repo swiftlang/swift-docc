@@ -106,7 +106,7 @@ struct FileWritingHTMLContentConsumer: HTMLContentConsumer {
         htmlTemplate: URL,
         customHeader: URL?,
         customFooter: URL?,
-        prettyPrintOutput: Bool = shouldPrettyPrintOutputJSON
+        prettyPrintOutput: Bool = shouldPrettyPrintOutputHTML
     ) throws {
         var customTemplates: [HTMLTemplate.CustomTemplate] = []
         if let customHeader {
