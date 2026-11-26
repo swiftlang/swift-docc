@@ -24,7 +24,19 @@ jobs:
       # due to issues with filenames on Windows. For now, the Windows CI runs
       # build the package, and only build the tests without running them.
       # Filenames PR: https://github.com/swiftlang/swift-docc/pull/668
-      windows_build_command: "Invoke-Program swift build --build-tests"
+
+      # Windows needs to build a copy of zlib first, because SwiftPM isn't
+      # able to fetch a built copy there.  The CMake build below needs it too,
+      # because nothing else provides ZLIB::ZLIB on Windows.
+      windows_pre_build_command: |
+        Invoke-Program .\.github\scripts\prebuild.ps1 -InstallCMake -SkipAndroid
+        Invoke-Program .\.github\scripts\buildzlib.ps1 -OutDir $Env:TEMP\zlib -WorkDir $Env:TEMP\zlib-build
+      windows_build_command: 'Invoke-Program swift build --pkg-config-path $Env:TEMP\zlib --build-tests'
+
+      # We don't support Swift 6.1 any more
+      macos_exclude_xcode_versions: "[{\"xcode_version\": \"swift_6.1\"}]"
+      linux_exclude_swift_versions: "[{\"swift_version\": \"6.1\"}]"
+      windows_exclude_swift_versions: "[{\"swift_version\": \"6.1\"}]"
 
   cmake:
     name: CMake
@@ -32,7 +44,9 @@ jobs:
     with:
       enable_linux_checks: false
       windows_swift_versions: '["nightly-6.4.x"]'
-      windows_pre_build_command: 'Invoke-Program .\.github\scripts\prebuild.ps1 -InstallCMake -SkipAndroid'
+      windows_pre_build_command: |
+        Invoke-Program .\.github\scripts\prebuild.ps1 -InstallCMake -SkipAndroid
+        Invoke-Program .\.github\scripts\buildzlib.ps1 -OutDir $Env:TEMP\zlib -WorkDir $Env:TEMP\zlib-build
       windows_build_command: |
         $Src = Join-Path $PWD ".build\checkouts"
         $Bin = Join-Path $PWD "BinaryCache"
@@ -61,7 +75,7 @@ jobs:
         Build "$Bin\swift-lmdb" "$Src\swift-lmdb" @("-DBUILD_SHARED_LIBS=NO")
         Build "$Bin\swift-docc-symbolkit" "$Src\swift-docc-symbolkit" @("-DBUILD_SHARED_LIBS=NO")
         # Build DocC
-        Build "$Bin\swift-docc" "$PWD" @("-DBUILD_SHARED_LIBS=YES", "-DArgumentParser_DIR=$Bin\swift-argument-parser\cmake\modules", "-DSwiftASN1_DIR=$Bin\swift-asn1\cmake\modules", "-DSwiftCrypto_DIR=$Bin\swift-crypto\cmake\modules", "-DSwiftMarkdown_DIR=$Bin\swift-markdown\cmake\modules", "-DLMDB_DIR=$Bin\swift-lmdb\cmake\modules", "-DSymbolKit_DIR=$Bin\swift-docc-symbolkit\cmake\modules", "-Dcmark-gfm_DIR=$Install\swift-cmark\lib\cmake")
+        Build "$Bin\swift-docc" "$PWD" @("-DBUILD_SHARED_LIBS=YES", "-DArgumentParser_DIR=$Bin\swift-argument-parser\cmake\modules", "-DSwiftASN1_DIR=$Bin\swift-asn1\cmake\modules", "-DSwiftCrypto_DIR=$Bin\swift-crypto\cmake\modules", "-DSwiftMarkdown_DIR=$Bin\swift-markdown\cmake\modules", "-DLMDB_DIR=$Bin\swift-lmdb\cmake\modules", "-DSymbolKit_DIR=$Bin\swift-docc-symbolkit\cmake\modules", "-DZLIB_ROOT=$Env:TEMP\zlib", "-Dcmark-gfm_DIR=$Install\swift-cmark\lib\cmake")
 
   soundness:
     name: Soundness
