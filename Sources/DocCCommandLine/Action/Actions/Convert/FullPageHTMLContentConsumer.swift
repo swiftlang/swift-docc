@@ -43,12 +43,8 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
         )
     }
     
-    func consume(
-        mainContent: HTMLNode?,
-        metadata: (title: String, description: String?),
-        forPage reference: ResolvedTopicReference
-    ) throws {
-        let page = HTMLRenderer.makeFullPage(mainContent: mainContent ?? article(contents: []), metadata: metadata, for: reference, customHeader: customHeader, customFooter: customFooter)
+    func consume(pageInfo: HTMLRenderer.RenderedPageInfo, forPage reference: ResolvedTopicReference) throws {
+        let page = HTMLRenderer.makeFullPage(pageInfo: pageInfo, for: reference, customHeader: customHeader, customFooter: customFooter)
         
         let htmlData = HTMLFormatter.format(page, options: prettyPrint ? .prettyPrint : [])
         

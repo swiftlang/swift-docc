@@ -525,12 +525,26 @@ struct MarkdownRendererTests {
     func codeBlockRepresentSyntaxHighlightingAsClassName() {
         assert(
             rendering: """
-            ```lang
+            ```swift
             Some block of code
             ```
             """,
             matches: """
-            <pre class="lang"><code>Some block of code
+            <pre class="swift"><code>Some block of code
+            </code></pre>
+            """
+        )
+        
+        assert(
+            rendering: """
+            ```
+            Some block of code
+            ```
+            """,
+            prettyFormatted: true,
+            defaultCodeListingLanguage: "json",
+            matches: """
+            <pre class="json"><code>Some block of code
             </code></pre>
             """
         )
@@ -923,10 +937,11 @@ struct MarkdownRendererTests {
         fallbackLinkTextToReturn: String? = nil,
         prettyFormatted: Bool = true,
         directiveToReturn: RenderableDirective? = nil,
+        defaultCodeListingLanguage: String? = nil,
         matches expectedHTML: String,
         sourceLocation: Testing.SourceLocation = #_sourceLocation
     ) {
-        let renderer = MarkdownRenderer(
+        var renderer = MarkdownRenderer(
             path: "documentation/Something/ThisPage/index.html".lowercased(),
             goal: .richness,
             linkProvider: SingleValueLinkProvider(
@@ -934,7 +949,8 @@ struct MarkdownRendererTests {
                 assetToReturn: assetToReturn,
                 fallbackLinkTextToReturn: fallbackLinkTextToReturn
             ),
-            renderableDirectiveParser: SingleValueDirectiveParser(directiveToReturn: directiveToReturn)
+            renderableDirectiveParser: SingleValueDirectiveParser(directiveToReturn: directiveToReturn),
+            defaultCodeListingLanguage: defaultCodeListingLanguage
         )
         var htmlNodes = [HTMLNode]()
         for markup in Document(parsing: markdownContent, options: [.parseSymbolLinks, .parseBlockDirectives]).children {

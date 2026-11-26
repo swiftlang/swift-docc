@@ -15,7 +15,7 @@ package extension MarkdownRenderer {
     /// Creates a discussion section with the given markup.
     ///
     /// If the markup doesn't start with a level-2 heading, the renderer will insert a level-2 heading based on the `fallbackSectionName`.
-    func discussion(_ markup: [any Markup], fallbackSectionName: String) -> [HTMLNode] {
+    mutating func discussion(_ markup: [any Markup], fallbackSectionName: String) -> [HTMLNode] {
         guard !markup.isEmpty else { return [] }
         var remaining = markup[...]
         
