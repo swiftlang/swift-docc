@@ -230,7 +230,7 @@ extension MarkdownOutputSemanticVisitor {
             metadata.availability = platforms.map { .init($0) }
         }
                  
-        if symbol.consolidatedAvailability.firstValue?.isDeprecated == true  {
+        if symbol.consolidatedAvailability.firstValue?.isDeprecated == true || symbol.deprecatedSummaryVariants[.swift] != nil {
             metadata.isDeprecated = true
         }
         

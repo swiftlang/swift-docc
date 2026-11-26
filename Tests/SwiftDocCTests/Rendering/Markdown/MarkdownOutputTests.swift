@@ -1840,6 +1840,39 @@ struct MarkdownOutputTests {
     }
     
     @Test
+    func deprecationSummaryMarksSymbolAsDeprecatedInMetadata() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"], docComment: #"""
+                    @DeprecationSummary {
+                        Deprecated
+                    }
+                    """#
+                )]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct")
+        
+        #expect(node.metadata.isDeprecated == true)
+    }
+    
+    @Test
+    func mixedDeprecationIsNotMarkedAsDeprecatedInMetadata() async throws {
+        let catalog = catalog(files: [
+            JSONFile(name: "SomeModule.symbols.json", content: makeSymbolGraph(moduleName: "SomeModule", symbols: [
+                makeSymbol(id: "some-struct-id", kind: .struct, pathComponents: ["SomeStruct"], availability: [
+                    .init(domainName: "iOS", introduced: .init(string: "11.0"), deprecated: nil),
+                    .init(domainName: "macOS", introduced: .init(string: "11.0"), deprecated: .init(string: "12.0"), message: "Do not use")
+                ])
+            ]))
+        ])
+        
+        let (node, _) = try await markdownOutput(catalog: catalog, path: "/documentation/SomeModule/SomeStruct")
+        
+        #expect(node.metadata.isDeprecated == nil)
+    }
+    
+    @Test
     func symbolIdentifierMatchesSymbolGraph() async throws {
         let catalog = catalog(files: [
             JSONFile(name: "MarkdownOutput.symbols.json", content: makeSymbolGraph(moduleName: "MarkdownOutput", symbols: [
