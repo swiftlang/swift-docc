@@ -448,6 +448,7 @@ extension MarkdownOutputMarkupWalker {
     }
     
     // Walk the children of the block quote with this walker's own handling (so links and other elements are processed), then prefix each line of the result with the block quote marker.
+    // TODO: rdar://193696209 - refactor walker to have a rewrite pass first, then format once.
     mutating func visitBlockQuote(_ blockQuote: BlockQuote) {
         var innerWalker = self
         innerWalker.markdown = ""
