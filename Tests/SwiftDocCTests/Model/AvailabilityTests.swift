@@ -1458,6 +1458,36 @@ struct AvailabilityTests {
         let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
         #expect(renderReference.isDeprecated == false)
     }
+    
+    @Test
+    func symbolAvailableOnOnePlatformWithDeprecationMessageIsNotConsideredDeprecatedWhenDefaultAvailable() async throws {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    .init(domainName: "macOS", introduced: .init(major: 10, minor: 7, patch: 0), deprecated: .init(major: 10, minor: 9, patch: 2), message: "Some message that describes why this symbol is deprecated"),
+                ]),
+            ]))
+            
+            InfoPlist(defaultAvailability: [
+                .init(platformName: .iOS, platformVersion: "9.2")
+            ])
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst", "macOS"])
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"   })?.deprecated == nil)
+        #expect(renderPlatforms.first(where: { $0.name == "macOS" })?.deprecated == "10.9.2")
+        
+        let renderReference = try #require(converter.renderContext.store.content(for: node.reference)?.renderReference as? TopicRenderReference)
+        withKnownIssue("An in-source deprecation message marks the page as deprecated even if the symbol is available without deprecation on another platform") {
+            #expect(renderReference.isDeprecated == false)
+        }
+    }
 
     @Test(arguments: DirectiveLocation.allCases)
     func symbolIsConsideredDeprecatedWhenOnlyAvailableDirectiveHasDeprecatedVersion(_ directiveLocation: DirectiveLocation) async throws {
