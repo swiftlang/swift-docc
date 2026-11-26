@@ -28,6 +28,6 @@ package extension MarkdownRenderer {
             sectionName = fallbackSectionName
         }
         
-        return selfReferencingSection(named: sectionName, content: remaining.map { visit($0) })
+        return selfReferencingSection(named: sectionName, content: _visitSequenceIntoNewAllocation(remaining))
     }
 }

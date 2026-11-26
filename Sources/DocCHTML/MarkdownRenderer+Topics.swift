@@ -71,13 +71,7 @@ package extension MarkdownRenderer {
         }
         // Abstract/Discussion
         for markup in taskGroup.content {
-            let rendered = visit(markup)
-            if rendered._isText {
-                // Wrap any inline content in an element. This is not expected to happen in practice
-                items.append(p(contents: [rendered]))
-            } else {
-                items.append(rendered)
-            }
+            visit(markup, into: &items)
         }
         // Links
         items.append(ul(contents: listItems))
@@ -123,7 +117,7 @@ package extension MarkdownRenderer {
         
         // Add the formatted abstract if the linked element has one.
         if let abstract = element.abstract {
-            content.append(visit(abstract))
+            visitParagraph(abstract, into: &content)
         }
         
         return li(contents: content)
