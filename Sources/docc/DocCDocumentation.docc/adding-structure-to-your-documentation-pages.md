@@ -133,7 +133,7 @@ backticks (\`\`) .
 
 > Tip: 
 > If you feel that a top-level topic group contains too many links, 
-> it could be an indication that that you can further organize the links into subtopics.
+> it could be an indication that you can further organize the links into subtopics.
 > For more information, see the <doc:#Incorporate-Hierarchy-in-Your-Navigation> section below.
 
 DocC uses the double backtick format to create symbol links, and to add the 

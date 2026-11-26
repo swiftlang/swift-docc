@@ -13,7 +13,7 @@ Displays a set of related download links in the resources section of a tutorial'
 
 Use the `Downloads` directive to add links to related downloads in the resources section at the bottom of your tutorial's table of contents page.
 
-DocC renders the URL you specify in the `destination` parameter as a "View downloads" link at the bottom of the downloads section. Within the directive, add descriptive text and, optionally, use standard Markdown syntax to provide links to one or more more specific downloads or download pages.
+DocC renders the URL you specify in the `destination` parameter as a "View downloads" link at the bottom of the downloads section. Within the directive, add descriptive text and, optionally, use standard Markdown syntax to provide links to one or more specific downloads or download pages.
 
 A single "View downloads" link:
 

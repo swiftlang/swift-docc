@@ -13,7 +13,7 @@ Displays a set of video links in the resources section of a tutorial's table of 
 
 Use the `Videos` directive to add links to related videos in the Resources section at the bottom of your tutorial's table of contents page.
 
-DocC renders the URL you specify in the `destination` parameter as a "Watch videos" link at the bottom of the sample code section. Within the directive, add descriptive text and, optionally, use standard Markdown syntax to provide links to one or more more specific videos.
+DocC renders the URL you specify in the `destination` parameter as a "Watch videos" link at the bottom of the videos section. Within the directive, add descriptive text and, optionally, use standard Markdown syntax to provide links to one or more specific videos.
 
 
 A single "Watch videos" link:
