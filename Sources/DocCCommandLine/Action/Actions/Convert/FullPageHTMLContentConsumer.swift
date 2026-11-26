@@ -50,7 +50,7 @@ struct FullPageHTMLContentConsumer: HTMLContentConsumer {
     ) throws {
         let page = HTMLRenderer.makeFullPage(mainContent: mainContent ?? article(contents: []), metadata: metadata, for: reference, customHeader: customHeader, customFooter: customFooter)
         
-        let htmlData = HTMLFormatter.format(page, options: prettyPrint ? .prettyPrint : [])
+        let htmlData = HTMLFormatter.format(page, options: prettyPrint ? .prettyPrint : [.omitOptionalEndTags, .omitOptionalQuotesAroundAttributeValues])
         
         let relativeFilePath = NodeURLGenerator.fileSafeReferencePath(reference, lowercased: true) + "/index.html"
         try fileWriter.write(htmlData, toFileSafePath: relativeFilePath)

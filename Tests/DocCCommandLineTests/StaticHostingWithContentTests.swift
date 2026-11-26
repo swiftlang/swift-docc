@@ -106,7 +106,7 @@ struct StaticHostingWithContentTests {
         
         let expectedTitleAndMetaContent = includeHTMLContent ? """
           <title>A single article</title>
-          <meta content="This is a formatted article that becomes the root page (because there is only one page)." name="description">
+          <meta content="This is a formatted article that becomes the root page (because there is only one page)." name=description>
         """ : "  <title>Documentation</title>\n  "
         
         let expectedNoScriptContent = includeHTMLContent ? """
@@ -114,13 +114,13 @@ struct StaticHostingWithContentTests {
         <article>\
         <section>\
         <ul>\
-        <li>RootArticle</li>\
+        <li>RootArticle\
         </ul>\
         <hgroup>\
-        <p>Article</p>\
+        <p>Article\
         <h1>RootArticle</h1>\
         </hgroup>\
-        <p>This is a <em>formatted</em> article that becomes the root page (because there is only one page).</p>\
+        <p>This is a <em>formatted</em> article that becomes the root page (because there is only one page).\
         </section>\
         </article>\
         </noscript>
