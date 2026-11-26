@@ -108,7 +108,17 @@ extension MarkdownOutputNode {
                     return
                 }
                 platform = String(words[0])
-                let available = words[1]
+                
+                // Check for version 0.1.0 format which could have a trailing - or be a standalone -.
+                // TODO: rdar://193697991 (Markdown Export: Add per-version fixtures and tests for metadata codable conformations / migrations)
+                var availabilityWord = words[1].trimmingCharacters(in: .whitespaces)
+                if availabilityWord == "-" {
+                    availabilityWord = ""
+                } else if availabilityWord.hasSuffix(" -") {
+                    availabilityWord.removeLast(2)
+                }
+                
+                let available = availabilityWord
                     .split(separator: Self.versionSeparator)
                     .map { $0.trimmingCharacters(in: .whitespaces) }
                     .filter { $0.isEmpty == false }

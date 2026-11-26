@@ -1692,7 +1692,18 @@ struct MarkdownOutputTests {
         let expectedRepresentation = expected.stringRepresentation
         #expect(expectedRepresentation == representation)
     }
-     
+
+    // Metadata version 0.1.0 encoded availability as "platform: introduced -", "platform: introduced - deprecated" or "platform: -" (unavailable / no introduced version - the latter is correct because unavailable symbols are never output in the first place).
+    @Test(arguments: [
+        ("iOS: 14.0 -", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .versioned("14.0"), deprecated: nil)),
+        ("iOS: 14.0 - 15.0", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .versioned("14.0"), deprecated: .versioned("15.0"))),
+        ("iOS: -", MarkdownOutputNode.Metadata.Availability(platform: "iOS", introduced: .unversioned, deprecated: nil)),
+    ])
+    func availabilityDecodesFromVersion0_1_0Format(_ representation: String, _ expected: MarkdownOutputNode.Metadata.Availability) async throws {
+        let availability = MarkdownOutputNode.Metadata.Availability(stringRepresentation: representation)
+        #expect(availability == expected)
+    }
+
     @Test
     func symbolDeprecationRepresentedInMetadataAndContent() async throws {
         let catalog = catalog(files: [
