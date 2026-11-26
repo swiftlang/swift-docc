@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "An unnamed parameter containing containing the page-title’s heading text.",
+      "text" : "An unnamed parameter containing the page-title’s heading text.",
       "type" : "text"
     }
   ],
@@ -236,7 +236,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TitleHeading/heading": {
   "abstract" : [
     {
-      "text" : "An unnamed parameter containing containing the page-title’s heading text.",
+      "text" : "An unnamed parameter containing the page-title’s heading text.",
       "type" : "text"
     }
   ],

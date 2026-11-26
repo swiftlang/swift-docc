@@ -126,7 +126,7 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " directive accepts an unnamed parameter containing containing the page’s title heading.",
+              "text" : " directive accepts an unnamed parameter containing the page’s title heading.",
               "type" : "text"
             }
           ],
@@ -746,7 +746,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TitleHeading/heading": {
   "abstract" : [
     {
-      "text" : "An unnamed parameter containing containing the page-title’s heading text.",
+      "text" : "An unnamed parameter containing the page-title’s heading text.",
       "type" : "text"
     }
   ],
