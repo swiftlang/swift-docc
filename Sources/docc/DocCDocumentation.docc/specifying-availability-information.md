@@ -9,9 +9,7 @@ When readers evaluate your API, they need to know whether it works on the platfo
 DocC can list those platforms on each symbol page, with the version that introduced the symbol and, when it applies, the version that deprecated it.
 The page shows each platform as a version range, such as "iOS 16.0+" or "iOS 16.0–18.0", and adds a Deprecated or Beta badge where it applies.
 
-Whenever possible, specify availability with in-source annotations, such as the `@available` attribute in Swift or the `API_AVAILABLE` macro in Objective-C.
-In-source annotations keep your documentation aligned with the availability the compiler enforces.
-If you duplicate that information in the documentation markup, an ``Available`` directive overrides the in-source information for that platform and risks being inaccurate.
+Specify availability with an in-source annotation whenever you can, such as `@available` in Swift or `API_AVAILABLE` in Objective-C.
 
 ```swift
 @available(iOS 17.0, macOS 14.0, *)
@@ -102,42 +100,25 @@ You can also list a platform name that DocC doesn't know, such as the name of yo
 > Support ends after Swift-DocC 6.6.
 
 DocC applies these defaults to every symbol in your module and to your module's landing page.
-An in-source attribute for a platform replaces the default version for that platform on that symbol's page.
-If the attribute doesn't specify an introduced version, for example because it only deprecates the symbol, DocC keeps the default introduced version.
+If an in-source attribute doesn't specify an introduced version, for example because it only deprecates the symbol, DocC keeps the default introduced version.
 
 > Note: Articles don't display your module's default availability.
 > To show availability on an article, use the ``Available`` directive.
 
 ### Add Availability with the Available Directive
 
-If your source language doesn't have a mechanism for specifying API availability, or if you're writing an article about a newly introduced or deprecated API, add an ``Available`` directive inside the page's ``Metadata`` directive.
-Each directive describes one platform, with an `introduced` version and an optional `deprecated` version:
-
-```markdown
-# Article with a Directive
-
-An article that declares its availability with directives.
-
-@Metadata {
-    @Available(iOS, introduced: "17.0")
-    @Available(macOS, introduced: "14.0", deprecated: "15.0")
-}
-```
-
+See ``Available`` for when a directive is appropriate and for its syntax.
 You can add the directive to a documentation extension file, a symbol's documentation comment, an article, or your module's landing page.
-DocC matches the platform names iOS, iPadOS, Mac Catalyst, macOS, tvOS, visionOS, and watchOS regardless of capitalization.
-It displays other names as you write them.
-Surround a name that contains spaces or punctuation with quotation marks, for example `@Available("Sloth Playground", introduced: "2.1")`.
 
 > Important: When a symbol's page has any `@Available` directive, DocC ignores all of that symbol's in-source availability attributes and starts from your module's default availability instead.
 > If you add a directive for one platform, add directives for the other platforms that the symbol's attributes describe.
 
 A deprecated version in a directive adds a Deprecated badge to that platform on the page, but links to the page from other pages don't show a Deprecated badge.
-To describe why you deprecated the API and what to use instead, add a ``DeprecationSummary`` directive.
+To describe why you deprecated the API, add a ``DeprecationSummary`` directive.
 
 ### Mark Platform Releases as Beta
 
-Use in-source annotations to say which version introduced an API. Pass the `--platform` option when you document that API for a release that's still in beta, once for each platform in beta:
+Pass the `--platform` option when you document an API for a release that's still in beta, once for each platform in beta:
 
 ```shell
 docc convert SlothCreator.docc \
