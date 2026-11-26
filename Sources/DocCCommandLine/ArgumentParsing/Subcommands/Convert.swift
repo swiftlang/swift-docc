@@ -85,7 +85,14 @@ extension Docc {
             }
             
             /// The format that the convert action will output the documentation in when writing to the specific output location.
-            @Option(name: .long, help: .hidden)
+            @Option(
+                name: .long,
+                help: ArgumentHelp("The format that the documentation compiler writes the built documentation in", discussion: """
+                The JSON format (default) creates per-page JSON files and is intended to be used together with the DocC-Render single page web application.
+                
+                The HTML format creates per-page HTML files and is suitable for hosting your documentation on the web. 
+                """)
+            )
             var outputFormat: OutputFormat = .json
         }
         
@@ -157,8 +164,10 @@ extension Docc {
             /// A user-provided relative path to be used in the archived output
             @Option(
                 name: [.customLong("hosting-base-path")],
-                help: ArgumentHelp("The base path your documentation website will be hosted at.", discussion: """
+                help: ArgumentHelp("The base path your documentation website will be hosted at. (JSON output only)", discussion: """
                 For example, if you deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.
+                
+                This option is only applicable to the JSON output format. DocC's HTML output format can be moved freely between base paths. 
                 """)
             )
             var hostingBasePath: String?
@@ -169,7 +178,10 @@ extension Docc {
             @Flag(
                 inversion: .prefixedNo,
                 exclusivity: .exclusive,
-                help: "Produce a DocC archive that includes documentation content in each HTML file for static hosting environments."
+                help: ArgumentHelp(
+                    "Produce a DocC archive that includes documentation content in each HTML file for static hosting environments. (JSON output only)",
+                    discussion: "This option is only applicable to the JSON output format. DocC's HTML output format always includes documentation content the HTML and is always compatible with static hosting environments."
+                )
             )
             var transformForStaticHosting = true
             
@@ -178,7 +190,10 @@ extension Docc {
             /// This value is ignored if ``transformForStaticHosting`` is `false`.
             @Flag(
                 name: [.customLong("transform-for-static-hosting-without-content")],
-                help: "Omit documentation content from each HTML file for static hosting environments."
+                help: ArgumentHelp(
+                    "Omit documentation content from each HTML file for static hosting environments. (JSON output only)",
+                    discussion: "This option is only applicable to the JSON output format. DocC's HTML output format always includes documentation content the HTML."
+                )
             )
             var omitContentFromStaticHostingOutput = false
             
@@ -653,10 +668,8 @@ extension Docc {
                 switch argument {
                     case "json": self = .json
                     
-                    // This spelling is meant to indicate that this feature is not suitable for general use.
-                    // As this start to approach being complete enough to a viable alternative output format,
-                    // the plan is to rename this to only "experimental-html" and post a pitch about the broader feature to the Swift Forums.
-                    case "experimental-html-for-development":
+                    // We display "experimental-html" in the help text but allow more spellings for backwards and forwards compatibility. 
+                    case "experimental-html-for-development", "experimental-html", "html":
                         self = .experimentalHTML
                     
                     default: return nil
@@ -664,7 +677,7 @@ extension Docc {
             }
             
             package static var allValueStrings: [String] {
-                ["json", "experimental-html-for-development"]
+                ["json", "experimental-html"]
             }
         }
     }
