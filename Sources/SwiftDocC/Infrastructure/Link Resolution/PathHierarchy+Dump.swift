@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,12 +12,10 @@
 #if DEBUG
 
 private import SymbolKit
+private import DocCCommon
 
 /// A node in a tree structure that can be printed into a visual representation for debugging.
-private struct DumpableNode {
-    var name: String
-    var children: [DumpableNode]
-}
+private typealias DumpableNode = TreeStringRepresentation.Node
 
 private extension PathHierarchy.Node {
     /// Maps the path hierarchy subtree into a representation that can be printed into a visual form for debugging.
@@ -69,26 +67,7 @@ extension PathHierarchy {
         children.append(contentsOf: [tutorialContainer.dumpableNode(), tutorialOverviewContainer.dumpableNode()])
         
         let root = DumpableNode(name: ".", children: children)
-        return Self.dump(root)
-    }
-    
-    fileprivate static func dump(_ node: DumpableNode, decorator: String = "") -> String {
-        var result = ""
-        result.append("\(decorator) \(node.name)\n")
-        
-        let children = node.children
-        for (index, child) in children.enumerated() {
-            var decorator = decorator
-            if decorator.hasSuffix("├") {
-                decorator = decorator.dropLast() + "│"
-            }
-            if decorator.hasSuffix("╰") {
-                decorator = decorator.dropLast() + " "
-            }
-            let newDecorator = decorator + " " + (index == children.count-1 ? "╰" : "├")
-            result.append(dump(child, decorator: newDecorator))
-        }
-        return result
+        return TreeStringRepresentation.dump(root)
     }
 }
 

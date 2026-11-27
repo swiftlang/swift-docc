@@ -45,11 +45,11 @@ struct TestFileSystemTests {
         // Verify correct file tree
         #expect(fileSystem.dump() == """
         /
-        ├─ additional/
-        ├─ main/
-        │  ╰─ nested/
-        │     ╰─ myfile.txt
-        ╰─ tmp/
+        ├╴additional/
+        ├╴main/
+        │ ╰╴nested/
+        │   ╰╴myfile.txt
+        ╰╴tmp/
         """)
     }
     
@@ -82,10 +82,10 @@ struct TestFileSystemTests {
         
         var expectedDump = """
         /
-        ├─ Always Included/
-        │  ├─ File1
-        │  ├─ File2
-        │  ╰─ File3
+        ├╴Always Included/
+        │ ├╴File1
+        │ ├╴File2
+        │ ╰╴File3
         """
         
         var otherTopLevelFolders = seed < 10 ? ["Small number"] : []
@@ -94,8 +94,8 @@ struct TestFileSystemTests {
         } else {
             otherTopLevelFolders.append(contentsOf: ["Odd number", "Number \(seed)"])
         }
-        expectedDump.append(otherTopLevelFolders.sorted().map{ "\n├─ \($0)/" }.joined())
-        expectedDump.append("\n╰─ tmp/")
+        expectedDump.append(otherTopLevelFolders.sorted().map{ "\n├╴\($0)/" }.joined())
+        expectedDump.append("\n╰╴tmp/")
         #expect(fileSystem.dump() == expectedDump)
     }
 
@@ -116,24 +116,24 @@ struct TestFileSystemTests {
         let fileSystem = try makeTestFileSystemWithExampleStructure()
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        │  ╰─ nested/
-        │     ├─ myfile1.txt
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴main/
+        │ ╰╴nested/
+        │   ├╴myfile1.txt
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
         
         #expect(fileSystem.dump(subHierarchyFrom: "/main") == """
         main/
-        ╰─ nested/
-           ├─ myfile1.txt
-           ╰─ myfile2.txt
+        ╰╴nested/
+          ├╴myfile1.txt
+          ╰╴myfile2.txt
         """)
         
         #expect(fileSystem.dump(subHierarchyFrom: "/main/nested") == """
         nested/
-        ├─ myfile1.txt
-        ╰─ myfile2.txt
+        ├╴myfile1.txt
+        ╰╴myfile2.txt
         """)
     }
     
@@ -144,12 +144,12 @@ struct TestFileSystemTests {
         try fileSystem._copyItem(at: URL(fileURLWithPath: "/main/nested/myfile1.txt"), to: URL(fileURLWithPath: "/main/myfile1.txt"))
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        │  ├─ myfile1.txt
-        │  ╰─ nested/
-        │     ├─ myfile1.txt
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴main/
+        │ ├╴myfile1.txt
+        │ ╰╴nested/
+        │   ├╴myfile1.txt
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
     }
 
@@ -160,14 +160,14 @@ struct TestFileSystemTests {
         try fileSystem._copyItem(at: URL(fileURLWithPath: "/main/nested"), to: URL(fileURLWithPath: "/copy"))
         #expect(fileSystem.dump() == """
         /
-        ├─ copy/
-        │  ├─ myfile1.txt
-        │  ╰─ myfile2.txt
-        ├─ main/
-        │  ╰─ nested/
-        │     ├─ myfile1.txt
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴copy/
+        │ ├╴myfile1.txt
+        │ ╰╴myfile2.txt
+        ├╴main/
+        │ ╰╴nested/
+        │   ├╴myfile1.txt
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
         
         let filesIterator = fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/"))
@@ -190,11 +190,11 @@ struct TestFileSystemTests {
         try fileSystem.moveItem(at: URL(fileURLWithPath: "/main/nested/myfile1.txt"), to: URL(fileURLWithPath: "/main/myfile1.txt"))
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        │  ├─ myfile1.txt
-        │  ╰─ nested/
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴main/
+        │ ├╴myfile1.txt
+        │ ╰╴nested/
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
     }
     
@@ -205,11 +205,11 @@ struct TestFileSystemTests {
         try fileSystem.moveItem(at: URL(fileURLWithPath: "/main/nested"), to: URL(fileURLWithPath: "/main/new"))
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        │  ╰─ new/
-        │     ├─ myfile1.txt
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴main/
+        │ ╰╴new/
+        │   ├╴myfile1.txt
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
     }
     
@@ -220,10 +220,10 @@ struct TestFileSystemTests {
         try fileSystem.removeItem(at: URL(fileURLWithPath: "/main/nested/myfile1.txt"))
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        │  ╰─ nested/
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴main/
+        │ ╰╴nested/
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
         
         #expect(fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent) == [
@@ -238,8 +238,8 @@ struct TestFileSystemTests {
         try fileSystem.removeItem(at: URL(fileURLWithPath: "/main/nested"))
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        ╰─ tmp/
+        ├╴main/
+        ╰╴tmp/
         """)
     }
 
@@ -259,24 +259,24 @@ struct TestFileSystemTests {
         try fileSystem.createDirectory(at: URL(fileURLWithPath: "/main/nested/inner"), withIntermediateDirectories: false)
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        │  ╰─ nested/
-        │     ├─ inner/
-        │     ├─ myfile1.txt
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴main/
+        │ ╰╴nested/
+        │   ├╴inner/
+        │   ├╴myfile1.txt
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
 
         try fileSystem.createDirectory(at: URL(fileURLWithPath: "/main/nested/inner2"), withIntermediateDirectories: true)
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        │  ╰─ nested/
-        │     ├─ inner/
-        │     ├─ inner2/
-        │     ├─ myfile1.txt
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴main/
+        │ ╰╴nested/
+        │   ├╴inner/
+        │   ├╴inner2/
+        │   ├╴myfile1.txt
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
 
         // Test it throws when parent folder is missing
@@ -288,15 +288,15 @@ struct TestFileSystemTests {
         try fileSystem.createDirectory(at: URL(fileURLWithPath: "/main/nested/missing/inner4"), withIntermediateDirectories: true)
         #expect(fileSystem.dump() == """
         /
-        ├─ main/
-        │  ╰─ nested/
-        │     ├─ inner/
-        │     ├─ inner2/
-        │     ├─ missing/
-        │     │  ╰─ inner4/
-        │     ├─ myfile1.txt
-        │     ╰─ myfile2.txt
-        ╰─ tmp/
+        ├╴main/
+        │ ╰╴nested/
+        │   ├╴inner/
+        │   ├╴inner2/
+        │   ├╴missing/
+        │   │ ╰╴inner4/
+        │   ├╴myfile1.txt
+        │   ╰╴myfile2.txt
+        ╰╴tmp/
         """)
         
         #expect(fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent).sorted() == [
@@ -313,13 +313,13 @@ struct TestFileSystemTests {
         
         #expect(fileSystem.dump() == """
         /
-        ├─ one/
-        │  ╰─ two/
-        │     ╰─ three/
-        │        ╰─ four/
-        │           ╰─ five/
-        │              ╰─ six/
-        ╰─ tmp/
+        ├╴one/
+        │ ╰╴two/
+        │   ╰╴three/
+        │     ╰╴four/
+        │       ╰╴five/
+        │         ╰╴six/
+        ╰╴tmp/
         """)
         
         #expect(fileSystem.recursiveFiles(startingPoint: URL(fileURLWithPath: "/")).map(\.lastPathComponent) == [], "Only directories. No files.")

@@ -190,17 +190,17 @@ struct FileWritingHTMLContentConsumerTests {
         // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
         #expect(fileSystem.dump(subHierarchyFrom: "/output-dir") == """
         output-dir/
-        ╰─ documentation/
-           ╰─ modulename/
-              ├─ index.html
-              ├─ somearticle/
-              │  ╰─ index.html
-              ├─ someclass/
-              │  ├─ index.html
-              │  ╰─ somemethod(with:and:)/
-              │     ╰─ index.html
-              ╰─ someprotocol/
-                 ╰─ index.html
+        ╰╴documentation/
+          ╰╴modulename/
+            ├╴index.html
+            ├╴somearticle/
+            │ ╰╴index.html
+            ├╴someclass/
+            │ ├╴index.html
+            │ ╰╴somemethod(with:and:)/
+            │   ╰╴index.html
+            ╰╴someprotocol/
+              ╰╴index.html
         """)
         
         try assert(readHTML: fileSystem.contents(of: URL(fileURLWithPath: "/output-dir/documentation/modulename/index.html")), matches: """
@@ -574,9 +574,9 @@ struct FileWritingHTMLContentConsumerTests {
         // Because the TestOutputConsumer below doesn't create any files, we only expect the HTML files in the output directory
         #expect(fileSystem.dump(subHierarchyFrom: "/output-dir") == """
         output-dir/
-        ╰─ documentation/
-           ╰─ rootarticle/
-              ╰─ index.html
+        ╰╴documentation/
+          ╰╴rootarticle/
+            ╰╴index.html
         """)
         
         // In the current state, the whitespace around the metadata depends on how the text replacements were done
