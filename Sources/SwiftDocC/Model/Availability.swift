@@ -538,6 +538,24 @@ struct Availability {
         return foundDeprecatedPlatforms
     }
     
+    /// Determines whether or not a page as a whole is considered to be deprecated for display specifically for the navigator—which has a different definition of when a page is considered to be deprecated.
+    ///
+    /// - Bug: The navigator has a different definition of what it means to be deprecated; _any_ available platform, instead of _all_ available platforms (rdar://193627314).
+    ///   Only call this property specifically for the navigator (to preserve the old behavior) while we work towards the same deprecation definition everywhere.
+    var isDeprecatedForNavigatorWhichHasDifferentDefinition: Bool {
+        if isDeprecated { return true }
+        
+        // FIXME: The navigator considers a symbol deprecated if ANY of the platforms are deprecated (rdar://193627314)
+        if knownPlatforms.contains(where: { $0.state.deprecated != nil }) {
+            return true
+        }
+        if customPlatformsByName.values.contains(where: { $0.state.deprecated != nil }) {
+            return true
+        }
+        
+        return false
+    }
+    
     private static func displayNameForCustomPlatform(_ name: String) -> String {
         Self.additionalPlatformDisplayNamesByCaseInsensitiveAlias[name.lowercased()] ?? name
     }
