@@ -488,7 +488,17 @@ private extension HTMLNode._Tag {
         switch self {
         case .p:
             switch next {
-            case .address, .article, .aside, .blockquote, .details, .dialog, .div, .dl, .fieldset, .figcaption, .figure, .footer, .form, .h1, .h2, .h3, .h4, .h5, .h6, .header, .hgroup, .hr, .main, .menu, .nav, .ol, .p, .pre, .search, .section, .table, .ul:
+            case .address, .article, .aside,
+                 .blockquote,
+                 .details, .dialog, .div, .dl,
+                 .fieldset, .figcaption, .figure, .footer, .form,
+                 .h1, .h2, .h3, .h4, .h5, .h6, .header, .hgroup, .hr,
+                 .main, .menu,
+                 .nav,
+                 .ol, .p, .pre,
+                 .search, .section,
+                 .table,
+                 .ul:
                 true
             case nil:
                 switch container {
@@ -501,7 +511,8 @@ private extension HTMLNode._Tag {
                 false
             }
             
-        case .body:
+        // These technically require that they're not followed by comments, but we don't include comments in the hierarchy.
+        case .body, .html, .head, .caption, .colgroup:
             true
             
         case .li:
@@ -515,12 +526,12 @@ private extension HTMLNode._Tag {
             
         case .rt, .rp:
             next == .rt || next == .rp || next == nil
-            
-        case .caption:
-            true
 
         case .thead:
             next == .tbody || next == .tfoot
+        
+        case .tbody:
+            next == .tbody || next == .tfoot || next == nil
             
         case .tfoot:
             next == nil
