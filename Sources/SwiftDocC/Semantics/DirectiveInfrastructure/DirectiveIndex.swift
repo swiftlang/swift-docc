@@ -112,4 +112,32 @@ struct DirectiveIndex {
             }
         )?.value
     }
+    
+    /// Returns the directive hierarchy as path components.
+    ///
+    /// The type that the directive's class is nested inside is part of the path when that type is an indexed directive.
+    /// `SwiftDocC` in `SwiftDocC.TabNavigator.Tab`, however, would be skipped
+    /// because the module name is not a directive.
+    ///
+    /// `TabNavigator.Tab` returns `["TabNavigator", "Tab"]`.
+    /// `Metadata.Availability` returns `["Metadata", "Available"]`.
+    /// `DisplayName` returns `["DisplayName"]`.
+    ///
+    /// - Parameter directive: The directive to build the hierarchy for.
+    func pathComponents(of directive: DirectiveMirror.ReflectedDirective) -> [String] {
+        let directivesByQualifiedTypeName = [String: DirectiveMirror.ReflectedDirective](
+            indexedDirectives.values.map { (String(reflecting: $0.type), $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        
+        var enclosingTypeName = String(reflecting: directive.type)[...]
+        var pathComponents = [directive.name]
+        while let separatorIndex = enclosingTypeName.lastIndex(of: ".") {
+            enclosingTypeName = enclosingTypeName[..<separatorIndex]
+            if let enclosingDirective = directivesByQualifiedTypeName[String(enclosingTypeName)] {
+                pathComponents.insert(enclosingDirective.name, at: 0)
+            }
+        }
+        return pathComponents
+    }
 }

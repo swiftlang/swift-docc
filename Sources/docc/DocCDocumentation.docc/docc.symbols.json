@@ -23,7 +23,30 @@
     }
   },
   "relationships" : [
-
+    {
+      "kind" : "memberOf",
+      "source" : "__docc_universal_symbol_reference_$Available",
+      "target" : "__docc_universal_symbol_reference_$Metadata",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "__docc_universal_symbol_reference_$Column",
+      "target" : "__docc_universal_symbol_reference_$Row",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "__docc_universal_symbol_reference_$PageKind",
+      "target" : "__docc_universal_symbol_reference_$Metadata",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "__docc_universal_symbol_reference_$Tab",
+      "target" : "__docc_universal_symbol_reference_$TabNavigator",
+      "targetFallback" : null
+    }
   ],
   "symbols" : [
     {
@@ -1129,6 +1152,7 @@
         "title" : "Available"
       },
       "pathComponents" : [
+        "Metadata",
         "Available"
       ]
     },
@@ -2188,6 +2212,7 @@
         "title" : "Column"
       },
       "pathComponents" : [
+        "Row",
         "Column"
       ]
     },
@@ -2401,7 +2426,7 @@
             "text" : "> If you are writing a custom deprecation summary message for an API or documentation page that isn't already deprecated,"
           },
           {
-            "text" : "> you should also deprecate it—using in-source annotations when possible or ``Available`` directives when in-source annotations aren't available—so that the reader knows the version when you deprecated that API or documentation page."
+            "text" : "> you should also deprecate it—using in-source annotations when possible or ``Metadata\/Available`` directives when in-source annotations aren't available—so that the reader knows the version when you deprecated that API or documentation page."
           }
         ]
       },
@@ -4594,6 +4619,7 @@
         "title" : "PageKind"
       },
       "pathComponents" : [
+        "Metadata",
         "PageKind"
       ]
     },
@@ -6167,6 +6193,7 @@
         "title" : "Tab"
       },
       "pathComponents" : [
+        "TabNavigator",
         "Tab"
       ]
     },

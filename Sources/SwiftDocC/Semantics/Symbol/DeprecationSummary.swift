@@ -30,7 +30,7 @@ public import Markdown
 ///
 /// > Tip:
 /// > If you are writing a custom deprecation summary message for an API or documentation page that isn't already deprecated,
-/// > you should also deprecate it—using in-source annotations when possible or ``Available`` directives when in-source annotations aren't available—so that the reader knows the version when you deprecated that API or documentation page.
+/// > you should also deprecate it—using in-source annotations when possible or ``Metadata/Available`` directives when in-source annotations aren't available—so that the reader knows the version when you deprecated that API or documentation page.
 public final class DeprecationSummary: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
