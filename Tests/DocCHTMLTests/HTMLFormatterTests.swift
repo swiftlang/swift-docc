@@ -463,7 +463,7 @@ struct HTMLFormatterTests {
     @Test(arguments: [
         HTMLNode._Tag.a, .audio, .del, .ins, .map, .noscript, .video,
     ])
-    func paragraphElementIncludesEndTagWhenLastElementCertainEnclosingTags(_ enclosingTag: HTMLNode._Tag) {
+    func paragraphElementIncludesEndTagWhenLastElementInCertainEnclosingTags(_ enclosingTag: HTMLNode._Tag) {
         let tagName = enclosingTag.rawValue
         let singleParagraph = HTMLNode._element(enclosingTag, contents: [
             p(contents: [.text("Some text")])
