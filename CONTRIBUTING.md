@@ -106,9 +106,9 @@ Or, in Xcode, run the `docc`
 
 ### Miscellaneous
 
-The JSON output of Swift-DocC is optimized for file size. If you need to inspect it
-for debugging purposes set the `DOCC_JSON_PRETTYPRINT` environment variable
-to "YES" to enable pretty printing.
+Both the JSON output and HTML output of Swift-DocC are optimized for file size. 
+If you need to inspect either output format for debugging purposes set the `DOCC_JSON_PRETTYPRINT` or `DOCC_HTML_PRETTYPRINT` environment variables to "YES" to enable pretty printing.
+Alternatively, you can set the `DOCC_PRETTYPRINT` environment variable to "YES" to enable pretty printing regardless of output format.
 
   ```bash
   export DOCC_JSON_PRETTYPRINT="YES"

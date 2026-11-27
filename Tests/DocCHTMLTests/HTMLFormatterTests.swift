@@ -459,6 +459,68 @@ struct HTMLFormatterTests {
         <\(tag.rawValue)></\(tag.rawValue)>
         """)
     }
+    
+    @Test(arguments: [
+        HTMLNode._Tag.a, .audio, .del, .ins, .map, .noscript, .video,
+    ])
+    func paragraphElementIncludesEndTagWhenLastElementInCertainEnclosingTags(_ enclosingTag: HTMLNode._Tag) {
+        let tagName = enclosingTag.rawValue
+        let singleParagraph = HTMLNode._element(enclosingTag, contents: [
+            p(contents: [.text("Some text")])
+        ])
+        
+        #expect(htmlString(for: singleParagraph, options: [.prettyPrint, .omitOptionalEndTags]) == """
+        <\(tagName)>
+          <p>Some text</p>
+        </\(tagName)>
+        """)
+        
+        let multipleParagraphs = HTMLNode._element(enclosingTag, contents: [
+            p(contents: [.text("First")]),
+            p(contents: [.text("Second")]),
+        ])
+        
+        #expect(htmlString(for: multipleParagraphs, options: [.prettyPrint, .omitOptionalEndTags]) == """
+        <\(tagName)>
+          <p>First
+          <p>Second</p>
+        </\(tagName)>
+        """)
+    }
+    
+    @Test(arguments: [
+        HTMLNode._Tag.address, .article, .aside,
+        .blockquote,
+        .details, .dialog, .div, .dl,
+        .fieldset, .figcaption, .figure, .footer, .form,
+        .h1, .h2, .h3, .h4, .h5, .h6, .header, .hgroup, /* `hr` is omitted because it's a void element */
+        .main, .menu,
+        .nav,
+        .ol,
+        /* `p` is omitted because it's covered in the test above */ .pre,
+        .search, .section,
+        .table,
+        .ul,
+    ])
+    func paragraphElementCanOmitEndTagWhenFollowedByCertainTags(_ nextTag: HTMLNode._Tag) {
+        if nextTag.isVoid {
+            Issue.record("\(nextTag.rawValue) is void element")
+            return
+        }
+        
+        let tagName = nextTag.rawValue
+        let html = main(contents: [
+            p(contents: [.text("Some text")]),
+            ._element(nextTag, contents: [])
+        ])
+        
+        #expect(htmlString(for: html, options: [.prettyPrint, .omitOptionalEndTags]) == """
+        <main>
+          <p>Some text
+          <\(tagName)></\(tagName)>
+        </main>
+        """)
+    }
 }
 
 private func htmlString(for element: HTMLNode, options: HTMLFormatter.Options = []) -> String {

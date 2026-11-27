@@ -360,7 +360,7 @@ public struct ConvertAction: AsyncAction {
                 targetFolder: temporaryFolder,
                 inputFileManager: inputFileManager,
                 outputFileManager: outputFileManager,
-                prettyPrint: shouldPrettyPrintOutputJSON, // Use the same configuration as the JSON output to make it convenient for the developer.
+                prettyPrint: shouldPrettyPrintOutputHTML,
                 customHeader: experimentalEnableCustomTemplates ? inputs.customHeader : nil,
                 customFooter: experimentalEnableCustomTemplates ? inputs.customFooter : nil
             )

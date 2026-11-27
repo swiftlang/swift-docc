@@ -1461,6 +1461,11 @@ extension HTMLNode {
         case `var`
         case wbr // a void-element
         
+        // Edits
+        
+        case del
+        case ins
+        
         // Embedded
         
         case area   // a void-element
