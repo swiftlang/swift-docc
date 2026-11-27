@@ -297,6 +297,105 @@ struct MarkdownRendererTests {
     }
     
     @Test
+    func termListsRenderAsDescriptionLists() {
+        assert(
+            rendering: """
+            - term First term: Definition of the first term.
+            - term `Second`: Definition with more content.
+
+              A second paragraph in the same definition.
+            """,
+            matches: """
+            <dl>
+              <dt>First term</dt>
+              <dd>
+                <p>Definition of the first term.</p>
+              </dd>
+              <dt>
+                <code>Second</code>
+              </dt>
+              <dd>
+                <p>Definition with more content.</p>
+                <p>A second paragraph in the same definition.</p>
+              </dd>
+            </dl>
+            """
+        )
+    }
+    
+    @Test
+    func listsThatMixTermListItemsAndOtherItemsRenderAsSiblingLists() {
+        assert(
+            rendering: """
+            - term Ice: Thrives below freezing.
+            - A normal bullet.
+            - term Fire: Thrives at boiling.
+            """,
+            matches: """
+            <dl>
+              <dt>Ice</dt>
+              <dd>
+                <p>Thrives below freezing.</p>
+              </dd>
+            </dl>
+            <ul>
+              <li>
+                <p>A normal bullet.</p>
+              </li>
+            </ul>
+            <dl>
+              <dt>Fire</dt>
+              <dd>
+                <p>Thrives at boiling.</p>
+              </dd>
+            </dl>
+            """
+        )
+    }
+    
+    @Test
+    func termsSupportFormattedText() {
+        assert(
+            rendering: "- term *Fancy* [link](https://example.com) thing: Def.",
+            prettyFormatted: false,
+            matches: #"<dl><dt><em>Fancy</em> <a href="https://example.com">link</a> thing</dt><dd><p>Def.</p></dd></dl>"#
+        )
+    }
+    
+    @Test
+    func termsOmitHTMLComments() {
+        assert(
+            rendering: "- term <!-- c -->Foo: Bar.",
+            prettyFormatted: false,
+            matches: "<dl><dt>Foo</dt><dd><p>Bar.</p></dd></dl>"
+        )
+    }
+    
+    @Test
+    func termListsNestedInDefinitionsRenderAsNestedDescriptionLists() {
+        assert(
+            rendering: """
+            - term A: x
+              - term B: y
+            """,
+            matches: """
+            <dl>
+              <dt>A</dt>
+              <dd>
+                <p>x</p>
+                <dl>
+                  <dt>B</dt>
+                  <dd>
+                    <p>y</p>
+                  </dd>
+                </dl>
+              </dd>
+            </dl>
+            """
+        )
+    }
+    
+    @Test
     func nestedAsidesRenderAsSemanticElements() {
         assert(
             rendering: """

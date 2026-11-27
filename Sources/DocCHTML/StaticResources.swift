@@ -539,36 +539,48 @@ p {
 /* Parameter and term definition lists */
 
 dl {
+  --term-spacing: var(--spacing-stacked-margin-large);
+  --definition-indent: 34px;
   margin-top: 0.85em;
   
-  dt {
-    font-weight: 600;
+  &> dt {
     font-size: 17px;
     line-height: 25px;
+    
+    &:not(:first-child) {
+      padding-top: var(--term-spacing);
+    }
+  }
+  
+  &> dd {
+    padding-left: var(--definition-indent);
+    
+    &> p:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+#Parameters > dl {
+  --term-spacing: var(--spacing-param);
+  
+  @media only screen and (max-width: 735px) {
+    --definition-indent: 0px;
+  }
+  
+  &> dt {
+    font-weight: 600;
     font-family: var(--font-mono);
     padding-left: 17px;
-    padding-top: var(--spacing-param);
-    
-    &:first-child {
-      padding-top: 0;
-    }
     
     @media only screen and (max-width: 735px) {
       padding-left: 0;
     }
   }
   
-  dd {
-    padding-left: 34px;
-    
-    p {
-      margin: 0;
-      line-height: 23px;
-    }
-    
-    @media only screen and (max-width: 735px) {
-      padding-left: 0;
-    }
+  &> dd p {
+    margin: 0;
+    line-height: 23px;
   }
 }
 

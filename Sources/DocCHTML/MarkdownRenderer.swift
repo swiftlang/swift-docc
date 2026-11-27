@@ -474,7 +474,7 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     
     // MARK: List
     
-    /// Transforms a markdown unordered list into a`<ul>` HTML element.
+    /// Transforms a markdown unordered list into `<ul>` or `<dl>` HTML elements.
     ///
     /// As part of transforming the unordered list, the renderer also transforms all of its list items and their content recursively.
     /// For example, the renderer transforms this markdown
@@ -503,8 +503,53 @@ package struct MarkdownRenderer<Provider: LinkProvider, Parser: RenderableDirect
     ///   </li>
     /// </ul>
     /// ```
+    ///
+    /// If the list items define terms, the renderer transforms them into a `<dl>` HTML element instead.
+    /// For example, the renderer transforms this markdown
+    /// ```md
+    /// - term First: The first term's definition.
+    /// - term Second: The second term's definition.
+    /// ```
+    /// into nodes representing this HTML structure
+    /// ```
+    /// <dl>
+    ///   <dt>First</dt>
+    ///   <dd>
+    ///     <p>The first term's definition.</p>
+    ///   </dd>
+    ///   <dt>Second</dt>
+    ///   <dd>
+    ///     <p>The second term's definition.</p>
+    ///   </dd>
+    /// </dl>
+    /// ```
+    ///
+    /// A list that mixes term-list items and other items becomes consecutive sibling `<dl>` and `<ul>` HTML elements, one for each run of items of the same kind.
     func visitUnorderedList(_ unorderedList: UnorderedList, into output: inout [HTMLNode]) {
-        output.append(ul(contents: _visitSequenceIntoNewAllocation(unorderedList.children)))
+        for run in unorderedList.termListRuns() {
+            switch run {
+            case .otherItems(let listItems):
+                var items: [HTMLNode] = []
+                items.reserveCapacity(listItems.count)
+                for listItem in listItems {
+                    visitListItem(listItem, into: &items)
+                }
+                output.append(ul(contents: items))
+            case .termItems(let termListItems):
+                // Each term-list item becomes a `<dt>` and a `<dd>` element.
+                var items: [HTMLNode] = []
+                items.reserveCapacity(termListItems.count * 2)
+                for termListItem in termListItems {
+                    items.append(dt(contents: _visitSequenceIntoNewAllocation(termListItem.term.children)))
+                    var definition: [HTMLNode] = []
+                    for block in termListItem.definition {
+                        visit(block, into: &definition)
+                    }
+                    items.append(dd(contents: definition))
+                }
+                output.append(dl(contents: items))
+            }
+        }
     }
     
     /// Transforms a markdown ordered list into a`<ul>` HTML element.
