@@ -161,7 +161,7 @@ package struct HTMLFormatter {
         var presentOnCurrentLine: Bool = true
         /// The tag of the next element in the element's container, or `nil` if there are no more elements in the element's container.
         var nextElementTag: HTMLNode._Tag? = nil
-        /// The tag the current element's container, or `nil` if the current element is a top-level element.
+        /// The tag of the current element's container, or `nil` if the current element is a top-level element.
         var containerElementTag: HTMLNode._Tag? = nil
     }
     
