@@ -225,6 +225,9 @@ struct Availability {
             // !!!: Preserve the bug that adding a single `@Available` directive causes a symbol to ignore all its in-source information but not its Info.plist "default" values (rdar://171807245)
             let originalWildcardInfo = knownPlatforms[.wildcard]
             knownPlatforms = defaultAvailability.knownPlatforms
+            for offset in 0 ..< KnownPlatform.wildcard.rawValue where knownPlatforms[offset].source == .defaultFromPropertyList {
+                knownPlatforms[offset].source = .rolledBackToPropertyListAfterEncounteringDirective
+            }
             knownPlatforms[.wildcard] = originalWildcardInfo
         }
         
@@ -276,6 +279,12 @@ struct Availability {
                 case .defaultFromPropertyList, .foundInSymbolGraph:
                     if otherInfo.source < valueToCopy.source,
                        (iOSHasVersions || !otherInfo.state.hasVersions)
+                    {
+                        knownPlatforms[platform] = valueToCopy
+                    }
+                case .rolledBackToPropertyListAfterEncounteringDirective:
+                    if otherInfo.source < valueToCopy.source,
+                       (iOSHasVersions && !otherInfo.state.hasVersions)
                     {
                         knownPlatforms[platform] = valueToCopy
                     }
@@ -405,7 +414,7 @@ struct Availability {
                     // Skip any information that's implicitly "unavailable" based on its source
                     continue
                 
-                case .defaultFromPropertyList, .foundInSymbolGraph, .inSourceAttribute, .directiveOverride:
+                case .defaultFromPropertyList, .rolledBackToPropertyListAfterEncounteringDirective, .foundInSymbolGraph, .inSourceAttribute, .directiveOverride:
                     addPlatformIfInBeta(for: info.state , name: Self.knownPlatformNames[offset], betaVersion: currentPlatform.knownBetaPlatforms[offset])
             }
         }
@@ -465,7 +474,7 @@ struct Availability {
                     // Skip any information that's implicitly "unavailable" based on its source
                     continue
                 
-                case .defaultFromPropertyList, .foundInSymbolGraph, .directiveOverride:
+                case .defaultFromPropertyList, .rolledBackToPropertyListAfterEncounteringDirective, .foundInSymbolGraph, .directiveOverride:
                     // !!!: Preserve the bug that symbol's render references are only considered in-beta when the introduced version is from in-source attributes (rdar://173773442)
                     return false
                 
@@ -680,6 +689,7 @@ private extension Availability {
         enum Source: Comparable {
             case initialValue
             case defaultFromPropertyList
+            case rolledBackToPropertyListAfterEncounteringDirective
             case markedUnavailableInPropertyList
             case havePlatformForInSymbolGraph
             case foundInSymbolGraph

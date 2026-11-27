@@ -1314,7 +1314,8 @@ public class DocumentationContext {
             //  - have been associated with its potential extension file first so that we can add information about directive availability
             signposter.withIntervalSignpost("Compute consolidated availability") {
                 for (moduleName, unifiedGraph) in symbolGraphLoader.unifiedGraphs {
-                    var symbolBaseAvailability = Availability(defaultAvailability: inputs.info.defaultAvailability?.platforms(moduleName: moduleName))
+                    let onlyDefaultAvailability = Availability(defaultAvailability: inputs.info.defaultAvailability?.platforms(moduleName: moduleName))
+                    var symbolBaseAvailability  = onlyDefaultAvailability
                     
                     documentationCache.reference(symbolID: moduleName).map { moduleReference in
                         var moduleAvailability = symbolBaseAvailability
@@ -1342,7 +1343,7 @@ public class DocumentationContext {
                             availability.addInSourceAvailability(from: symbol, matchingLanguage: language)
                             
                             if let directiveAvailability {
-                                availability.addDirectiveAvailability(directiveAvailability, preservingBugOfFirstResettingAvailabilityTo: symbolBaseAvailability)
+                                availability.addDirectiveAvailability(directiveAvailability, preservingBugOfFirstResettingAvailabilityTo: onlyDefaultAvailability)
                             }
                             availability.finalizePlatformFallbacks()
                             
