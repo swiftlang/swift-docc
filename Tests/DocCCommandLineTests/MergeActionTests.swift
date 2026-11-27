@@ -79,79 +79,79 @@ class MergeActionTests: XCTestCase {
         // The combined archive as the data and assets from the input archives but only one set of archive template files
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
         Output.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ data/
-        │  ├─ documentation.json
-        │  ├─ documentation/
-        │  │  ├─ first.json
-        │  │  ├─ first/
-        │  │  │  ├─ someclass.json
-        │  │  │  ╰─ someclass/
-        │  │  │     ├─ somefunction(:_).json
-        │  │  │     ╰─ someproperty.json
-        │  │  ├─ second.json
-        │  │  ╰─ second/
-        │  │     ├─ somestruct.json
-        │  │     ╰─ somestruct/
-        │  │        ├─ somefunction(:_).json
-        │  │        ╰─ someproperty.json
-        │  ╰─ tutorials/
-        │     ├─ first.json
-        │     ├─ first/
-        │     │  ╰─ sometutorial.json
-        │     ├─ second.json
-        │     ╰─ second/
-        │        ╰─ sometutorial.json
-        ├─ documentation/
-        │  ├─ first/
-        │  │  ├─ index.html
-        │  │  ╰─ someclass/
-        │  │     ├─ index.html
-        │  │     ├─ somefunction(:_)/
-        │  │     │  ╰─ index.html
-        │  │     ╰─ someproperty/
-        │  │        ╰─ index.html
-        │  ╰─ second/
-        │     ├─ index.html
-        │     ╰─ somestruct/
-        │        ├─ index.html
-        │        ├─ somefunction(:_)/
-        │        │  ╰─ index.html
-        │        ╰─ someproperty/
-        │           ╰─ index.html
-        ├─ downloads/
-        │  ├─ com.example.first/
-        │  │  ╰─ something.zip
-        │  ╰─ com.example.second/
-        │     ╰─ something.zip
-        ├─ favicon.svg
-        ├─ images/
-        │  ├─ com.example.first/
-        │  │  ╰─ something.png
-        │  ╰─ com.example.second/
-        │     ╰─ something.png
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ├─ tutorials/
-        │  ├─ first/
-        │  │  ├─ index.html
-        │  │  ╰─ sometutorial/
-        │  │     ╰─ index.html
-        │  ╰─ second/
-        │     ├─ index.html
-        │     ╰─ sometutorial/
-        │        ╰─ index.html
-        ╰─ videos/
-           ├─ com.example.first/
-           │  ╰─ something.mov
-           ╰─ com.example.second/
-              ╰─ something.mov
+        ├╴css/
+        │ ╰╴something.css
+        ├╴data/
+        │ ├╴documentation.json
+        │ ├╴documentation/
+        │ │ ├╴first.json
+        │ │ ├╴first/
+        │ │ │ ├╴someclass.json
+        │ │ │ ╰╴someclass/
+        │ │ │   ├╴somefunction(:_).json
+        │ │ │   ╰╴someproperty.json
+        │ │ ├╴second.json
+        │ │ ╰╴second/
+        │ │   ├╴somestruct.json
+        │ │   ╰╴somestruct/
+        │ │     ├╴somefunction(:_).json
+        │ │     ╰╴someproperty.json
+        │ ╰╴tutorials/
+        │   ├╴first.json
+        │   ├╴first/
+        │   │ ╰╴sometutorial.json
+        │   ├╴second.json
+        │   ╰╴second/
+        │     ╰╴sometutorial.json
+        ├╴documentation/
+        │ ├╴first/
+        │ │ ├╴index.html
+        │ │ ╰╴someclass/
+        │ │   ├╴index.html
+        │ │   ├╴somefunction(:_)/
+        │ │   │ ╰╴index.html
+        │ │   ╰╴someproperty/
+        │ │     ╰╴index.html
+        │ ╰╴second/
+        │   ├╴index.html
+        │   ╰╴somestruct/
+        │     ├╴index.html
+        │     ├╴somefunction(:_)/
+        │     │ ╰╴index.html
+        │     ╰╴someproperty/
+        │       ╰╴index.html
+        ├╴downloads/
+        │ ├╴com.example.first/
+        │ │ ╰╴something.zip
+        │ ╰╴com.example.second/
+        │   ╰╴something.zip
+        ├╴favicon.svg
+        ├╴images/
+        │ ├╴com.example.first/
+        │ │ ╰╴something.png
+        │ ╰╴com.example.second/
+        │   ╰╴something.png
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ├╴tutorials/
+        │ ├╴first/
+        │ │ ├╴index.html
+        │ │ ╰╴sometutorial/
+        │ │   ╰╴index.html
+        │ ╰╴second/
+        │   ├╴index.html
+        │   ╰╴sometutorial/
+        │     ╰╴index.html
+        ╰╴videos/
+          ├╴com.example.first/
+          │ ╰╴something.mov
+          ╰╴com.example.second/
+            ╰╴something.mov
         """)
         
         let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
@@ -208,45 +208,45 @@ class MergeActionTests: XCTestCase {
         // The empty archive doesn't have a "data" subdirectory
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Empty.doccarchive"), """
         Empty.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ downloads/
-        │  ╰─ com.example.empty/
-        ├─ favicon.svg
-        ├─ images/
-        │  ╰─ com.example.empty/
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ╰─ videos/
-           ╰─ com.example.empty/
+        ├╴css/
+        │ ╰╴something.css
+        ├╴downloads/
+        │ ╰╴com.example.empty/
+        ├╴favicon.svg
+        ├╴images/
+        │ ╰╴com.example.empty/
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ╰╴videos/
+          ╰╴com.example.empty/
         """)
         
         // The combined archive has a "data" subdirectory.
         // This allows other archives to copy their documentation and tutorial data without needing to check or create intermediate directories. 
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
         Output.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ data/
-        ├─ downloads/
-        │  ╰─ com.example.empty/
-        ├─ favicon.svg
-        ├─ images/
-        │  ╰─ com.example.empty/
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ╰─ videos/
-           ╰─ com.example.empty/
+        ├╴css/
+        │ ╰╴something.css
+        ├╴data/
+        ├╴downloads/
+        │ ╰╴com.example.empty/
+        ├╴favicon.svg
+        ├╴images/
+        │ ╰╴com.example.empty/
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ╰╴videos/
+          ╰╴com.example.empty/
         """)
     }
     
@@ -298,58 +298,58 @@ class MergeActionTests: XCTestCase {
         // The combined archive as the data, documentation, tutorials, and assets from the both input archives.
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
         Output.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ data/
-        │  ├─ documentation.json
-        │  ├─ documentation/
-        │  │  ├─ first.json
-        │  │  ╰─ first/
-        │  │     ├─ someclass.json
-        │  │     ╰─ someclass/
-        │  │        ├─ somefunction(:_).json
-        │  │        ╰─ someproperty.json
-        │  ╰─ tutorials/
-        │     ├─ second.json
-        │     ╰─ second/
-        │        ╰─ sometutorial.json
-        ├─ documentation/
-        │  ╰─ first/
-        │     ├─ index.html
-        │     ╰─ someclass/
-        │        ├─ index.html
-        │        ├─ somefunction(:_)/
-        │        │  ╰─ index.html
-        │        ╰─ someproperty/
-        │           ╰─ index.html
-        ├─ downloads/
-        │  ├─ com.example.first/
-        │  │  ╰─ something.zip
-        │  ╰─ com.example.second/
-        │     ╰─ something.zip
-        ├─ favicon.svg
-        ├─ images/
-        │  ├─ com.example.first/
-        │  │  ╰─ something.png
-        │  ╰─ com.example.second/
-        │     ╰─ something.png
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ├─ tutorials/
-        │  ╰─ second/
-        │     ├─ index.html
-        │     ╰─ sometutorial/
-        │        ╰─ index.html
-        ╰─ videos/
-           ├─ com.example.first/
-           │  ╰─ something.mov
-           ╰─ com.example.second/
-              ╰─ something.mov
+        ├╴css/
+        │ ╰╴something.css
+        ├╴data/
+        │ ├╴documentation.json
+        │ ├╴documentation/
+        │ │ ├╴first.json
+        │ │ ╰╴first/
+        │ │   ├╴someclass.json
+        │ │   ╰╴someclass/
+        │ │     ├╴somefunction(:_).json
+        │ │     ╰╴someproperty.json
+        │ ╰╴tutorials/
+        │   ├╴second.json
+        │   ╰╴second/
+        │     ╰╴sometutorial.json
+        ├╴documentation/
+        │ ╰╴first/
+        │   ├╴index.html
+        │   ╰╴someclass/
+        │     ├╴index.html
+        │     ├╴somefunction(:_)/
+        │     │ ╰╴index.html
+        │     ╰╴someproperty/
+        │       ╰╴index.html
+        ├╴downloads/
+        │ ├╴com.example.first/
+        │ │ ╰╴something.zip
+        │ ╰╴com.example.second/
+        │   ╰╴something.zip
+        ├╴favicon.svg
+        ├╴images/
+        │ ├╴com.example.first/
+        │ │ ╰╴something.png
+        │ ╰╴com.example.second/
+        │   ╰╴something.png
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ├╴tutorials/
+        │ ╰╴second/
+        │   ├╴index.html
+        │   ╰╴sometutorial/
+        │     ╰╴index.html
+        ╰╴videos/
+          ├╴com.example.first/
+          │ ╰╴something.mov
+          ╰╴com.example.second/
+            ╰╴something.mov
         """)
         
         let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
@@ -419,44 +419,44 @@ class MergeActionTests: XCTestCase {
         // The combined archive doesn't have "documentation" or "tutorial" directories because the inputs didn't support static hosting.
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
         Output.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ data/
-        │  ├─ documentation.json
-        │  ├─ documentation/
-        │  │  ├─ first.json
-        │  │  ╰─ first/
-        │  │     ├─ someclass.json
-        │  │     ╰─ someclass/
-        │  │        ├─ somefunction(:_).json
-        │  │        ╰─ someproperty.json
-        │  ╰─ tutorials/
-        │     ├─ second.json
-        │     ╰─ second/
-        │        ╰─ sometutorial.json
-        ├─ downloads/
-        │  ├─ com.example.first/
-        │  │  ╰─ something.zip
-        │  ╰─ com.example.second/
-        │     ╰─ something.zip
-        ├─ favicon.svg
-        ├─ images/
-        │  ├─ com.example.first/
-        │  │  ╰─ something.png
-        │  ╰─ com.example.second/
-        │     ╰─ something.png
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ╰─ videos/
-           ├─ com.example.first/
-           │  ╰─ something.mov
-           ╰─ com.example.second/
-              ╰─ something.mov
+        ├╴css/
+        │ ╰╴something.css
+        ├╴data/
+        │ ├╴documentation.json
+        │ ├╴documentation/
+        │ │ ├╴first.json
+        │ │ ╰╴first/
+        │ │   ├╴someclass.json
+        │ │   ╰╴someclass/
+        │ │     ├╴somefunction(:_).json
+        │ │     ╰╴someproperty.json
+        │ ╰╴tutorials/
+        │   ├╴second.json
+        │   ╰╴second/
+        │     ╰╴sometutorial.json
+        ├╴downloads/
+        │ ├╴com.example.first/
+        │ │ ╰╴something.zip
+        │ ╰╴com.example.second/
+        │   ╰╴something.zip
+        ├╴favicon.svg
+        ├╴images/
+        │ ├╴com.example.first/
+        │ │ ╰╴something.png
+        │ ╰╴com.example.second/
+        │   ╰╴something.png
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ╰╴videos/
+          ├╴com.example.first/
+          │ ╰╴something.mov
+          ╰╴com.example.second/
+            ╰╴something.mov
         """)
         
         let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
@@ -534,53 +534,53 @@ class MergeActionTests: XCTestCase {
         // The combined archive doesn't have "documentation" or "tutorial" directories because the inputs didn't support static hosting.
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
         Output.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ data/
-        │  ├─ documentation.json
-        │  ├─ documentation/
-        │  │  ├─ first.json
-        │  │  ├─ first/
-        │  │  │  ├─ someclass.json
-        │  │  │  ╰─ someclass/
-        │  │  │     ├─ somefunction(:_).json
-        │  │  │     ╰─ someproperty.json
-        │  │  ├─ second.json
-        │  │  ╰─ second/
-        │  │     ├─ somestruct.json
-        │  │     ╰─ somestruct/
-        │  │        ├─ somefunction(:_).json
-        │  │        ╰─ someproperty.json
-        │  ╰─ tutorials/
-        │     ├─ first.json
-        │     ├─ first/
-        │     │  ╰─ sometutorial.json
-        │     ├─ second.json
-        │     ╰─ second/
-        │        ╰─ sometutorial.json
-        ├─ downloads/
-        │  ├─ com.example.first/
-        │  │  ╰─ something.zip
-        │  ╰─ com.example.second/
-        │     ╰─ something.zip
-        ├─ favicon.svg
-        ├─ images/
-        │  ├─ com.example.first/
-        │  │  ╰─ something.png
-        │  ╰─ com.example.second/
-        │     ╰─ something.png
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ╰─ videos/
-           ├─ com.example.first/
-           │  ╰─ something.mov
-           ╰─ com.example.second/
-              ╰─ something.mov
+        ├╴css/
+        │ ╰╴something.css
+        ├╴data/
+        │ ├╴documentation.json
+        │ ├╴documentation/
+        │ │ ├╴first.json
+        │ │ ├╴first/
+        │ │ │ ├╴someclass.json
+        │ │ │ ╰╴someclass/
+        │ │ │   ├╴somefunction(:_).json
+        │ │ │   ╰╴someproperty.json
+        │ │ ├╴second.json
+        │ │ ╰╴second/
+        │ │   ├╴somestruct.json
+        │ │   ╰╴somestruct/
+        │ │     ├╴somefunction(:_).json
+        │ │     ╰╴someproperty.json
+        │ ╰╴tutorials/
+        │   ├╴first.json
+        │   ├╴first/
+        │   │ ╰╴sometutorial.json
+        │   ├╴second.json
+        │   ╰╴second/
+        │     ╰╴sometutorial.json
+        ├╴downloads/
+        │ ├╴com.example.first/
+        │ │ ╰╴something.zip
+        │ ╰╴com.example.second/
+        │   ╰╴something.zip
+        ├╴favicon.svg
+        ├╴images/
+        │ ├╴com.example.first/
+        │ │ ╰╴something.png
+        │ ╰╴com.example.second/
+        │   ╰╴something.png
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ╰╴videos/
+          ├╴com.example.first/
+          │ ╰╴something.mov
+          ╰╴com.example.second/
+            ╰╴something.mov
         """)
         
         let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
@@ -955,23 +955,23 @@ class MergeActionTests: XCTestCase {
             
             XCTAssertEqual(fileSystem.dump(subHierarchyFrom: outputPath.path), """
             \(name).doccarchive/
-            ├─ data/
-            │  ╰─ documentation/
-            │     ├─ \(name.lowercased()).json
-            │     ╰─ \(name.lowercased())/
-            │        ╰─ article.json
-            ├─ downloads/
-            │  ╰─ \(name)
-            ├─ images/
-            │  ╰─ \(name)/
-            │     ╰─ \(name.lowercased())-card.png
-            ├─ index/
-            │  ╰─ index.json
-            ├─ link-hierarchy.json
-            ├─ linkable-entities.json
-            ├─ metadata.json
-            ╰─ videos/
-               ╰─ \(name)
+            ├╴data/
+            │ ╰╴documentation/
+            │   ├╴\(name.lowercased()).json
+            │   ╰╴\(name.lowercased())/
+            │     ╰╴article.json
+            ├╴downloads/
+            │ ╰╴\(name)
+            ├╴images/
+            │ ╰╴\(name)/
+            │   ╰╴\(name.lowercased())-card.png
+            ├╴index/
+            │ ╰╴index.json
+            ├╴link-hierarchy.json
+            ├╴linkable-entities.json
+            ├╴metadata.json
+            ╰╴videos/
+              ╰╴\(name)
             """, file: file, line: line)
             
             return outputPath
@@ -995,31 +995,31 @@ class MergeActionTests: XCTestCase {
         
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: combinedArchiveDir.path), """
         Output.doccarchive/
-        ├─ data/
-        │  ├─ documentation.json
-        │  ╰─ documentation/
-        │     ├─ first.json
-        │     ├─ first/
-        │     │  ╰─ article.json
-        │     ├─ second.json
-        │     ╰─ second/
-        │        ╰─ article.json
-        ├─ downloads/
-        │  ├─ First/
-        │  ╰─ Second/
-        ├─ images/
-        │  ├─ First/
-        │  │  ╰─ first-card.png
-        │  ╰─ Second/
-        │     ╰─ second-card.png
-        ├─ index/
-        │  ╰─ index.json
-        ├─ link-hierarchy.json
-        ├─ linkable-entities.json
-        ├─ metadata.json
-        ╰─ videos/
-           ├─ First/
-           ╰─ Second/
+        ├╴data/
+        │ ├╴documentation.json
+        │ ╰╴documentation/
+        │   ├╴first.json
+        │   ├╴first/
+        │   │ ╰╴article.json
+        │   ├╴second.json
+        │   ╰╴second/
+        │     ╰╴article.json
+        ├╴downloads/
+        │ ├╴First/
+        │ ╰╴Second/
+        ├╴images/
+        │ ├╴First/
+        │ │ ╰╴first-card.png
+        │ ╰╴Second/
+        │   ╰╴second-card.png
+        ├╴index/
+        │ ╰╴index.json
+        ├╴link-hierarchy.json
+        ├╴linkable-entities.json
+        ├╴metadata.json
+        ╰╴videos/
+          ├╴First/
+          ╰╴Second/
         """)
         
         let rootPageData = try fileSystem.contents(of: combinedArchiveDir.appendingPathComponent("data/documentation.json"))
@@ -1096,22 +1096,22 @@ class MergeActionTests: XCTestCase {
     func testMakeArchive() throws {
         XCTAssertEqual(Self.makeArchive(name: "Something", documentationPages: [], tutorialPages: []).dump(), """
         Something.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ downloads/
-        │  ╰─ com.example.something/
-        ├─ favicon.svg
-        ├─ images/
-        │  ╰─ com.example.something/
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ╰─ videos/
-           ╰─ com.example.something/
+        ├╴css/
+        │ ╰╴something.css
+        ├╴downloads/
+        │ ╰╴com.example.something/
+        ├╴favicon.svg
+        ├╴images/
+        │ ╰╴com.example.something/
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ╰╴videos/
+          ╰╴com.example.something/
         """)
         
         XCTAssertEqual(Self.makeArchive(
@@ -1131,52 +1131,52 @@ class MergeActionTests: XCTestCase {
             downloads: ["some-download.zip"]
         ).dump(), """
         Something.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ data/
-        │  ├─ documentation/
-        │  │  ├─ something.json
-        │  │  ╰─ something/
-        │  │     ├─ someclass.json
-        │  │     ╰─ someclass/
-        │  │        ├─ somefunction(:_).json
-        │  │        ╰─ someproperty.json
-        │  ╰─ tutorials/
-        │     ├─ something.json
-        │     ╰─ something/
-        │        ╰─ sometutorial.json
-        ├─ documentation/
-        │  ╰─ something/
-        │     ├─ index.html
-        │     ╰─ someclass/
-        │        ├─ index.html
-        │        ├─ somefunction(:_)/
-        │        │  ╰─ index.html
-        │        ╰─ someproperty/
-        │           ╰─ index.html
-        ├─ downloads/
-        │  ╰─ com.example.something/
-        │     ╰─ some-download.zip
-        ├─ favicon.svg
-        ├─ images/
-        │  ╰─ com.example.something/
-        │     ├─ first-image.png
-        │     ╰─ second-image.png
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ├─ tutorials/
-        │  ╰─ something/
-        │     ├─ index.html
-        │     ╰─ sometutorial/
-        │        ╰─ index.html
-        ╰─ videos/
-           ╰─ com.example.something/
-              ╰─ some-video.mov
+        ├╴css/
+        │ ╰╴something.css
+        ├╴data/
+        │ ├╴documentation/
+        │ │ ├╴something.json
+        │ │ ╰╴something/
+        │ │   ├╴someclass.json
+        │ │   ╰╴someclass/
+        │ │     ├╴somefunction(:_).json
+        │ │     ╰╴someproperty.json
+        │ ╰╴tutorials/
+        │   ├╴something.json
+        │   ╰╴something/
+        │     ╰╴sometutorial.json
+        ├╴documentation/
+        │ ╰╴something/
+        │   ├╴index.html
+        │   ╰╴someclass/
+        │     ├╴index.html
+        │     ├╴somefunction(:_)/
+        │     │ ╰╴index.html
+        │     ╰╴someproperty/
+        │       ╰╴index.html
+        ├╴downloads/
+        │ ╰╴com.example.something/
+        │   ╰╴some-download.zip
+        ├╴favicon.svg
+        ├╴images/
+        │ ╰╴com.example.something/
+        │   ├╴first-image.png
+        │   ╰╴second-image.png
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ├╴tutorials/
+        │ ╰╴something/
+        │   ├╴index.html
+        │   ╰╴sometutorial/
+        │     ╰╴index.html
+        ╰╴videos/
+          ╰╴com.example.something/
+            ╰╴some-video.mov
         """)
         
         XCTAssertEqual(Self.makeArchive(
@@ -1197,38 +1197,38 @@ class MergeActionTests: XCTestCase {
             supportsStaticHosting: false
         ).dump(), """
         Something.doccarchive/
-        ├─ css/
-        │  ╰─ something.css
-        ├─ data/
-        │  ├─ documentation/
-        │  │  ├─ something.json
-        │  │  ╰─ something/
-        │  │     ├─ someclass.json
-        │  │     ╰─ someclass/
-        │  │        ├─ somefunction(:_).json
-        │  │        ╰─ someproperty.json
-        │  ╰─ tutorials/
-        │     ├─ something.json
-        │     ╰─ something/
-        │        ╰─ sometutorial.json
-        ├─ downloads/
-        │  ╰─ com.example.something/
-        │     ╰─ some-download.zip
-        ├─ favicon.svg
-        ├─ images/
-        │  ╰─ com.example.something/
-        │     ├─ first-image.png
-        │     ╰─ second-image.png
-        ├─ img/
-        │  ╰─ something.svg
-        ├─ index/
-        │  ╰─ index.json
-        ├─ js/
-        │  ╰─ something.js
-        ├─ metadata.json
-        ╰─ videos/
-           ╰─ com.example.something/
-              ╰─ some-video.mov
+        ├╴css/
+        │ ╰╴something.css
+        ├╴data/
+        │ ├╴documentation/
+        │ │ ├╴something.json
+        │ │ ╰╴something/
+        │ │   ├╴someclass.json
+        │ │   ╰╴someclass/
+        │ │     ├╴somefunction(:_).json
+        │ │     ╰╴someproperty.json
+        │ ╰╴tutorials/
+        │   ├╴something.json
+        │   ╰╴something/
+        │     ╰╴sometutorial.json
+        ├╴downloads/
+        │ ╰╴com.example.something/
+        │   ╰╴some-download.zip
+        ├╴favicon.svg
+        ├╴images/
+        │ ╰╴com.example.something/
+        │   ├╴first-image.png
+        │   ╰╴second-image.png
+        ├╴img/
+        │ ╰╴something.svg
+        ├╴index/
+        │ ╰╴index.json
+        ├╴js/
+        │ ╰╴something.js
+        ├╴metadata.json
+        ╰╴videos/
+          ╰╴com.example.something/
+            ╰╴some-video.mov
         """)
     }
     

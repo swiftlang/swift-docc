@@ -2857,24 +2857,24 @@ class ConvertActionTests: XCTestCase {
         
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: targetURL.path), """
         Output.doccarchive/
-        ├─ data/
-        │  ╰─ documentation/
-        │     ╰─ something.json
-        ├─ downloads/
-        │  ╰─ unit-test/
-        ├─ images/
-        │  ╰─ unit-test/
-        │     ├─ image-name.png
-        │     ├─ image-name@2x.png
-        │     ├─ image-name~dark.png
-        │     ╰─ image-name~dark@2x.png
-        ├─ index/
-        │  ╰─ index.json
-        ├─ link-hierarchy.json
-        ├─ linkable-entities.json
-        ├─ metadata.json
-        ╰─ videos/
-           ╰─ unit-test/
+        ├╴data/
+        │ ╰╴documentation/
+        │   ╰╴something.json
+        ├╴downloads/
+        │ ╰╴unit-test/
+        ├╴images/
+        │ ╰╴unit-test/
+        │   ├╴image-name.png
+        │   ├╴image-name@2x.png
+        │   ├╴image-name~dark.png
+        │   ╰╴image-name~dark@2x.png
+        ├╴index/
+        │ ╰╴index.json
+        ├╴link-hierarchy.json
+        ├╴linkable-entities.json
+        ├╴metadata.json
+        ╰╴videos/
+          ╰╴unit-test/
         """)
         
         XCTAssert(fileSystem.fileExists(atPath: targetURL.appendingPathComponent("images/unit-test/image-name.png").path))

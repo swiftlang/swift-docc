@@ -57,16 +57,16 @@ class FileTests: XCTestCase {
     func testMakingDirectoryStructure() throws {
         XCTAssertEqual(Folder.makeStructure(filePaths: ["one/two/a.json", "one/two/b.json"]).first!.dump(), """
         one/
-        ╰─ two/
-           ├─ a.json
-           ╰─ b.json
+        ╰╴two/
+          ├╴a.json
+          ╰╴b.json
         """)
         
         XCTAssertEqual(Folder.makeStructure(filePaths: ["one/two.json", "one/two/three.json"]).first!.dump(), """
         one/
-        ├─ two.json
-        ╰─ two/
-           ╰─ three.json
+        ├╴two.json
+        ╰╴two/
+          ╰╴three.json
         """)
         
         XCTAssertEqual(Folder.makeStructure(filePaths: [
@@ -75,12 +75,12 @@ class FileTests: XCTestCase {
             "documentation/first/xyz-page/index.html",
         ]).first!.dump(), """
         documentation/
-        ╰─ first/
-           ├─ abc-page/
-           │  ╰─ index.html
-           ├─ index.html
-           ╰─ xyz-page/
-              ╰─ index.html
+        ╰╴first/
+          ├╴abc-page/
+          │ ╰╴index.html
+          ├╴index.html
+          ╰╴xyz-page/
+            ╰╴index.html
         """)
         
         XCTAssertEqual(Folder.makeStructure(filePaths: [
@@ -89,11 +89,11 @@ class FileTests: XCTestCase {
             "data/documentation/first/xyz-page.json",
         ]).first!.dump(), """
         data/
-        ╰─ documentation/
-           ├─ first.json
-           ╰─ first/
-              ├─ abc-page.json
-              ╰─ xyz-page.json
+        ╰╴documentation/
+          ├╴first.json
+          ╰╴first/
+            ├╴abc-page.json
+            ╰╴xyz-page.json
         """)
     }
 }

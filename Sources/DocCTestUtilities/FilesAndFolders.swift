@@ -430,18 +430,36 @@ private func makeMinimalTestRenderNode(path: String) -> RenderNode {
 }
 
 /// A node in a tree structure that can be printed into a visual representation for debugging.
-private struct DumpableNode {
-    var name: String
-    var children: [DumpableNode]?
-    
+private extension TreeStringRepresentation.Node {
     init(_ file: any File) {
-        if let folder = file as? Folder {
-            name = file.name
-            children = folder.content.map { DumpableNode($0) }
-        } else {
-            name = file.name
-            children = nil
+        guard let folder = file as? Folder else {
+            self.init(
+                name: file.name,
+                children: []
+            )
+            return
         }
+        
+        self.init(
+            name: file.name + "/",
+            children: folder.content
+                // Sort files before folders if the folder name is a prefix of the file name
+                .sorted(by: { lhs, rhs in
+                    switch (lhs is Folder, rhs is Folder) {
+                    case (true,  true):
+                        return lhs.name < rhs.name
+                    case (false, true) where lhs.name.hasPrefix(rhs.name):
+                        return true
+                    case (true, false) where rhs.name.hasPrefix(lhs.name):
+                        return false
+                    default:
+                        return lhs.name < rhs.name
+                    }
+                })
+                .map {
+                    TreeStringRepresentation.Node($0)
+                }
+            )
     }
 }
 
@@ -460,52 +478,11 @@ extension File {
     /// The string `dump()` for the folder hierarchy above is shown below:
     /// ```
     /// one/
-    /// ╰─ two/
-    ///    ├─ a.json
-    ///    ╰─ b.json
+    /// ╰╴two/
+    ///   ├╴a.json
+    ///   ╰╴b.json
     /// ```
     public func dump() -> String {
-        Self.dump(.init(self))
-            .trimmingCharacters(in: .newlines) // remove the trailing newline
-    }
-
-    private static func dump(_ node: DumpableNode, decorator: String = "") -> String {
-        var result = ""
-        result.append(decorator)
-        if !decorator.isEmpty {
-            result.append("─ ")
-        }
-        result.append(node.name)
-        guard let children = node.children else {
-            return result + "\n"
-        }
-        result.append("/\n")
-        
-        let sortedChildren = children.sorted(by: { lhs, rhs in
-            // Sort files before folders if the folder name is a prefix of the file name
-            switch (lhs.children, rhs.children) {
-            case (nil, nil):
-                return lhs.name < rhs.name
-            case (nil, _) where lhs.name.hasPrefix(rhs.name):
-                return true
-            case (_, nil) where rhs.name.hasPrefix(lhs.name):
-                return false
-            default:
-                return lhs.name < rhs.name
-            }
-        })
-        
-        for (index, child) in sortedChildren.enumerated() {
-            var decorator = decorator
-            if decorator.hasSuffix("├") {
-                decorator = decorator.dropLast() + "│  "
-            }
-            if decorator.hasSuffix("╰") {
-                decorator = decorator.dropLast() + "   "
-            }
-            let newDecorator = decorator + (index == sortedChildren.count-1 ? "╰" : "├")
-            result.append(dump(child, decorator: newDecorator))
-        }
-        return result
+        TreeStringRepresentation.dump(.init(self))
     }
 }

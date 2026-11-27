@@ -84,24 +84,24 @@ struct StaticHostingWithContentTests {
         // Because the TestOutputConsumer below, doesn't create any files, we only expect the HTML files in the output directory
         #expect(fileSystem.dump(subHierarchyFrom: "/output-dir") == """
         output-dir/
-        ├─ data/
-        │  ╰─ documentation/
-        │     ╰─ rootarticle.json
-        ├─ documentation/
-        │  ╰─ rootarticle/
-        │     ╰─ index.html
-        ├─ downloads/
-        │  ╰─ Something/
-        ├─ images/
-        │  ╰─ Something/
-        ├─ index.html
-        ├─ index/
-        │  ╰─ index.json
-        ├─ link-hierarchy.json
-        ├─ linkable-entities.json
-        ├─ metadata.json
-        ╰─ videos/
-           ╰─ Something/
+        ├╴data/
+        │ ╰╴documentation/
+        │   ╰╴rootarticle.json
+        ├╴documentation/
+        │ ╰╴rootarticle/
+        │   ╰╴index.html
+        ├╴downloads/
+        │ ╰╴Something/
+        ├╴images/
+        │ ╰╴Something/
+        ├╴index.html
+        ├╴index/
+        │ ╰╴index.json
+        ├╴link-hierarchy.json
+        ├╴linkable-entities.json
+        ├╴metadata.json
+        ╰╴videos/
+          ╰╴Something/
         """)
         
         let expectedTitleAndMetaContent = includeHTMLContent ? """
