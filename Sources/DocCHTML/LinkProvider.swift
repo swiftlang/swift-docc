@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2025 Apple Inc. and the Swift project authors
+ Copyright (c) 2025-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -42,12 +42,20 @@ package struct LinkedElement {
     /// The abstract of the page—to be displayed in either a Topics section, See Also section, or in a `@Links` directive—or `nil` if the linked element doesn't have an abstract.
     package var abstract: Paragraph?
 
-    package init(path: String, names: Names, subheadings: Subheadings, abstract: Paragraph?) {
+    // FIXME: The status comes from the first language representation, like the page's availability list. Revisit this when availability can differ per language.
+    /// A Boolean value that indicates whether the linked element is deprecated, for display as a "Deprecated" badge when the element is referenced in either a Topics section or See Also section.
+    package var isDeprecated: Bool
+    /// A Boolean value that indicates whether the linked element is in beta, for display as a "Beta" badge when the element is referenced in either a Topics section or See Also section.
+    package var isBeta: Bool
+
+    package init(path: String, names: Names, subheadings: Subheadings, abstract: Paragraph?, isDeprecated: Bool = false, isBeta: Bool = false) {
         assert(path.first != "/")
         self.path = path
         self.names = names
         self.subheadings = subheadings
         self.abstract = abstract
+        self.isDeprecated = isDeprecated
+        self.isBeta = isBeta
     }
     
     /// The single name or language-specific names to use when referring to a linked element in inline content.

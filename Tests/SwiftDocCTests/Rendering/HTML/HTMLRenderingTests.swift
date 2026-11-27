@@ -848,6 +848,146 @@ struct HTMLRenderingTests {
         #expect(html.contains(expectedTabs), "\(html)")
     }
 
+    @Test
+    func displaysStatusBadgesForBetaSymbols() async throws {
+        let version1 = SymbolGraph.SemanticVersion(major: 1, minor: 0, patch: 0)
+        let version2 = SymbolGraph.SemanticVersion(major: 2, minor: 0, patch: 0)
+
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                // Not beta
+                makeSymbol(id: "class-id", kind: .class, pathComponents: ["SomeClass"], availability: [
+                    makeAvailabilityItem(domainName: "macOS", introduced: version1),
+                ]),
+                // Beta because it's introduced in a platform version that's currently in beta
+                makeSymbol(id: "beta-id", kind: .method, pathComponents: ["SomeClass", "betaMethod()"], availability: [
+                    makeAvailabilityItem(domainName: "macOS", introduced: version2),
+                ]),
+            ], relationships: [
+                .init("beta-id", .memberOf, "class-id"),
+            ]))
+        }
+
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = ["macOS": .init(.init(2, 0, 0), beta: true)]
+
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        func renderedHTML(symbolID: String) throws -> String {
+            let reference = try #require(context.documentationCache.reference(symbolID: symbolID))
+            let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+            var renderer = makeHTMLRenderer(for: reference, in: context)
+            return try #require(renderer.renderSymbol(symbol).prettyHTMLString)
+        }
+
+        // The breadcrumbs and the Topics section use the same badge class, so check each of them separately.
+        func breadcrumbs(in html: String) throws -> Substring {
+            let start = try #require(html.firstRange(of: #"<nav id="breadcrumbs">"#))
+            let end = try #require(html[start.upperBound...].firstRange(of: "</nav>"))
+            return html[start.upperBound..<end.lowerBound]
+        }
+        // The Topics item for the beta method is a badged list item that contains a link to the method.
+        let betaTopicsItem = #/<li class="beta-badge">\s*<a href="betamethod\(\)/index\.html">/#
+
+        // A page that isn't beta doesn't display a tag or a breadcrumb badge, but its beta Topics item displays a badge.
+        let classHTML = try renderedHTML(symbolID: "class-id")
+        #expect(!classHTML.contains(#"<p class="beta-tag">"#), "\(classHTML)")
+        #expect(try !breadcrumbs(in: classHTML).contains("beta-badge"), "\(classHTML)")
+        #expect(classHTML.contains(betaTopicsItem), "\(classHTML)")
+
+        // A beta page displays a beta tag and a beta breadcrumb badge.
+        let betaHTML = try renderedHTML(symbolID: "beta-id")
+        #expect(betaHTML.contains(#"<p class="beta-tag">"#), "\(betaHTML)")
+        #expect(try breadcrumbs(in: betaHTML).contains(#"<li class="beta-badge">"#), "\(betaHTML)")
+        #expect(!betaHTML.contains(betaTopicsItem), "\(betaHTML)")
+    }
+
+    // MARK: Status tag agrees with the availability list
+
+    /// Renders the page for `SomeClass` in a catalog with a single symbol that has the given in-source availability and doc comment.
+    private func renderSomeClass(
+        availability: [SymbolGraph.Symbol.Availability.AvailabilityItem] = [],
+        docComment: String? = nil,
+        infoPlist: InfoPlist? = nil,
+        betaPlatforms: [String: PlatformVersion] = [:]
+    ) async throws -> String {
+        let catalog = Folder(name: "unit-test.docc") {
+            JSONFile(symbolGraph: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "class-id", kind: .class, pathComponents: ["SomeClass"], docComment: docComment, availability: availability),
+            ]))
+            if let infoPlist {
+                infoPlist
+            }
+        }
+
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = betaPlatforms.isEmpty ? nil : betaPlatforms
+
+        let context = try await load(catalog: catalog, configuration: configuration)
+        #expect(context.diagnostics.isEmpty, "Encountered unexpected problems: \(context.diagnostics.map(\.summary))")
+
+        let reference = try #require(context.documentationCache.reference(symbolID: "class-id"))
+        let symbol = try #require(context.documentationCache[reference]?.semantic as? Symbol)
+        var renderer = makeHTMLRenderer(for: reference, in: context)
+        return try #require(renderer.renderSymbol(symbol).prettyHTMLString)
+    }
+
+    @Test
+    func displaysDeprecatedTagForDeprecationFromDirective() async throws {
+        // The directive is the only source of availability and it deprecates the symbol on every platform that it displays.
+        let html = try await renderSomeClass(docComment: """
+        A symbol that's deprecated by a directive.
+
+        @Metadata {
+          @Available(macOS, introduced: 1.0, deprecated: 2.0)
+        }
+        """)
+        #expect(html.contains(#"<span class="deprecated-badge">"#), "The availability list shows the deprecated badge next to the platform\n\(html)")
+        #expect(html.contains(#"<p class="deprecated-tag">"#), "The tag next to the title agrees with the list\n\(html)")
+    }
+
+    @Test
+    func displaysBetaTagForBetaFromInfoPlistDefaultAvailability() async throws {
+        // The symbol has no in-source availability. Its introduced version comes from the Info.plist default availability.
+        let html = try await renderSomeClass(
+            availability: [makeAvailabilityItem(domainName: "macOS")],
+            infoPlist: InfoPlist(defaultAvailability: [
+                .init(platformName: .macOS, platformVersion: "2.0"),
+            ]),
+            betaPlatforms: ["macOS": .init(.init(2, 0, 0), beta: true)]
+        )
+        #expect(html.contains(#"<span class="beta-badge">"#), "The availability list shows the badge\n\(html)")
+        #expect(html.contains(#"<p class="beta-tag">"#), "The tag agrees with the list\n\(html)")
+    }
+
+    @Test
+    func displaysDeprecatedTagForUnconditionalWildcardDeprecation() async throws {
+        // `@available(*, deprecated)` without a message.
+        let wildcardDeprecation = SymbolGraph.Symbol.Availability.AvailabilityItem(
+            domain: nil, introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil,
+            isUnconditionallyDeprecated: true, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false
+        )
+        let html = try await renderSomeClass(availability: [wildcardDeprecation])
+        #expect(html.contains(#"<p class="deprecated-tag">"#), "\(html)")
+    }
+
+    @Test
+    func doesntDisplayDeprecatedTagWhenOnlySomePlatformsAreDeprecated() async throws {
+        let html = try await renderSomeClass(availability: [
+            makeAvailabilityItem(domainName: "macOS", introduced: .init(major: 1, minor: 0, patch: 0), deprecated: .init(major: 2, minor: 0, patch: 0)),
+            makeAvailabilityItem(domainName: "iOS",   introduced: .init(major: 1, minor: 0, patch: 0)),
+        ])
+        #expect(html.contains(#"<span class="deprecated-badge">"#), "The macOS item in the availability list shows the badge\n\(html)")
+        #expect(!html.contains(#"deprecated-tag"#), "The page as a whole isn't deprecated\n\(html)")
+    }
+
+    @Test
+    func doesntDisplayTagForSymbolWithOnlyVersionlessPlatforms() async throws {
+        let html = try await renderSomeClass(availability: [makeAvailabilityItem(domainName: "macOS")])
+        #expect(!html.contains("deprecated-tag") && !html.contains("beta-tag"), "\(html)")
+    }
+
     private func makeHTMLRenderer(for reference: ResolvedTopicReference, in context: DocumentationContext) -> HTMLRenderer {
         HTMLRenderer(reference: reference, context: context, jsonRenderContext: .init(documentationContext: context), goal: .richness, featureFlags: context.configuration.featureFlags)
     }

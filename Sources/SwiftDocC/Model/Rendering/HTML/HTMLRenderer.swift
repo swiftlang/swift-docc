@@ -74,11 +74,28 @@ private struct ContextLinkProvider: LinkProvider {
             .single(.conceptual(node.name.plainText))
         }
         
+        // Render links with a deprecated/beta status when applicable
+        let isDeprecated: Bool
+        let isBeta: Bool
+        switch node.semantic {
+        case let symbol as Symbol:
+            isDeprecated = symbol.isDisplayedAsDeprecated(context.currentBetaPlatforms)
+            isBeta       = symbol.isDisplayedAsBeta(context.currentBetaPlatforms)
+        case let article as Article:
+            isDeprecated = article.isDisplayedAsDeprecated()
+            isBeta       = false // Articles are never displayed as beta (rdar://173773442)
+        default:
+            isDeprecated = false
+            isBeta       = false
+        }
+        
         return .init(
             path: Self.filePath(for: node.reference),
             names: node.makeNames(goal: goal),
             subheadings: subheadings,
-            abstract: (node.semantic as? (any Abstracted))?.abstract
+            abstract: (node.semantic as? (any Abstracted))?.abstract,
+            isDeprecated: isDeprecated,
+            isBeta: isBeta
         )
     }
     
@@ -162,18 +179,25 @@ package struct HTMLRenderer {
     
     mutating func renderArticle(_ article: Article) -> RenderedPageInfo {
         let node = context.documentationCache[reference]!
-        
+        let isDeprecated = article.isDisplayedAsDeprecated()
+        var hgroupElements: [HTMLNode] = [
+            p(contents: [.text(article.topics == nil ? "Article": "API collection")]),
+            h1(contents: [.text(node.name.plainText)]),
+        ]
+        if isDeprecated {
+            hgroupElements.append(
+                p(attributes: [.class("deprecated-tag")], contents: [.text("Deprecated")])
+            )
+        }
         var heroElements = [
             // Breadcrumbs
             renderer.breadcrumbs(
                 references: (context.shortestFinitePath(to: reference) ?? [context.soleRootModuleReference!]).map { $0.absoluteString },
-                currentPageNames: .single(.conceptual(node.name.plainText))
+                currentPageNames: .single(.conceptual(node.name.plainText)),
+                isDeprecated: isDeprecated
             ),
             // Eyebrow and title
-            hgroup(contents: [
-                p(contents: [.text(article.topics == nil ? "Article": "API collection")]),
-                h1(contents: [.text(node.name.plainText)]),
-            ]),
+            hgroup(contents: consume hgroupElements),
         ]
         
         // Abstract
@@ -245,7 +269,8 @@ package struct HTMLRenderer {
     
     mutating func renderSymbol(_ symbol: Symbol) -> RenderedPageInfo {
         let node = context.documentationCache[reference]!
-        
+        let isDeprecated = symbol.isDisplayedAsDeprecated(context.currentBetaPlatforms)
+        let isBeta = symbol.isDisplayedAsBeta(context.currentBetaPlatforms)
         let isModule = symbol.kind.identifier == .module
         var heroElements: [HTMLNode] = []
         
@@ -253,7 +278,9 @@ package struct HTMLRenderer {
             // Breadcrumbs
             heroElements.append(renderer.breadcrumbs(
                 references: (context.linkResolver.localResolver.breadcrumbs(of: reference, in: reference.sourceLanguage) ?? []).map { $0.absoluteString },
-                currentPageNames: node.makeNames(goal: goal)
+                currentPageNames: node.makeNames(goal: goal),
+                isDeprecated: isDeprecated,
+                isBeta: isBeta
             ))
         }
         
@@ -277,6 +304,17 @@ package struct HTMLRenderer {
                 hgroupElements.append(
                     h1(contents: renderer.wordBreak(symbolName: symbol.title /* This is internally force unwrapped */))
                 )
+        }
+        // Display if the symbol is deprecated or in beta.
+        // Deprecated takes precedence over beta.
+        if isDeprecated {
+            hgroupElements.append(
+                p(attributes: [.class("deprecated-tag")], contents: [.text("Deprecated")])
+            )
+        } else if isBeta {
+            hgroupElements.append(
+                p(attributes: [.class("beta-tag")], contents: [.text("Beta")])
+            )
         }
         heroElements.append(hgroup(contents: consume hgroupElements))
         
@@ -624,5 +662,16 @@ private extension DocumentationDataVariants where Variant: Equatable {
 private extension ImplementationsGroup {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.heading == rhs.heading && lhs.references == rhs.references
+    }
+}
+
+private extension Article {
+    /// Whether the output displays this article as deprecated.
+    ///
+    /// An article is only deprecated if it has a deprecation summary.
+    func isDisplayedAsDeprecated() -> Bool {
+        // Its availability doesn't count because `@Available` directives don't mark pages as deprecated (rdar://173761647).
+        // For the same reason, articles are never displayed as beta (rdar://173773442).
+        deprecationSummary != nil
     }
 }

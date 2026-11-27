@@ -228,7 +228,7 @@ struct FileWritingHTMLContentConsumerTests {
             A custom <em>formatted</em> description of this topic section
           </p>
           <ul>
-            <li>
+            <li class="deprecated-badge">
               <a href="somearticle/index.html">
                 <p>Some article</p>
               </a>
@@ -291,7 +291,7 @@ struct FileWritingHTMLContentConsumerTests {
           <h2>Topics</h2>
           <h3>Instance methods</h3>
           <ul>
-            <li>
+            <li class="deprecated-badge">
               <a href="somemethod(with:and:)/index.html">
                 <code>func someMethod(with first: Int, and second: String) -> Bool</code>
               </a>
@@ -310,7 +310,7 @@ struct FileWritingHTMLContentConsumerTests {
           <h2>See also</h2>
           <h3>Something custom</h3>
           <ul>
-            <li>
+            <li class="deprecated-badge">
               <a href="../somearticle/index.html">
                 <p>Some article</p>
               </a>
@@ -343,11 +343,16 @@ struct FileWritingHTMLContentConsumerTests {
               <li>
                 <a href="../index.html">SomeClass</a>
               </li>
-              <li>someMethod(with:and:)</li>
+              <li class="deprecated-badge">
+                someMethod(with:and:)
+              </li>
             </ul>
             <hgroup>
               <p>Instance Method</p>
               <h1>someMethod(with:and:)</h1>
+              <p class="deprecated-tag">
+                Deprecated
+              </p>
             </hgroup>
             <p>Some in-source description of this method.</p>
             <pre><code>func someMethod(with first: Int, and second: String) -> Bool</code></pre>
@@ -382,7 +387,7 @@ struct FileWritingHTMLContentConsumerTests {
           <h2>See also</h2>
           <h3>Related documentation</h3>
           <ul>
-            <li>
+            <li class="deprecated-badge">
               <a href="../../somearticle/index.html">
                 <p>Some article</p>
               </a>
@@ -412,11 +417,16 @@ struct FileWritingHTMLContentConsumerTests {
               <li>
                 <a href="../index.html">ModuleName</a>
               </li>
-              <li>Some article</li>
+              <li class="deprecated-badge">
+                Some article
+              </li>
             </ul>
             <hgroup>
               <p>Article</p>
               <h1>Some article</h1>
+              <p class="deprecated-tag">
+                Deprecated
+              </p>
             </hgroup>
             <p>
               This is a <em>formatted</em> article.
