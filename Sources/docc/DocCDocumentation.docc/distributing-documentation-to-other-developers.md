@@ -110,7 +110,7 @@ with the name `MyNewProtocol`, the URL to view the `MyNewPackage`
 documentation might resemble the following:
 
 ```
-https://www.example.com/documentation/MyNewPackage/MyNewProtocol
+https://www.example.com/documentation/mynewpackage/mynewprotocol
 ```
 
 #### Host a Documentation Archive with a File Server
@@ -130,14 +130,46 @@ docc convert MyNewPackage.docc \
 ```
 
 DocC adds the provided hosting base path before the path of each documentation
-page. For example, the URL to view for `MyNewProtocol` protocol in the 
+page. For example, the URL to view the `MyNewProtocol` protocol in the
 `MyNewPackage` documentation might resemble the following:
 
 ```
-https://www.example.com/MyProject/Base/Path/documentation/MyNewPackage/MyNewProtocol
+https://www.example.com/MyProject/Base/Path/documentation/mynewpackage/mynewprotocol
                         ╰────────┬────────╯
                        your custom base path
 ```
+
+To find the value to pass, start from the URL of the folder on your website
+that holds the archive's top-level `index.html` file. Use the path that
+follows the domain name. You don't need a leading or trailing slash. For
+example, if your website serves the contents of `MyNewPackage.doccarchive` at
+`https://www.example.com/MyProject/docs/`, pass
+`--hosting-base-path MyProject/docs`.
+
+```
+MyNewPackage.doccarchive/
+├── index.html
+├── theme-settings.json
+├── data/
+│   └── documentation/
+│       ├── mynewpackage.json
+│       └── mynewpackage/
+│           └── mynewprotocol.json
+└── documentation/
+    └── mynewpackage/
+        ├── index.html
+        └── mynewprotocol/
+            └── index.html
+```
+
+With that base path, the landing page for the module is at the following URL:
+
+```
+https://www.example.com/MyProject/docs/documentation/mynewpackage/
+```
+
+If the base path doesn't match the archive folder's path, the browser requests the web app's
+scripts and styles from the wrong location, and the web app doesn't load.
 
 You can also configure the base path through the `--hosting-base-path` option
 when [building documentation using the SwiftPM DocC Plugin][plugin-docs] or via
