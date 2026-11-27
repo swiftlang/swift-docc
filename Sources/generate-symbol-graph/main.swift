@@ -28,22 +28,31 @@ struct Directive {
     /// `true` if the directive doesn't expect body content.
     var isLeaf: Bool
     
+    /// The hierarchy of the directive as named path components.
+    var pathComponents: [String]
+    
     init(
         name: String,
         implementationName: String? = nil,
         introducedVersion: String,
         acceptsArguments: Bool = true,
-        isLeaf: Bool
+        isLeaf: Bool,
+        pathComponents: [String]? = nil
     ) {
         self.name = name
         self.implementationName = implementationName ?? name
         self.introducedVersion = introducedVersion
         self.acceptsArguments = acceptsArguments
         self.isLeaf = isLeaf
+        self.pathComponents = pathComponents ?? [name]
     }
     
     var usr: String {
         return directiveUSR(name)
+    }
+    
+    var parentName: String? {
+        pathComponents.dropLast().last
     }
 }
 
@@ -84,6 +93,11 @@ extension SymbolKit.SymbolGraph.LineList.Line: Swift.ExpressibleByStringInterpol
         self.init(text: value, range: nil)
     }
 }
+
+let documentedIndexedDirectives = DirectiveIndex.shared.indexedDirectives.values.filter { directive in
+    !directive.hiddenFromDocumentation
+}
+let documentedIndexedDirectiveNames = Set(documentedIndexedDirectives.map(\.name))
 
 let supportedDirectives: [Directive] = [
 
@@ -186,15 +200,13 @@ let supportedDirectives: [Directive] = [
         acceptsArguments: false,
         isLeaf: false
     ),
-] + DirectiveIndex.shared.indexedDirectives.values.filter { directive in
-        !directive.hiddenFromDocumentation
-    }
-    .map { directive in
+] + documentedIndexedDirectives.map { directive in
         return Directive(
             name: directive.name,
             introducedVersion: directive.introducedVersion,
             acceptsArguments: !directive.documentableArguments.isEmpty,
-            isLeaf: !directive.allowsMarkup && directive.childDirectives.isEmpty
+            isLeaf: !directive.allowsMarkup && directive.childDirectives.isEmpty,
+            pathComponents: DirectiveIndex.shared.pathComponents(of: directive).filter(documentedIndexedDirectiveNames.contains)
         )
     }
 
@@ -618,9 +630,7 @@ let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
             subHeading: navigatorFragments,
             prose: nil
         ),
-        pathComponents: [
-            directive.name
-        ],
+        pathComponents: directive.pathComponents,
         docComment: documentationComments[directive.name],
         accessLevel: .init(rawValue: "public"),
         kind: .init(parsedIdentifier: .class, displayName: "Directive"),
@@ -645,6 +655,19 @@ let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
     )
 }
 
+let relationships: [SymbolGraph.Relationship] = supportedDirectives.compactMap { directive in
+    guard let parentName = directive.parentName else {
+        return nil
+    }
+    
+    return SymbolGraph.Relationship(
+        source: directive.usr,
+        target: directiveUSR(parentName),
+        kind: .memberOf,
+        targetFallback: nil
+    )
+}
+
 // Emits SGFs for the different directives we support.
 let symbolGraph = SymbolGraph(
     metadata: SymbolGraph.Metadata(
@@ -658,7 +681,7 @@ let symbolGraph = SymbolGraph(
         bystanders: []
     ),
     symbols: symbols,
-    relationships: []
+    relationships: relationships
 )
 
 private struct SortedSymbolGraph: Codable {
@@ -672,7 +695,7 @@ private struct SortedSymbolGraph: Codable {
         try container.encode(wrapped.metadata, forKey: .metadata)
         try container.encode(wrapped.module, forKey: .module)
         try container.encode(wrapped.symbols.values.sorted(by: \.identifier.precise), forKey: .symbols)
-        try container.encode(wrapped.relationships, forKey: .relationships)
+        try container.encode(wrapped.relationships.sorted(by: \.source), forKey: .relationships)
     }
     
     init(from decoder: any Decoder) throws {
