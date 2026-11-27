@@ -139,7 +139,7 @@ https://www.example.com/MyProject/Base/Path/documentation/MyNewPackage/MyNewProt
                        your custom base path
 ```
 
-You can also configure the base path path via the `--hosting-base-path` option
+You can also configure the base path through the `--hosting-base-path` option
 when [building documentation using the SwiftPM DocC Plugin][plugin-docs] or via
 the `DOCC_HOSTING_BASE_PATH` build setting when building documentation in Xcode.
 

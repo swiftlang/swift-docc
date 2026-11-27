@@ -11,7 +11,7 @@
 import Foundation
 public import Markdown
 
-/// A directive for authoring authoring embedded
+/// A directive for authoring embedded
 /// previews of documentation links (similar to how links are currently
 /// rendered in Topics sections) anywhere on the page without affecting page
 /// curation behavior.
