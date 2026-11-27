@@ -81,7 +81,7 @@ the Swift-DocC Plugin. Refer to instructions in the plugin's
 to get started with [building](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
 and publishing your documentation to your [website](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
 
-You can also use the DocC command-line interface, as described in <doc:distributing-documentation-to-other-developers>.
+You can also use the DocC command-line interface, as described in <doc:distributing-documentation-to-other-developers>, including linking to actual source code from your documentation as for <doc:distributing-documentation-to-other-developers#Include-Links-to-your-Projects-Sources>.
 
 ## See Also
 
