@@ -2730,6 +2730,60 @@ struct AvailabilityTests {
         #expect(topicReference.isDeprecated == !isAlsoInMacOSSymbolGraph)
     }
     
+    @Test(arguments: DirectiveLocation.allCases)
+    func prefersDefaultAvailabilityOverFallbackAvailabilityWhenDirectiveAnnotationsArePresent(_ directiveLocation: DirectiveLocation) async throws {
+        let availableDirective = """
+        @Metadata {
+          @Available(iOS, introduced: "1.2.3")
+        }
+        """
+        
+        let catalog = Folder(name: "unit-test.docc") {
+            for (fileName, platform) in [
+                ("ModuleName-ios.symbols.json",      SymbolGraph.Platform(operatingSystem: .init(name: "ios")) ),
+                ("ModuleName-catalyst.symbols.json", SymbolGraph.Platform(operatingSystem: .init(name: "ios"), environment: "macabi") ),
+            ] {
+                JSONFile(name: fileName, content: makeSymbolGraph(moduleName: "ModuleName", platform: platform, symbols: [
+                    makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SomeClass"], docComment: """
+                    Some in-source documentation for this class.
+                    
+                    \(directiveLocation == .inSourceComment ? availableDirective : "")
+                    """) // No availability _attributes_ for this symbol
+                ]))
+                
+                InfoPlist(defaultAvailability: [
+                    .init(platformName: .iOS,      platformVersion: "3.2.1"), // The directive version is preferred over this value
+                    .init(platformName: .iPadOS,   platformVersion: "4.5.6"),
+                    .init(platformName: .catalyst, platformVersion: "7.8.9"),
+                ])
+            }
+            
+            TextFile(name: "SomeClass.md", utf8Content: """
+            # ``SomeClass``
+            
+            Some additional documentation for this class.
+            \(directiveLocation == .extensionFile ? availableDirective : "")
+            """)
+        }
+        let context = try await load(catalog: catalog)
+        #expect(context.diagnostics.isEmpty, "Unexpected problems: \(context.diagnostics.map(\.summary))")
+        let node = try #require(context.documentationCache["some-symbol-id"])
+        #expect(node.metadata?.availability.count == 1)
+        let directiveAvailability = node.metadata?.availability.first
+        #expect(directiveAvailability?.platform.rawValue      == "iOS")
+        #expect(directiveAvailability?.introduced.description == "1.2.3")
+        
+        let converter = DocumentationContextConverter(context: context, renderContext: .init(documentationContext: context))
+        let renderNode = try #require(converter.renderNode(for: node))
+        
+        let renderPlatforms = try #require(renderNode.metadata.platforms)
+        #expect(renderPlatforms.compactMap(\.name) == ["iOS", "iPadOS", "Mac Catalyst"])
+        
+        #expect(renderPlatforms.first(where: { $0.name == "iOS"          })?.introduced == "1.2.3")
+        #expect(renderPlatforms.first(where: { $0.name == "iPadOS"       })?.introduced == "4.5.6")
+        #expect(renderPlatforms.first(where: { $0.name == "Mac Catalyst" })?.introduced == "7.8.9")
+    }
+    
     private static let allMainPlatforms: [SymbolGraph.Platform] = [
         .init(operatingSystem: .init(name: "ios")),
         .init(operatingSystem: .init(name: "ios"), environment: "macabi"), // Mac Catalyst
