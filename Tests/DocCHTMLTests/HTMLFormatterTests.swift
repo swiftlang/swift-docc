@@ -461,7 +461,7 @@ struct HTMLFormatterTests {
     }
     
     @Test(arguments: [
-        HTMLNode._Tag.a, .audio, .del, .ins, .noscript, .video
+        HTMLNode._Tag.a, .audio, .del, .ins, .map, .noscript, .video,
     ])
     func paragraphElementIncludesEndTagWhenLastElementCertainEnclosingTags(_ enclosingTag: HTMLNode._Tag) {
         let tagName = enclosingTag.rawValue
@@ -492,7 +492,7 @@ struct HTMLFormatterTests {
         HTMLNode._Tag.address, .article, .aside,
         .blockquote,
         .details, .dialog, .div, .dl,
-        .figure, .figcaption, .figure, .footer, .form,
+        .fieldset, .figcaption, .figure, .footer, .form,
         .h1, .h2, .h3, .h4, .h5, .h6, .header, .hgroup, /* `hr` is omitted because it's a void element */
         .main, .menu,
         .nav,
@@ -502,7 +502,7 @@ struct HTMLFormatterTests {
         .table,
         .ul,
     ])
-    func paragraphElementCanOmitEndTagWhenFollowedByCertainEnclosingTags(_ nextTag: HTMLNode._Tag) {
+    func paragraphElementCanOmitEndTagWhenFollowedByCertainTags(_ nextTag: HTMLNode._Tag) {
         if nextTag.isVoid {
             Issue.record("\(nextTag.rawValue) is void element")
             return
