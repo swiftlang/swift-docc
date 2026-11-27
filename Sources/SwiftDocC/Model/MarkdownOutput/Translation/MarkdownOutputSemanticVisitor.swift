@@ -229,7 +229,11 @@ extension MarkdownOutputSemanticVisitor {
         if let platforms = symbol.consolidatedAvailability.firstValue?.makePlatforms(context.currentBetaPlatforms) {
             metadata.availability = platforms.map { .init($0) }
         }
-         
+                 
+        if symbol.consolidatedAvailability.firstValue?.isDeprecated == true || symbol.deprecatedSummaryVariants[.swift] != nil {
+            metadata.isDeprecated = true
+        }
+        
         // Content
         
         markdownWalker.visit(Heading(level: 1, Text(symbol.title)))
@@ -269,6 +273,15 @@ extension MarkdownOutputSemanticVisitor {
             }
         }
         
+        // Deprecation message
+        // Call out deprecated symbols in the text, with the message if there is one.
+        let deprecationMessage = symbol.deprecatedSummaryVariants[.swift]?.content
+        if deprecationMessage != nil || metadata.isDeprecated == true {
+            var blocks: [any BlockMarkup] = [Paragraph([Text("Deprecated")])]
+            blocks.append(contentsOf: (deprecationMessage ?? []).compactMap { $0 as? any BlockMarkup })
+            markdownWalker.visit(BlockQuote(blocks))
+        }
+                
         // Parameters
         
         if let parametersSection = symbol.parametersSection, parametersSection.parameters.isEmpty == false {
@@ -384,12 +397,19 @@ private extension MarkdownOutputNode.Metadata.Symbol {
 
 private extension MarkdownOutputNode.Metadata.Availability {
     init(_ platform: Availability.Platform) {
+        let deprecated: Version?
+        if platform.isUnconditionallyDeprecated {
+            deprecated = .unversioned
+        } else if let version = platform.deprecated {
+            deprecated = .versioned(version.stringRepresentation(precisionUpToNonsignificant: .minor))
+        } else {
+            deprecated = nil
+        }
+        let introduced: Version = platform.introduced.map { .versioned($0.stringRepresentation(precisionUpToNonsignificant: .minor)) } ?? .unversioned
         self.init(
             platform: platform.name,
-            // FIXME: It would be more consistent with other output to use `stringRepresentation(precisionUpToNonsignificant: .minor)` for both these versions.
-            introduced: platform.introduced?.description,
-            deprecated: platform.deprecated?.description,
-            unavailable: false
+            introduced: introduced,
+            deprecated: deprecated
         )
     }
 }

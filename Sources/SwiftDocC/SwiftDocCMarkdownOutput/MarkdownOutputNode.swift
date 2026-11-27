@@ -27,32 +27,44 @@ package struct MarkdownOutputNode: Sendable {
 extension MarkdownOutputNode {
     struct Metadata: Codable, Sendable {
     
-        static let version = SemanticVersion(major: 0, minor: 1, patch: 0)
+        static let version = SemanticVersion(major: 0, minor: 2, patch: 0)
         
         enum DocumentType: String, Codable, Sendable {
             case article, tutorial, symbol
         }
         
+        // Completely unavailable symbols are not included in the documentation output so don't need representation in this structure.
+        // It only has to deal with introduced and deprecated versions.
         struct Availability: Codable, Equatable, Sendable {
             
+            enum Version: Equatable, Sendable {
+                case unversioned
+                case versioned(String)
+            }
+            
             let platform: String
-            /// A string representation of the introduced version
-            let introduced: String?
-            /// A string representation of the deprecated version
-            let deprecated: String?
-            let unavailable: Bool
-                        
-            init(platform: String, introduced: String? = nil, deprecated: String? = nil, unavailable: Bool) {
+            /// When the symbol was introduced
+            let introduced: Version
+            /// When the symbol was deprecated
+            let deprecated: Version?
+                            
+            private static let availableToken = "available"
+            private static let deprecatedToken = "deprecated"
+            private static let versionSeparator = " - "
+            
+            init(platform: String, introduced: Version, deprecated: Version? = nil) {
                 self.platform = platform
                 self.introduced = introduced
                 self.deprecated = deprecated
-                self.unavailable = unavailable
             }
             
             // For a compact representation on-disk and for human and machine readers, availability is stored as a single string:
-            // platform: introduced -               (not deprecated)
-            // platform: introduced - deprecated    (deprecated)
-            // platform: -                          (unavailable)
+            // iOS: 14.0                (available from 14.0, not deprecated)
+            // iOS: 14.0 - 15.0         (available from 14.0, deprecated at 15.0)
+            // iOS: 14.0 - deprecated   (available from 14.0, deprecated unconditionally, no version)
+            // iOS: available           (available, no minimum version, not deprecated)
+            // iOS: available - 15.0    (available, no minimum version, deprecated at 15.0)
+            // iOS: deprecated          (available, no minimum version, deprecated unconditionally, no version)
             func encode(to encoder: any Encoder) throws {
                 var container = encoder.singleValueContainer()
                 try container.encode(stringRepresentation)
@@ -66,18 +78,24 @@ extension MarkdownOutputNode {
             
             var stringRepresentation: String {
                 var stringRepresentation = "\(platform): "
-                if unavailable {
-                    stringRepresentation += "-"
-                } else {
-                    if let introduced, introduced.isEmpty == false {
-                        stringRepresentation += "\(introduced) -"
-                        if let deprecated, deprecated.isEmpty == false {
-                            stringRepresentation += " \(deprecated)"
-                        }
-                    } else {
-                        stringRepresentation += "-"
-                    }
+                let versions: [String]
+            
+                switch (introduced, deprecated) {
+                case (.unversioned, nil):
+                    versions = [Self.availableToken]
+                case (.unversioned, .unversioned):
+                    versions = [Self.deprecatedToken]
+                case (.unversioned, .versioned(let deprecatedVersion)):
+                    versions = [Self.availableToken, deprecatedVersion]
+                case (.versioned(let introducedVersion), nil):
+                    versions = [introducedVersion]
+                case (.versioned(let introducedVersion), .unversioned):
+                    versions = [introducedVersion, Self.deprecatedToken]
+                case (.versioned(let introducedVersion), .versioned(let deprecatedVersion)):
+                    versions = [introducedVersion, deprecatedVersion]
                 }
+                                    
+                stringRepresentation += versions.joined(separator: Self.versionSeparator)
                 return stringRepresentation
             }
             
@@ -85,25 +103,48 @@ extension MarkdownOutputNode {
                 let words = stringRepresentation.split(separator: ":", maxSplits: 1)
                 guard words.count == 2 else {
                     platform = stringRepresentation
-                    unavailable = true
-                    introduced = nil
+                    introduced = .unversioned
                     deprecated = nil
                     return
                 }
                 platform = String(words[0])
-                let available = words[1]
-                    .split(separator: "-")
-                    .map { $0.trimmingCharacters(in: .whitespaces) }
-                    .filter { $0.isEmpty == false }
                 
-                introduced = available.first
-                if available.count > 1 {
-                    deprecated = available.last
-                } else {
-                    deprecated = nil
+                // Check for version 0.1.0 format which could have a trailing - or be a standalone -.
+                // TODO: rdar://193697991 (Markdown Export: Add per-version fixtures and tests for metadata codable conformations / migrations)
+                var availabilityWord = words[1].trimmingCharacters(in: .whitespaces)
+                if availabilityWord == "-" {
+                    availabilityWord = ""
+                } else if availabilityWord.hasSuffix(" -") {
+                    availabilityWord.removeLast(2)
                 }
                 
-                unavailable = available.isEmpty
+                let available = availabilityWord
+                    .split(separator: Self.versionSeparator)
+                    .map { $0.trimmingCharacters(in: .whitespaces) }
+                    .filter { $0.isEmpty == false }
+                                
+                if available.first == Self.deprecatedToken {
+                    // Special case where the first version doesn't refer to introduction
+                    self.introduced = .unversioned
+                    self.deprecated = .unversioned
+                } else {
+                    
+                    func version(from component: String) -> Version {
+                        switch component {
+                        case Self.availableToken, Self.deprecatedToken:
+                            return .unversioned
+                        default:
+                            return .versioned(component)
+                        }
+                    }
+                    
+                    self.introduced = available.first.map(version(from:)) ?? .unversioned
+                    if available.count > 1 {
+                        self.deprecated = version(from: available[1])
+                    } else {
+                        self.deprecated = nil
+                    }
+                }
             }
 
         }
@@ -135,6 +176,8 @@ extension MarkdownOutputNode {
         let framework: String
         var symbol: Symbol?
         var availability: [Availability]?
+        /// `true` if the page as whole is deprecated. For platform-level deprecation, see `availability`
+        var isDeprecated: Bool?
            
         init(documentType: DocumentType, identifier: String, title: String, framework: String) {
             self.documentType = documentType
